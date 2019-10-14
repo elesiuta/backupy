@@ -49,9 +49,11 @@ def writeCsv(fName: str, data: list, enc = None, delimiter = ",") -> None:
             writer.writerow(row)
 
 def readJson(fName: str) -> dict:
-    with open(fName, "r", errors="ignore") as json_file:
-        data = json.load(json_file)
-    return data
+    if os.path.exists(fName):
+        with open(fName, "r", errors="ignore") as json_file:
+            data = json.load(json_file)
+        return data
+    return {}
 
 def writeJson(fName: str, data: dict) -> None:
     if not os.path.isdir(os.path.dirname(fName)):
@@ -78,6 +80,8 @@ class ConfigObject:
         self.config_dir = ".backupy"
         self.filter_list = [re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]
         self.backup_time_override = False
+        self.load_json = False
+        self.save_json = False
         # load config
         for key in config:
             self.__setattr__(key, config[key])
@@ -86,6 +90,7 @@ class ConfigObject:
 class DirInfo:
     def __init__(self, directory: str, crc_mode: int,  config_dir: str, ignored_folders: list = []):
         self.file_dicts = {}
+        self.loaded_dicts = {}
         self.dir = directory
         self.crc_mode = crc_mode
         self.config_dir = config_dir
@@ -130,10 +135,18 @@ class DirInfo:
                         relativePath = os.path.relpath(full_path, self.dir)
                         size = os.path.getsize(full_path)
                         mtime = os.path.getmtime(full_path)
-                        self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
-                        if self.crc_mode == 3:
-                            self.file_dicts[relativePath]["crc"] = self.crc(full_path)
-    
+                        if relativePath in self.loaded_dicts:
+                            if self.loaded_dicts[relativePath]["size"] == size and self.loaded_dicts[relativePath]["mtime"] == mtime:
+                                self.file_dicts[relativePath] = self.loaded_dicts[relativePath]
+                            else:
+                                self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
+                            if self.crc_mode == 3 and "crc" not in self.file_dicts[relativePath]:
+                                self.file_dicts[relativePath]["crc"] = self.crc(full_path)
+                        else:
+                            self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
+                            if self.crc_mode == 3:
+                                self.file_dicts[relativePath]["crc"] = self.crc(full_path)
+
     def getDirDict(self) -> dict:
         return self.file_dicts
 
@@ -141,8 +154,7 @@ class DirInfo:
         writeJson(os.path.join(self.dir, self.config_dir, "dirinfo.json"), self.file_dicts)
 
     def loadJson(self):
-        #TODO
-        pass
+        self.loaded_dicts = readJson(os.path.join(self.dir, self.config_dir, "dirinfo.json"))
 
     def scanCrc(self, relativePath: str) -> int:
         full_path = os.path.join(self.dir, relativePath)
@@ -367,12 +379,18 @@ class BackupManager:
     def backup(self):
         # scan directories
         source = DirInfo(self.source_root, self.config.crc, self.config.config_dir, [self.config.conflict_dir])
+        dest = DirInfo(self.dest_root, self.config.crc, self.config.config_dir, [self.config.conflict_dir])
+        if self.config.load_json:
+            source.loadJson()
+            dest.loadJson()
         source.scan()
         source_dict = source.getDirDict()
-        dest = DirInfo(self.dest_root, self.config.crc, self.config.config_dir, [self.config.conflict_dir])
         dest.scan()
         dest_dict = dest.getDirDict()
         sourceOnly, destOnly, changed, moved = source.dirCompare(dest, self.config.d)
+        if self.config.save_json:
+            source.saveJson()
+            dest.saveJson()
         # print differences
         print(colourString("Source Only", "HEADER"))
         self.log.append("Source Only")
