@@ -75,10 +75,12 @@ class ConfigObject:
         self.norun = False
         self.csv = False
         self.goahead = True
+        self.save = False
+        self.load = False
         # default config (additional)
         self.conflict_dir = ".backupy"
         self.config_dir = ".backupy"
-        self.filter_list = [re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]
+        self.filter_list_test = [re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]
         self.backup_time_override = False
         self.load_json = False
         self.save_json = False
@@ -222,9 +224,17 @@ class BackupManager:
         if type(args) != dict:
             args = vars(args)
         self.config = ConfigObject(args)
-        # copy some variables
+        # save or load
+        if self.config.save:
+            self.config.save = False
+            self.saveJson()
+        elif self.config.load:
+            self.loadJson()
+        # copy and check source & dest
         self.source_root = self.config.source
         self.dest_root = self.config.dest
+        if self.dest_root == None:
+            sys.exit()
         # debugging
         if self.config.backup_time_override:
             self.backup_time = self.config.backup_time_override
@@ -369,12 +379,12 @@ class BackupManager:
             else:
                 break
 
-    def saveJson(self, sourceInfo, destInfo, args):
+    def saveJson(self):
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
 
-    def loadJson(self, sourceInfo, destInfo, args):
-        #TODO
-        pass
+    def loadJson(self):
+        config = readJson(os.path.join(self.config.source, self.config.config_dir, "config.json"))
+        self.config = ConfigObject(config)
 
     def backup(self):
         # scan directories
@@ -437,7 +447,7 @@ def main():
     parser = argparse.ArgumentParser(description="Simple python script for backing up directories")
     parser.add_argument("source", action="store", type=str,
                         help="Path of source")
-    parser.add_argument("dest", action="store", type=str,
+    parser.add_argument("dest", action="store", type=str, nargs="?", default=None,
                         help="Path of destination")
     parser.add_argument("-m", type=str, default="mirror", metavar="mode", choices=["mirror", "backup", "sync"],
                         help="How to handle files that exist only on one side? Available modes: mirror [source -> destination, delete destination only files] (default), backup [source -> destination, keep destination only files] sync [source <-> destination]")
@@ -455,6 +465,10 @@ def main():
                         help="Write log.csv in os.getcwd() of results")
     parser.add_argument("--goahead", action="store_true",
                         help="Go ahead without prompting for confirmation")
+    parser.add_argument("-s", "--save", action="store_true",
+                        help="Save configuration in source")
+    parser.add_argument("-l", "--load", action="store_true",
+                        help="Load configuration from source")
     args = parser.parse_args()
     backup_manager = BackupManager(args)
     backup_manager.backup()
