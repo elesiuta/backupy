@@ -8,6 +8,7 @@ import json
 import time
 import datetime
 import typing
+import sys
 
 def replaceSurrogates(string: str) -> str:
     return string.encode('utf16', 'surrogatepass').decode('utf16', 'replace')
@@ -58,6 +59,7 @@ def writeJson(fName: str, data: dict) -> None:
     with open(fName, "w", errors="ignore") as json_file:
         json.dump(data, json_file, indent=1, separators=(',', ': '))
 
+
 class ConfigObject:
     def __init__(self, config: dict):
         # default config (copy argparse)
@@ -79,6 +81,7 @@ class ConfigObject:
         # load config
         for key in config:
             self.__setattr__(key, config[key])
+
 
 class DirInfo:
     def __init__(self, directory: str, crc_mode: int,  config_dir: str, ignored_folders: list = []):
@@ -196,6 +199,7 @@ class DirInfo:
                         secondOnly.remove(f2)
                         moved.append({"source": f1, "dest": f2})
         return selfOnly, secondOnly, changed, moved
+
 
 class BackupManager:
     def __init__(self, args):
@@ -410,7 +414,8 @@ class BackupManager:
             self.log.append([str(vars(self.config))])
             writeCsv(os.path.join(self.source_root, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
 
-if __name__ == "__main__":
+
+def main():
     parser = argparse.ArgumentParser(description="Simple python script for backing up directories")
     parser.add_argument("source", action="store", type=str,
                         help="Path of source")
@@ -436,6 +441,10 @@ if __name__ == "__main__":
     backup_manager = BackupManager(args)
     backup_manager.backup()
     print("Backup complete!")
+
+
+if __name__ == "__main__":
+    sys.exit(main())
 
 
 ## TODO
