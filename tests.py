@@ -55,6 +55,15 @@ def runTest(test_name, config):
     return dirA, dirB, dirAsol, dirBsol
 
 class TestPyxargs(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        shutil.rmtree("backupy_test_solutions", ignore_errors=True)
+        shutil.unpack_archive("backupy_test_solutions.zip", "backupy_test_solutions")
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree("backupy_test_solutions")
+
     def test_mirror_KS(self):
         test_name = "mirror-KS"
         config = {"m": "mirror", "c": "KS"}
@@ -140,7 +149,4 @@ class TestPyxargs(unittest.TestCase):
         self.assertEqual(dirB, dirBsol)
 
 if __name__ == '__main__':
-    shutil.rmtree("backupy_test_solutions", ignore_errors=True)
-    shutil.unpack_archive("backupy_test_solutions.zip", "backupy_test_solutions")
     unittest.main()
-    shutil.rmtree("backupy_test_solutions", ignore_errors=True)
