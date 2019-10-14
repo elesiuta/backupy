@@ -39,19 +39,23 @@ def prettySize(size: float) -> str:
     else:
         return "{:<10}".format("%s B" %(size))
 
-def writeCsv(fName, data, enc = None, delimiter = ",") -> None:
+def writeCsv(fName: str, data: list, enc = None, delimiter = ",") -> None:
+    if not os.path.isdir(os.path.dirname(fName)):
+        os.makedirs(os.path.dirname(fName))
     with open(fName, "w", newline="", encoding=enc, errors="backslashreplace") as f:
         writer = csv.writer(f, delimiter=delimiter)
         for row in data:
             writer.writerow(row)
 
-def readJson(fname):
-    with open(fname, "r", errors="ignore") as json_file:
+def readJson(fName: str) -> dict:
+    with open(fName, "r", errors="ignore") as json_file:
         data = json.load(json_file)
     return data
 
-def writeJson(fname, data):
-    with open(fname, "w", errors="ignore") as json_file:
+def writeJson(fName: str, data: dict) -> None:
+    if not os.path.isdir(os.path.dirname(fName)):
+        os.makedirs(os.path.dirname(fName))
+    with open(fName, "w", errors="ignore") as json_file:
         json.dump(data, json_file, indent=1, separators=(',', ': '))
 
 class ConfigObject:
@@ -143,7 +147,7 @@ class DirInfo:
             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
         return self.file_dicts[relativePath]["crc"]
 
-    def fileCompare(self, f: str, file_dict1: dict, file_dict2: dict, secondInfo, crc_mode: int) -> bool:
+    def fileMatch(self, f: str, file_dict1: dict, file_dict2: dict, secondInfo, crc_mode: int) -> bool:
         if crc_mode == 3:
             if file_dict1["crc"] == file_dict2["crc"]:
                 return True
@@ -177,7 +181,7 @@ class DirInfo:
         moved = []
         for f in file_list:
             if f in second_list:
-                if not self.fileCompare(f, self.file_dicts[f], second_dict[f], secondInfo, crc_mode):
+                if not self.fileMatch(f, self.file_dicts[f], second_dict[f], secondInfo, crc_mode):
                     changed.append(f)
             else:
                 selfOnly.append(f)
@@ -187,7 +191,7 @@ class DirInfo:
         if moves:
             for f1 in selfOnly:
                 for f2 in secondOnly:
-                    if self.fileCompare(f, self.file_dicts[f1], second_dict[f2], secondInfo, crc_mode):
+                    if self.fileMatch(f, self.file_dicts[f1], second_dict[f2], secondInfo, crc_mode):
                         selfOnly.remove(f1)
                         secondOnly.remove(f2)
                         moved.append({"source": f1, "dest": f2})
@@ -235,7 +239,7 @@ class BackupManager:
     def removeFiles(self, root: str, files: list):
         for f in files:
             try:
-                self.log.append("removeFile(%s, %s)" %(root, f))
+                self.log.append(["removeFile()", root, f])
                 if not self.config.norun:
                     path = os.path.join(root, f)
                     os.remove(path)
@@ -244,21 +248,19 @@ class BackupManager:
                         if len(os.listdir(head)) == 0:
                             os.removedirs(head)
             except Exception as e:
-                self.log.append("REMOVE ERROR")
-                self.log.append(str(e))
+                self.log.append(["REMOVE ERROR", str(e)])
                 print(e)
 
     def copyFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str):
         try:
-            self.log.append("copyFile(%s, %s, %s, %s)" %(source_root, dest_root, source_file, dest_file))
+            self.log.append(["copyFile()", source_root, dest_root, source_file, dest_file])
             if not self.config.norun:
                 dest = os.path.join(dest_root, dest_file)
                 if not os.path.isdir(os.path.dirname(dest)):
                     os.makedirs(os.path.dirname(dest))
                 shutil.copy2(os.path.join(source_root, source_file), dest)
         except Exception as e:
-            self.log.append("COPY ERROR")
-            self.log.append(str(e))
+            self.log.append(["COPY ERROR", str(e)])
             print(e)
 
     def copyFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str):
@@ -267,7 +269,7 @@ class BackupManager:
     
     def moveFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str):
         try:
-            self.log.append("moveFile(%s, %s, %s, %s)" %(source_root, dest_root, source_file, dest_file))
+            self.log.append(["moveFile()", source_root, dest_root, source_file, dest_file])
             if not self.config.norun:
                 source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
@@ -279,8 +281,7 @@ class BackupManager:
                     if len(os.listdir(head)) == 0:
                         os.removedirs(head)
         except Exception as e:
-            self.log.append("MOVE ERROR")
-            self.log.append(str(e))
+            self.log.append(["MOVE ERROR", str(e)])
             print(e)
 
     def moveFiles(self, moved: list, reverse: bool = False):
@@ -406,6 +407,7 @@ class BackupManager:
                 self.moveFiles(moved)
             self.handleSyncConflicts(self.source_root, self.dest_root, source_dict, dest_dict, changed, self.config.c)
         if self.config.csv:
+            self.log.append([str(vars(self.config))])
             writeCsv(os.path.join(self.source_root, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
 
 if __name__ == "__main__":
