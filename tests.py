@@ -2,7 +2,7 @@ import unittest
 import os
 import shutil
 import zlib
-import backu
+import backupy
 import zipfile
 import time
 
@@ -45,7 +45,7 @@ def runTest(test_name, config):
     setupTestDir(test_name)
     config["source"] = os.path.join(test_name, "dir A")
     config["dest"] = os.path.join(test_name, "dir B")
-    backup_man = backu.BackupManager(config)
+    backup_man = backupy.BackupManager(config)
     backup_man.backup()
     dirA = dirStats(os.path.join(test_name, "dir A"))
     dirB = dirStats(os.path.join(test_name, "dir B"))
