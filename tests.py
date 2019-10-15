@@ -55,7 +55,7 @@ def runTest(test_name, config):
     cleanupTestDir(test_name)
     return dirA, dirB, dirAsol, dirBsol
 
-class TestPyxargs(unittest.TestCase):
+class TestBackupy(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         shutil.rmtree("backupy_test_solutions", ignore_errors=True)
@@ -65,86 +65,121 @@ class TestPyxargs(unittest.TestCase):
     def tearDownClass(cls):
         shutil.rmtree("backupy_test_solutions")
 
-    def test_mirror_KS(self):
-        test_name = "mirror-KS"
-        config = {"m": "mirror", "c": "KS", "goahead": True, "suppress": True}
+    def test_mirror_new(self):
+        test_name = "mirror-new"
+        config = {"m": "mirror", "c": "new", "goahead": True, "suppress": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
-    def test_mirror_KD(self):
-        test_name = "mirror-KD"
-        config = {"m": "mirror", "c": "KD", "goahead": True, "suppress": True}
+    def test_mirror_source(self):
+        test_name = "mirror-source"
+        config = {"m": "mirror", "c": "source", "goahead": True, "suppress": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
-    def test_mirror_KN(self):
-        test_name = "mirror-KN"
-        config = {"m": "mirror", "c": "KN", "goahead": True, "suppress": True}
+    def test_mirror_dest(self):
+        test_name = "mirror-dest"
+        config = {"m": "mirror", "c": "dest", "goahead": True, "suppress": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
-    def test_mirror_NO(self):
-        test_name = "mirror-NO"
-        config = {"m": "mirror", "c": "NO", "goahead": True, "suppress": True}
+    def test_mirror_no(self):
+        test_name = "mirror-no"
+        config = {"m": "mirror", "c": "no", "goahead": True, "suppress": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
-    def test_backup_KS(self):
-        test_name = "backup-KS"
-        config = {"m": "backup", "c": "KS", "goahead": True, "suppress": True}
+    def test_backup_new(self):
+        test_name = "backup-new"
+        config = {"m": "backup", "c": "new", "goahead": True, "suppress": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
-    def test_backup_KD(self):
-        test_name = "backup-KD"
-        config = {"m": "backup", "c": "KD", "goahead": True, "suppress": True}
+    def test_backup_source(self):
+        test_name = "backup-source"
+        config = {"m": "backup", "c": "source", "goahead": True, "suppress": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
-    def test_backup_KN(self):
-        test_name = "backup-KN"
-        config = {"m": "backup", "c": "KN", "goahead": True, "suppress": True}
+    def test_backup_dest(self):
+        test_name = "backup-dest"
+        config = {"m": "backup", "c": "dest", "goahead": True, "suppress": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
-    def test_backup_NO(self):
-        test_name = "backup-NO"
-        config = {"m": "backup", "c": "NO", "goahead": True, "suppress": True}
+    def test_backup_no(self):
+        test_name = "backup-no"
+        config = {"m": "backup", "c": "no", "goahead": True, "suppress": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
-    def test_sync_KS(self):
-        test_name = "sync-KS"
-        config = {"m": "sync", "c": "KS", "goahead": True, "suppress": True}
+    def test_sync_new(self):
+        test_name = "sync-new"
+        config = {"m": "sync", "c": "new", "goahead": True, "suppress": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
-    def test_sync_KD(self):
-        test_name = "sync-KD"
-        config = {"m": "sync", "c": "KD", "goahead": True, "suppress": True}
+    def test_sync_source(self):
+        test_name = "sync-source"
+        config = {"m": "sync", "c": "source", "goahead": True, "suppress": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
-    def test_sync_KN(self):
-        test_name = "sync-KN"
-        config = {"m": "sync", "c": "KN", "goahead": True, "suppress": True}
+    def test_sync_dest(self):
+        test_name = "sync-dest"
+        config = {"m": "sync", "c": "dest", "goahead": True, "suppress": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
-    def test_sync_NO(self):
-        test_name = "sync-NO"
-        config = {"m": "sync", "c": "NO", "goahead": True, "suppress": True}
+    def test_sync_no(self):
+        test_name = "sync-no"
+        config = {"m": "sync", "c": "no", "goahead": True, "suppress": True, "noarchive": True}
+        dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
+        self.assertEqual(dirA, dirAsol)
+        self.assertEqual(dirB, dirBsol)
+
+    def test_mirror_new_archive(self):
+        test_name = "mirror-new-archive"
+        config = {"m": "mirror", "c": "new", "goahead": True, "suppress": True, "noarchive": False, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
+        self.assertEqual(dirA, dirAsol)
+        self.assertEqual(dirB, dirBsol)
+
+    def test_backup_new_moved(self):
+        test_name = "backup-new-moved"
+        config = {"m": "backup", "c": "new", "d": True, "goahead": True, "suppress": True, "noarchive": True}
+        dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
+        self.assertEqual(dirA, dirAsol)
+        self.assertEqual(dirB, dirBsol)
+
+    def test_backup_new_moved_match(self):
+        test_name = "backup-new-moved-match"
+        config = {"m": "backup", "c": "new", "r": "match", "d": True, "goahead": True, "suppress": True, "noarchive": True}
+        dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
+        self.assertEqual(dirA, dirAsol)
+        self.assertEqual(dirB, dirBsol)
+
+    def test_backup_new_moved_all(self):
+        test_name = "backup-new-moved-all"
+        config = {"m": "backup", "c": "new", "r": "all", "d": True, "goahead": True, "suppress": True, "noarchive": True}
+        dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
+        self.assertEqual(dirA, dirAsol)
+        self.assertEqual(dirB, dirBsol)
+
+    def test_mirror_new_moved_archive(self):
+        test_name = "mirror-new-moved-archive"
+        config = {"m": "mirror", "c": "new", "d": True, "goahead": True, "suppress": True, "noarchive": False, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
