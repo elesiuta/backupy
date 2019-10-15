@@ -1,9 +1,10 @@
 # backupy
 
 ```
-usage: backu.py [-h] [-m mode] [-c conflict-resolution] [-d] [--crc mode]
-                [--cleanup True|False] [-n] [-w] [--goahead]
-                source dest
+usage: backupy [-h] [-m mode] [-c conflict-resolution] [-d] [--crc mode]
+                  [--cleanup True|False] [-n] [--suppress] [--goahead] [-s]
+                  [-l]
+                  source [dest]
 
 Simple python script for backing up directories
 
@@ -30,6 +31,10 @@ optional arguments:
   --cleanup True|False  Remove directory if empty after a file move or
                         deletion (default: True)
   -n, --norun           Simulate the run
-  -w, --csv             Write log.csv in os.getcwd() of results
+  --suppress            Suppress logging; by default logs are written to
+                        source/.backupy/log-yymmdd-HHMM.csv and
+                        /.backupy/dirinfo.json
   --goahead             Go ahead without prompting for confirmation
+  -s, --save            Save configuration in source
+  -l, --load            Load configuration from source
 ```
