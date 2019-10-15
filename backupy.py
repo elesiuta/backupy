@@ -322,10 +322,14 @@ class BackupManager:
         try:
             self.log.append(["copyFile()", source_root, dest_root, source_file, dest_file])
             if not self.config.norun:
+                source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
-                if not os.path.isdir(os.path.dirname(dest)):
-                    os.makedirs(os.path.dirname(dest))
-                shutil.copy2(os.path.join(source_root, source_file), dest)
+                if os.path.isdir(source):
+                    os.makedirs(dest)
+                else:
+                    if not os.path.isdir(os.path.dirname(dest)):
+                        os.makedirs(os.path.dirname(dest))
+                    shutil.copy2(source, dest)
         except Exception as e:
             self.log.append(["COPY ERROR", str(e)])
             print(e)
@@ -436,6 +440,7 @@ class BackupManager:
                     self.writeLog()
                 return 1
         # Backup operations
+        self.log.append("Start " + self.config.m)
         if self.config.m == "mirror":
             self.copyFiles(self.source_root, self.dest_root, sourceOnly, sourceOnly)
             if self.config.noarchive:
