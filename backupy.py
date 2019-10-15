@@ -88,7 +88,7 @@ class ConfigObject:
         self.archive_dir = ".backupy"
         self.config_dir = ".backupy"
         self.cleanup = True
-        self.filter_list_test = [re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]
+        self.filter_list_test = "[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]"
         self.backup_time_override = False
         self.csv = True
         self.load_json = True
@@ -277,6 +277,8 @@ class BackupManager:
     def saveJson(self):
         self.config.save, self.config.load = False, False
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
+        print("Config saved")
+        sys.exit()
 
     def loadJson(self):
         config = readJson(os.path.join(self.config.source, self.config.config_dir, "config.json"))
@@ -446,6 +448,7 @@ class BackupManager:
                 self.log.append("Aborted")
                 if self.config.csv:
                     self.writeLog()
+                print("Run aborted")
                 return 1
         # Backup operations
         self.log.append("Start " + self.config.m)
@@ -473,6 +476,7 @@ class BackupManager:
         self.log.append("Completed")
         if self.config.csv:
             self.writeLog()
+        print("Completed!")
 
 
 def main():
@@ -530,7 +534,6 @@ def main():
     args = parser.parse_args()
     backup_manager = BackupManager(args)
     backup_manager.backup()
-    print("Backup complete!")
 
 if __name__ == "__main__":
     sys.exit(main())
