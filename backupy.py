@@ -62,6 +62,13 @@ def writeJson(fName: str, data: dict) -> None:
         json.dump(data, json_file, indent=1, separators=(',', ': '))
 
 
+class ArgparseCustomFormatter(argparse.HelpFormatter):
+    def _split_lines(self, text, width):
+        if text[:2] == 'F!':
+            return text.splitlines()[1:]
+        return argparse.HelpFormatter._split_lines(self, text, width)
+
+
 class ConfigObject:
     def __init__(self, config: dict):
         # default config (copy argparse)
@@ -69,17 +76,17 @@ class ConfigObject:
         self.dest = None
         self.m = "mirror"
         self.c = "KS"
+        self.r = 1
         self.d = False
-        self.crc = 1
-        self.cleanup = True
-        self.norun = False
         self.suppress = False
         self.goahead = True
+        self.norun = False
         self.save = False
         self.load = False
         # default config (additional)
         self.conflict_dir = ".backupy"
         self.config_dir = ".backupy"
+        self.cleanup = True
         self.filter_list_test = [re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]
         self.backup_time_override = False
         self.csv = True
@@ -96,6 +103,7 @@ class ConfigObject:
 class DirInfo:
     def __init__(self, directory: str, crc_mode: int,  config_dir: str, ignored_folders: list = []):
         self.file_dicts = {}
+        self.empty_dirs = []
         self.loaded_dicts = {}
         self.loaded_diffs = []
         self.dir = directory
@@ -137,8 +145,13 @@ class DirInfo:
             for dir_path, subdir_list, file_list in os.walk(self.dir):
                 if os.path.abspath(dir_path) not in self.ignored_paths:
                     subdir_list.sort()
-                    for f in sorted(file_list):
-                        full_path = os.path.join(dir_path, f)
+                    for subdir in subdir_list:
+                        full_path = os.path.join(dir_path, subdir)
+                        if len(os.listdir(full_path)) == 0:
+                            relativePath = os.path.relpath(full_path, self.dir)
+                            self.empty_dirs.append(relativePath)
+                    for fName in sorted(file_list):
+                        full_path = os.path.join(dir_path, fName)
                         relativePath = os.path.relpath(full_path, self.dir)
                         size = os.path.getsize(full_path)
                         mtime = os.path.getmtime(full_path)
@@ -403,8 +416,8 @@ class BackupManager:
 
     def backup(self):
         # scan directories
-        source = DirInfo(self.source_root, self.config.crc, self.config.config_dir, [self.config.conflict_dir])
-        dest = DirInfo(self.dest_root, self.config.crc, self.config.config_dir, [self.config.conflict_dir])
+        source = DirInfo(self.source_root, self.config.r, self.config.config_dir, [self.config.conflict_dir])
+        dest = DirInfo(self.dest_root, self.config.r, self.config.config_dir, [self.config.conflict_dir])
         if self.config.load_json:
             source.loadJson()
             dest.loadJson()
@@ -469,27 +482,47 @@ class BackupManager:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Simple python script for backing up directories")
+    parser = argparse.ArgumentParser(description="Simple python script for backing up directories", formatter_class=ArgparseCustomFormatter)
     parser.add_argument("source", action="store", type=str,
                         help="Path of source")
     parser.add_argument("dest", action="store", type=str, nargs="?", default=None,
                         help="Path of destination")
     parser.add_argument("-m", type=str, default="mirror", metavar="mode", choices=["mirror", "backup", "sync"],
-                        help="How to handle files that exist only on one side? Available modes: mirror [source -> destination, delete destination only files] (default), backup [source -> destination, keep destination only files] sync [source <-> destination]")
-    parser.add_argument("-c", type=str, default="KS", metavar="conflict-resolution", choices=["KS", "KD", "KN", "NO", "AS", "AD", "AO"],
-                        help="How to handle files that exist on both sides but differ? Available modes: KS [keep source] (default), KD [keep dest], KN [keep newer], NO [do nothing], AS [archive source], AD [archive dest], AN [archive older]")
+                        help="F!\n"
+                             "Backup mode (str):\n"
+                             "How to handle files that exist only on one side?\n"
+                             "mirror (default)\n"
+                             " [source -> destination, delete destination only files]\n"
+                             "backup\n"
+                             " [source -> destination, keep destination only files]\n"
+                             "sync\n"
+                             " [source <-> destination]")
+    parser.add_argument("-c", type=str, default="KS", metavar="mode", choices=["KS", "KD", "KN", "NO", "AS", "AD", "AO"],
+                        help="F!\n"
+                             "Conflict resolution mode (str):\n"
+                             "How to handle files that exist on both sides but differ?\n"
+                             "KS [keep source] (default)\n"
+                             "KD [keep dest]\n"
+                             "KN [keep newer]\n"
+                             "NO [do nothing]\n"
+                             "AS [archive source]\n"
+                             "AD [archive dest]\n"
+                             "AN [archive older]")
+    parser.add_argument("-r", type=int, default=1, metavar="mode", choices=[1, 2, 3],
+                        help="F!\n"
+                             "CRC mode (int):\n"
+                             "Compare file hashes\n"
+                             "1 none (default)\n"
+                             "2 only for files with matching size and date\n"
+                             "3 all files")
     parser.add_argument("-d", action="store_true",
                         help="Try and detect moved files")
-    parser.add_argument("--crc", type=int, default=1, metavar="mode", choices=[1, 2, 3],
-                        help="Compare file hashes, available modes: 1: none (default) 2: matching date and time 3: all files")
-    parser.add_argument("--cleanup", type=bool, default=True, metavar="True|False",
-                        help="Remove directory if empty after a file move or deletion (default: True)")
-    parser.add_argument("-n", "--norun", action="store_true",
-                        help="Simulate the run")
     parser.add_argument("--suppress", action="store_true",
                         help="Suppress logging; by default logs are written to source/.backupy/log-yymmdd-HHMM.csv and /.backupy/dirinfo.json")
     parser.add_argument("--goahead", action="store_true",
                         help="Go ahead without prompting for confirmation")
+    parser.add_argument("-n", "--norun", action="store_true",
+                        help="Simulate the run")
     parser.add_argument("-s", "--save", action="store_true",
                         help="Save configuration in source")
     parser.add_argument("-l", "--load", action="store_true",
@@ -501,3 +534,9 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+# TODO
+# 1. Increase test coverage
+# 2. Release gooey build
+# 3. Copy/remove empty directories using file rules

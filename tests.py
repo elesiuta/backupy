@@ -2,9 +2,10 @@ import unittest
 import os
 import shutil
 import zlib
-import backupy
 import zipfile
 import time
+
+import backupy
 
 def crc(fileName, prev = 0):
     with open(fileName,"rb") as f:
@@ -66,84 +67,84 @@ class TestPyxargs(unittest.TestCase):
 
     def test_mirror_KS(self):
         test_name = "mirror-KS"
-        config = {"m": "mirror", "c": "KS", "save_json": False, "suppress": True}
+        config = {"m": "mirror", "c": "KS", "suppress": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
     def test_mirror_KD(self):
         test_name = "mirror-KD"
-        config = {"m": "mirror", "c": "KD", "save_json": False, "suppress": True}
+        config = {"m": "mirror", "c": "KD", "suppress": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
     def test_mirror_KN(self):
         test_name = "mirror-KN"
-        config = {"m": "mirror", "c": "KN", "save_json": False, "suppress": True}
+        config = {"m": "mirror", "c": "KN", "suppress": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
     def test_mirror_NO(self):
         test_name = "mirror-NO"
-        config = {"m": "mirror", "c": "NO", "save_json": False, "suppress": True}
+        config = {"m": "mirror", "c": "NO", "suppress": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
     def test_backup_KS(self):
         test_name = "backup-KS"
-        config = {"m": "backup", "c": "KS", "save_json": False, "suppress": True}
+        config = {"m": "backup", "c": "KS", "suppress": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
     def test_backup_KD(self):
         test_name = "backup-KD"
-        config = {"m": "backup", "c": "KD", "save_json": False, "suppress": True}
+        config = {"m": "backup", "c": "KD", "suppress": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
     def test_backup_KN(self):
         test_name = "backup-KN"
-        config = {"m": "backup", "c": "KN", "save_json": False, "suppress": True}
+        config = {"m": "backup", "c": "KN", "suppress": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
     def test_backup_NO(self):
         test_name = "backup-NO"
-        config = {"m": "backup", "c": "NO", "save_json": False, "suppress": True}
+        config = {"m": "backup", "c": "NO", "suppress": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
     def test_sync_KS(self):
         test_name = "sync-KS"
-        config = {"m": "sync", "c": "KS", "save_json": False, "suppress": True}
+        config = {"m": "sync", "c": "KS", "suppress": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
     def test_sync_KD(self):
         test_name = "sync-KD"
-        config = {"m": "sync", "c": "KD", "save_json": False, "suppress": True}
+        config = {"m": "sync", "c": "KD", "suppress": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
     def test_sync_KN(self):
         test_name = "sync-KN"
-        config = {"m": "sync", "c": "KN", "save_json": False, "suppress": True}
+        config = {"m": "sync", "c": "KN", "suppress": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
 
     def test_sync_NO(self):
         test_name = "sync-NO"
-        config = {"m": "sync", "c": "NO", "save_json": False, "suppress": True}
+        config = {"m": "sync", "c": "NO", "suppress": True}
         dirA, dirB, dirAsol, dirBsol = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol)
         self.assertEqual(dirB, dirBsol)
