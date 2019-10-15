@@ -235,10 +235,12 @@ class DirInfo:
         if moves:
             for f1 in selfOnly:
                 for f2 in secondOnly:
+                    # if "dir" not in self.file_dicts[f1] and "dir" not in second_dict[f2]:
                     if self.fileMatch(f, self.file_dicts[f1], second_dict[f2], secondInfo, crc_mode):
-                        selfOnly.remove(f1)
-                        secondOnly.remove(f2)
                         moved.append({"source": f1, "dest": f2})
+            for pair in moved:
+                selfOnly.remove(pair["source"])
+                secondOnly.remove(pair["dest"])
         return selfOnly, secondOnly, changed, moved
 
 
