@@ -215,6 +215,7 @@ class DirInfo:
         if self.crc_mode == secondInfo.crc_mode:
             crc_mode = self.crc_mode
         else:
+            # this shouldn't happen, but "match" is safe if crc_modes differ
             crc_mode = "match"
         if filter_list:
             file_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), file_list)
@@ -235,6 +236,7 @@ class DirInfo:
         if moves:
             for f1 in selfOnly:
                 for f2 in secondOnly:
+                    # should empty dirs be moved?
                     # if "dir" not in self.file_dicts[f1] and "dir" not in second_dict[f2]:
                     if self.fileMatch(f, self.file_dicts[f1], second_dict[f2], secondInfo, crc_mode):
                         moved.append({"source": f1, "dest": f2})
