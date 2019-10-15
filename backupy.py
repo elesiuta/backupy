@@ -162,12 +162,12 @@ class DirInfo:
                             else:
                                 self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
                                 self.loaded_diffs.append([relativePath, str(self.loaded_dicts[relativePath])])
-                            if self.crc_mode == 3 and "crc" not in self.file_dicts[relativePath]:
+                            if self.crc_mode == "all" and "crc" not in self.file_dicts[relativePath]:
                                 self.file_dicts[relativePath]["crc"] = self.crc(full_path)
                         else:
                             self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
                             self.loaded_diffs.append([relativePath, str(self.file_dicts[relativePath])])
-                            if self.crc_mode == 3:
+                            if self.crc_mode == "all":
                                 self.file_dicts[relativePath]["crc"] = self.crc(full_path)
 
     def getDirDict(self) -> dict:
@@ -188,21 +188,21 @@ class DirInfo:
             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
         return self.file_dicts[relativePath]["crc"]
 
-    def fileMatch(self, f: str, file_dict1: dict, file_dict2: dict, secondInfo, crc_mode: int) -> bool:
-        if crc_mode == 3:
+    def fileMatch(self, f: str, file_dict1: dict, file_dict2: dict, secondInfo, crc_mode: str) -> bool:
+        if crc_mode == "all":
             if file_dict1["crc"] == file_dict2["crc"]:
                 return True
             else:
                 return False
         if file_dict1["size"] == file_dict2["size"]:
             if file_dict1["mtime"] == file_dict2["mtime"]:
-                if crc_mode == 2 and self.scanCrc(f) != secondInfo.scanCrc(f):
+                if crc_mode == "match" and self.scanCrc(f) != secondInfo.scanCrc(f):
                     return False
                 return True
             else:
                 diff = abs(int(file_dict1["mtime"]) - int(file_dict2["mtime"]))
                 if diff <= 1 or diff == 3600:
-                    if crc_mode == 2 and self.scanCrc(f) != secondInfo.scanCrc(f):
+                    if crc_mode == "match" and self.scanCrc(f) != secondInfo.scanCrc(f):
                         return False
                     return True
                 else:
@@ -212,7 +212,10 @@ class DirInfo:
         file_list = list(self.file_dicts)
         second_dict = secondInfo.getDirDict()
         second_list = list(second_dict)
-        crc_mode = min(self.crc_mode, secondInfo.crc_mode)
+        if self.crc_mode == secondInfo.crc_mode:
+            crc_mode = self.crc_mode
+        else:
+            crc_mode = "match"
         if filter_list:
             file_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), file_list)
             second_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), second_list)
