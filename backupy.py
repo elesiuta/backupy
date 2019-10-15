@@ -355,24 +355,25 @@ class BackupManager:
                 newLoc = f["source"]
             self.moveFile(dest, dest, oldLoc, newLoc)
 
-    def getArchivePath(self, fpath: str) -> str:
-        return os.path.join(self.config.archive_dir, self.backup_time, fpath)
+    def archiveFile(self, root_path: str, file_path: str):
+        if not self.config.noarchive:
+            archive_path = os.path.join(self.config.archive_dir, self.backup_time, file_path)
+            self.moveFile(root_path, root_path, file_path, archive_path)
 
     def handleConflicts(self, source, dest, source_dict, dest_dict, changed):
         for fp in changed:
-            ap = self.getArchivePath(fp)
             if self.config.c == "source":
-                self.moveFile(dest, dest, fp, ap)
+                self.archiveFile(dest, fp)
                 self.copyFile(source, dest, fp, fp)
             elif self.config.c == "dest":
-                self.moveFile(source, source, fp, ap)
+                self.archiveFile(source, fp)
                 self.copyFile(dest, source, fp, fp)
             elif self.config.c == "new":
                 if source_dict[fp]["mtime"] > dest_dict[fp]["mtime"]:
-                    self.moveFile(dest, dest, fp, ap)
+                    self.archiveFile(dest, fp)
                     self.copyFile(source, dest, fp, fp)
                 else:
-                    self.moveFile(source, source, fp, ap)
+                    self.archiveFile(source, fp)
                     self.copyFile(dest, source, fp, fp)
             else:
                 break
