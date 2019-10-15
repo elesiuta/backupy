@@ -310,7 +310,10 @@ class BackupManager:
                 self.log.append(["removeFile()", root, f])
                 if not self.config.norun:
                     path = os.path.join(root, f)
-                    os.remove(path)
+                    if os.path.isdir(path):
+                        os.rmdir(path)
+                    else:
+                        os.remove(path)
                     if self.config.cleanup:
                         head = os.path.dirname(path)
                         if len(os.listdir(head)) == 0:
