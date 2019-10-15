@@ -79,7 +79,7 @@ class ConfigObject:
         self.r = 1
         self.d = False
         self.suppress = False
-        self.goahead = True
+        self.goahead = False
         self.norun = False
         self.save = False
         self.load = False
