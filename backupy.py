@@ -182,7 +182,7 @@ class DirInfo:
         self.loaded_dicts = readJson(os.path.join(self.dir, self.config_dir, "dirinfo.json"))
 
     def scanCrc(self, relativePath: str) -> int:
-        if ["crc"] not in self.file_dicts[relativePath]:
+        if "crc" not in self.file_dicts[relativePath]:
             full_path = os.path.join(self.dir, relativePath)
             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
         return self.file_dicts[relativePath]["crc"]
