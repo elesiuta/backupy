@@ -75,16 +75,17 @@ class ConfigObject:
         self.source = None
         self.dest = None
         self.m = "mirror"
-        self.c = "KS"
-        self.r = 1
+        self.c = "source"
+        self.r = "none"
         self.d = False
+        self.noarchive = False
         self.suppress = False
         self.goahead = False
         self.norun = False
         self.save = False
         self.load = False
         # default config (additional)
-        self.conflict_dir = ".backupy"
+        self.archive_dir = ".backupy"
         self.config_dir = ".backupy"
         self.cleanup = True
         self.filter_list_test = [re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]
@@ -350,23 +351,24 @@ class BackupManager:
                 newLoc = f["source"]
             self.moveFile(dest, dest, oldLoc, newLoc)
 
-    def getConflictDest(self, root: str, fpath: str) -> str:
-        conflict_path = os.path.join(self.config.conflict_dir, self.backup_time, fpath)
-        return conflict_path
+    def getArchivePath(self, root: str, fpath: str) -> str:
+        archive_path = os.path.join(self.config.archive_dir, self.backup_time, fpath)
+        return archive_path
 
-    def handleConflicts(self, source, dest, source_dict, dest_dict, changed, conflict_resolution):
+    def handleConflicts(self, source, dest, source_dict, dest_dict, changed):
+        conflict_resolution = self.config.c
         for fp in changed:
-            cp = self.getConflictDest(dest, fp)
+            ap = self.getArchivePath(dest, fp)
             if conflict_resolution == "AO":
                 if dest_dict[fp]["mtime"] < source_dict[fp]["mtime"]:
-                    self.moveFile(dest, dest, fp, cp)
+                    self.moveFile(dest, dest, fp, ap)
                     self.copyFile(source, dest, fp, fp)
                 else:
-                    self.copyFile(source, dest, fp, cp)
+                    self.copyFile(source, dest, fp, ap)
             elif conflict_resolution == "AS":
-                self.copyFile(source, dest, fp, cp)
+                self.copyFile(source, dest, fp, ap)
             elif conflict_resolution == "AD":
-                self.moveFile(dest, dest, fp, cp)
+                self.moveFile(dest, dest, fp, ap)
                 self.copyFile(source, dest, fp, fp)
             elif conflict_resolution == "KN":
                 if dest_dict[fp]["mtime"] < source_dict[fp]["mtime"]:
@@ -378,21 +380,22 @@ class BackupManager:
             else:
                 break
 
-    def handleSyncConflicts(self, source, dest, source_dict, dest_dict, changed, conflict_resolution):
+    def handleSyncConflicts(self, source, dest, source_dict, dest_dict, changed):
+        conflict_resolution = self.config.c
         for fp in changed:
-            cp = self.getConflictDest(dest, fp)
+            ap = self.getArchivePath(dest, fp)
             if conflict_resolution == "AO":
                 if dest_dict[fp]["mtime"] < source_dict[fp]["mtime"]:
-                    self.moveFile(dest, dest, fp, cp)
+                    self.moveFile(dest, dest, fp, ap)
                     self.copyFile(source, dest, fp, fp)
                 else:
-                    self.moveFile(source, source, fp, cp)
+                    self.moveFile(source, source, fp, ap)
                     self.copyFile(dest, source, fp, fp)
             elif conflict_resolution == "AS":
-                self.moveFile(source, source, fp, cp)
+                self.moveFile(source, source, fp, ap)
                 self.copyFile(dest, source, fp, fp)
             elif conflict_resolution == "AD":
-                self.moveFile(dest, dest, fp, cp)
+                self.moveFile(dest, dest, fp, ap)
                 self.copyFile(source, dest, fp, fp)
             elif conflict_resolution == "KN":
                 if dest_dict[fp]["mtime"] < source_dict[fp]["mtime"]:
@@ -416,8 +419,8 @@ class BackupManager:
 
     def backup(self):
         # scan directories
-        source = DirInfo(self.source_root, self.config.r, self.config.config_dir, [self.config.conflict_dir])
-        dest = DirInfo(self.dest_root, self.config.r, self.config.config_dir, [self.config.conflict_dir])
+        source = DirInfo(self.source_root, self.config.r, self.config.config_dir, [self.config.archive_dir])
+        dest = DirInfo(self.dest_root, self.config.r, self.config.config_dir, [self.config.archive_dir])
         if self.config.load_json:
             source.loadJson()
             dest.loadJson()
@@ -427,9 +430,9 @@ class BackupManager:
         dest_dict = dest.getDirDict()
         dest_diffs = dest.getLoadedDiffs()
         if self.config.m != "sync" and len(dest_diffs) >= 1:
-            self.log.append(["WARNING, THE FOLLOWING FILES IN DESTINATION HAVE CHANGED SINCE LAST SCAN"])
+            self.log.append(["CHANGES ON DESTINATION SINCE LAST SCAN"])
             self.log += dest_diffs
-            print(colourString("Some files in the destination folder have changed since the last scan, see log for details", "WARNING"))
+            print(colourString("Some files in the destination folder have changed since the last scan, this may include files from the previous backup, see log for details", "WARNING"))
             if self.config.csv:
                 writeCsv(os.path.join(self.source_root, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
         sourceOnly, destOnly, changed, moved = source.dirCompare(dest, self.config.d)
@@ -464,18 +467,18 @@ class BackupManager:
             self.removeFiles(self.dest_root, destOnly)
             if self.config.d:
                 self.moveFiles(moved)
-            self.handleConflicts(self.source_root, self.dest_root, source_dict, dest_dict, changed, self.config.c)
+            self.handleConflicts(self.source_root, self.dest_root, source_dict, dest_dict, changed)
         elif self.config.m == "backup":
             self.copyFiles(self.source_root, self.dest_root, sourceOnly, sourceOnly)
             if self.config.d:
                 self.moveFiles(moved)
-            self.handleConflicts(self.source_root, self.dest_root, source_dict, dest_dict, changed, self.config.c)
+            self.handleConflicts(self.source_root, self.dest_root, source_dict, dest_dict, changed)
         elif self.config.m == "sync":
             self.copyFiles(self.source_root, self.dest_root, sourceOnly, sourceOnly)
             self.copyFiles(self.dest_root, self.source_root, destOnly, destOnly)
             if self.config.d:
                 self.moveFiles(moved)
-            self.handleSyncConflicts(self.source_root, self.dest_root, source_dict, dest_dict, changed, self.config.c)
+            self.handleSyncConflicts(self.source_root, self.dest_root, source_dict, dest_dict, changed)
         self.log.append("Completed")
         if self.config.csv:
             writeCsv(os.path.join(self.source_root, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
@@ -487,36 +490,42 @@ def main():
                         help="Path of source")
     parser.add_argument("dest", action="store", type=str, nargs="?", default=None,
                         help="Path of destination")
-    parser.add_argument("-m", type=str, default="mirror", metavar="mode", choices=["mirror", "backup", "sync"],
+    parser.add_argument("-m", type=str.lower, default="mirror", metavar="mode", choices=["mirror", "backup", "sync"],
                         help="F!\n"
-                             "Backup mode (str):\n"
+                             "Backup mode:\n"
                              "How to handle files that exist only on one side?\n"
-                             "mirror (default)\n"
-                             " [source -> destination, delete destination only files]\n"
-                             "backup\n"
-                             " [source -> destination, keep destination only files]\n"
-                             "sync\n"
-                             " [source <-> destination]")
-    parser.add_argument("-c", type=str, default="KS", metavar="mode", choices=["KS", "KD", "KN", "NO", "AS", "AD", "AO"],
+                             "  MIRROR (default)\n"
+                             "    [source-only -> destination, delete destination-only]\n"
+                             "  BACKUP\n"
+                             "    [source-only -> destination, keep destination-only]\n"
+                             "  SYNC\n"
+                             "    [source-only -> destination, destination-only -> source]")
+    parser.add_argument("-c", type=str.lower, default="source", metavar="mode", choices=["source", "dest", "new", "no"],
                         help="F!\n"
-                             "Conflict resolution mode (str):\n"
+                             "Conflict resolution mode:\n"
                              "How to handle files that exist on both sides but differ?\n"
-                             "KS [keep source] (default)\n"
-                             "KD [keep dest]\n"
-                             "KN [keep newer]\n"
-                             "NO [do nothing]\n"
-                             "AS [archive source]\n"
-                             "AD [archive dest]\n"
-                             "AN [archive older]")
-    parser.add_argument("-r", type=int, default=1, metavar="mode", choices=[1, 2, 3],
+                             "  SOURCE (default)\n"
+                             "    [copy source to destination]\n"
+                             "  DEST\n"
+                             "    [copy destination to source]\n"
+                             "  NEW\n"
+                             "    [copy newer to opposite side]\n"
+                             "  NO\n"
+                             "    [do nothing]")
+    parser.add_argument("-r", type=str.lower, default="none", metavar="mode", choices=["none", "match", "all"],
                         help="F!\n"
-                             "CRC mode (int):\n"
-                             "Compare file hashes\n"
-                             "1 none (default)\n"
-                             "2 only for files with matching size and date\n"
-                             "3 all files")
+                             "CRC mode:\n"
+                             "How to compare files that exist on both sides?\n"
+                             "  NONE (default)\n"
+                             "    [only compare file size and time, fastest]\n"
+                             "  MATCH\n"
+                             "    [only compare CRC for files with matching size and time]\n"
+                             "  ALL\n"
+                             "    [compare CRC first for all files, slowest]")
     parser.add_argument("-d", action="store_true",
                         help="Try and detect moved files")
+    parser.add_argument("--noarchive", action="store_true",
+                        help="Disable archiving, by default files are moved to /.backupy/yymmdd-HHMM/ on their respective side before being overwritten")
     parser.add_argument("--suppress", action="store_true",
                         help="Suppress logging; by default logs are written to source/.backupy/log-yymmdd-HHMM.csv and /.backupy/dirinfo.json")
     parser.add_argument("--goahead", action="store_true",
