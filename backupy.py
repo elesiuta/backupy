@@ -104,7 +104,6 @@ class ConfigObject:
 class DirInfo:
     def __init__(self, directory: str, crc_mode: int,  config_dir: str, ignored_folders: list = []):
         self.file_dicts = {}
-        self.empty_dirs = []
         self.loaded_dicts = {}
         self.loaded_diffs = []
         self.dir = directory
@@ -150,7 +149,7 @@ class DirInfo:
                         full_path = os.path.join(dir_path, subdir)
                         if len(os.listdir(full_path)) == 0:
                             relativePath = os.path.relpath(full_path, self.dir)
-                            self.empty_dirs.append(relativePath)
+                            self.file_dicts[relativePath] = {"size": 0, "mtime": 0, "crc": 0, "dir": True}
                     for fName in sorted(file_list):
                         full_path = os.path.join(dir_path, fName)
                         relativePath = os.path.relpath(full_path, self.dir)
@@ -183,8 +182,8 @@ class DirInfo:
         self.loaded_dicts = readJson(os.path.join(self.dir, self.config_dir, "dirinfo.json"))
 
     def scanCrc(self, relativePath: str) -> int:
-        full_path = os.path.join(self.dir, relativePath)
         if ["crc"] not in self.file_dicts[relativePath]:
+            full_path = os.path.join(self.dir, relativePath)
             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
         return self.file_dicts[relativePath]["crc"]
 
@@ -527,4 +526,3 @@ if __name__ == "__main__":
 # TODO
 # 1. Increase test coverage
 # 2. Release gooey build
-# 3. Copy/remove empty directories using file rules
