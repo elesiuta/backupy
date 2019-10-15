@@ -267,6 +267,17 @@ class BackupManager:
         if self.config.backup_time_override:
             self.backup_time = self.config.backup_time_override
 
+    def saveJson(self):
+        self.config.save, self.config.load = False, False
+        writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
+
+    def loadJson(self):
+        config = readJson(os.path.join(self.config.source, self.config.config_dir, "config.json"))
+        self.config = ConfigObject(config)
+
+    def writeLog(self):
+        writeCsv(os.path.join(self.source_root, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
+
     def printFileInfo(self, header: str, f: str, d: dict):
         self.log.append([header, f] + [str(d[f])])
         s = colourString(header, "OKBLUE") + replaceSurrogates(f) + "\n\t"
@@ -378,14 +389,6 @@ class BackupManager:
             else:
                 break
 
-    def saveJson(self):
-        self.config.save, self.config.load = False, False
-        writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
-
-    def loadJson(self):
-        config = readJson(os.path.join(self.config.source, self.config.config_dir, "config.json"))
-        self.config = ConfigObject(config)
-
     def backup(self):
         # scan directories
         source = DirInfo(self.source_root, self.config.r, self.config.config_dir, [self.config.archive_dir])
@@ -403,7 +406,7 @@ class BackupManager:
             self.log += dest_diffs
             print(colourString("Some files in the destination folder have changed since the last scan, this may include files from the previous backup, see log for details", "WARNING"))
             if self.config.csv:
-                writeCsv(os.path.join(self.source_root, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
+                self.writeLog()
         sourceOnly, destOnly, changed, moved = source.dirCompare(dest, self.config.d)
         if self.config.save_json:
             source.saveJson()
@@ -428,7 +431,7 @@ class BackupManager:
             if go[0].lower() != "y":
                 self.log.append("Aborted")
                 if self.config.csv:
-                    writeCsv(os.path.join(self.source_root, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
+                    self.writeLog()
                 return 1
         # Backup operations
         if self.config.m == "mirror":
@@ -454,7 +457,7 @@ class BackupManager:
             self.handleConflicts(self.source_root, self.dest_root, source_dict, dest_dict, changed)
         self.log.append("Completed")
         if self.config.csv:
-            writeCsv(os.path.join(self.source_root, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
+            self.writeLog()
 
 
 def main():
