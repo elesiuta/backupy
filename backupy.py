@@ -109,10 +109,7 @@ class DirInfo:
         self.dir = directory
         self.crc_mode = crc_mode
         self.config_dir = config_dir
-        self.ignored_paths = []
-        for f in ignored_folders:
-            p = os.path.abspath(os.path.join(directory, f))
-            self.ignored_paths.append(p)
+        self.ignored_folders = ignored_folders[:]
 
     def crc(self, fileName: str, prev: int = 0) -> int:
         with open(fileName,"rb") as f:
@@ -127,47 +124,51 @@ class DirInfo:
         total_file_size = 0
         total_folder_size = 0
         for dir_path, sub_dir_list, file_list in os.walk(self.dir):
-            if os.path.abspath(dir_path) not in self.ignored_paths:
-                sub_dir_list.sort()
-                dir_count += len(sub_dir_list)
-                file_count += len(file_list)
-                total_folder_size += os.path.getsize(dir_path)
-                for f in sorted(file_list):
-                    full_path = os.path.join(dir_path, f)
-                    total_file_size += os.path.getsize(full_path)
-                    total_crc += self.crc(full_path)
-                    total_crc %= (0xFFFFFFFF + 1)
+            for folder in sub_dir_list:
+                if folder in self.ignored_folders:
+                    sub_dir_list.remove(folder)
+            sub_dir_list.sort()
+            dir_count += len(sub_dir_list)
+            file_count += len(file_list)
+            total_folder_size += os.path.getsize(dir_path)
+            for f in sorted(file_list):
+                full_path = os.path.join(dir_path, f)
+                total_file_size += os.path.getsize(full_path)
+                total_crc += self.crc(full_path)
+                total_crc %= (0xFFFFFFFF + 1)
         return {"total_crc": total_crc, "file_count": file_count, "dir_count": dir_count, "total_file_size": total_file_size, "total_folder_size": total_folder_size}
 
     def scan(self) -> None:
         if os.path.isdir(self.dir):
             self.file_dicts = {}
             for dir_path, subdir_list, file_list in os.walk(self.dir):
-                if os.path.abspath(dir_path) not in self.ignored_paths:
-                    subdir_list.sort()
-                    for subdir in subdir_list:
-                        full_path = os.path.join(dir_path, subdir)
-                        if len(os.listdir(full_path)) == 0:
-                            relativePath = os.path.relpath(full_path, self.dir)
-                            self.file_dicts[relativePath] = {"size": 0, "mtime": 0, "crc": 0, "dir": True}
-                    for fName in sorted(file_list):
-                        full_path = os.path.join(dir_path, fName)
+                for folder in subdir_list:
+                    if folder in self.ignored_folders:
+                        subdir_list.remove(folder)
+                subdir_list.sort()
+                for subdir in subdir_list:
+                    full_path = os.path.join(dir_path, subdir)
+                    if len(os.listdir(full_path)) == 0:
                         relativePath = os.path.relpath(full_path, self.dir)
-                        size = os.path.getsize(full_path)
-                        mtime = os.path.getmtime(full_path)
-                        if relativePath in self.loaded_dicts:
-                            if self.loaded_dicts[relativePath]["size"] == size and self.loaded_dicts[relativePath]["mtime"] == mtime:
-                                self.file_dicts[relativePath] = self.loaded_dicts[relativePath]
-                            else:
-                                self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
-                                self.loaded_diffs.append([relativePath, str(self.loaded_dicts[relativePath])])
-                            if self.crc_mode == "all" and "crc" not in self.file_dicts[relativePath]:
-                                self.file_dicts[relativePath]["crc"] = self.crc(full_path)
+                        self.file_dicts[relativePath] = {"size": 0, "mtime": 0, "crc": 0, "dir": True}
+                for fName in sorted(file_list):
+                    full_path = os.path.join(dir_path, fName)
+                    relativePath = os.path.relpath(full_path, self.dir)
+                    size = os.path.getsize(full_path)
+                    mtime = os.path.getmtime(full_path)
+                    if relativePath in self.loaded_dicts:
+                        if self.loaded_dicts[relativePath]["size"] == size and self.loaded_dicts[relativePath]["mtime"] == mtime:
+                            self.file_dicts[relativePath] = self.loaded_dicts[relativePath]
                         else:
                             self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
-                            self.loaded_diffs.append([relativePath, str(self.file_dicts[relativePath])])
-                            if self.crc_mode == "all":
-                                self.file_dicts[relativePath]["crc"] = self.crc(full_path)
+                            self.loaded_diffs.append([relativePath, str(self.loaded_dicts[relativePath])])
+                        if self.crc_mode == "all" and "crc" not in self.file_dicts[relativePath]:
+                            self.file_dicts[relativePath]["crc"] = self.crc(full_path)
+                    else:
+                        self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
+                        self.loaded_diffs.append([relativePath, str(self.file_dicts[relativePath])])
+                        if self.crc_mode == "all":
+                            self.file_dicts[relativePath]["crc"] = self.crc(full_path)
 
     def getDirDict(self) -> dict:
         return self.file_dicts
