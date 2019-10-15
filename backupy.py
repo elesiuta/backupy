@@ -281,8 +281,12 @@ class BackupManager:
         sys.exit()
 
     def loadJson(self):
+        current_source = self.config.source
         config = readJson(os.path.join(self.config.source, self.config.config_dir, "config.json"))
         self.config = ConfigObject(config)
+        if current_source != self.config.source:
+            print("The specified source does not match the loaded config file, exiting")
+            sys.exit()
 
     def writeLog(self):
         writeCsv(os.path.join(self.source_root, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
