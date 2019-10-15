@@ -276,6 +276,8 @@ class BackupManager:
 
     def saveJson(self):
         self.config.save, self.config.load = False, False
+        self.config.source = os.path.abspath(self.config.source)
+        self.config.dest = os.path.abspath(self.config.dest)
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
         print("Config saved")
         sys.exit()
@@ -284,7 +286,7 @@ class BackupManager:
         current_source = self.config.source
         config = readJson(os.path.join(self.config.source, self.config.config_dir, "config.json"))
         self.config = ConfigObject(config)
-        if current_source != self.config.source:
+        if os.path.abspath(current_source) != os.path.abspath(self.config.source):
             print("The specified source does not match the loaded config file, exiting")
             sys.exit()
 
@@ -546,3 +548,5 @@ if __name__ == "__main__":
 # TODO
 # 1. Increase test coverage
 # 2. Release gooey build
+# 3. Replace source_root and dest_root with config.source and config.dest and convert to abspath in init
+# 4. Use colourString in more print statements
