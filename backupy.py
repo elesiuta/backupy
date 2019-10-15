@@ -73,7 +73,7 @@ class ConfigObject:
         self.crc = 1
         self.cleanup = True
         self.norun = False
-        self.csv = False
+        self.suppress = False
         self.goahead = True
         self.save = False
         self.load = False
@@ -82,17 +82,22 @@ class ConfigObject:
         self.config_dir = ".backupy"
         self.filter_list_test = [re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]
         self.backup_time_override = False
-        self.load_json = False
-        self.save_json = False
+        self.csv = True
+        self.load_json = True
+        self.save_json = True
         # load config
         for key in config:
             self.__setattr__(key, config[key])
+        # suppress logging
+        if self.suppress:
+            self.csv, self.save_json = False, False
 
 
 class DirInfo:
     def __init__(self, directory: str, crc_mode: int,  config_dir: str, ignored_folders: list = []):
         self.file_dicts = {}
         self.loaded_dicts = {}
+        self.loaded_diffs = []
         self.dir = directory
         self.crc_mode = crc_mode
         self.config_dir = config_dir
@@ -142,15 +147,20 @@ class DirInfo:
                                 self.file_dicts[relativePath] = self.loaded_dicts[relativePath]
                             else:
                                 self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
+                                self.loaded_diffs.append([relativePath, str(self.loaded_dicts[relativePath])])
                             if self.crc_mode == 3 and "crc" not in self.file_dicts[relativePath]:
                                 self.file_dicts[relativePath]["crc"] = self.crc(full_path)
                         else:
                             self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
+                            self.loaded_diffs.append([relativePath, str(self.file_dicts[relativePath])])
                             if self.crc_mode == 3:
                                 self.file_dicts[relativePath]["crc"] = self.crc(full_path)
 
     def getDirDict(self) -> dict:
         return self.file_dicts
+
+    def getLoadedDiffs(self) -> list:
+        return self.loaded_diffs
 
     def saveJson(self):
         writeJson(os.path.join(self.dir, self.config_dir, "dirinfo.json"), self.file_dicts)
@@ -226,16 +236,20 @@ class BackupManager:
         self.config = ConfigObject(args)
         # save or load
         if self.config.save:
-            self.config.save = False
             self.saveJson()
         elif self.config.load:
             self.loadJson()
         # copy and check source & dest
         self.source_root = self.config.source
+        if not os.path.isdir(self.source_root):
+            print(colourString("Invalid source directory: " + self.source_root, "FAIL"))
+            sys.exit()
         self.dest_root = self.config.dest
         if self.dest_root == None:
+            print(colourString("Destination directory not provided", "FAIL"))
             sys.exit()
         # debugging
+        self.log.append(["CONFIG", str(vars(self.config))])
         if self.config.backup_time_override:
             self.backup_time = self.config.backup_time_override
 
@@ -380,6 +394,7 @@ class BackupManager:
                 break
 
     def saveJson(self):
+        self.config.save, self.config.load = False, False
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
 
     def loadJson(self):
@@ -397,6 +412,13 @@ class BackupManager:
         source_dict = source.getDirDict()
         dest.scan()
         dest_dict = dest.getDirDict()
+        dest_diffs = dest.getLoadedDiffs()
+        if self.config.m != "sync" and len(dest_diffs) >= 1:
+            self.log.append(["WARNING, THE FOLLOWING FILES IN DESTINATION HAVE CHANGED SINCE LAST SCAN"])
+            self.log += dest_diffs
+            print(colourString("Some files in the destination folder have changed since the last scan, see log for details", "WARNING"))
+            if self.config.csv:
+                writeCsv(os.path.join(self.source_root, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
         sourceOnly, destOnly, changed, moved = source.dirCompare(dest, self.config.d)
         if self.config.save_json:
             source.saveJson()
@@ -419,6 +441,9 @@ class BackupManager:
         if not self.config.goahead:
             go = input("Continue (y/N)? ")
             if go[0].lower() != "y":
+                self.log.append("Aborted")
+                if self.config.csv:
+                    writeCsv(os.path.join(self.source_root, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
                 return 1
         # Backup operations
         if self.config.m == "mirror":
@@ -438,8 +463,8 @@ class BackupManager:
             if self.config.d:
                 self.moveFiles(moved)
             self.handleSyncConflicts(self.source_root, self.dest_root, source_dict, dest_dict, changed, self.config.c)
+        self.log.append("Completed")
         if self.config.csv:
-            self.log.append([str(vars(self.config))])
             writeCsv(os.path.join(self.source_root, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
 
 
@@ -461,8 +486,8 @@ def main():
                         help="Remove directory if empty after a file move or deletion (default: True)")
     parser.add_argument("-n", "--norun", action="store_true",
                         help="Simulate the run")
-    parser.add_argument("-w", "--csv", action="store_true",
-                        help="Write log.csv in os.getcwd() of results")
+    parser.add_argument("--suppress", action="store_true",
+                        help="Suppress logging; by default logs are written to source/.backupy/log-yymmdd-HHMM.csv and /.backupy/dirinfo.json")
     parser.add_argument("--goahead", action="store_true",
                         help="Go ahead without prompting for confirmation")
     parser.add_argument("-s", "--save", action="store_true",
@@ -474,15 +499,5 @@ def main():
     backup_manager.backup()
     print("Backup complete!")
 
-
 if __name__ == "__main__":
     sys.exit(main())
-
-
-## TODO
-# add -g arg to generate config file and save
-# add -l arg to load config instead
-# add flag to save/load dir info
-# add profile support and save config in a unified directory
-# add warning if the dest dir doesn't match loaded dir info (might also want to check source just to see what changed, or just crc for file corruption)
-# add ability to save time on crc by scanning only files that are missing crcs in the json load
