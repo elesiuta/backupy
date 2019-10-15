@@ -338,7 +338,11 @@ class BackupManager:
             self.log.append(["MOVE ERROR", str(e)])
             print(e)
 
-    def moveFiles(self, moved: list, reverse: bool = False):
+    def moveFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str):
+        for i in range(len(source_files)):
+            self.moveFile(source_root, dest_root, source_files[i], dest_files[i])
+
+    def movedFiles(self, moved: list, reverse: bool = False):
         # conflicts shouldn't happen since moved is a subset of files from sourceOnly and destOnly
         for f in moved:
             if reverse:
@@ -351,61 +355,25 @@ class BackupManager:
                 newLoc = f["source"]
             self.moveFile(dest, dest, oldLoc, newLoc)
 
-    def getArchivePath(self, root: str, fpath: str) -> str:
-        archive_path = os.path.join(self.config.archive_dir, self.backup_time, fpath)
-        return archive_path
+    def getArchivePath(self, fpath: str) -> str:
+        return os.path.join(self.config.archive_dir, self.backup_time, fpath)
 
     def handleConflicts(self, source, dest, source_dict, dest_dict, changed):
-        conflict_resolution = self.config.c
         for fp in changed:
-            ap = self.getArchivePath(dest, fp)
-            if conflict_resolution == "AO":
-                if dest_dict[fp]["mtime"] < source_dict[fp]["mtime"]:
-                    self.moveFile(dest, dest, fp, ap)
-                    self.copyFile(source, dest, fp, fp)
-                else:
-                    self.copyFile(source, dest, fp, ap)
-            elif conflict_resolution == "AS":
-                self.copyFile(source, dest, fp, ap)
-            elif conflict_resolution == "AD":
+            ap = self.getArchivePath(fp)
+            if self.config.c == "source":
                 self.moveFile(dest, dest, fp, ap)
                 self.copyFile(source, dest, fp, fp)
-            elif conflict_resolution == "KN":
-                if dest_dict[fp]["mtime"] < source_dict[fp]["mtime"]:
-                    self.copyFile(source, dest, fp, fp)
-            elif conflict_resolution == "KS":
-                self.copyFile(source, dest, fp, fp)
-            elif conflict_resolution == "KD":
-                pass
-            else:
-                break
-
-    def handleSyncConflicts(self, source, dest, source_dict, dest_dict, changed):
-        conflict_resolution = self.config.c
-        for fp in changed:
-            ap = self.getArchivePath(dest, fp)
-            if conflict_resolution == "AO":
-                if dest_dict[fp]["mtime"] < source_dict[fp]["mtime"]:
+            elif self.config.c == "dest":
+                self.moveFile(source, source, fp, ap)
+                self.copyFile(dest, source, fp, fp)
+            elif self.config.c == "new":
+                if source_dict[fp]["mtime"] > dest_dict[fp]["mtime"]:
                     self.moveFile(dest, dest, fp, ap)
                     self.copyFile(source, dest, fp, fp)
                 else:
                     self.moveFile(source, source, fp, ap)
                     self.copyFile(dest, source, fp, fp)
-            elif conflict_resolution == "AS":
-                self.moveFile(source, source, fp, ap)
-                self.copyFile(dest, source, fp, fp)
-            elif conflict_resolution == "AD":
-                self.moveFile(dest, dest, fp, ap)
-                self.copyFile(source, dest, fp, fp)
-            elif conflict_resolution == "KN":
-                if dest_dict[fp]["mtime"] < source_dict[fp]["mtime"]:
-                    self.copyFile(source, dest, fp, fp)
-                else:
-                    self.copyFile(dest, source, fp, fp)
-            elif conflict_resolution == "KS":
-                self.copyFile(source, dest, fp, fp)
-            elif conflict_resolution == "KD":
-                self.copyFile(dest, source, fp, fp)
             else:
                 break
 
@@ -464,21 +432,25 @@ class BackupManager:
         # Backup operations
         if self.config.m == "mirror":
             self.copyFiles(self.source_root, self.dest_root, sourceOnly, sourceOnly)
-            self.removeFiles(self.dest_root, destOnly)
+            if self.config.noarchive:
+                self.removeFiles(self.dest_root, destOnly)
+            else:
+                recycle_bin = os.path.join(self.dest_root, self.config.archive_dir, "Deleted", self.backup_time)
+                self.moveFiles(self.dest_root, recycle_bin, destOnly, destOnly)
             if self.config.d:
-                self.moveFiles(moved)
+                self.movedFiles(moved)
             self.handleConflicts(self.source_root, self.dest_root, source_dict, dest_dict, changed)
         elif self.config.m == "backup":
             self.copyFiles(self.source_root, self.dest_root, sourceOnly, sourceOnly)
             if self.config.d:
-                self.moveFiles(moved)
+                self.movedFiles(moved)
             self.handleConflicts(self.source_root, self.dest_root, source_dict, dest_dict, changed)
         elif self.config.m == "sync":
             self.copyFiles(self.source_root, self.dest_root, sourceOnly, sourceOnly)
             self.copyFiles(self.dest_root, self.source_root, destOnly, destOnly)
             if self.config.d:
-                self.moveFiles(moved)
-            self.handleSyncConflicts(self.source_root, self.dest_root, source_dict, dest_dict, changed)
+                self.movedFiles(moved)
+            self.handleConflicts(self.source_root, self.dest_root, source_dict, dest_dict, changed)
         self.log.append("Completed")
         if self.config.csv:
             writeCsv(os.path.join(self.source_root, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
