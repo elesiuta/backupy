@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="backupy",
-    version="0.2.5",
+    version="0.2.6",
     description="Simple python script for backing up directories",
     long_description=long_description,
     long_description_content_type="text/markdown",

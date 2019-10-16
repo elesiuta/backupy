@@ -310,12 +310,12 @@ class BackupManager:
     def printChangedFiles(self, l: list, d1: dict, d2: dict):
         for f in l:
             self.printFileInfo("Source: ", f, d1)
-            self.printFileInfo("Dest: ", f, d2)
+            self.printFileInfo("Dest:   ", f, d2)
 
     def printMovedFiles(self, l: list, d1: dict, d2: dict):
         for f in l:
             self.printFileInfo("Source: ", f["source"], d1)
-            self.printFileInfo("Dest: ", f["dest"], d2)
+            self.printFileInfo("Dest:   ", f["dest"], d2)
 
     def removeFiles(self, root: str, files: list):
         for f in files:
