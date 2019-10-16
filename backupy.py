@@ -263,7 +263,7 @@ class BackupManager:
             print(colourString("Invalid source directory: " + self.config.source, "FAIL"))
             sys.exit()
         if self.config.dest == None:
-            print(colourString("Destination directory not provided", "FAIL"))
+            print(colourString("Destination directory not provided or config failed to load", "FAIL"))
             sys.exit()
         self.config.source = os.path.abspath(self.config.source)
         self.config.dest = os.path.abspath(self.config.dest)
@@ -283,7 +283,9 @@ class BackupManager:
 
     def loadJson(self):
         current_source = self.config.source
-        config = readJson(os.path.join(self.config.source, self.config.config_dir, "config.json"))
+        config_dir = os.path.abspath(os.path.join(self.config.source, self.config.config_dir, "config.json"))
+        config = readJson(config_dir)
+        print(colourString("Loaded config from:\n" + config_dir, "OKGREEN"))
         self.config = ConfigObject(config)
         if os.path.abspath(current_source) != os.path.abspath(self.config.source):
             print(colourString("The specified source does not match the loaded config file, exiting", "FAIL"))
