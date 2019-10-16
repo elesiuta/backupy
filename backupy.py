@@ -255,20 +255,20 @@ class BackupManager:
         if type(args) != dict:
             args = vars(args)
         self.config = ConfigObject(args)
+        # check source & dest
+        if not os.path.isdir(self.config.source):
+            print(colourString("Invalid source directory: " + self.config.source, "FAIL"))
+            sys.exit()
+        if self.config.dest == None:
+            print(colourString("Destination directory not provided", "FAIL"))
+            sys.exit()
+        self.config.source = os.path.abspath(self.config.source)
+        self.config.dest = os.path.abspath(self.config.dest)
         # save or load
         if self.config.save:
             self.saveJson()
         elif self.config.load:
             self.loadJson()
-        # copy and check source & dest
-        self.source_root = self.config.source
-        if not os.path.isdir(self.source_root):
-            print(colourString("Invalid source directory: " + self.source_root, "FAIL"))
-            sys.exit()
-        self.dest_root = self.config.dest
-        if self.dest_root == None:
-            print(colourString("Destination directory not provided", "FAIL"))
-            sys.exit()
         # debugging
         self.log.append(["CONFIG", str(vars(self.config))])
         if self.config.backup_time_override:
@@ -276,8 +276,6 @@ class BackupManager:
 
     def saveJson(self):
         self.config.save, self.config.load = False, False
-        self.config.source = os.path.abspath(self.config.source)
-        self.config.dest = os.path.abspath(self.config.dest)
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
         print(colourString("Config saved", "OKGREEN"))
         sys.exit()
@@ -291,7 +289,7 @@ class BackupManager:
             sys.exit()
 
     def writeLog(self):
-        writeCsv(os.path.join(self.source_root, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
+        writeCsv(os.path.join(self.config.source, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
 
     def printFileInfo(self, header: str, f: str, d: dict):
         self.log.append([header, f] + [str(d[f])])
@@ -377,13 +375,14 @@ class BackupManager:
 
     def movedFiles(self, moved: list, reverse: bool = False):
         # conflicts shouldn't happen since moved is a subset of files from sourceOnly and destOnly
+        # depends on source_info.dirCompare(dest_info) otherwise source and dest will be reversed
         for f in moved:
             if reverse:
-                dest = self.source_root
+                dest = self.config.source
                 oldLoc = f["source"]
                 newLoc = f["dest"]
             else:
-                dest = self.dest_root
+                dest = self.config.dest
                 oldLoc = f["dest"]
                 newLoc = f["source"]
             self.moveFile(dest, dest, oldLoc, newLoc)
@@ -413,8 +412,8 @@ class BackupManager:
 
     def backup(self):
         # scan directories
-        source = DirInfo(self.source_root, self.config.r, self.config.config_dir, [self.config.archive_dir])
-        dest = DirInfo(self.dest_root, self.config.r, self.config.config_dir, [self.config.archive_dir])
+        source = DirInfo(self.config.source, self.config.r, self.config.config_dir, [self.config.archive_dir])
+        dest = DirInfo(self.config.dest, self.config.r, self.config.config_dir, [self.config.archive_dir])
         if self.config.load_json:
             source.loadJson()
             dest.loadJson()
@@ -450,7 +449,7 @@ class BackupManager:
         # wait for go ahead
         if not self.config.goahead:
             print(colourString("Scan complete, continue with %s (y/N)?" %(self.config.m), "OKGREEN"))
-            go = input(">")
+            go = input("> ")
             if go[0].lower() != "y":
                 self.log.append("Aborted")
                 if self.config.csv:
@@ -461,26 +460,26 @@ class BackupManager:
         self.log.append("Start " + self.config.m)
         print(colourString("Starting " + self.config.m, "OKGREEN"))
         if self.config.m == "mirror":
-            self.copyFiles(self.source_root, self.dest_root, sourceOnly, sourceOnly)
+            self.copyFiles(self.config.source, self.config.dest, sourceOnly, sourceOnly)
             if self.config.noarchive:
-                self.removeFiles(self.dest_root, destOnly)
+                self.removeFiles(self.config.dest, destOnly)
             else:
-                recycle_bin = os.path.join(self.dest_root, self.config.archive_dir, "Deleted", self.backup_time)
-                self.moveFiles(self.dest_root, recycle_bin, destOnly, destOnly)
+                recycle_bin = os.path.join(self.config.dest, self.config.archive_dir, "Deleted", self.backup_time)
+                self.moveFiles(self.config.dest, recycle_bin, destOnly, destOnly)
             if self.config.d:
                 self.movedFiles(moved)
-            self.handleConflicts(self.source_root, self.dest_root, source_dict, dest_dict, changed)
+            self.handleConflicts(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         elif self.config.m == "backup":
-            self.copyFiles(self.source_root, self.dest_root, sourceOnly, sourceOnly)
+            self.copyFiles(self.config.source, self.config.dest, sourceOnly, sourceOnly)
             if self.config.d:
                 self.movedFiles(moved)
-            self.handleConflicts(self.source_root, self.dest_root, source_dict, dest_dict, changed)
+            self.handleConflicts(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         elif self.config.m == "sync":
-            self.copyFiles(self.source_root, self.dest_root, sourceOnly, sourceOnly)
-            self.copyFiles(self.dest_root, self.source_root, destOnly, destOnly)
+            self.copyFiles(self.config.source, self.config.dest, sourceOnly, sourceOnly)
+            self.copyFiles(self.config.dest, self.config.source, destOnly, destOnly)
             if self.config.d:
                 self.movedFiles(moved)
-            self.handleConflicts(self.source_root, self.dest_root, source_dict, dest_dict, changed)
+            self.handleConflicts(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         self.log.append("Completed")
         if self.config.csv:
             self.writeLog()
@@ -550,4 +549,3 @@ if __name__ == "__main__":
 # TODO
 # 1. Increase test coverage
 # 2. Release gooey build
-# 3. Replace source_root and dest_root with config.source and config.dest and convert to abspath in init
