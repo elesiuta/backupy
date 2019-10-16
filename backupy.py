@@ -255,6 +255,9 @@ class BackupManager:
         if type(args) != dict:
             args = vars(args)
         self.config = ConfigObject(args)
+        # load config
+        if self.config.load:
+            self.loadJson()
         # check source & dest
         if not os.path.isdir(self.config.source):
             print(colourString("Invalid source directory: " + self.config.source, "FAIL"))
@@ -264,11 +267,9 @@ class BackupManager:
             sys.exit()
         self.config.source = os.path.abspath(self.config.source)
         self.config.dest = os.path.abspath(self.config.dest)
-        # save or load
+        # save config
         if self.config.save:
             self.saveJson()
-        elif self.config.load:
-            self.loadJson()
         # debugging
         self.log.append(["CONFIG", str(vars(self.config))])
         if self.config.backup_time_override:
