@@ -279,7 +279,7 @@ class BackupManager:
         self.config.source = os.path.abspath(self.config.source)
         self.config.dest = os.path.abspath(self.config.dest)
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
-        print("Config saved")
+        print(colourString("Config saved", "OKGREEN"))
         sys.exit()
 
     def loadJson(self):
@@ -287,7 +287,7 @@ class BackupManager:
         config = readJson(os.path.join(self.config.source, self.config.config_dir, "config.json"))
         self.config = ConfigObject(config)
         if os.path.abspath(current_source) != os.path.abspath(self.config.source):
-            print("The specified source does not match the loaded config file, exiting")
+            print(colourString("The specified source does not match the loaded config file, exiting", "FAIL"))
             sys.exit()
 
     def writeLog(self):
@@ -449,15 +449,17 @@ class BackupManager:
             self.printMovedFiles(moved, source_dict, dest_dict)
         # wait for go ahead
         if not self.config.goahead:
-            go = input("Continue (y/N)? ")
+            print(colourString("Scan complete, continue with %s (y/N)?" %(self.config.m), "OKGREEN"))
+            go = input(">")
             if go[0].lower() != "y":
                 self.log.append("Aborted")
                 if self.config.csv:
                     self.writeLog()
-                print("Run aborted")
+                print(colourString("Run aborted", "WARNING"))
                 return 1
         # Backup operations
         self.log.append("Start " + self.config.m)
+        print(colourString("Starting " + self.config.m, "OKGREEN"))
         if self.config.m == "mirror":
             self.copyFiles(self.source_root, self.dest_root, sourceOnly, sourceOnly)
             if self.config.noarchive:
@@ -482,7 +484,7 @@ class BackupManager:
         self.log.append("Completed")
         if self.config.csv:
             self.writeLog()
-        print("Completed!")
+        print(colourString("Completed!", "OKGREEN"))
 
 
 def main():
@@ -549,4 +551,3 @@ if __name__ == "__main__":
 # 1. Increase test coverage
 # 2. Release gooey build
 # 3. Replace source_root and dest_root with config.source and config.dest and convert to abspath in init
-# 4. Use colourString in more print statements
