@@ -69,6 +69,32 @@ class ArgparseCustomFormatter(argparse.HelpFormatter):
         return argparse.HelpFormatter._split_lines(self, text, width)
 
 
+class CopyStatus:
+    def __init__(self, total: int):
+        self.x = 0
+        self.total = str(total)
+        self.digits = str(len(self.total))
+        progress = str("{:>" + self.digits + "}").format(self.x) + "/" + self.total
+        sys.stdout.write("\rCopying file " + progress + " "*51)
+        sys.stdout.flush()
+
+    def update(self, msg:str):
+        self.x += 1
+        if len(msg) > 49:
+            msg = msg[:22] + "....." + msg[-22:]
+        else:
+            msg = msg + " " * int(49- len(msg))
+        progress = str("{:>" + self.digits + "}").format(self.x) + "/" + self.total
+        sys.stdout.write("\rCopying file " + progress + ": " + msg)
+        sys.stdout.flush()
+
+    def endProgress(self):
+        sys.stdout.write("\rCopying complete" + " " * 60)
+        sys.stdout.flush()
+        sys.stdout.write("\n")
+        sys.stdout.flush()
+
+
 class ConfigObject:
     def __init__(self, config: dict):
         # default config (copy argparse)
@@ -352,8 +378,11 @@ class BackupManager:
             print(e)
 
     def copyFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str):
+        copy_status = CopyStatus(len(source_files))
         for i in range(len(source_files)):
+            copy_status.update(source_files[i])
             self.copyFile(source_root, dest_root, source_files[i], dest_files[i])
+        copy_status.endProgress()
     
     def moveFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str):
         try:
@@ -396,7 +425,9 @@ class BackupManager:
             self.moveFile(root_path, root_path, file_path, archive_path)
 
     def handleConflicts(self, source, dest, source_dict, dest_dict, changed):
+        copy_status = CopyStatus(len(changed))
         for fp in changed:
+            copy_status.update(fp)
             if self.config.c == "source":
                 self.archiveFile(dest, fp)
                 self.copyFile(source, dest, fp, fp)
@@ -412,6 +443,7 @@ class BackupManager:
                     self.copyFile(dest, source, fp, fp)
             else:
                 break
+        copy_status.endProgress()
 
     def backup(self):
         # scan directories
