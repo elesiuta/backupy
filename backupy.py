@@ -70,29 +70,35 @@ class ArgparseCustomFormatter(argparse.HelpFormatter):
 
 
 class CopyStatus:
-    def __init__(self, total: int):
-        self.x = 0
-        self.total = str(total)
-        self.digits = str(len(self.total))
-        progress = str("{:>" + self.digits + "}").format(self.x) + "/" + self.total
-        sys.stdout.write("\rCopying file " + progress + " "*51)
-        sys.stdout.flush()
+    def __init__(self, total: int, verbose: bool):
+        self.verbose = verbose
+        if self.verbose:
+            char_display = shutil.get_terminal_size()[0] - 4
+            self.x = 0
+            self.total = str(total)
+            self.digits = str(len(self.total))
+            self.title = "Copying file "
+            progress = str("{:>" + self.digits + "}").format(self.x) + "/" + self.total + ": "
+            self.msg_len = char_display - len(progress) - len(self.title)
+            self.neg_msg_len = -1 * (self.msg_len - 25)
+            sys.stdout.write("\r" + self.title + progress + " "*self.msg_len)
+            sys.stdout.flush()
 
     def update(self, msg:str):
-        self.x += 1
-        if len(msg) > 49:
-            msg = msg[:22] + "....." + msg[-22:]
-        else:
-            msg = msg + " " * int(49- len(msg))
-        progress = str("{:>" + self.digits + "}").format(self.x) + "/" + self.total
-        sys.stdout.write("\rCopying file " + progress + ": " + msg)
-        sys.stdout.flush()
+        if self.verbose:
+            self.x += 1
+            if len(msg) > self.msg_len:
+                msg = msg[:20] + "....." + msg[self.neg_msg_len:]
+            else:
+                msg = msg + " " * int(self.msg_len - len(msg))
+            progress = str("{:>" + self.digits + "}").format(self.x) + "/" + self.total + ": "
+            sys.stdout.write("\r" + self.title + progress + ": " + msg)
+            sys.stdout.flush()
 
     def endProgress(self):
-        sys.stdout.write("\rCopying complete" + " " * 60)
-        sys.stdout.flush()
-        sys.stdout.write("\n")
-        sys.stdout.flush()
+        if self.verbose:
+            sys.stdout.write("\rCompleted!   " + " " * self.msg_len + "\n")
+            sys.stdout.flush()
 
 
 class ConfigObject:
@@ -119,6 +125,7 @@ class ConfigObject:
         self.csv = True
         self.load_json = True
         self.save_json = True
+        self.verbose = True
         # load config
         for key in config:
             self.__setattr__(key, config[key])
@@ -320,6 +327,10 @@ class BackupManager:
     def writeLog(self):
         writeCsv(os.path.join(self.config.source, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
 
+    def colourPrint(self, msg, colour):
+        if self.config.verbose:
+            print(colourString(msg, colour))
+
     def printFileInfo(self, header: str, f: str, d: dict):
         self.log.append([header, f] + [str(d[f])])
         s = colourString(header, "OKBLUE") + replaceSurrogates(f) + "\n\t"
@@ -378,7 +389,8 @@ class BackupManager:
             print(e)
 
     def copyFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str):
-        copy_status = CopyStatus(len(source_files))
+        self.colourPrint("Copying unique files from:\n%s\nto:\n%s" %(source_root, dest_root), "OKBLUE")
+        copy_status = CopyStatus(len(source_files), self.config.verbose)
         for i in range(len(source_files)):
             copy_status.update(source_files[i])
             self.copyFile(source_root, dest_root, source_files[i], dest_files[i])
@@ -408,6 +420,7 @@ class BackupManager:
     def movedFiles(self, moved: list, reverse: bool = False):
         # conflicts shouldn't happen since moved is a subset of files from sourceOnly and destOnly
         # depends on source_info.dirCompare(dest_info) otherwise source and dest will be reversed
+        self.colourPrint("Moving files on destination to match source", "OKBLUE")
         for f in moved:
             if reverse:
                 dest = self.config.source
@@ -425,7 +438,8 @@ class BackupManager:
             self.moveFile(root_path, root_path, file_path, archive_path)
 
     def handleConflicts(self, source, dest, source_dict, dest_dict, changed):
-        copy_status = CopyStatus(len(changed))
+        self.colourPrint("Handling file conflicts", "OKBLUE")
+        copy_status = CopyStatus(len(changed), self.config.verbose)
         for fp in changed:
             copy_status.update(fp)
             if self.config.c == "source":
@@ -497,8 +511,10 @@ class BackupManager:
         if self.config.m == "mirror":
             self.copyFiles(self.config.source, self.config.dest, sourceOnly, sourceOnly)
             if self.config.noarchive:
+                self.colourPrint("Removing destination-only files", "OKBLUE")
                 self.removeFiles(self.config.dest, destOnly)
             else:
+                self.colourPrint("Archiving destination-only files", "OKBLUE")
                 recycle_bin = os.path.join(self.config.dest, self.config.archive_dir, "Deleted", self.backup_time)
                 self.moveFiles(self.config.dest, recycle_bin, destOnly, destOnly)
             if self.config.d:
