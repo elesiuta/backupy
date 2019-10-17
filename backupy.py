@@ -70,35 +70,55 @@ class ArgparseCustomFormatter(argparse.HelpFormatter):
 
 
 class CopyStatus:
-    def __init__(self, total: int, verbose: bool):
+    def __init__(self, total: int, verbose: bool, progress_bar: bool = False):
         self.verbose = verbose
+        self.progress_bar = progress_bar
         if self.verbose:
-            char_display = shutil.get_terminal_size()[0] - 4
-            self.x = 0
-            self.total = str(total)
-            self.digits = str(len(self.total))
-            self.title = "Copying file "
-            progress = str("{:>" + self.digits + "}").format(self.x) + "/" + self.total + ": "
-            self.msg_len = char_display - len(progress) - len(self.title)
-            self.neg_msg_len = -1 * (self.msg_len - 25)
-            sys.stdout.write("\r" + self.title + progress + " "*self.msg_len)
-            sys.stdout.flush()
+            if self.progress_bar:
+                self.bar_len = min(68, shutil.get_terminal_size()[0] - 15)
+                sys.stdout.write("Copying: [" + "-"*self.bar_len + "]\b" + "\b"*self.bar_len)
+                sys.stdout.flush()
+                self.total_progress = 0
+                self.count = 0
+                self.total = total
+            else:
+                char_display = shutil.get_terminal_size()[0] - 4
+                self.x = 0
+                self.total = str(total)
+                self.digits = str(len(self.total))
+                self.title = "Copying file "
+                progress = str("{:>" + self.digits + "}").format(self.x) + "/" + self.total + ": "
+                self.msg_len = char_display - len(progress) - len(self.title)
+                self.neg_msg_len = -1 * (self.msg_len - 25)
+                sys.stdout.write("\r" + self.title + progress + " "*self.msg_len)
+                sys.stdout.flush()
 
     def update(self, msg:str):
         if self.verbose:
-            self.x += 1
-            if len(msg) > self.msg_len:
-                msg = msg[:20] + "....." + msg[self.neg_msg_len:]
+            if self.progress_bar:
+                self.count += 1
+                progression = int(self.bar_len * self.count // self.total) - self.total_progress
+                sys.stdout.write("#" * progression)
+                sys.stdout.flush()
+                self.total_progress += progression
             else:
-                msg = msg + " " * int(self.msg_len - len(msg))
-            progress = str("{:>" + self.digits + "}").format(self.x) + "/" + self.total + ": "
-            sys.stdout.write("\r" + self.title + progress + ": " + msg)
-            sys.stdout.flush()
+                self.x += 1
+                if len(msg) > self.msg_len:
+                    msg = msg[:20] + "....." + msg[self.neg_msg_len:]
+                else:
+                    msg = msg + " " * int(self.msg_len - len(msg))
+                progress = str("{:>" + self.digits + "}").format(self.x) + "/" + self.total + ": "
+                sys.stdout.write("\r" + self.title + progress + ": " + msg)
+                sys.stdout.flush()
 
     def endProgress(self):
         if self.verbose:
-            sys.stdout.write("\rCompleted!   " + " " * self.msg_len + "\n")
-            sys.stdout.flush()
+            if self.progress_bar:
+                sys.stdout.write("#" * (self.bar_len - self.total_progress) + "]\n")
+                sys.stdout.flush()
+            else:
+                sys.stdout.write("\rCompleted!   " + " " * self.msg_len + "\n")
+                sys.stdout.flush()
 
 
 class ConfigObject:
