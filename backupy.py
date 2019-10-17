@@ -323,7 +323,7 @@ class BackupManager:
         # save config
         if self.config.save:
             self.saveJson()
-        # debugging
+        # debugging/testing
         self.log.append(["CONFIG", str(vars(self.config))])
         if self.config.backup_time_override:
             self.backup_time = self.config.backup_time_override
@@ -374,23 +374,27 @@ class BackupManager:
             self.printFileInfo("Source: ", f["source"], d1)
             self.printFileInfo("Dest:   ", f["dest"], d2)
 
+    def removeFile(self, root: str, fPath: str):
+        try:
+            self.log.append(["removeFile()", root, fPath])
+            if not self.config.norun:
+                path = os.path.join(root, fPath)
+                if os.path.isdir(path):
+                    os.rmdir(path)
+                else:
+                    os.remove(path)
+                if self.config.cleanup:
+                    head = os.path.dirname(path)
+                    if len(os.listdir(head)) == 0:
+                        os.removedirs(head)
+        except Exception as e:
+            self.log.append(["REMOVE ERROR", str(e)])
+            print(e)
+
     def removeFiles(self, root: str, files: list):
+        self.colourPrint("Removing unique files from:\n%s" %(root), "OKBLUE")
         for f in files:
-            try:
-                self.log.append(["removeFile()", root, f])
-                if not self.config.norun:
-                    path = os.path.join(root, f)
-                    if os.path.isdir(path):
-                        os.rmdir(path)
-                    else:
-                        os.remove(path)
-                    if self.config.cleanup:
-                        head = os.path.dirname(path)
-                        if len(os.listdir(head)) == 0:
-                            os.removedirs(head)
-            except Exception as e:
-                self.log.append(["REMOVE ERROR", str(e)])
-                print(e)
+            self.removeFile(root, f)
 
     def copyFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str):
         try:
@@ -434,6 +438,7 @@ class BackupManager:
             print(e)
 
     def moveFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str):
+        self.colourPrint("Archiving unique files from:\n%s" %(source_root), "OKBLUE")
         for i in range(len(source_files)):
             self.moveFile(source_root, dest_root, source_files[i], dest_files[i])
 
@@ -480,6 +485,8 @@ class BackupManager:
         copy_status.endProgress()
 
     def backup(self):
+        if self.config.norun:
+            print(colourString("Simulation Run", "HEADER"))
         # scan directories
         source = DirInfo(self.config.source, self.config.r, self.config.config_dir, [self.config.archive_dir])
         dest = DirInfo(self.config.dest, self.config.r, self.config.config_dir, [self.config.archive_dir])
@@ -517,7 +524,10 @@ class BackupManager:
             self.printMovedFiles(moved, source_dict, dest_dict)
         # wait for go ahead
         if not self.config.goahead:
-            print(colourString("Scan complete, continue with %s (y/N)?" %(self.config.m), "OKGREEN"))
+            simulation = ""
+            if self.config.norun:
+                simulation = "simulated "
+            print(colourString("Scan complete, continue with %s%s (y/N)?" %(simulation, self.config.m), "OKGREEN"))
             go = input("> ")
             if go[0].lower() != "y":
                 self.log.append("Aborted")
@@ -531,10 +541,8 @@ class BackupManager:
         if self.config.m == "mirror":
             self.copyFiles(self.config.source, self.config.dest, sourceOnly, sourceOnly)
             if self.config.noarchive:
-                self.colourPrint("Removing destination-only files", "OKBLUE")
                 self.removeFiles(self.config.dest, destOnly)
             else:
-                self.colourPrint("Archiving destination-only files", "OKBLUE")
                 recycle_bin = os.path.join(self.config.dest, self.config.archive_dir, "Deleted", self.backup_time)
                 self.moveFiles(self.config.dest, recycle_bin, destOnly, destOnly)
             if self.config.d:
