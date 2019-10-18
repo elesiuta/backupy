@@ -362,7 +362,8 @@ class BackupManager:
             sys.exit()
 
     def writeLog(self):
-        writeCsv(os.path.join(self.config.source, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
+        if self.config.csv:
+            writeCsv(os.path.join(self.config.source, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
 
     def colourPrint(self, msg, colour):
         if self.config.verbose:
@@ -525,8 +526,7 @@ class BackupManager:
             self.log.append(["CHANGES ON DESTINATION SINCE LAST SCAN"])
             self.log += dest_diffs
             print(colourString("Some files in the destination folder have changed since the last scan, this may include files from the previous backup, see log for details", "WARNING"))
-            if self.config.csv:
-                self.writeLog()
+            self.writeLog()
         sourceOnly, destOnly, changed, moved = source.dirCompare(dest, self.config.d)
         if self.config.save_json:
             source.saveJson()
@@ -552,14 +552,14 @@ class BackupManager:
                 simulation = "simulated "
             if len(sourceOnly) == 0 and len(destOnly) == 0 and len(changed) == 0 and len(moved) == 0:
                 print(colourString("Directories already match, completed!", "OKGREEN"))
+                self.log.append(["No changes found"])
                 self.writeLog()
                 sys.exit()
             print(colourString("Scan complete, continue with %s%s (y/N)?" %(simulation, self.config.m), "OKGREEN"))
             go = input("> ")
             if go[0].lower() != "y":
                 self.log.append("Aborted")
-                if self.config.csv:
-                    self.writeLog()
+                self.writeLog()
                 print(colourString("Run aborted", "WARNING"))
                 return 1
         # Backup operations
@@ -587,8 +587,7 @@ class BackupManager:
                 self.movedFiles(moved)
             self.handleConflicts(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         self.log.append("Completed")
-        if self.config.csv:
-            self.writeLog()
+        self.writeLog()
         print(colourString("Completed!", "OKGREEN"))
 
 
