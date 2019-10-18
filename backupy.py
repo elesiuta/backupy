@@ -81,7 +81,7 @@ class CopyStatus:
         terminal_width = shutil.get_terminal_size()[0]
         if terminal_width < 16:
             self.verbose = False
-        elif terminal_width < 60:
+        elif terminal_width < 80:
             self.progress_bar = True
         if self.verbose:
             if self.progress_bar:
@@ -532,17 +532,17 @@ class BackupManager:
             source.saveJson()
             dest.saveJson()
         # print differences
-        print(colourString("Source Only", "HEADER"))
+        print(colourString("Source Only: %s" %(len(sourceOnly)), "HEADER"))
         self.log.append("Source Only")
         self.printFiles(sourceOnly, source_dict)
-        print(colourString("Destination Only", "HEADER"))
+        print(colourString("Destination Only: %s" %(len(destOnly)), "HEADER"))
         self.log.append("Destination Only")
         self.printFiles(destOnly, dest_dict)
-        print(colourString("File Conflicts", "HEADER"))
+        print(colourString("File Conflicts: %s" %(len(changed)), "HEADER"))
         self.log.append("File Conflicts")
         self.printChangedFiles(changed, source_dict, dest_dict)
         if self.config.d:
-            print(colourString("Moved Files", "HEADER"))
+            print(colourString("Moved Files: %s" %(len(moved)), "HEADER"))
             self.log.append("Moved Files")
             self.printMovedFiles(moved, source_dict, dest_dict)
         # wait for go ahead
@@ -550,6 +550,10 @@ class BackupManager:
             simulation = ""
             if self.config.norun:
                 simulation = "simulated "
+            if len(sourceOnly) == 0 and len(destOnly) == 0 and len(changed) == 0 and len(moved) == 0:
+                print(colourString("Directories already match, completed!", "OKGREEN"))
+                self.writeLog()
+                sys.exit()
             print(colourString("Scan complete, continue with %s%s (y/N)?" %(simulation, self.config.m), "OKGREEN"))
             go = input("> ")
             if go[0].lower() != "y":
