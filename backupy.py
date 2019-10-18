@@ -10,6 +10,9 @@ import datetime
 import typing
 import sys
 
+
+### String manipulation functions ###
+
 def replaceSurrogates(string: str) -> str:
     return string.encode('utf16', 'surrogatepass').decode('utf16', 'replace')
 
@@ -39,6 +42,8 @@ def prettySize(size: float) -> str:
         return "{:<10}".format("%s KB" %(round(size/10**3, 2)))
     else:
         return "{:<10}".format("%s B" %(size))
+
+### File IO functions ###
 
 def writeCsv(fName: str, data: list, enc = None, delimiter = ",") -> None:
     if not os.path.isdir(os.path.dirname(fName)):
@@ -73,16 +78,21 @@ class CopyStatus:
     def __init__(self, total: int, verbose: bool, progress_bar: bool = False):
         self.verbose = verbose
         self.progress_bar = progress_bar
+        terminal_width = shutil.get_terminal_size()[0]
+        if terminal_width < 16:
+            self.verbose = False
+        elif terminal_width < 60:
+            self.progress_bar = True
         if self.verbose:
             if self.progress_bar:
-                self.bar_len = min(68, shutil.get_terminal_size()[0] - 15)
+                self.bar_len = min(68, terminal_width - 15)
                 self.progress_scaled = 0
                 self.progress = 0
                 self.total = total
                 sys.stdout.write("Copying: [" + "-"*self.bar_len + "]\b" + "\b"*self.bar_len)
                 sys.stdout.flush()
             else:
-                char_display = shutil.get_terminal_size()[0] - 4
+                char_display = terminal_width - 4
                 self.progress = 0
                 self.total = str(total)
                 self.digits = str(len(self.total))
@@ -308,9 +318,14 @@ class BackupManager:
         if type(args) != dict:
             args = vars(args)
         self.config = ConfigObject(args)
+        # copy norun value to survive load
+        norun = self.config.norun
         # load config
         if self.config.load:
             self.loadJson()
+        # set norun = True iff flag was set, no other args survive a load
+        if norun:
+            self.config.norun = norun
         # check source & dest
         if not os.path.isdir(self.config.source):
             print(colourString("Invalid source directory: " + self.config.source, "FAIL"))
@@ -628,6 +643,7 @@ def main():
     args = parser.parse_args()
     backup_manager = BackupManager(args)
     backup_manager.backup()
+
 
 if __name__ == "__main__":
     sys.exit(main())
