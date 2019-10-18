@@ -76,45 +76,45 @@ class CopyStatus:
         if self.verbose:
             if self.progress_bar:
                 self.bar_len = min(68, shutil.get_terminal_size()[0] - 15)
+                self.progress_scaled = 0
+                self.progress = 0
+                self.total = total
                 sys.stdout.write("Copying: [" + "-"*self.bar_len + "]\b" + "\b"*self.bar_len)
                 sys.stdout.flush()
-                self.total_progress = 0
-                self.count = 0
-                self.total = total
             else:
                 char_display = shutil.get_terminal_size()[0] - 4
-                self.x = 0
+                self.progress = 0
                 self.total = str(total)
                 self.digits = str(len(self.total))
                 self.title = "Copying file "
-                progress = str("{:>" + self.digits + "}").format(self.x) + "/" + self.total + ": "
-                self.msg_len = char_display - len(progress) - len(self.title)
+                progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + self.total + ": "
+                self.msg_len = char_display - len(progress_str) - len(self.title)
                 self.neg_msg_len = -1 * (self.msg_len - 25)
-                sys.stdout.write("\r" + self.title + progress + " "*self.msg_len)
+                sys.stdout.write("\r" + self.title + progress_str + " "*self.msg_len)
                 sys.stdout.flush()
 
     def update(self, msg:str):
         if self.verbose:
             if self.progress_bar:
-                self.count += 1
-                progression = int(self.bar_len * self.count // self.total) - self.total_progress
-                sys.stdout.write("#" * progression)
+                self.progress += 1
+                bar_progression = int(self.bar_len * self.progress // self.total) - self.progress_scaled
+                self.progress_scaled += bar_progression
+                sys.stdout.write("#" * bar_progression)
                 sys.stdout.flush()
-                self.total_progress += progression
             else:
-                self.x += 1
+                self.progress += 1
                 if len(msg) > self.msg_len:
                     msg = msg[:20] + "....." + msg[self.neg_msg_len:]
                 else:
                     msg = msg + " " * int(self.msg_len - len(msg))
-                progress = str("{:>" + self.digits + "}").format(self.x) + "/" + self.total + ": "
-                sys.stdout.write("\r" + self.title + progress + ": " + msg)
+                progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + self.total + ": "
+                sys.stdout.write("\r" + self.title + progress_str + ": " + msg)
                 sys.stdout.flush()
 
     def endProgress(self):
         if self.verbose:
             if self.progress_bar:
-                sys.stdout.write("#" * (self.bar_len - self.total_progress) + "]\n")
+                sys.stdout.write("#" * (self.bar_len - self.progress_scaled) + "]\n")
                 sys.stdout.flush()
             else:
                 sys.stdout.write("\rCompleted!   " + " " * self.msg_len + "\n")
@@ -164,11 +164,29 @@ class DirInfo:
         self.config_dir = config_dir
         self.ignored_folders = ignored_folders[:]
 
+    def getDirDict(self) -> dict:
+        return self.file_dicts
+
+    def getLoadedDiffs(self) -> list:
+        return self.loaded_diffs
+
+    def saveJson(self):
+        writeJson(os.path.join(self.dir, self.config_dir, "dirinfo.json"), self.file_dicts)
+
+    def loadJson(self):
+        self.loaded_dicts = readJson(os.path.join(self.dir, self.config_dir, "dirinfo.json"))
+
     def crc(self, fileName: str, prev: int = 0) -> int:
         with open(fileName,"rb") as f:
             for line in f:
                 prev = zlib.crc32(line, prev)
         return prev
+
+    def scanCrc(self, relativePath: str) -> int:
+        if "crc" not in self.file_dicts[relativePath]:
+            full_path = os.path.join(self.dir, relativePath)
+            self.file_dicts[relativePath]["crc"] = self.crc(full_path)
+        return self.file_dicts[relativePath]["crc"]
 
     def dirStats(self) -> dict:
         total_crc = 0
@@ -222,24 +240,6 @@ class DirInfo:
                         self.loaded_diffs.append([relativePath, str(self.file_dicts[relativePath])])
                         if self.crc_mode == "all":
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
-
-    def getDirDict(self) -> dict:
-        return self.file_dicts
-
-    def getLoadedDiffs(self) -> list:
-        return self.loaded_diffs
-
-    def saveJson(self):
-        writeJson(os.path.join(self.dir, self.config_dir, "dirinfo.json"), self.file_dicts)
-
-    def loadJson(self):
-        self.loaded_dicts = readJson(os.path.join(self.dir, self.config_dir, "dirinfo.json"))
-
-    def scanCrc(self, relativePath: str) -> int:
-        if "crc" not in self.file_dicts[relativePath]:
-            full_path = os.path.join(self.dir, relativePath)
-            self.file_dicts[relativePath]["crc"] = self.crc(full_path)
-        return self.file_dicts[relativePath]["crc"]
 
     def fileMatch(self, f: str, file_dict1: dict, file_dict2: dict, secondInfo, crc_mode: str) -> bool:
         if crc_mode == "all":
@@ -328,6 +328,8 @@ class BackupManager:
         if self.config.backup_time_override:
             self.backup_time = self.config.backup_time_override
 
+    ### Saving/loading/logging/printing methods ###
+
     def saveJson(self):
         self.config.save, self.config.load = False, False
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
@@ -374,6 +376,8 @@ class BackupManager:
             self.printFileInfo("Source: ", f["source"], d1)
             self.printFileInfo("Dest:   ", f["dest"], d2)
 
+    ### File operation methods (only use these methods to perform operations) ###
+
     def removeFile(self, root: str, fPath: str):
         try:
             self.log.append(["removeFile()", root, fPath])
@@ -391,11 +395,6 @@ class BackupManager:
             self.log.append(["REMOVE ERROR", str(e)])
             print(e)
 
-    def removeFiles(self, root: str, files: list):
-        self.colourPrint("Removing unique files from:\n%s" %(root), "OKBLUE")
-        for f in files:
-            self.removeFile(root, f)
-
     def copyFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str):
         try:
             self.log.append(["copyFile()", source_root, dest_root, source_file, dest_file])
@@ -412,14 +411,6 @@ class BackupManager:
             self.log.append(["COPY ERROR", str(e)])
             print(e)
 
-    def copyFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str):
-        self.colourPrint("Copying unique files from:\n%s\nto:\n%s" %(source_root, dest_root), "OKBLUE")
-        copy_status = CopyStatus(len(source_files), self.config.verbose)
-        for i in range(len(source_files)):
-            copy_status.update(source_files[i])
-            self.copyFile(source_root, dest_root, source_files[i], dest_files[i])
-        copy_status.endProgress()
-    
     def moveFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str):
         try:
             self.log.append(["moveFile()", source_root, dest_root, source_file, dest_file])
@@ -436,6 +427,21 @@ class BackupManager:
         except Exception as e:
             self.log.append(["MOVE ERROR", str(e)])
             print(e)
+
+    ### Batch file operation methods (do not perform file operations directly) ###
+
+    def removeFiles(self, root: str, files: list):
+        self.colourPrint("Removing unique files from:\n%s" %(root), "OKBLUE")
+        for f in files:
+            self.removeFile(root, f)
+
+    def copyFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str):
+        self.colourPrint("Copying unique files from:\n%s\nto:\n%s" %(source_root, dest_root), "OKBLUE")
+        copy_status = CopyStatus(len(source_files), self.config.verbose)
+        for i in range(len(source_files)):
+            copy_status.update(source_files[i])
+            self.copyFile(source_root, dest_root, source_files[i], dest_files[i])
+        copy_status.endProgress()
 
     def moveFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str):
         self.colourPrint("Archiving unique files from:\n%s" %(source_root), "OKBLUE")
@@ -483,6 +489,8 @@ class BackupManager:
             else:
                 break
         copy_status.endProgress()
+
+    ### Main backup/mirror/sync method ###
 
     def backup(self):
         if self.config.norun:
@@ -566,7 +574,7 @@ class BackupManager:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Simple python script for backing up directories", formatter_class=ArgparseCustomFormatter)
+    parser = argparse.ArgumentParser(description="BackuPy: A small python program for backing up directories with an emphasis on clear rules, simple usage and logging changes", formatter_class=ArgparseCustomFormatter)
     parser.add_argument("source", action="store", type=str,
                         help="Path of source")
     parser.add_argument("dest", action="store", type=str, nargs="?", default=None,
@@ -606,13 +614,13 @@ def main():
     parser.add_argument("-d", action="store_true",
                         help="Try and detect moved files")
     parser.add_argument("--noarchive", action="store_true",
-                        help="Disable archiving, by default files are moved to /.backupy/yymmdd-HHMM/ on their respective side before being overwritten")
+                        help="Disable archiving, by default files are moved to /.backupy/yymmdd-HHMM/ on their respective side before being removed or overwritten")
     parser.add_argument("--suppress", action="store_true",
                         help="Suppress logging; by default logs are written to source/.backupy/log-yymmdd-HHMM.csv and /.backupy/dirinfo.json")
     parser.add_argument("--goahead", action="store_true",
                         help="Go ahead without prompting for confirmation")
     parser.add_argument("-n", "--norun", action="store_true",
-                        help="Simulate the run")
+                        help="Simulate the run according to your configuration")
     parser.add_argument("-s", "--save", action="store_true",
                         help="Save configuration in source")
     parser.add_argument("-l", "--load", action="store_true",

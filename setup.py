@@ -4,9 +4,9 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="backupy",
+    name="BackuPy",
     version="0.2.6",
-    description="Simple python script for backing up directories",
+    description="BackuPy: A small python program for backing up directories with an emphasis on clear rules, simple usage and logging changes",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/elesiuta/backupy",
