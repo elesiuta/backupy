@@ -198,27 +198,6 @@ class DirInfo:
             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
         return self.file_dicts[relativePath]["crc"]
 
-    def dirStats(self) -> dict:
-        total_crc = 0
-        file_count = 0
-        dir_count = 0
-        total_file_size = 0
-        total_folder_size = 0
-        for dir_path, sub_dir_list, file_list in os.walk(self.dir):
-            for folder in sub_dir_list:
-                if folder in self.ignored_folders:
-                    sub_dir_list.remove(folder)
-            sub_dir_list.sort()
-            dir_count += len(sub_dir_list)
-            file_count += len(file_list)
-            total_folder_size += os.path.getsize(dir_path)
-            for f in sorted(file_list):
-                full_path = os.path.join(dir_path, f)
-                total_file_size += os.path.getsize(full_path)
-                total_crc += self.crc(full_path)
-                total_crc %= (0xFFFFFFFF + 1)
-        return {"total_crc": total_crc, "file_count": file_count, "dir_count": dir_count, "total_file_size": total_file_size, "total_folder_size": total_folder_size}
-
     def scan(self) -> None:
         if os.path.isdir(self.dir):
             self.file_dicts = {}
