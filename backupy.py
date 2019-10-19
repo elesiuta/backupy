@@ -9,12 +9,22 @@ import time
 import datetime
 import typing
 import sys
+import unicodedata
 
 
 ### String manipulation functions ###
 
 def replaceSurrogates(string: str) -> str:
-    return string.encode('utf-8', 'surrogateescape').decode('utf-8', 'replace')
+    return string.encode("utf-8", "surrogateescape").decode("utf-8", "replace")
+
+def getStringWidth(string: str) -> int:
+    width = 0
+    for char in string:
+        if unicodedata.east_asian_width(char) == "W":
+            width += 2
+        else:
+            width += 1
+    return width
 
 def colourString(string: str, colour: str) -> str:
     colours = {
@@ -92,15 +102,15 @@ class CopyStatus:
                 sys.stdout.write("Copying: [" + "-"*self.bar_len + "]\b" + "\b"*self.bar_len)
                 sys.stdout.flush()
             else:
-                char_display = terminal_width - 4
+                self.char_display = terminal_width - 2
                 self.progress = 0
                 self.total = str(total)
                 self.digits = str(len(self.total))
                 self.title = "Copying file "
                 progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + self.total + ": "
-                self.msg_len = char_display - len(progress_str) - len(self.title)
-                self.neg_msg_len = -1 * (self.msg_len - 25)
-                print(self.title + progress_str + " "*self.msg_len, end='\r')
+                self.msg_len = self.char_display - len(progress_str) - len(self.title)
+                msg = " " * self.msg_len
+                print(self.title + progress_str + msg, end="\r")
 
     def update(self, msg:str):
         if self.verbose:
@@ -112,13 +122,12 @@ class CopyStatus:
                 sys.stdout.flush()
             else:
                 self.progress += 1
-                # msg = replaceSurrogates(msg)
-                if len(msg) > self.msg_len:
-                    msg = msg[:20] + "....." + msg[self.neg_msg_len:]
-                else:
-                    msg = msg + " " * int(self.msg_len - len(msg))
+                while getStringWidth(msg) > self.msg_len:
+                    splice = (len(msg) - 4) // 2
+                    msg = msg[:splice] + "..." + msg[-splice:]
+                msg = msg + " " * int(self.msg_len - getStringWidth(msg))
                 progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + self.total + ": "
-                print(self.title + progress_str + ": " + msg, end='\r')
+                print(self.title + progress_str + msg, end="\r")
 
     def endProgress(self):
         if self.verbose:
@@ -126,7 +135,8 @@ class CopyStatus:
                 sys.stdout.write("#" * (self.bar_len - self.progress_scaled) + "]\n")
                 sys.stdout.flush()
             else:
-                print("Completed!   " + " " * self.msg_len)
+                title = "Completed!"
+                print(title + " " * (self.char_display - len(title)))
 
 
 class ConfigObject:
