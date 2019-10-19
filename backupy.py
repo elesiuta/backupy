@@ -385,12 +385,12 @@ class BackupManager:
     def printChangedFiles(self, l: list, d1: dict, d2: dict):
         for f in l:
             self.printFileInfo("Source: ", f, d1)
-            self.printFileInfo("Dest:   ", f, d2)
+            self.printFileInfo("  Dest: ", f, d2)
 
     def printMovedFiles(self, l: list, d1: dict, d2: dict):
         for f in l:
             self.printFileInfo("Source: ", f["source"], d1)
-            self.printFileInfo("Dest:   ", f["dest"], d2)
+            self.printFileInfo("  Dest: ", f["dest"], d2)
 
     ### File operation methods (only use these methods to perform operations) ###
 
@@ -554,7 +554,7 @@ class BackupManager:
                 print(colourString("Directories already match, completed!", "OKGREEN"))
                 self.log.append(["No changes found"])
                 self.writeLog()
-                sys.exit()
+                return 0
             print(colourString("Scan complete, continue with %s%s (y/N)?" %(simulation, self.config.m), "OKGREEN"))
             go = input("> ")
             if go[0].lower() != "y":
