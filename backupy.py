@@ -14,7 +14,7 @@ import sys
 ### String manipulation functions ###
 
 def replaceSurrogates(string: str) -> str:
-    return string.encode('utf16', 'surrogatepass').decode('utf16', 'replace')
+    return string.encode('utf-8', 'surrogateescape').decode('utf-8', 'replace')
 
 def colourString(string: str, colour: str) -> str:
     colours = {
@@ -45,17 +45,17 @@ def prettySize(size: float) -> str:
 
 ### File IO functions ###
 
-def writeCsv(fName: str, data: list, enc = None, delimiter = ",") -> None:
+def writeCsv(fName: str, data: list, delimiter = ",") -> None:
     if not os.path.isdir(os.path.dirname(fName)):
         os.makedirs(os.path.dirname(fName))
-    with open(fName, "w", newline="", encoding=enc, errors="backslashreplace") as f:
+    with open(fName, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
         writer = csv.writer(f, delimiter=delimiter)
         for row in data:
             writer.writerow(row)
 
 def readJson(fName: str) -> dict:
     if os.path.exists(fName):
-        with open(fName, "r", errors="ignore") as json_file:
+        with open(fName, "r", encoding="utf-8", errors="surrogateescape") as json_file:
             data = json.load(json_file)
         return data
     return {}
@@ -63,7 +63,7 @@ def readJson(fName: str) -> dict:
 def writeJson(fName: str, data: dict) -> None:
     if not os.path.isdir(os.path.dirname(fName)):
         os.makedirs(os.path.dirname(fName))
-    with open(fName, "w", errors="ignore") as json_file:
+    with open(fName, "w", encoding="utf-8", errors="surrogateescape") as json_file:
         json.dump(data, json_file, indent=1, separators=(',', ': '))
 
 
@@ -100,8 +100,7 @@ class CopyStatus:
                 progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + self.total + ": "
                 self.msg_len = char_display - len(progress_str) - len(self.title)
                 self.neg_msg_len = -1 * (self.msg_len - 25)
-                sys.stdout.write("\r" + self.title + progress_str + " "*self.msg_len)
-                sys.stdout.flush()
+                print(self.title + progress_str + " "*self.msg_len, end='\r')
 
     def update(self, msg:str):
         if self.verbose:
@@ -113,13 +112,13 @@ class CopyStatus:
                 sys.stdout.flush()
             else:
                 self.progress += 1
+                # msg = replaceSurrogates(msg)
                 if len(msg) > self.msg_len:
                     msg = msg[:20] + "....." + msg[self.neg_msg_len:]
                 else:
                     msg = msg + " " * int(self.msg_len - len(msg))
                 progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + self.total + ": "
-                sys.stdout.write("\r" + self.title + progress_str + ": " + msg)
-                sys.stdout.flush()
+                print(self.title + progress_str + ": " + msg, end='\r')
 
     def endProgress(self):
         if self.verbose:
@@ -127,8 +126,7 @@ class CopyStatus:
                 sys.stdout.write("#" * (self.bar_len - self.progress_scaled) + "]\n")
                 sys.stdout.flush()
             else:
-                sys.stdout.write("\rCompleted!   " + " " * self.msg_len + "\n")
-                sys.stdout.flush()
+                print("Completed!   " + " " * self.msg_len)
 
 
 class ConfigObject:
