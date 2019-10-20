@@ -257,6 +257,7 @@ class DirInfo:
                     return True
                 else:
                     return False
+        return False
 
     def dirCompare(self, secondInfo, moves: bool = False, filter_list = False) -> tuple:
         file_list = list(self.file_dicts)
