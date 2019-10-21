@@ -91,7 +91,7 @@ class StatusBar:
         terminal_width = shutil.get_terminal_size()[0]
         if terminal_width < 16:
             self.verbose = False
-        elif terminal_width < 80 and total > 0:
+        elif terminal_width < 80 and total >= 0:
             self.progress_bar = True
         if self.verbose:
             if self.progress_bar:
@@ -105,7 +105,7 @@ class StatusBar:
                 self.char_display = terminal_width - 2
                 self.progress = 0
                 self.total = str(total)
-                if self.total == "0":
+                if self.total == "-1":
                     self.title = "Scanning file "
                     progress_str = str(self.progress) + ": "
                     self.msg_len = self.char_display - len(progress_str) - len(self.title)
@@ -127,7 +127,7 @@ class StatusBar:
                 sys.stdout.flush()
             else:
                 self.progress += 1
-                if self.total == "0":
+                if self.total == "-1":
                     progress_str = str(self.progress) + ": "
                     self.msg_len = self.char_display - len(progress_str) - len(self.title)
                 else:
@@ -144,7 +144,7 @@ class StatusBar:
                 sys.stdout.write("#" * (self.bar_len - self.progress_scaled) + "]\n")
                 sys.stdout.flush()
             else:
-                if self.total == "0":
+                if self.total == "-1":
                     title = "Scanning completed!"
                 else:
                     title = "Copying completed!"
@@ -221,7 +221,7 @@ class DirInfo:
     def scanDir(self, verbose: bool) -> None:
         if os.path.isdir(self.dir):
             self.file_dicts = {}
-            scan_status = StatusBar(0, verbose)
+            scan_status = StatusBar(-1, verbose)
             for dir_path, subdir_list, file_list in os.walk(self.dir):
                 for folder in subdir_list:
                     if folder in self.ignored_folders:
