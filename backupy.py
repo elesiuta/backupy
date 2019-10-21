@@ -144,7 +144,10 @@ class StatusBar:
                 sys.stdout.write("#" * (self.bar_len - self.progress_scaled) + "]\n")
                 sys.stdout.flush()
             else:
-                title = "Completed!"
+                if self.total == "0":
+                    title = "Scanning completed!"
+                else:
+                    title = "Copying completed!"
                 print(title + " " * (self.char_display - len(title)))
 
 
