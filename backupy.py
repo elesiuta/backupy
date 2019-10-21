@@ -20,7 +20,7 @@ def replaceSurrogates(string: str) -> str:
 def getStringWidth(string: str) -> int:
     width = 0
     for char in string:
-        if unicodedata.east_asian_width(char) == "W":
+        if unicodedata.east_asian_width(char) in ["W", "F"]:
             width += 2
         else:
             width += 1
