@@ -17,10 +17,10 @@ import unicodedata
 def replaceSurrogates(string: str) -> str:
     return string.encode("utf-8", "surrogateescape").decode("utf-8", "replace")
 
-def getStringWidth(string: str) -> int:
+def getStringMaxWidth(string: str) -> int:
     width = 0
     for char in string:
-        if unicodedata.east_asian_width(char) in ["W", "F"]:
+        if unicodedata.east_asian_width(char) in ["W", "F", "A"]:
             width += 2
         else:
             width += 1
@@ -132,10 +132,10 @@ class StatusBar:
                     self.msg_len = self.char_display - len(progress_str) - len(self.title)
                 else:
                     progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + self.total + ": "
-                while getStringWidth(msg) > self.msg_len:
+                while getStringMaxWidth(msg) > self.msg_len:
                     splice = (len(msg) - 4) // 2
                     msg = msg[:splice] + "..." + msg[-splice:]
-                msg = msg + " " * int(self.msg_len - getStringWidth(msg))
+                msg = msg + " " * int(self.msg_len - getStringMaxWidth(msg))
                 print(self.title + progress_str + msg, end="\r")
 
     def endProgress(self):
