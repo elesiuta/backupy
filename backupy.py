@@ -84,14 +84,14 @@ class ArgparseCustomFormatter(argparse.HelpFormatter):
         return argparse.HelpFormatter._split_lines(self, text, width)
 
 
-class CopyStatus:
+class StatusBar:
     def __init__(self, total: int, verbose: bool, progress_bar: bool = False):
         self.verbose = verbose
         self.progress_bar = progress_bar
         terminal_width = shutil.get_terminal_size()[0]
         if terminal_width < 16:
             self.verbose = False
-        elif terminal_width < 80:
+        elif terminal_width < 80 and total > 0:
             self.progress_bar = True
         if self.verbose:
             if self.progress_bar:
@@ -105,10 +105,15 @@ class CopyStatus:
                 self.char_display = terminal_width - 2
                 self.progress = 0
                 self.total = str(total)
-                self.digits = str(len(self.total))
-                self.title = "Copying file "
-                progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + self.total + ": "
-                self.msg_len = self.char_display - len(progress_str) - len(self.title)
+                if self.total == "0":
+                    self.title = "Scanning file "
+                    progress_str = str(self.progress) + ": "
+                    self.msg_len = self.char_display - len(progress_str) - len(self.title)
+                else:
+                    self.digits = str(len(self.total))
+                    self.title = "Copying file "
+                    progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + self.total + ": "
+                    self.msg_len = self.char_display - len(progress_str) - len(self.title)
                 msg = " " * self.msg_len
                 print(self.title + progress_str + msg, end="\r")
 
@@ -122,11 +127,15 @@ class CopyStatus:
                 sys.stdout.flush()
             else:
                 self.progress += 1
+                if self.total == "0":
+                    progress_str = str(self.progress) + ": "
+                    self.msg_len = self.char_display - len(progress_str) - len(self.title)
+                else:
+                    progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + self.total + ": "
                 while getStringWidth(msg) > self.msg_len:
                     splice = (len(msg) - 4) // 2
                     msg = msg[:splice] + "..." + msg[-splice:]
                 msg = msg + " " * int(self.msg_len - getStringWidth(msg))
-                progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + self.total + ": "
                 print(self.title + progress_str + msg, end="\r")
 
     def endProgress(self):
@@ -206,9 +215,10 @@ class DirInfo:
             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
         return self.file_dicts[relativePath]["crc"]
 
-    def scan(self) -> None:
+    def scanDir(self, verbose: bool) -> None:
         if os.path.isdir(self.dir):
             self.file_dicts = {}
+            scan_status = StatusBar(0, verbose)
             for dir_path, subdir_list, file_list in os.walk(self.dir):
                 for folder in subdir_list:
                     if folder in self.ignored_folders:
@@ -222,6 +232,7 @@ class DirInfo:
                 for fName in sorted(file_list):
                     full_path = os.path.join(dir_path, fName)
                     relativePath = os.path.relpath(full_path, self.dir)
+                    scan_status.update(relativePath)
                     size = os.path.getsize(full_path)
                     mtime = os.path.getmtime(full_path)
                     if relativePath in self.loaded_dicts:
@@ -237,6 +248,7 @@ class DirInfo:
                         self.loaded_diffs.append([relativePath, str(self.file_dicts[relativePath])])
                         if self.crc_mode == "all":
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
+            scan_status.endProgress()
 
     def fileMatch(self, f: str, file_dict1: dict, file_dict2: dict, secondInfo, crc_mode: str) -> bool:
         if crc_mode == "all":
@@ -441,7 +453,7 @@ class BackupManager:
 
     def copyFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str):
         self.colourPrint("Copying unique files from:\n%s\nto:\n%s" %(source_root, dest_root), "OKBLUE")
-        copy_status = CopyStatus(len(source_files), self.config.verbose)
+        copy_status = StatusBar(len(source_files), self.config.verbose)
         for i in range(len(source_files)):
             copy_status.update(source_files[i])
             self.copyFile(source_root, dest_root, source_files[i], dest_files[i])
@@ -474,7 +486,7 @@ class BackupManager:
 
     def handleConflicts(self, source, dest, source_dict, dest_dict, changed):
         self.colourPrint("Handling file conflicts", "OKBLUE")
-        copy_status = CopyStatus(len(changed), self.config.verbose)
+        copy_status = StatusBar(len(changed), self.config.verbose)
         for fp in changed:
             copy_status.update(fp)
             if self.config.c == "source":
@@ -505,9 +517,9 @@ class BackupManager:
         if self.config.load_json:
             source.loadJson()
             dest.loadJson()
-        source.scan()
+        source.scanDir(self.config.verbose)
         source_dict = source.getDirDict()
-        dest.scan()
+        dest.scanDir(self.config.verbose)
         dest_dict = dest.getDirDict()
         dest_diffs = dest.getLoadedDiffs()
         if self.config.m != "sync" and len(dest_diffs) >= 1:
