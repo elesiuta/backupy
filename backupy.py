@@ -514,14 +514,17 @@ class BackupManager:
     def backup(self):
         if self.config.norun:
             print(colourString("Simulation Run", "HEADER"))
-        # scan directories
+        # init dir scanning and load previous scan data if available
         source = DirInfo(self.config.source, self.config.r, self.config.config_dir, [self.config.archive_dir])
         dest = DirInfo(self.config.dest, self.config.r, self.config.config_dir, [self.config.archive_dir])
         if self.config.load_json:
             source.loadJson()
             dest.loadJson()
+        # scan directories, this is where CRC mode = all takes place
+        self.colourPrint("Scanning files on source:\n%s" %(self.config.source), "OKBLUE")
         source.scanDir(self.config.verbose)
         source_dict = source.getDirDict()
+        self.colourPrint("Scanning files on destination:\n%s" %(self.config.dest), "OKBLUE")
         dest.scanDir(self.config.verbose)
         dest_dict = dest.getDirDict()
         dest_diffs = dest.getLoadedDiffs()
@@ -530,7 +533,10 @@ class BackupManager:
             self.log += dest_diffs
             print(colourString("Some files in the destination folder have changed since the last scan, this may include files from the previous backup, see log for details", "WARNING"))
             self.writeLog()
+        # compare directories, this is where CRC mode = match takes place
+        self.colourPrint("Comparing directories...", "OKBLUE")
         sourceOnly, destOnly, changed, moved = source.dirCompare(dest, self.config.d)
+        # save scan data (done after compare to save CRC info if CRC mode = match)
         if self.config.save_json:
             source.saveJson()
             dest.saveJson()
@@ -565,7 +571,7 @@ class BackupManager:
                 self.writeLog()
                 print(colourString("Run aborted", "WARNING"))
                 return 1
-        # Backup operations
+        # backup operations
         self.log.append("Start " + self.config.m)
         print(colourString("Starting " + self.config.m, "OKGREEN"))
         if self.config.m == "mirror":
