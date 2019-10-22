@@ -12,7 +12,9 @@ import sys
 import unicodedata
 
 
+#####################################
 ### String manipulation functions ###
+#####################################
 
 def replaceSurrogates(string: str) -> str:
     return string.encode("utf-8", "surrogateescape").decode("utf-8", "replace")
@@ -53,13 +55,15 @@ def prettySize(size: float) -> str:
     else:
         return "{:<10}".format("%s B" %(size))
 
+#########################
 ### File IO functions ###
+#########################
 
-def writeCsv(fName: str, data: list, delimiter = ",") -> None:
+def writeCsv(fName: str, data: list) -> None:
     if not os.path.isdir(os.path.dirname(fName)):
         os.makedirs(os.path.dirname(fName))
     with open(fName, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
-        writer = csv.writer(f, delimiter=delimiter)
+        writer = csv.writer(f, delimiter=",")
         for row in data:
             writer.writerow(row)
 
@@ -75,6 +79,11 @@ def writeJson(fName: str, data: dict) -> None:
         os.makedirs(os.path.dirname(fName))
     with open(fName, "w", encoding="utf-8", errors="surrogateescape") as json_file:
         json.dump(data, json_file, indent=1, separators=(',', ': '))
+
+
+###########################################################
+### Classes for helping make the command line interface ###
+###########################################################
 
 
 class ArgparseCustomFormatter(argparse.HelpFormatter):
@@ -117,7 +126,7 @@ class StatusBar:
                 msg = " " * self.msg_len
                 print(self.title + progress_str + msg, end="\r")
 
-    def update(self, msg:str):
+    def update(self, msg:str) -> None:
         if self.verbose:
             if self.progress_bar:
                 self.progress += 1
@@ -138,7 +147,7 @@ class StatusBar:
                 msg = msg + " " * int(self.msg_len - getStringMaxWidth(msg))
                 print(self.title + progress_str + msg, end="\r")
 
-    def endProgress(self):
+    def endProgress(self) -> None:
         if self.verbose:
             if self.progress_bar:
                 sys.stdout.write("#" * (self.bar_len - self.progress_scaled) + "]\n")
@@ -149,6 +158,11 @@ class StatusBar:
                 else:
                     title = "Copying completed!"
                 print(title + " " * (self.char_display - len(title)))
+
+
+###########################
+### Config helper class ###
+###########################
 
 
 class ConfigObject:
@@ -184,6 +198,11 @@ class ConfigObject:
             self.csv, self.save_json = False, False
 
 
+########################################
+### Directory scanning and comparing ###
+########################################
+
+
 class DirInfo:
     def __init__(self, directory: str, crc_mode: int,  config_dir: str, ignored_folders: list = []):
         self.file_dicts = {}
@@ -200,10 +219,10 @@ class DirInfo:
     def getLoadedDiffs(self) -> list:
         return self.loaded_diffs
 
-    def saveJson(self):
+    def saveJson(self) -> None:
         writeJson(os.path.join(self.dir, self.config_dir, "dirinfo.json"), self.file_dicts)
 
-    def loadJson(self):
+    def loadJson(self) -> None:
         self.loaded_dicts = readJson(os.path.join(self.dir, self.config_dir, "dirinfo.json"))
 
     def crc(self, fileName: str, prev: int = 0) -> int:
@@ -253,7 +272,7 @@ class DirInfo:
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
             scan_status.endProgress()
 
-    def fileMatch(self, f: str, file_dict1: dict, file_dict2: dict, secondInfo, crc_mode: str) -> bool:
+    def fileMatch(self, f: str, file_dict1: dict, file_dict2: dict, secondInfo: 'DirInfo', crc_mode: str) -> bool:
         if crc_mode == "all":
             if file_dict1["crc"] == file_dict2["crc"]:
                 return True
@@ -274,7 +293,7 @@ class DirInfo:
                     return False
         return False
 
-    def dirCompare(self, secondInfo, moves: bool = False, filter_list = False) -> tuple:
+    def dirCompare(self, secondInfo: 'DirInfo', moves: bool = False, filter_list = False) -> tuple:
         file_list = list(self.file_dicts)
         second_dict = secondInfo.getDirDict()
         second_list = list(second_dict)
@@ -312,6 +331,11 @@ class DirInfo:
         return selfOnly, secondOnly, changed, moved
 
 
+##################
+### Main class ###
+##################
+
+
 class BackupManager:
     def __init__(self, args):
         # init logging
@@ -346,15 +370,17 @@ class BackupManager:
         if self.config.backup_time_override:
             self.backup_time = self.config.backup_time_override
 
+    ###############################################
     ### Saving/loading/logging/printing methods ###
+    ###############################################
 
-    def saveJson(self):
+    def saveJson(self) -> None:
         self.config.save, self.config.load = False, False
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
         print(colourString("Config saved", "OKGREEN"))
         sys.exit()
 
-    def loadJson(self):
+    def loadJson(self) -> None:
         current_source = self.config.source
         config_dir = os.path.abspath(os.path.join(self.config.source, self.config.config_dir, "config.json"))
         config = readJson(config_dir)
@@ -364,15 +390,15 @@ class BackupManager:
             print(colourString("The specified source does not match the loaded config file, exiting", "FAIL"))
             sys.exit()
 
-    def writeLog(self):
+    def writeLog(self) -> None:
         if self.config.csv:
             writeCsv(os.path.join(self.config.source, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
 
-    def colourPrint(self, msg, colour):
+    def colourPrint(self, msg: str, colour: str) -> None:
         if self.config.verbose:
             print(colourString(msg, colour))
 
-    def printFileInfo(self, header: str, f: str, d: dict):
+    def printFileInfo(self, header: str, f: str, d: dict) -> None:
         self.log.append([header, f] + [str(d[f])])
         s = colourString(header, "OKBLUE") + replaceSurrogates(f) + "\n\t"
         s = s + colourString(" Size: ", "OKBLUE") + prettySize(d[f]["size"])
@@ -381,23 +407,25 @@ class BackupManager:
             s = s + colourString(" Hash: ", "OKBLUE") + prettyCrc(d[f]["crc"])
         print(s)
 
-    def printFiles(self, l: list, d: dict):
+    def printFiles(self, l: list, d: dict) -> None:
         for f in l:
             self.printFileInfo("File: ", f, d)
 
-    def printChangedFiles(self, l: list, d1: dict, d2: dict):
+    def printChangedFiles(self, l: list, d1: dict, d2: dict) -> None:
         for f in l:
             self.printFileInfo("Source: ", f, d1)
             self.printFileInfo("  Dest: ", f, d2)
 
-    def printMovedFiles(self, l: list, d1: dict, d2: dict):
+    def printMovedFiles(self, l: list, d1: dict, d2: dict) -> None:
         for f in l:
             self.printFileInfo("Source: ", f["source"], d1)
             self.printFileInfo("  Dest: ", f["dest"], d2)
 
+    #############################################################################
     ### File operation methods (only use these methods to perform operations) ###
+    #############################################################################
 
-    def removeFile(self, root: str, fPath: str):
+    def removeFile(self, root: str, fPath: str) -> None:
         try:
             self.log.append(["removeFile()", root, fPath])
             if not self.config.norun:
@@ -414,7 +442,7 @@ class BackupManager:
             self.log.append(["REMOVE ERROR", str(e)])
             print(e)
 
-    def copyFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str):
+    def copyFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
             self.log.append(["copyFile()", source_root, dest_root, source_file, dest_file])
             if not self.config.norun:
@@ -430,7 +458,7 @@ class BackupManager:
             self.log.append(["COPY ERROR", str(e)])
             print(e)
 
-    def moveFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str):
+    def moveFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
             self.log.append(["moveFile()", source_root, dest_root, source_file, dest_file])
             if not self.config.norun:
@@ -447,14 +475,16 @@ class BackupManager:
             self.log.append(["MOVE ERROR", str(e)])
             print(e)
 
+    ##############################################################################
     ### Batch file operation methods (do not perform file operations directly) ###
+    ##############################################################################
 
-    def removeFiles(self, root: str, files: list):
+    def removeFiles(self, root: str, files: list) -> None:
         self.colourPrint("Removing unique files from:\n%s" %(root), "OKBLUE")
         for f in files:
             self.removeFile(root, f)
 
-    def copyFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str):
+    def copyFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str) -> None:
         self.colourPrint("Copying unique files from:\n%s\nto:\n%s" %(source_root, dest_root), "OKBLUE")
         copy_status = StatusBar(len(source_files), self.config.verbose)
         for i in range(len(source_files)):
@@ -462,12 +492,12 @@ class BackupManager:
             self.copyFile(source_root, dest_root, source_files[i], dest_files[i])
         copy_status.endProgress()
 
-    def moveFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str):
+    def moveFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str) -> None:
         self.colourPrint("Archiving unique files from:\n%s" %(source_root), "OKBLUE")
         for i in range(len(source_files)):
             self.moveFile(source_root, dest_root, source_files[i], dest_files[i])
 
-    def movedFiles(self, moved: list, reverse: bool = False):
+    def movedFiles(self, moved: list, reverse: bool = False) -> None:
         # conflicts shouldn't happen since moved is a subset of files from sourceOnly and destOnly
         # depends on source_info.dirCompare(dest_info) otherwise source and dest will be reversed
         self.colourPrint("Moving files on destination to match source", "OKBLUE")
@@ -482,12 +512,12 @@ class BackupManager:
                 newLoc = f["source"]
             self.moveFile(dest, dest, oldLoc, newLoc)
 
-    def archiveFile(self, root_path: str, file_path: str):
+    def archiveFile(self, root_path: str, file_path: str) -> None:
         if not self.config.noarchive:
             archive_path = os.path.join(self.config.archive_dir, self.backup_time, file_path)
             self.moveFile(root_path, root_path, file_path, archive_path)
 
-    def handleConflicts(self, source, dest, source_dict, dest_dict, changed):
+    def handleConflicts(self, source, dest, source_dict, dest_dict, changed) -> None:
         self.colourPrint("Handling file conflicts", "OKBLUE")
         copy_status = StatusBar(len(changed), self.config.verbose)
         for fp in changed:
@@ -509,7 +539,9 @@ class BackupManager:
                 break
         copy_status.endProgress()
 
+    ######################################
     ### Main backup/mirror/sync method ###
+    ######################################
 
     def backup(self):
         if self.config.norun:
