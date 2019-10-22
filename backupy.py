@@ -517,7 +517,7 @@ class BackupManager:
             archive_path = os.path.join(self.config.archive_dir, self.backup_time, file_path)
             self.moveFile(root_path, root_path, file_path, archive_path)
 
-    def handleConflicts(self, source, dest, source_dict, dest_dict, changed) -> None:
+    def handleConflicts(self, source: str, dest: str, source_dict: dict, dest_dict:dict, changed: list) -> None:
         self.colourPrint("Handling file conflicts", "OKBLUE")
         copy_status = StatusBar(len(changed), self.config.verbose)
         for fp in changed:
