@@ -398,13 +398,20 @@ class BackupManager:
         if self.config.verbose:
             print(colourString(msg, colour))
 
-    def printFileInfo(self, header: str, f: str, d: dict) -> None:
+    def printFileInfo(self, header: str, f: str, d: dict, sub_header: str = "", skip_info: bool = False) -> None:
         self.log.append([header, f] + [str(d[f])])
-        s = colourString(header, "OKBLUE") + replaceSurrogates(f) + "\n\t"
-        s = s + colourString(" Size: ", "OKBLUE") + prettySize(d[f]["size"])
-        s = s + colourString(" Modified: ", "OKBLUE") + time.ctime(d[f]["mtime"])
-        if "crc" in d[f]:
-            s = s + colourString(" Hash: ", "OKBLUE") + prettyCrc(d[f]["crc"])
+        if header == "":
+            s = ""
+        else:
+            s = colourString(header, "OKBLUE") + replaceSurrogates(f)
+            if not skip_info:
+                s = s + "\n"
+        if not skip_info:
+            s = s + colourString(sub_header, "OKBLUE") + "\t"
+            s = s + colourString(" Size: ", "OKBLUE") + prettySize(d[f]["size"])
+            s = s + colourString(" Modified: ", "OKBLUE") + time.ctime(d[f]["mtime"])
+            if "crc" in d[f]:
+                s = s + colourString(" Hash: ", "OKBLUE") + prettyCrc(d[f]["crc"])
         print(s)
 
     def printFiles(self, l: list, d: dict) -> None:
@@ -413,12 +420,12 @@ class BackupManager:
 
     def printChangedFiles(self, l: list, d1: dict, d2: dict) -> None:
         for f in l:
-            self.printFileInfo("Source: ", f, d1)
-            self.printFileInfo("  Dest: ", f, d2)
+            self.printFileInfo("File: ", f, d1, " Source")
+            self.printFileInfo("", f, d2, "   Dest")
 
     def printMovedFiles(self, l: list, d1: dict, d2: dict) -> None:
         for f in l:
-            self.printFileInfo("Source: ", f["source"], d1)
+            self.printFileInfo("Source: ", f["source"], d1, skip_info=True)
             self.printFileInfo("  Dest: ", f["dest"], d2)
 
     #############################################################################
