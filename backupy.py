@@ -725,8 +725,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
-
-# TODO
-# 1. Increase test coverage
-# 2. Release gooey build
