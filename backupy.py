@@ -100,20 +100,20 @@ class StatusBar:
         terminal_width = shutil.get_terminal_size()[0]
         if terminal_width < 16:
             self.verbose = False
-        elif terminal_width < 80 and total >= 0:
-            self.progress_bar = True
+        elif total <= 0:
+            self.progress_bar = False
         if self.verbose:
             if self.progress_bar:
                 self.bar_len = min(68, terminal_width - 15)
                 self.progress_scaled = 0
                 self.progress = 0
-                self.total = total
+                self.total = total # note self.total is an int when progress_bar is true
                 sys.stdout.write("Copying: [" + "-"*self.bar_len + "]\b" + "\b"*self.bar_len)
                 sys.stdout.flush()
             else:
                 self.char_display = terminal_width - 2
                 self.progress = 0
-                self.total = str(total)
+                self.total = str(total) # note self.total is a str when progress_bar is false
                 if self.total == "-1":
                     self.title = "Scanning file "
                     progress_str = str(self.progress) + ": "
@@ -155,6 +155,8 @@ class StatusBar:
             else:
                 if self.total == "-1":
                     title = "Scanning completed!"
+                elif self.total == "0":
+                    title = "No action necessary"
                 else:
                     title = "File operations completed!"
                 print(title + " " * (self.char_display - len(title)))
@@ -396,7 +398,10 @@ class BackupManager:
 
     def colourPrint(self, msg: str, colour: str) -> None:
         if self.config.verbose:
-            print(colourString(msg, colour))
+            if colour == "NONE":
+                print(msg)
+            else:
+                print(colourString(msg, colour))
 
     def printFileInfo(self, header: str, f: str, d: dict, sub_header: str = "", skip_info: bool = False) -> None:
         self.log.append([header, f] + [str(d[f])])
@@ -487,12 +492,13 @@ class BackupManager:
     ##############################################################################
 
     def removeFiles(self, root: str, files: list) -> None:
-        self.colourPrint("Removing unique files from:\n%s" %(root), "OKBLUE")
+        self.colourPrint("Removing %s unique files from:\n%s" %(len(files), root), "OKBLUE")
         for f in files:
             self.removeFile(root, f)
+        self.colourPrint("Removal completed!", "NONE")
 
     def copyFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str) -> None:
-        self.colourPrint("Copying unique files from:\n%s\nto:\n%s" %(source_root, dest_root), "OKBLUE")
+        self.colourPrint("Copying %s unique files from:\n%s\nto:\n%s" %(len(source_files), source_root, dest_root), "OKBLUE")
         copy_status = StatusBar(len(source_files), self.config.verbose)
         for i in range(len(source_files)):
             copy_status.update(source_files[i])
@@ -500,14 +506,15 @@ class BackupManager:
         copy_status.endProgress()
 
     def moveFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str) -> None:
-        self.colourPrint("Archiving unique files from:\n%s" %(source_root), "OKBLUE")
+        self.colourPrint("Archiving %s unique files from:\n%s" %(len(source_files), source_root), "OKBLUE")
         for i in range(len(source_files)):
             self.moveFile(source_root, dest_root, source_files[i], dest_files[i])
+        self.colourPrint("Archiving completed!", "NONE")
 
     def movedFiles(self, moved: list, reverse: bool = False) -> None:
         # conflicts shouldn't happen since moved is a subset of files from sourceOnly and destOnly
         # depends on source_info.dirCompare(dest_info) otherwise source and dest will be reversed
-        self.colourPrint("Moving files on destination to match source", "OKBLUE")
+        self.colourPrint("Moving %s files on destination to match source" %(len(moved)), "OKBLUE")
         for f in moved:
             if reverse:
                 dest = self.config.source
@@ -518,6 +525,7 @@ class BackupManager:
                 oldLoc = f["dest"]
                 newLoc = f["source"]
             self.moveFile(dest, dest, oldLoc, newLoc)
+        self.colourPrint("Moving completed!", "NONE")
 
     def archiveFile(self, root_path: str, file_path: str) -> None:
         if not self.config.noarchive:
@@ -525,7 +533,7 @@ class BackupManager:
             self.moveFile(root_path, root_path, file_path, archive_path)
 
     def handleConflicts(self, source: str, dest: str, source_dict: dict, dest_dict:dict, changed: list) -> None:
-        self.colourPrint("Handling file conflicts", "OKBLUE")
+        self.colourPrint("Handling %s file conflicts" %(len(changed)), "OKBLUE")
         copy_status = StatusBar(len(changed), self.config.verbose)
         for fp in changed:
             copy_status.update(fp)
