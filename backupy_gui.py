@@ -1,12 +1,12 @@
-from backupy import *
+import backupy
 from gooey import Gooey, GooeyParser
 
-@Gooey
+@Gooey()
 def main_gui():
     parser = GooeyParser(description="BackuPy: A small python program for backing up directories with an emphasis on clear rules, simple usage and logging changes")
-    parser.add_argument("source", action="store", type=str, widget='DirChooser',
+    parser.add_argument("--source", action="store", type=str, widget='DirChooser', required=True,
                         help="Path of source")
-    parser.add_argument("dest", action="store", type=str, nargs="?", default=None, widget='DirChooser',
+    parser.add_argument("--dest", action="store", type=str, default=None, widget='DirChooser',
                         help="Path of destination")
     parser.add_argument("-m", type=str.lower, default="mirror", metavar="mode", choices=["mirror", "backup", "sync"],
                         help="Backup mode:\n"
@@ -52,9 +52,9 @@ def main_gui():
     parser.add_argument("-l", "--load", action="store_true",
                         help="Load configuration from source")
     args = parser.parse_args()
-    backup_manager = BackupManager(args)
+    backup_manager = backupy.BackupManager(args)
     backup_manager.backup()
 
 
 if __name__ == "__main__":
-    sys.exit(main_gui())
+    main_gui()
