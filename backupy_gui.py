@@ -1,3 +1,4 @@
+import sys
 import backupy
 from gooey import Gooey, GooeyParser
 
@@ -44,7 +45,7 @@ def main_gui():
     parser.add_argument("--suppress", action="store_true",
                         help="Suppress logging; by default logs are written to source/.backupy/log-yymmdd-HHMM.csv and /.backupy/dirinfo.json")
     parser.add_argument("--goahead", action="store_true",
-                        help="Go ahead without prompting for confirmation (MUST BE ENABLED)")
+                        help="Go ahead without prompting for confirmation (MUST BE ENABLED)") # https://github.com/chriskiehl/Gooey/issues/222
     parser.add_argument("-n", "--norun", action="store_true",
                         help="Simulate the run according to your configuration")
     parser.add_argument("-s", "--save", action="store_true",
@@ -57,4 +58,4 @@ def main_gui():
 
 
 if __name__ == "__main__":
-    main_gui()
+    sys.exit(main_gui())
