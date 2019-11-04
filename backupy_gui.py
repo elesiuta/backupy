@@ -1,16 +1,15 @@
 from backupy import *
-from gooey import Gooey
+from gooey import Gooey, GooeyParser
 
 @Gooey
 def main_gui():
-    parser = argparse.ArgumentParser(description="BackuPy: A small python program for backing up directories with an emphasis on clear rules, simple usage and logging changes", formatter_class=ArgparseCustomFormatter)
-    parser.add_argument("source", action="store", type=str,
+    parser = GooeyParser(description="BackuPy: A small python program for backing up directories with an emphasis on clear rules, simple usage and logging changes")
+    parser.add_argument("source", action="store", type=str, widget='DirChooser',
                         help="Path of source")
-    parser.add_argument("dest", action="store", type=str, nargs="?", default=None,
+    parser.add_argument("dest", action="store", type=str, nargs="?", default=None, widget='DirChooser',
                         help="Path of destination")
     parser.add_argument("-m", type=str.lower, default="mirror", metavar="mode", choices=["mirror", "backup", "sync"],
-                        help="F!\n"
-                             "Backup mode:\n"
+                        help="Backup mode:\n"
                              "How to handle files that exist only on one side?\n"
                              "  MIRROR (default)\n"
                              "    [source-only -> destination, delete destination-only]\n"
@@ -19,8 +18,7 @@ def main_gui():
                              "  SYNC\n"
                              "    [source-only -> destination, destination-only -> source]")
     parser.add_argument("-c", type=str.lower, default="source", metavar="mode", choices=["source", "dest", "new", "no"],
-                        help="F!\n"
-                             "Conflict resolution mode:\n"
+                        help="Conflict resolution mode:\n"
                              "How to handle files that exist on both sides but differ?\n"
                              "  SOURCE (default)\n"
                              "    [copy source to destination]\n"
@@ -31,8 +29,7 @@ def main_gui():
                              "  NO\n"
                              "    [do nothing]")
     parser.add_argument("-r", type=str.lower, default="none", metavar="mode", choices=["none", "match", "all"],
-                        help="F!\n"
-                             "CRC mode:\n"
+                        help="CRC mode:\n"
                              "How to compare files that exist on both sides?\n"
                              "  NONE (default)\n"
                              "    [only compare file size and time, fastest]\n"
