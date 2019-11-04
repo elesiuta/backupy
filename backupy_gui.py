@@ -1,7 +1,7 @@
 import backupy
 from gooey import Gooey, GooeyParser
 
-@Gooey()
+@Gooey(richtext_controls=True)
 def main_gui():
     parser = GooeyParser(description="BackuPy: A small python program for backing up directories with an emphasis on clear rules, simple usage and logging changes")
     parser.add_argument("--source", action="store", type=str, widget='DirChooser', required=True,
@@ -44,7 +44,7 @@ def main_gui():
     parser.add_argument("--suppress", action="store_true",
                         help="Suppress logging; by default logs are written to source/.backupy/log-yymmdd-HHMM.csv and /.backupy/dirinfo.json")
     parser.add_argument("--goahead", action="store_true",
-                        help="Go ahead without prompting for confirmation")
+                        help="Go ahead without prompting for confirmation (MUST BE ENABLED)")
     parser.add_argument("-n", "--norun", action="store_true",
                         help="Simulate the run according to your configuration")
     parser.add_argument("-s", "--save", action="store_true",
