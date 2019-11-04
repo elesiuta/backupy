@@ -42,6 +42,10 @@ def colourString(string: str, colour: str) -> str:
     string = replaceSurrogates(string)
     return colours[colour] + string + colours["ENDC"]
 
+def guiColourString(string: str, colour: str) -> str:
+    string = replaceSurrogates(string)
+    return string
+
 def prettyCrc(prev: int) -> str:
     return "%X" %(prev & 0xFFFFFFFF)
 
@@ -345,6 +349,10 @@ class BackupManager:
         self.backup_time = datetime.datetime.now().strftime("%y%m%d-%H%M")
         # init gui flag
         self.gui = gui
+        # replace functions if gui
+        if self.gui:
+            global colourString # make this a BackupManager method later
+            colourString = guiColourString
         # init config
         if type(args) != dict:
             args = vars(args)

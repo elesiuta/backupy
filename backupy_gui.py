@@ -2,7 +2,7 @@ import sys
 import backupy
 from gooey import Gooey, GooeyParser
 
-@Gooey(richtext_controls=True)
+@Gooey(richtext_controls=False)
 def main_gui():
     parser = GooeyParser(description="BackuPy: A small python program for backing up directories with an emphasis on clear rules, simple usage and logging changes")
     parser.add_argument("--source", action="store", type=str, widget='DirChooser', required=True,
@@ -53,7 +53,7 @@ def main_gui():
     parser.add_argument("-l", "--load", action="store_true",
                         help="Load configuration from source")
     args = parser.parse_args()
-    backup_manager = backupy.BackupManager(args)
+    backup_manager = backupy.BackupManager(args, gui=True)
     backup_manager.backup()
 
 
