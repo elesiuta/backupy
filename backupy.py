@@ -155,8 +155,8 @@ class StatusBar:
             else:
                 if self.total == "-1":
                     title = "Scanning completed!"
-                elif self.total == "0":
-                    title = "No action necessary"
+                # elif self.total == "0":
+                #     title = "No action necessary"
                 else:
                     title = "File operations completed!"
                 print(title + " " * (self.char_display - len(title)))
