@@ -100,7 +100,7 @@ class StatusBar:
         terminal_width = shutil.get_terminal_size()[0]
         if terminal_width < 16:
             self.verbose = False
-        elif total <= 0:
+        elif total < 0:
             self.progress_bar = False
         if self.verbose:
             if self.progress_bar:
