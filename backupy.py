@@ -156,7 +156,7 @@ class StatusBar:
                 if self.total == "-1":
                     title = "Scanning completed!"
                 else:
-                    title = "Copying completed!"
+                    title = "File operations completed!"
                 print(title + " " * (self.char_display - len(title)))
 
 
@@ -579,18 +579,37 @@ class BackupManager:
         if self.config.save_json:
             source.saveJson()
             dest.saveJson()
+        # prepare diff messages
+        if self.config.noarchive:
+            archive_msg = "delete"
+        else:
+            archive_msg = "archive"
+        if self.config.m == "sync":
+            dest_msg = "(copy to source)"
+        elif self.config.m == "backup":
+            dest_msg = "(left as is)"
+        elif self.config.m == "mirror":
+            dest_msg = "(to be " + archive_msg + "d)"
+        if self.config.c == "source":
+            conflict_msg = "(" + archive_msg + " dest and copy from source)"
+        elif self.config.c == "dest":
+            conflict_msg = "(" + archive_msg + " source and copy from dest)"
+        elif self.config.c == "new":
+            conflict_msg = "(" + archive_msg + " older and copy newer)"
+        elif self.config.c == "no":
+            conflict_msg = "(left as is)"
         # print differences
-        print(colourString("Source Only: %s" %(len(sourceOnly)), "HEADER"))
+        print(colourString("Source Only (copy to dest): %s" %(len(sourceOnly)), "HEADER"))
         self.log.append("Source Only")
         self.printFiles(sourceOnly, source_dict)
-        print(colourString("Destination Only: %s" %(len(destOnly)), "HEADER"))
+        print(colourString("Destination Only %s: %s" %(dest_msg, len(destOnly)), "HEADER"))
         self.log.append("Destination Only")
         self.printFiles(destOnly, dest_dict)
-        print(colourString("File Conflicts: %s" %(len(changed)), "HEADER"))
+        print(colourString("File Conflicts %s: %s" %(conflict_msg, len(changed)), "HEADER"))
         self.log.append("File Conflicts")
         self.printChangedFiles(changed, source_dict, dest_dict)
         if self.config.d:
-            print(colourString("Moved Files: %s" %(len(moved)), "HEADER"))
+            print(colourString("Moved Files (move on dest to match source): %s" %(len(moved)), "HEADER"))
             self.log.append("Moved Files")
             self.printMovedFiles(moved, source_dict, dest_dict)
         # wait for go ahead
