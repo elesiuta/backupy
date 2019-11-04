@@ -339,10 +339,12 @@ class DirInfo:
 
 
 class BackupManager:
-    def __init__(self, args):
+    def __init__(self, args: typing.Union[argparse.Namespace, dict], gui: bool = False):
         # init logging
         self.log = []
         self.backup_time = datetime.datetime.now().strftime("%y%m%d-%H%M")
+        # init gui
+        self.gui = gui
         # init config
         if type(args) != dict:
             args = vars(args)
