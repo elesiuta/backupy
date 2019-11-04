@@ -343,7 +343,7 @@ class BackupManager:
         # init logging
         self.log = []
         self.backup_time = datetime.datetime.now().strftime("%y%m%d-%H%M")
-        # init gui
+        # init gui flag
         self.gui = gui
         # init config
         if type(args) != dict:
