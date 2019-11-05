@@ -12,53 +12,6 @@ import sys
 import unicodedata
 
 
-#####################################
-### String manipulation functions ###
-#####################################
-
-def replaceSurrogates(string: str) -> str:
-    return string.encode("utf-8", "surrogateescape").decode("utf-8", "replace")
-
-def getStringMaxWidth(string: str) -> int:
-    width = 0
-    for char in string:
-        if unicodedata.east_asian_width(char) in ["W", "F", "A"]:
-            width += 2
-        else:
-            width += 1
-    return width
-
-def colourString(string: str, colour: str) -> str:
-    colours = {
-        "HEADER" : '\033[95m',
-        "OKBLUE" : '\033[94m',
-        "OKGREEN" : '\033[92m',
-        "WARNING" : '\033[93m',
-        "FAIL" : '\033[91m',
-        "ENDC" : '\033[0m',
-        "BOLD" : '\033[1m',
-        "UNDERLINE" : '\033[4m'
-    }
-    string = replaceSurrogates(string)
-    return colours[colour] + string + colours["ENDC"]
-
-def guiColourString(string: str, colour: str) -> str:
-    string = replaceSurrogates(string)
-    return string
-
-def prettyCrc(prev: int) -> str:
-    return "%X" %(prev & 0xFFFFFFFF)
-
-def prettySize(size: float) -> str:
-    if size > 10**9:
-        return "{:<10}".format("%s GB" %(round(size/10**9, 2)))
-    elif size > 10**6:
-        return "{:<10}".format("%s MB" %(round(size/10**6, 2)))
-    elif size > 10**3:
-        return "{:<10}".format("%s KB" %(round(size/10**3, 2)))
-    else:
-        return "{:<10}".format("%s B" %(size))
-
 #########################
 ### File IO functions ###
 #########################
@@ -85,9 +38,9 @@ def writeJson(fName: str, data: dict) -> None:
         json.dump(data, json_file, indent=1, separators=(',', ': '))
 
 
-###########################################################
-### Classes for helping make the command line interface ###
-###########################################################
+######################################################
+### Classes for helping the command line interface ###
+######################################################
 
 
 class ArgparseCustomFormatter(argparse.HelpFormatter):
@@ -130,6 +83,15 @@ class StatusBar:
                 msg = " " * self.msg_len
                 print(self.title + progress_str + msg, end="\r")
 
+    def getStringMaxWidth(self, string: str) -> int:
+        width = 0
+        for char in string:
+            if unicodedata.east_asian_width(char) in ["W", "F", "A"]:
+                width += 2
+            else:
+                width += 1
+        return width
+
     def update(self, msg:str) -> None:
         if self.verbose:
             if self.progress_bar:
@@ -145,10 +107,10 @@ class StatusBar:
                     self.msg_len = self.char_display - len(progress_str) - len(self.title)
                 else:
                     progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + self.total + ": "
-                while getStringMaxWidth(msg) > self.msg_len:
+                while self.getStringMaxWidth(msg) > self.msg_len:
                     splice = (len(msg) - 4) // 2
                     msg = msg[:splice] + "..." + msg[-splice:]
-                msg = msg + " " * int(self.msg_len - getStringMaxWidth(msg))
+                msg = msg + " " * int(self.msg_len - self.getStringMaxWidth(msg))
                 print(self.title + progress_str + msg, end="\r")
 
     def endProgress(self) -> None:
@@ -349,10 +311,6 @@ class BackupManager:
         self.backup_time = datetime.datetime.now().strftime("%y%m%d-%H%M")
         # init gui flag
         self.gui = gui
-        # replace functions if gui
-        if self.gui:
-            global colourString # make this a BackupManager method later
-            colourString = guiColourString
         # init config
         if type(args) != dict:
             args = vars(args)
@@ -367,10 +325,10 @@ class BackupManager:
             self.config.norun = norun
         # check source & dest
         if not os.path.isdir(self.config.source):
-            print(colourString("Invalid source directory: " + self.config.source, "FAIL"))
+            print(self.colourString("Invalid source directory: " + self.config.source, "FAIL"))
             sys.exit()
         if self.config.dest == None:
-            print(colourString("Destination directory not provided or config failed to load", "FAIL"))
+            print(self.colourString("Destination directory not provided or config failed to load", "FAIL"))
             sys.exit()
         self.config.source = os.path.abspath(self.config.source)
         self.config.dest = os.path.abspath(self.config.dest)
@@ -382,51 +340,91 @@ class BackupManager:
         if self.config.backup_time_override:
             self.backup_time = self.config.backup_time_override
 
-    ###############################################
-    ### Saving/loading/logging/printing methods ###
-    ###############################################
+    ######################################
+    ### Saving/loading/logging methods ###
+    ######################################
 
     def saveJson(self) -> None:
         self.config.save, self.config.load = False, False
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
-        print(colourString("Config saved", "OKGREEN"))
+        print(self.colourString("Config saved", "OKGREEN"))
         sys.exit()
 
     def loadJson(self) -> None:
         current_source = self.config.source
         config_dir = os.path.abspath(os.path.join(self.config.source, self.config.config_dir, "config.json"))
         config = readJson(config_dir)
-        print(colourString("Loaded config from:\n" + config_dir, "OKGREEN"))
+        print(self.colourString("Loaded config from:\n" + config_dir, "OKGREEN"))
         self.config = ConfigObject(config)
         if os.path.abspath(current_source) != os.path.abspath(self.config.source):
-            print(colourString("The specified source does not match the loaded config file, exiting", "FAIL"))
+            print(self.colourString("The specified source does not match the loaded config file, exiting", "FAIL"))
             sys.exit()
 
     def writeLog(self) -> None:
         if self.config.csv:
             writeCsv(os.path.join(self.config.source, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
 
+    ###################################
+    ### String manipulation methods ###
+    ###################################
+
+    def replaceSurrogates(self, string: str) -> str:
+        return string.encode("utf-8", "surrogateescape").decode("utf-8", "replace")
+
+    def colourString(self, string: str, colour: str) -> str:
+        colours = {
+            "HEADER" : '\033[95m',
+            "OKBLUE" : '\033[94m',
+            "OKGREEN" : '\033[92m',
+            "WARNING" : '\033[93m',
+            "FAIL" : '\033[91m',
+            "ENDC" : '\033[0m',
+            "BOLD" : '\033[1m',
+            "UNDERLINE" : '\033[4m'
+        }
+        string = self.replaceSurrogates(string)
+        if self.gui:
+            return string
+        return colours[colour] + string + colours["ENDC"]
+
+    def prettyCrc(self, prev: int) -> str:
+        return "%X" %(prev & 0xFFFFFFFF)
+
+    def prettySize(self, size: float) -> str:
+        if size > 10**9:
+            return "{:<10}".format("%s GB" %(round(size/10**9, 2)))
+        elif size > 10**6:
+            return "{:<10}".format("%s MB" %(round(size/10**6, 2)))
+        elif size > 10**3:
+            return "{:<10}".format("%s KB" %(round(size/10**3, 2)))
+        else:
+            return "{:<10}".format("%s B" %(size))
+
+    ########################
+    ### Printing methods ###
+    ########################
+
     def colourPrint(self, msg: str, colour: str) -> None:
         if self.config.verbose:
             if colour == "NONE":
                 print(msg)
             else:
-                print(colourString(msg, colour))
+                print(self.colourString(msg, colour))
 
     def printFileInfo(self, header: str, f: str, d: dict, sub_header: str = "", skip_info: bool = False) -> None:
         self.log.append([header, f] + [str(d[f])])
         if header == "":
             s = ""
         else:
-            s = colourString(header, "OKBLUE") + replaceSurrogates(f)
+            s = self.colourString(header, "OKBLUE") + self.replaceSurrogates(f)
             if not skip_info:
                 s = s + "\n"
         if not skip_info:
-            s = s + colourString(sub_header, "OKBLUE") + "\t"
-            s = s + colourString(" Size: ", "OKBLUE") + prettySize(d[f]["size"])
-            s = s + colourString(" Modified: ", "OKBLUE") + time.ctime(d[f]["mtime"])
+            s = s + self.colourString(sub_header, "OKBLUE") + "\t"
+            s = s + self.colourString(" Size: ", "OKBLUE") + self.prettySize(d[f]["size"])
+            s = s + self.colourString(" Modified: ", "OKBLUE") + time.ctime(d[f]["mtime"])
             if "crc" in d[f]:
-                s = s + colourString(" Hash: ", "OKBLUE") + prettyCrc(d[f]["crc"])
+                s = s + self.colourString(" Hash: ", "OKBLUE") + self.prettyCrc(d[f]["crc"])
         print(s)
 
     def printFiles(self, l: list, d: dict) -> None:
@@ -570,7 +568,7 @@ class BackupManager:
 
     def backup(self):
         if self.config.norun:
-            print(colourString("Simulation Run", "HEADER"))
+            print(self.colourString("Simulation Run", "HEADER"))
         # init dir scanning and load previous scan data if available
         source = DirInfo(self.config.source, self.config.r, self.config.config_dir, [self.config.archive_dir])
         dest = DirInfo(self.config.dest, self.config.r, self.config.config_dir, [self.config.archive_dir])
@@ -588,7 +586,7 @@ class BackupManager:
         if self.config.m != "sync" and len(dest_diffs) >= 1:
             self.log.append(["CHANGES ON DESTINATION SINCE LAST SCAN"])
             self.log += dest_diffs
-            print(colourString("Some files in the destination folder have changed since the last scan, this may include files from the previous backup, see log for details", "WARNING"))
+            print(self.colourString("Some files in the destination folder have changed since the last scan, this may include files from the previous backup, see log for details", "WARNING"))
             self.writeLog()
         # compare directories, this is where CRC mode = match takes place
         self.colourPrint("Comparing directories...", "OKBLUE")
@@ -617,17 +615,17 @@ class BackupManager:
         elif self.config.c == "no":
             conflict_msg = "(left as is)"
         # print differences
-        print(colourString("Source Only (copy to dest): %s" %(len(sourceOnly)), "HEADER"))
+        print(self.colourString("Source Only (copy to dest): %s" %(len(sourceOnly)), "HEADER"))
         self.log.append("Source Only")
         self.printFiles(sourceOnly, source_dict)
-        print(colourString("Destination Only %s: %s" %(dest_msg, len(destOnly)), "HEADER"))
+        print(self.colourString("Destination Only %s: %s" %(dest_msg, len(destOnly)), "HEADER"))
         self.log.append("Destination Only")
         self.printFiles(destOnly, dest_dict)
-        print(colourString("File Conflicts %s: %s" %(conflict_msg, len(changed)), "HEADER"))
+        print(self.colourString("File Conflicts %s: %s" %(conflict_msg, len(changed)), "HEADER"))
         self.log.append("File Conflicts")
         self.printChangedFiles(changed, source_dict, dest_dict)
         if self.config.d:
-            print(colourString("Moved Files (move on dest to match source): %s" %(len(moved)), "HEADER"))
+            print(self.colourString("Moved Files (move on dest to match source): %s" %(len(moved)), "HEADER"))
             self.log.append("Moved Files")
             self.printMovedFiles(moved, source_dict, dest_dict)
         # wait for go ahead
@@ -636,20 +634,20 @@ class BackupManager:
             if self.config.norun:
                 simulation = "simulated "
             if len(sourceOnly) == 0 and len(destOnly) == 0 and len(changed) == 0 and len(moved) == 0:
-                print(colourString("Directories already match, completed!", "OKGREEN"))
+                print(self.colourString("Directories already match, completed!", "OKGREEN"))
                 self.log.append(["No changes found"])
                 self.writeLog()
                 return 0
-            print(colourString("Scan complete, continue with %s%s (y/N)?" %(simulation, self.config.m), "OKGREEN"))
+            print(self.colourString("Scan complete, continue with %s%s (y/N)?" %(simulation, self.config.m), "OKGREEN"))
             go = input("> ")
             if go[0].lower() != "y":
                 self.log.append("Aborted")
                 self.writeLog()
-                print(colourString("Run aborted", "WARNING"))
+                print(self.colourString("Run aborted", "WARNING"))
                 return 1
         # backup operations
         self.log.append("Start " + self.config.m)
-        print(colourString("Starting " + self.config.m, "OKGREEN"))
+        print(self.colourString("Starting " + self.config.m, "OKGREEN"))
         if self.config.m == "mirror":
             self.copyFiles(self.config.source, self.config.dest, sourceOnly, sourceOnly)
             if self.config.noarchive:
@@ -673,7 +671,7 @@ class BackupManager:
             self.handleConflicts(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         self.log.append("Completed")
         self.writeLog()
-        print(colourString("Completed!", "OKGREEN"))
+        print(self.colourString("Completed!", "OKGREEN"))
 
 
 def main():
