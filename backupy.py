@@ -682,7 +682,7 @@ def main():
                         help="Path of destination")
     parser.add_argument("-m", type=str.lower, default="mirror", metavar="mode", choices=["mirror", "backup", "sync"],
                         help="F!\n"
-                             "Backup mode:\n"
+                             "Main mode:\n"
                              "How to handle files that exist only on one side?\n"
                              "  MIRROR (default)\n"
                              "    [source-only -> destination, delete destination-only]\n"
@@ -702,18 +702,18 @@ def main():
                              "    [copy newer to opposite side]\n"
                              "  NO\n"
                              "    [do nothing]")
-    parser.add_argument("-r", type=str.lower, default="none", metavar="mode", choices=["none", "match", "all"],
+    parser.add_argument("-f", type=str.lower, default="attr", metavar="mode", choices=["attr", "both", "crc"],
                         help="F!\n"
-                             "CRC mode:\n"
-                             "How to compare files that exist on both sides?\n"
-                             "  NONE (default)\n"
-                             "    [only compare file size and time, fastest]\n"
-                             "  MATCH\n"
-                             "    [only compare CRC for files with matching size and time]\n"
-                             "  ALL\n"
-                             "    [compare CRC first for all files, slowest]")
-    parser.add_argument("-d", action="store_true",
-                        help="Try and detect moved files")
+                             "File compare mode:\n"
+                             "How to detect files that exist on both sides but differ?\n"
+                             "  ATTR (default)\n"
+                             "    [compare file attributes: mod-time and size]\n"
+                             "  BOTH\n"
+                             "    [compare file attributes first, then check CRC]\n"
+                             "  CRC\n"
+                             "    [compare CRC only]")
+    parser.add_argument("--nomoves", action="store_true",
+                        help="Don't detect moved or renamed files")
     parser.add_argument("--noarchive", action="store_true",
                         help="Disable archiving, by default files are moved to /.backupy/yymmdd-HHMM/ on their respective side before being removed or overwritten")
     parser.add_argument("--suppress", action="store_true",
