@@ -9,18 +9,16 @@ def main_gui():
                         help="Path of source")
     parser.add_argument("--dest", action="store", type=str, default=None, widget='DirChooser',
                         help="Path of destination")
-    parser.add_argument("-m", type=str.lower, default="mirror", metavar="mode", choices=["mirror", "backup", "sync"],
-                        help="Backup mode:\n"
-                             "How to handle files that exist only on one side?\n"
+    parser.add_argument("-m", type=str.lower, default="mirror", metavar="Backup mode", choices=["mirror", "backup", "sync"],
+                        help="How to handle files that exist only on one side?\n"
                              "  MIRROR (default)\n"
                              "    [source-only -> destination, delete destination-only]\n"
                              "  BACKUP\n"
                              "    [source-only -> destination, keep destination-only]\n"
                              "  SYNC\n"
                              "    [source-only -> destination, destination-only -> source]")
-    parser.add_argument("-c", type=str.lower, default="source", metavar="mode", choices=["source", "dest", "new", "no"],
-                        help="Conflict resolution mode:\n"
-                             "How to handle files that exist on both sides but differ?\n"
+    parser.add_argument("-c", type=str.lower, default="source", metavar="Conflict resolution mode", choices=["source", "dest", "new", "no"],
+                        help="How to handle files that exist on both sides but differ?\n"
                              "  SOURCE (default)\n"
                              "    [copy source to destination]\n"
                              "  DEST\n"
@@ -29,16 +27,15 @@ def main_gui():
                              "    [copy newer to opposite side]\n"
                              "  NO\n"
                              "    [do nothing]")
-    parser.add_argument("-r", type=str.lower, default="none", metavar="mode", choices=["none", "match", "all"],
-                        help="CRC mode:\n"
-                             "How to compare files that exist on both sides?\n"
+    parser.add_argument("-r", type=str.lower, default="none", metavar="CRC compare mode", choices=["none", "match", "all"],
+                        help="How to compare files that exist on both sides?\n"
                              "  NONE (default)\n"
                              "    [only compare file size and time, fastest]\n"
                              "  MATCH\n"
                              "    [only compare CRC for files with matching size and time]\n"
                              "  ALL\n"
                              "    [compare CRC first for all files, slowest]")
-    parser.add_argument("-d", action="store_true",
+    parser.add_argument("-d", metavar="Move detection mode", action="store_true",
                         help="Try and detect moved files")
     parser.add_argument("--noarchive", action="store_true",
                         help="Disable archiving, by default files are moved to /.backupy/yymmdd-HHMM/ on their respective side before being removed or overwritten")
