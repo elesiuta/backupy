@@ -211,9 +211,9 @@ class DirInfo:
 
     def updateDictRemove(self, root: str, fPath: str, secondInfo: 'DirInfo') -> None:
         if root == self.dir:
-            tmp = self.file_dicts.pop(fPath)
+            _ = self.file_dicts.pop(fPath)
         elif root == secondInfo.dir:
-            tmp = secondInfo.file_dicts.pop(fPath)
+            _ = secondInfo.file_dicts.pop(fPath)
         else:
             raise Exception("Update Dict Error")
 
@@ -620,11 +620,7 @@ class BackupManager:
             self.writeLog()
         # compare directories, this is where CRC mode = match takes place
         self.colourPrint("Comparing directories...", "OKBLUE")
-        sourceOnly, destOnly, changed, moved = self.source.dirCompare(dest, self.config.d)
-        # save scan data (done after compare to save CRC info if CRC mode = match)
-        if self.config.save_json:
-            self.source.saveJson()
-            self.dest.saveJson()
+        sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.d)
         # prepare diff messages
         if self.config.noarchive:
             archive_msg = "delete"
@@ -758,7 +754,7 @@ def main():
                         help="Simulate the run according to your configuration")
     parser.add_argument("--save", action="store_true",
                         help="Save configuration in source")
-    parser.add_argument("-l", "--load", action="store_true",
+    parser.add_argument("--load", action="store_true",
                         help="Load configuration from source")
     args = parser.parse_args()
     backup_manager = BackupManager(args)
