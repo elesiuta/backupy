@@ -193,6 +193,30 @@ class DirInfo:
     def loadJson(self) -> None:
         self.loaded_dicts = readJson(os.path.join(self.dir, self.config_dir, "dirinfo.json"))
 
+    def updateDictCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
+        if self.dir == source_root and secondInfo.dir == dest_root:
+            secondInfo.file_dicts[dest_file] = self.file_dicts[source_file]
+        elif self.dir == dest_root and secondInfo.dir == source_root:
+            self.file_dicts[dest_file] = secondInfo.file_dicts[source_file]
+        else:
+            raise Exception("Update Dict Error")
+
+    def updateDictMove(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
+        if source_root == dest_root == self.dir:
+            self.file_dicts[dest_file] = self.file_dicts.pop(source_file)
+        elif source_root == dest_root == secondInfo.dir:
+            secondInfo.file_dicts[dest_file] = secondInfo.file_dicts.pop(source_file)
+        else:
+            raise Exception("Update Dict Error")
+
+    def updateDictRemove(self, root: str, fPath: str, secondInfo: 'DirInfo') -> None:
+        if root == self.dir:
+            tmp = self.file_dicts.pop(fPath)
+        elif root == secondInfo.dir:
+            tmp = secondInfo.file_dicts.pop(fPath)
+        else:
+            raise Exception("Update Dict Error")
+
     def crc(self, fileName: str, prev: int = 0) -> int:
         with open(fileName,"rb") as f:
             for line in f:
@@ -332,6 +356,9 @@ class BackupManager:
             sys.exit()
         self.config.source = os.path.abspath(self.config.source)
         self.config.dest = os.path.abspath(self.config.dest)
+        # init DirInfo vars
+        self.source = None
+        self.dest = None
         # save config
         if self.config.save:
             self.saveJson()
@@ -448,6 +475,7 @@ class BackupManager:
     def removeFile(self, root: str, fPath: str) -> None:
         try:
             self.log.append(["removeFile()", root, fPath])
+            self.source.updateDictRemove(root, fPath, self.dest)
             if not self.config.norun:
                 path = os.path.join(root, fPath)
                 if os.path.isdir(path):
@@ -459,12 +487,13 @@ class BackupManager:
                     if len(os.listdir(head)) == 0:
                         os.removedirs(head)
         except Exception as e:
-            self.log.append(["REMOVE ERROR", str(e)])
+            self.log.append(["REMOVE ERROR", str(e), str(locals())])
             print(e)
 
     def copyFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
             self.log.append(["copyFile()", source_root, dest_root, source_file, dest_file])
+            self.source.updateDictCopy(source_root, dest_root, source_file, dest_file, self.dest)
             if not self.config.norun:
                 source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
@@ -475,12 +504,13 @@ class BackupManager:
                         os.makedirs(os.path.dirname(dest))
                     shutil.copy2(source, dest)
         except Exception as e:
-            self.log.append(["COPY ERROR", str(e)])
+            self.log.append(["COPY ERROR", str(e), str(locals())])
             print(e)
 
     def moveFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
             self.log.append(["moveFile()", source_root, dest_root, source_file, dest_file])
+            self.source.updateDictMove(source_root, dest_root, source_file, dest_file, self.dest)
             if not self.config.norun:
                 source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
@@ -492,7 +522,7 @@ class BackupManager:
                     if len(os.listdir(head)) == 0:
                         os.removedirs(head)
         except Exception as e:
-            self.log.append(["MOVE ERROR", str(e)])
+            self.log.append(["MOVE ERROR", str(e), str(locals())])
             print(e)
 
     ##############################################################################
@@ -570,31 +600,31 @@ class BackupManager:
         if self.config.norun:
             print(self.colourString("Simulation Run", "HEADER"))
         # init dir scanning and load previous scan data if available
-        source = DirInfo(self.config.source, self.config.r, self.config.config_dir, [self.config.archive_dir])
-        dest = DirInfo(self.config.dest, self.config.r, self.config.config_dir, [self.config.archive_dir])
+        self.source = DirInfo(self.config.source, self.config.r, self.config.config_dir, [self.config.archive_dir])
+        self.dest = DirInfo(self.config.dest, self.config.r, self.config.config_dir, [self.config.archive_dir])
         if self.config.load_json:
-            source.loadJson()
-            dest.loadJson()
+            self.source.loadJson()
+            self.dest.loadJson()
         # scan directories, this is where CRC mode = all takes place
         self.colourPrint("Scanning files on source:\n%s" %(self.config.source), "OKBLUE")
-        source.scanDir(self.config.verbose)
-        source_dict = source.getDirDict()
+        self.source.scanDir(self.config.verbose)
+        source_dict = self.source.getDirDict()
         self.colourPrint("Scanning files on destination:\n%s" %(self.config.dest), "OKBLUE")
-        dest.scanDir(self.config.verbose)
-        dest_dict = dest.getDirDict()
-        dest_diffs = dest.getLoadedDiffs()
+        self.dest.scanDir(self.config.verbose)
+        dest_dict = self.dest.getDirDict()
+        dest_diffs = self.dest.getLoadedDiffs()
         if self.config.m != "sync" and len(dest_diffs) >= 1:
             self.log.append(["CHANGES ON DESTINATION SINCE LAST SCAN"])
             self.log += dest_diffs
-            print(self.colourString("Some files in the destination folder have changed since the last scan, this may include files from the previous backup, see log for details", "WARNING"))
+            print(self.colourString("Some files in the destination folder have changed since the last scan, see log for file list", "WARNING"))
             self.writeLog()
         # compare directories, this is where CRC mode = match takes place
         self.colourPrint("Comparing directories...", "OKBLUE")
-        sourceOnly, destOnly, changed, moved = source.dirCompare(dest, self.config.d)
+        sourceOnly, destOnly, changed, moved = self.source.dirCompare(dest, self.config.d)
         # save scan data (done after compare to save CRC info if CRC mode = match)
         if self.config.save_json:
-            source.saveJson()
-            dest.saveJson()
+            self.source.saveJson()
+            self.dest.saveJson()
         # prepare diff messages
         if self.config.noarchive:
             archive_msg = "delete"
@@ -671,6 +701,10 @@ class BackupManager:
             self.handleConflicts(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         self.log.append("Completed")
         self.writeLog()
+        # save scan data (updated to reflect backup operations)
+        if self.config.save_json:
+            self.source.saveJson()
+            self.dest.saveJson()
         print(self.colourString("Completed!", "OKGREEN"))
 
 
@@ -690,9 +724,9 @@ def main():
                              "    [source-only -> destination, keep destination-only]\n"
                              "  SYNC\n"
                              "    [source-only -> destination, destination-only -> source]")
-    parser.add_argument("-c", type=str.lower, default="source", metavar="mode", choices=["source", "dest", "new", "no"],
+    parser.add_argument("-s", type=str.lower, default="source", metavar="mode", choices=["source", "dest", "new", "no"],
                         help="F!\n"
-                             "Conflict resolution mode:\n"
+                             "Selection mode (which files to keep):\n"
                              "How to handle files that exist on both sides but differ?\n"
                              "  SOURCE (default)\n"
                              "    [copy source to destination]\n"
@@ -702,9 +736,9 @@ def main():
                              "    [copy newer to opposite side]\n"
                              "  NO\n"
                              "    [do nothing]")
-    parser.add_argument("-f", type=str.lower, default="attr", metavar="mode", choices=["attr", "both", "crc"],
+    parser.add_argument("-c", type=str.lower, default="attr", metavar="mode", choices=["attr", "both", "crc"],
                         help="F!\n"
-                             "File compare mode:\n"
+                             "Compare mode:\n"
                              "How to detect files that exist on both sides but differ?\n"
                              "  ATTR (default)\n"
                              "    [compare file attributes: mod-time and size]\n"
@@ -720,9 +754,9 @@ def main():
                         help="Suppress logging; by default logs are written to source/.backupy/log-yymmdd-HHMM.csv and /.backupy/dirinfo.json")
     parser.add_argument("--goahead", action="store_true",
                         help="Go ahead without prompting for confirmation")
-    parser.add_argument("-n", "--norun", action="store_true",
+    parser.add_argument("--norun", action="store_true",
                         help="Simulate the run according to your configuration")
-    parser.add_argument("-s", "--save", action="store_true",
+    parser.add_argument("--save", action="store_true",
                         help="Save configuration in source")
     parser.add_argument("-l", "--load", action="store_true",
                         help="Load configuration from source")
