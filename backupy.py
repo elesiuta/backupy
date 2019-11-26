@@ -259,7 +259,7 @@ class DirInfo:
                             self.file_dicts[relativePath] = self.loaded_dicts[relativePath]
                         else:
                             self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
-                            self.loaded_diffs[relativePath] = self.loaded_dicts[relativePath]
+                            self.loaded_diffs[relativePath] = self.file_dicts[relativePath]
                         if self.compare_mode == "crc" and "crc" not in self.file_dicts[relativePath]:
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
                     else:
