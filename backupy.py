@@ -135,13 +135,13 @@ class StatusBar:
 
 class ConfigObject:
     def __init__(self, config: dict):
-        # default config (copy argparse)
+        # default config (from argparse)
         self.source = None
         self.dest = None
-        self.m = "mirror"
-        self.c = "source"
-        self.r = "none"
-        self.d = False
+        self.main_mode = "mirror"
+        self.select_mode = "source"
+        self.compare_mode = "attr"
+        self.nomoves = False
         self.noarchive = False
         self.suppress = False
         self.goahead = False
@@ -172,12 +172,12 @@ class ConfigObject:
 
 
 class DirInfo:
-    def __init__(self, directory: str, crc_mode: int,  config_dir: str, ignored_folders: list = []):
+    def __init__(self, directory: str, compare_mode: str,  config_dir: str, ignored_folders: list = []):
         self.file_dicts = {}
         self.loaded_dicts = {}
         self.loaded_diffs = []
         self.dir = directory
-        self.crc_mode = crc_mode
+        self.compare_mode = compare_mode
         self.config_dir = config_dir
         self.ignored_folders = ignored_folders[:]
 
@@ -255,45 +255,45 @@ class DirInfo:
                         else:
                             self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
                             self.loaded_diffs.append([relativePath, str(self.loaded_dicts[relativePath])])
-                        if self.crc_mode == "all" and "crc" not in self.file_dicts[relativePath]:
+                        if self.compare_mode == "crc" and "crc" not in self.file_dicts[relativePath]:
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
                     else:
                         self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
                         self.loaded_diffs.append([relativePath, str(self.file_dicts[relativePath])])
-                        if self.crc_mode == "all":
+                        if self.compare_mode == "crc":
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
             scan_status.endProgress()
 
-    def fileMatch(self, f: str, file_dict1: dict, file_dict2: dict, secondInfo: 'DirInfo', crc_mode: str) -> bool:
-        if crc_mode == "all":
+    def fileMatch(self, f: str, file_dict1: dict, file_dict2: dict, secondInfo: 'DirInfo', compare_mode: str) -> bool:
+        if compare_mode == "crc":
             if file_dict1["crc"] == file_dict2["crc"]:
                 return True
             else:
                 return False
         if file_dict1["size"] == file_dict2["size"]:
             if file_dict1["mtime"] == file_dict2["mtime"]:
-                if crc_mode == "match" and self.scanCrc(f) != secondInfo.scanCrc(f):
+                if compare_mode == "both" and self.scanCrc(f) != secondInfo.scanCrc(f):
                     return False
                 return True
             else:
                 diff = abs(int(file_dict1["mtime"]) - int(file_dict2["mtime"]))
                 if diff <= 1 or diff == 3600:
-                    if crc_mode == "match" and self.scanCrc(f) != secondInfo.scanCrc(f):
+                    if compare_mode == "both" and self.scanCrc(f) != secondInfo.scanCrc(f):
                         return False
                     return True
                 else:
                     return False
         return False
 
-    def dirCompare(self, secondInfo: 'DirInfo', moves: bool = False, filter_list = False) -> tuple:
+    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filter_list = False) -> tuple:
         file_list = list(self.file_dicts)
         second_dict = secondInfo.getDirDict()
         second_list = list(second_dict)
-        if self.crc_mode == secondInfo.crc_mode:
-            crc_mode = self.crc_mode
+        if self.compare_mode == secondInfo.compare_mode:
+            compare_mode = self.compare_mode
         else:
-            # this shouldn't happen, but "match" is safe if crc_modes differ
-            crc_mode = "match"
+            # this shouldn't happen, but "both" is safe if compare_modes differ
+            compare_mode = "both"
         if filter_list:
             file_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), file_list)
             second_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), second_list)
@@ -303,19 +303,19 @@ class DirInfo:
         moved = []
         for f in file_list:
             if f in second_list:
-                if not self.fileMatch(f, self.file_dicts[f], second_dict[f], secondInfo, crc_mode):
+                if not self.fileMatch(f, self.file_dicts[f], second_dict[f], secondInfo, compare_mode):
                     changed.append(f)
             else:
                 selfOnly.append(f)
         for f in second_list:
             if not f in file_list:
                 secondOnly.append(f)
-        if moves:
+        if not no_moves:
             for f1 in selfOnly:
                 for f2 in secondOnly:
                     # should empty dirs be moved?
                     # if "dir" not in self.file_dicts[f1] and "dir" not in second_dict[f2]:
-                    if self.fileMatch(f, self.file_dicts[f1], second_dict[f2], secondInfo, crc_mode):
+                    if self.fileMatch(f, self.file_dicts[f1], second_dict[f2], secondInfo, compare_mode):
                         moved.append({"source": f1, "dest": f2})
             for pair in moved:
                 selfOnly.remove(pair["source"])
@@ -575,13 +575,13 @@ class BackupManager:
         copy_status = StatusBar(len(changed), self.config.verbose)
         for fp in changed:
             copy_status.update(fp)
-            if self.config.c == "source":
+            if self.config.select_mode == "source":
                 self.archiveFile(dest, fp)
                 self.copyFile(source, dest, fp, fp)
-            elif self.config.c == "dest":
+            elif self.config.select_mode == "dest":
                 self.archiveFile(source, fp)
                 self.copyFile(dest, source, fp, fp)
-            elif self.config.c == "new":
+            elif self.config.select_mode == "new":
                 if source_dict[fp]["mtime"] > dest_dict[fp]["mtime"]:
                     self.archiveFile(dest, fp)
                     self.copyFile(source, dest, fp, fp)
@@ -600,8 +600,8 @@ class BackupManager:
         if self.config.norun:
             print(self.colourString("Simulation Run", "HEADER"))
         # init dir scanning and load previous scan data if available
-        self.source = DirInfo(self.config.source, self.config.r, self.config.config_dir, [self.config.archive_dir])
-        self.dest = DirInfo(self.config.dest, self.config.r, self.config.config_dir, [self.config.archive_dir])
+        self.source = DirInfo(self.config.source, self.config.compare_mode, self.config.config_dir, [self.config.archive_dir])
+        self.dest = DirInfo(self.config.dest, self.config.compare_mode, self.config.config_dir, [self.config.archive_dir])
         if self.config.load_json:
             self.source.loadJson()
             self.dest.loadJson()
@@ -613,32 +613,32 @@ class BackupManager:
         self.dest.scanDir(self.config.verbose)
         dest_dict = self.dest.getDirDict()
         dest_diffs = self.dest.getLoadedDiffs()
-        if self.config.m != "sync" and len(dest_diffs) >= 1:
+        if self.config.main_mode != "sync" and len(dest_diffs) >= 1:
             self.log.append(["CHANGES ON DESTINATION SINCE LAST SCAN"])
             self.log += dest_diffs
             print(self.colourString("Some files in the destination folder have changed since the last scan, see log for file list", "WARNING"))
             self.writeLog()
         # compare directories, this is where CRC mode = match takes place
         self.colourPrint("Comparing directories...", "OKBLUE")
-        sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.d)
+        sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves)
         # prepare diff messages
         if self.config.noarchive:
             archive_msg = "delete"
         else:
             archive_msg = "archive"
-        if self.config.m == "sync":
+        if self.config.main_mode == "sync":
             dest_msg = "(copy to source)"
-        elif self.config.m == "backup":
+        elif self.config.main_mode == "backup":
             dest_msg = "(left as is)"
-        elif self.config.m == "mirror":
+        elif self.config.main_mode == "mirror":
             dest_msg = "(to be " + archive_msg + "d)"
-        if self.config.c == "source":
+        if self.config.select_mode == "source":
             conflict_msg = "(" + archive_msg + " dest and copy from source)"
-        elif self.config.c == "dest":
+        elif self.config.select_mode == "dest":
             conflict_msg = "(" + archive_msg + " source and copy from dest)"
-        elif self.config.c == "new":
+        elif self.config.select_mode == "new":
             conflict_msg = "(" + archive_msg + " older and copy newer)"
-        elif self.config.c == "no":
+        elif self.config.select_mode == "no":
             conflict_msg = "(left as is)"
         # print differences
         print(self.colourString("Source Only (copy to dest): %s" %(len(sourceOnly)), "HEADER"))
@@ -650,7 +650,7 @@ class BackupManager:
         print(self.colourString("File Conflicts %s: %s" %(conflict_msg, len(changed)), "HEADER"))
         self.log.append("File Conflicts")
         self.printChangedFiles(changed, source_dict, dest_dict)
-        if self.config.d:
+        if not self.config.nomoves:
             print(self.colourString("Moved Files (move on dest to match source): %s" %(len(moved)), "HEADER"))
             self.log.append("Moved Files")
             self.printMovedFiles(moved, source_dict, dest_dict)
@@ -664,7 +664,7 @@ class BackupManager:
                 self.log.append(["No changes found"])
                 self.writeLog()
                 return 0
-            print(self.colourString("Scan complete, continue with %s%s (y/N)?" %(simulation, self.config.m), "OKGREEN"))
+            print(self.colourString("Scan complete, continue with %s%s (y/N)?" %(simulation, self.config.main_mode), "OKGREEN"))
             go = input("> ")
             if go[0].lower() != "y":
                 self.log.append("Aborted")
@@ -672,27 +672,27 @@ class BackupManager:
                 print(self.colourString("Run aborted", "WARNING"))
                 return 1
         # backup operations
-        self.log.append("Start " + self.config.m)
-        print(self.colourString("Starting " + self.config.m, "OKGREEN"))
-        if self.config.m == "mirror":
+        self.log.append("Start " + self.config.main_mode)
+        print(self.colourString("Starting " + self.config.main_mode, "OKGREEN"))
+        if self.config.main_mode == "mirror":
             self.copyFiles(self.config.source, self.config.dest, sourceOnly, sourceOnly)
             if self.config.noarchive:
                 self.removeFiles(self.config.dest, destOnly)
             else:
                 recycle_bin = os.path.join(self.config.dest, self.config.archive_dir, "Deleted", self.backup_time)
                 self.moveFiles(self.config.dest, recycle_bin, destOnly, destOnly)
-            if self.config.d:
+            if not self.config.nomoves:
                 self.movedFiles(moved)
             self.handleConflicts(self.config.source, self.config.dest, source_dict, dest_dict, changed)
-        elif self.config.m == "backup":
+        elif self.config.main_mode == "backup":
             self.copyFiles(self.config.source, self.config.dest, sourceOnly, sourceOnly)
-            if self.config.d:
+            if not self.config.nomoves:
                 self.movedFiles(moved)
             self.handleConflicts(self.config.source, self.config.dest, source_dict, dest_dict, changed)
-        elif self.config.m == "sync":
+        elif self.config.main_mode == "sync":
             self.copyFiles(self.config.source, self.config.dest, sourceOnly, sourceOnly)
             self.copyFiles(self.config.dest, self.config.source, destOnly, destOnly)
-            if self.config.d:
+            if not self.config.nomoves:
                 self.movedFiles(moved)
             self.handleConflicts(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         self.log.append("Completed")
@@ -710,7 +710,7 @@ def main():
                         help="Path of source")
     parser.add_argument("dest", action="store", type=str, nargs="?", default=None,
                         help="Path of destination")
-    parser.add_argument("-m", type=str.lower, default="mirror", metavar="mode", choices=["mirror", "backup", "sync"],
+    parser.add_argument("-m", type=str.lower, dest="main_mode", default="mirror", metavar="mode", choices=["mirror", "backup", "sync"],
                         help="F!\n"
                              "Main mode:\n"
                              "How to handle files that exist only on one side?\n"
@@ -720,7 +720,7 @@ def main():
                              "    [source-only -> destination, keep destination-only]\n"
                              "  SYNC\n"
                              "    [source-only -> destination, destination-only -> source]")
-    parser.add_argument("-s", type=str.lower, default="source", metavar="mode", choices=["source", "dest", "new", "no"],
+    parser.add_argument("-s", type=str.lower, dest="select_mode", default="source", metavar="mode", choices=["source", "dest", "new", "no"],
                         help="F!\n"
                              "Selection mode (which files to keep):\n"
                              "How to handle files that exist on both sides but differ?\n"
@@ -732,7 +732,7 @@ def main():
                              "    [copy newer to opposite side]\n"
                              "  NO\n"
                              "    [do nothing]")
-    parser.add_argument("-c", type=str.lower, default="attr", metavar="mode", choices=["attr", "both", "crc"],
+    parser.add_argument("-c", type=str.lower, dest="compare_mode", default="attr", metavar="mode", choices=["attr", "both", "crc"],
                         help="F!\n"
                              "Compare mode:\n"
                              "How to detect files that exist on both sides but differ?\n"
@@ -741,7 +741,7 @@ def main():
                              "  BOTH\n"
                              "    [compare file attributes first, then check CRC]\n"
                              "  CRC\n"
-                             "    [compare CRC only]")
+                             "    [compare CRC only, ignoring file attributes]")
     parser.add_argument("--nomoves", action="store_true",
                         help="Don't detect moved or renamed files")
     parser.add_argument("--noarchive", action="store_true",
