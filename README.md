@@ -22,7 +22,7 @@ optional arguments:
                    [source-only -> destination, keep destination-only]
                  SYNC
                    [source-only -> destination, destination-only -> source]
-  -s mode      Selection mode (which files to keep):
+  -s mode      Selection mode:
                How to handle files that exist on both sides but differ?
                  SOURCE (default)
                    [copy source to destination]

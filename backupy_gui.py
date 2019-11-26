@@ -17,7 +17,7 @@ def main_gui():
                              "    [source-only -> destination, keep destination-only]\n"
                              "  SYNC\n"
                              "    [source-only -> destination, destination-only -> source]")
-    parser.add_argument("-s", type=str.lower, dest="select_mode", default="source", metavar="Selection mode (which files to keep)", choices=["source", "dest", "new", "no"],
+    parser.add_argument("-s", type=str.lower, dest="select_mode", default="source", metavar="Selection mode", choices=["source", "dest", "new", "no"],
                         help="How to handle files that exist on both sides but differ?\n"
                              "  SOURCE (default)\n"
                              "    [copy source to destination]\n"
