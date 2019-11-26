@@ -638,7 +638,7 @@ class BackupManager:
             print(self.colourString("Destination Database Conflicts: %s" %(len(dest_diffs)), "HEADER"))
             self.printFiles(list(dest_diffs.keys()), dest_diffs)
         # compare directories, this is where CRC mode = match takes place
-        self.colourPrint("Comparing directories...", "OKBLUE")
+        self.colourPrint("Comparing directories...", "OKGREEN")
         sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves, self.config.filter_list)
         # prepare diff messages
         if self.config.noarchive:
