@@ -259,12 +259,12 @@ class DirInfo:
                             self.file_dicts[relativePath] = self.loaded_dicts[relativePath]
                         else:
                             self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
-                            self.loaded_diffs.append([relativePath, str(self.loaded_dicts[relativePath])])
+                            self.loaded_diffs.append([relativePath, self.loaded_dicts[relativePath]])
                         if self.compare_mode == "crc" and "crc" not in self.file_dicts[relativePath]:
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
                     else:
                         self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
-                        self.loaded_diffs.append([relativePath, str(self.file_dicts[relativePath])])
+                        self.loaded_diffs.append([relativePath, self.file_dicts[relativePath]])
                         if self.compare_mode == "crc":
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
             scan_status.endProgress()
@@ -475,6 +475,10 @@ class BackupManager:
             self.printFileInfo("Source: ", f["source"], d1, skip_info=True)
             self.printFileInfo("  Dest: ", f["dest"], d2)
 
+    def printLoadedDiffs(self, loaded_diffs: list) -> None:
+        for f in loaded_diffs:
+            self.printFileInfo("File: ", f[0], {f[0]: f[1]})
+
     #############################################################################
     ### File operation methods (only use these methods to perform operations) ###
     #############################################################################
@@ -621,9 +625,9 @@ class BackupManager:
         dest_dict = self.dest.getDirDict()
         dest_diffs = self.dest.getLoadedDiffs()
         if self.config.main_mode != "sync" and len(dest_diffs) >= 1:
+            print(self.colourString("Some files in the destination folder have changed since the last scan", "WARNING"))
             self.log.append(["CHANGES ON DESTINATION SINCE LAST SCAN"])
-            self.log += dest_diffs
-            print(self.colourString("Some files in the destination folder have changed since the last scan, see log for file list", "WARNING"))
+            self.printLoadedDiffs(dest_diffs)
             self.writeLog()
         # compare directories, this is where CRC mode = match takes place
         self.colourPrint("Comparing directories...", "OKBLUE")
@@ -670,6 +674,8 @@ class BackupManager:
                 print(self.colourString("Directories already match, completed!", "OKGREEN"))
                 self.log.append(["No changes found"])
                 self.writeLog()
+                self.source.saveJson()
+                self.dest.saveJson()
                 return 0
             print(self.colourString("Scan complete, continue with %s%s (y/N)?" %(simulation, self.config.main_mode), "OKGREEN"))
             go = input("> ")
