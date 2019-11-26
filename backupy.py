@@ -189,10 +189,10 @@ class DirInfo:
         return self.loaded_diffs
 
     def saveJson(self) -> None:
-        writeJson(os.path.join(self.dir, self.config_dir, "dirinfo.json"), self.file_dicts)
+        writeJson(os.path.join(self.dir, self.config_dir, "database.json"), self.file_dicts)
 
     def loadJson(self) -> None:
-        self.loaded_dicts = readJson(os.path.join(self.dir, self.config_dir, "dirinfo.json"))
+        self.loaded_dicts = readJson(os.path.join(self.dir, self.config_dir, "database.json"))
 
     def updateDictCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
         if self.dir == source_root and secondInfo.dir == dest_root:
@@ -622,7 +622,7 @@ class BackupManager:
         dest_dict = self.dest.getDirDict()
         dest_diffs = self.dest.getLoadedDiffs()
         # print database conflicts
-        self.log.append("Database Conflicts")
+        self.log.append(["### DATABASE CONFLICTS ###"])
         if self.config.main_mode == "sync":
             sync_conflicts = []
             for f in source_diffs:
@@ -630,12 +630,12 @@ class BackupManager:
                     sync_conflicts.append(f)
             if len(sync_conflicts) >= 1:
                 print(self.colourString("Found files modified in both source and destination since the last scan\n(database conflicts will be overwritten according to selection mode)", "WARNING"))
-            print(self.colourString("Sync database conflicts: %s" %(len(sync_conflicts)), "HEADER"))
+            print(self.colourString("Sync Database Conflicts: %s" %(len(sync_conflicts)), "HEADER"))
             self.printChangedFiles(sync_conflicts, source_diffs, dest_diffs)
         else:
             if len(dest_diffs) >= 1:
                 print(self.colourString("Found files modified in the destination since the last scan\n(database conflicts will be overwritten according to selection mode)", "WARNING"))
-            print(self.colourString("Destination database conflicts: %s" %(len(dest_diffs)), "HEADER"))
+            print(self.colourString("Destination Database Conflicts: %s" %(len(dest_diffs)), "HEADER"))
             self.printFiles(list(dest_diffs.keys()), dest_diffs)
         # compare directories, this is where CRC mode = match takes place
         self.colourPrint("Comparing directories...", "OKBLUE")
@@ -661,17 +661,17 @@ class BackupManager:
             conflict_msg = "(left as is)"
         # print differences
         print(self.colourString("Source Only (copy to dest): %s" %(len(sourceOnly)), "HEADER"))
-        self.log.append("Source Only")
+        self.log.append(["### SOURCE ONLY ###"])
         self.printFiles(sourceOnly, source_dict)
         print(self.colourString("Destination Only %s: %s" %(dest_msg, len(destOnly)), "HEADER"))
-        self.log.append("Destination Only")
+        self.log.append(["### DESTINATION ONLY ###"])
         self.printFiles(destOnly, dest_dict)
         print(self.colourString("File Conflicts %s: %s" %(conflict_msg, len(changed)), "HEADER"))
-        self.log.append("File Conflicts")
+        self.log.append(["### FILE CONFLICTS ###"])
         self.printChangedFiles(changed, source_dict, dest_dict)
         if not self.config.nomoves:
             print(self.colourString("Moved Files (move on dest to match source): %s" %(len(moved)), "HEADER"))
-            self.log.append("Moved Files")
+            self.log.append(["### MOVED FILES ###"])
             self.printMovedFiles(moved, source_dict, dest_dict)
         # wait for go ahead
         if not self.config.goahead:
@@ -680,7 +680,7 @@ class BackupManager:
                 simulation = "simulated "
             if len(sourceOnly) == 0 and len(destOnly) == 0 and len(changed) == 0 and len(moved) == 0:
                 print(self.colourString("Directories already match, completed!", "OKGREEN"))
-                self.log.append(["No changes found"])
+                self.log.append(["### NO CHANGES FOUND ###"])
                 self.writeLog()
                 self.source.saveJson()
                 self.dest.saveJson()
@@ -689,12 +689,12 @@ class BackupManager:
             self.writeLog() # for inspection before decision if necessary
             go = input("> ")
             if go[0].lower() != "y":
-                self.log.append("Aborted")
+                self.log.append(["### ABORTED ###"])
                 self.writeLog()
                 print(self.colourString("Run aborted", "WARNING"))
                 return 1
         # backup operations
-        self.log.append("Start " + self.config.main_mode)
+        self.log.append(["### START " + self.config.main_mode.upper() + " ###"])
         print(self.colourString("Starting " + self.config.main_mode, "OKGREEN"))
         if self.config.main_mode == "mirror":
             self.copyFiles(self.config.source, self.config.dest, sourceOnly, sourceOnly)
@@ -717,7 +717,7 @@ class BackupManager:
             if not self.config.nomoves:
                 self.movedFiles(moved)
             self.handleConflicts(self.config.source, self.config.dest, source_dict, dest_dict, changed)
-        self.log.append("Completed")
+        self.log.append(["### COMPLETED ###"])
         self.writeLog()
         # save scan data (updated to reflect backup operations)
         if self.config.save_json:
@@ -769,7 +769,7 @@ def main():
     parser.add_argument("--noarchive", action="store_true",
                         help="Disable archiving, by default files are moved to /.backupy/yymmdd-HHMM/ on their respective side before being removed or overwritten")
     parser.add_argument("--suppress", action="store_true",
-                        help="Suppress logging; by default logs are written to source/.backupy/log-yymmdd-HHMM.csv and /.backupy/dirinfo.json")
+                        help="Suppress logging; source/.backupy/log-yymmdd-HHMM.csv and <source|dest>/.backupy/database.json will not be written")
     parser.add_argument("--goahead", action="store_true",
                         help="Go ahead without prompting for confirmation")
     parser.add_argument("--norun", action="store_true",
