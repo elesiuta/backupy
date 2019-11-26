@@ -176,7 +176,7 @@ class DirInfo:
     def __init__(self, directory: str, compare_mode: str,  config_dir: str, ignored_folders: list = []):
         self.file_dicts = {}
         self.loaded_dicts = {}
-        self.loaded_diffs = []
+        self.loaded_diffs = {}
         self.dir = directory
         self.compare_mode = compare_mode
         self.config_dir = config_dir
@@ -185,7 +185,7 @@ class DirInfo:
     def getDirDict(self) -> dict:
         return self.file_dicts
 
-    def getLoadedDiffs(self) -> list:
+    def getLoadedDiffs(self) -> dict:
         return self.loaded_diffs
 
     def saveJson(self) -> None:
@@ -259,12 +259,12 @@ class DirInfo:
                             self.file_dicts[relativePath] = self.loaded_dicts[relativePath]
                         else:
                             self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
-                            self.loaded_diffs.append([relativePath, self.loaded_dicts[relativePath]])
+                            self.loaded_diffs[relativePath] = self.loaded_dicts[relativePath]
                         if self.compare_mode == "crc" and "crc" not in self.file_dicts[relativePath]:
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
                     else:
                         self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
-                        self.loaded_diffs.append([relativePath, self.file_dicts[relativePath]])
+                        self.loaded_diffs[relativePath] = self.file_dicts[relativePath]
                         if self.compare_mode == "crc":
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
             scan_status.endProgress()
@@ -475,10 +475,6 @@ class BackupManager:
             self.printFileInfo("Source: ", f["source"], d1, skip_info=True)
             self.printFileInfo("  Dest: ", f["dest"], d2)
 
-    def printLoadedDiffs(self, loaded_diffs: list) -> None:
-        for f in loaded_diffs:
-            self.printFileInfo("File: ", f[0], {f[0]: f[1]})
-
     #############################################################################
     ### File operation methods (only use these methods to perform operations) ###
     #############################################################################
@@ -620,15 +616,27 @@ class BackupManager:
         self.colourPrint("Scanning files on source:\n%s" %(self.config.source), "OKBLUE")
         self.source.scanDir(self.config.verbose)
         source_dict = self.source.getDirDict()
+        source_diffs = self.source.getLoadedDiffs()
         self.colourPrint("Scanning files on destination:\n%s" %(self.config.dest), "OKBLUE")
         self.dest.scanDir(self.config.verbose)
         dest_dict = self.dest.getDirDict()
         dest_diffs = self.dest.getLoadedDiffs()
-        if self.config.main_mode != "sync" and len(dest_diffs) >= 1:
-            print(self.colourString("Some files in the destination folder have changed since the last scan", "WARNING"))
-            self.log.append(["CHANGES ON DESTINATION SINCE LAST SCAN"])
-            self.printLoadedDiffs(dest_diffs)
-            self.writeLog()
+        # print database conflicts
+        self.log.append("Database Conflicts")
+        if self.config.main_mode == "sync":
+            sync_conflicts = []
+            for f in source_diffs:
+                if f in dest_diffs:
+                    sync_conflicts.append(f)
+            if len(sync_conflicts) >= 1:
+                print(self.colourString("Found files modified in both source and destination since the last scan\n(database conflicts will be overwritten according to selection mode)", "WARNING"))
+            print(self.colourString("Sync database conflicts: %s" %(len(sync_conflicts)), "HEADER"))
+            self.printChangedFiles(sync_conflicts, source_diffs, dest_diffs)
+        else:
+            if len(dest_diffs) >= 1:
+                print(self.colourString("Found files modified in the destination since the last scan\n(database conflicts will be overwritten according to selection mode)", "WARNING"))
+            print(self.colourString("Destination database conflicts: %s" %(len(dest_diffs)), "HEADER"))
+            self.printFiles(list(dest_diffs.keys()), dest_diffs)
         # compare directories, this is where CRC mode = match takes place
         self.colourPrint("Comparing directories...", "OKBLUE")
         sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves, self.config.filter_list)
@@ -678,6 +686,7 @@ class BackupManager:
                 self.dest.saveJson()
                 return 0
             print(self.colourString("Scan complete, continue with %s%s (y/N)?" %(simulation, self.config.main_mode), "OKGREEN"))
+            self.writeLog() # for inspection before decision if necessary
             go = input("> ")
             if go[0].lower() != "y":
                 self.log.append("Aborted")
@@ -735,7 +744,7 @@ def main():
                              "    [source-only -> destination, destination-only -> source]")
     parser.add_argument("-s", type=str.lower, dest="select_mode", default="source", metavar="mode", choices=["source", "dest", "new", "no"],
                         help="F!\n"
-                             "Selection mode (which files to keep):\n"
+                             "Selection mode:\n"
                              "How to handle files that exist on both sides but differ?\n"
                              "  SOURCE (default)\n"
                              "    [copy source to destination]\n"
