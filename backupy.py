@@ -206,6 +206,10 @@ class DirInfo:
             self.file_dicts[dest_file] = self.file_dicts.pop(source_file)
         elif source_root == dest_root == secondInfo.dir:
             secondInfo.file_dicts[dest_file] = secondInfo.file_dicts.pop(source_file)
+        elif source_root == self.dir and dest_root != secondInfo.dir:
+            _ = self.file_dicts.pop(source_file)
+        elif source_root == secondInfo.dir and dest_root != self.dir:
+            _ = secondInfo.file_dicts.pop(source_file)
         else:
             raise Exception("Update Dict Error")
 
