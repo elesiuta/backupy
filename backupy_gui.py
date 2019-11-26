@@ -36,7 +36,7 @@ def main_gui():
                              "  CRC\n"
                              "    [compare CRC only, ignoring file attributes]")
     parser.add_argument("--nomoves", action="store_true",
-                        help="Don't detect moved or renamed files")
+                        help="Do not detect moved or renamed files")
     parser.add_argument("--noarchive", action="store_true",
                         help="Disable archiving, by default files are moved to /.backupy/yymmdd-HHMM/ on their respective side before being removed or overwritten")
     parser.add_argument("--suppress", action="store_true",

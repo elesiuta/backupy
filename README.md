@@ -40,7 +40,7 @@ optional arguments:
                    [compare file attributes first, then check CRC]
                  CRC
                    [compare CRC only, ignoring file attributes]
-  --nomoves    Don't detect moved or renamed files
+  --nomoves    Do not detect moved or renamed files
   --noarchive  Disable archiving, by default files are moved to
                /.backupy/yymmdd-HHMM/ on their respective side before being
                removed or overwritten
