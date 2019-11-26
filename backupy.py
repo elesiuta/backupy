@@ -152,7 +152,8 @@ class ConfigObject:
         self.archive_dir = ".backupy"
         self.config_dir = ".backupy"
         self.cleanup = True
-        self.filter_list_test = "[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]"
+        self.filter_list = False
+        self.filter_list_test = r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]"
         self.backup_time_override = False
         self.csv = True
         self.load_json = True
@@ -289,7 +290,7 @@ class DirInfo:
                     return False
         return False
 
-    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filter_list = False) -> tuple:
+    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filter_list: typing.Union[str, bool] = False) -> tuple:
         file_list = list(self.file_dicts)
         second_dict = secondInfo.getDirDict()
         second_list = list(second_dict)
@@ -298,9 +299,11 @@ class DirInfo:
         else:
             # this shouldn't happen, but "both" is safe if compare_modes differ
             compare_mode = "both"
-        if filter_list:
-            file_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), file_list)
-            second_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), second_list)
+        if type(filter_list) == str:
+            filter_list = eval(filter_list)
+            if type(filter_list) == list:
+                file_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), file_list)
+                second_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), second_list)
         selfOnly = []
         secondOnly = []
         changed = []
@@ -624,7 +627,7 @@ class BackupManager:
             self.writeLog()
         # compare directories, this is where CRC mode = match takes place
         self.colourPrint("Comparing directories...", "OKBLUE")
-        sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves)
+        sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves, self.config.filter_list)
         # prepare diff messages
         if self.config.noarchive:
             archive_msg = "delete"
