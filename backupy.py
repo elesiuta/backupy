@@ -612,6 +612,8 @@ class BackupManager:
         if self.config.load_json:
             self.source.loadJson()
             self.dest.loadJson()
+            if self.source.loaded_dicts == {} and self.dest.loaded_dicts == {}:
+                self.config.load = False
         # scan directories, this is where CRC mode = all takes place
         self.colourPrint("Scanning files on source:\n%s" %(self.config.source), "OKBLUE")
         self.source.scanDir(self.config.verbose)
@@ -622,22 +624,23 @@ class BackupManager:
         dest_dict = self.dest.getDirDict()
         dest_diffs = self.dest.getLoadedDiffs()
         # print database conflicts
-        self.log.append(["### DATABASE CONFLICTS ###"])
-        if self.config.main_mode == "sync":
-            sync_conflicts = []
-            for f in source_diffs:
-                if f in dest_diffs:
-                    sync_conflicts.append(f)
-            if len(sync_conflicts) >= 1:
-                print(self.colourString("Found files modified in both source and destination since the last scan\n(database conflicts will be overwritten according to selection mode)", "WARNING"))
-            print(self.colourString("Sync Database Conflicts: %s" %(len(sync_conflicts)), "HEADER"))
-            self.printChangedFiles(sync_conflicts, source_diffs, dest_diffs)
-        else:
-            if len(dest_diffs) >= 1:
-                print(self.colourString("Found files modified in the destination since the last scan\n(database conflicts will be overwritten according to selection mode)", "WARNING"))
-            print(self.colourString("Destination Database Conflicts: %s" %(len(dest_diffs)), "HEADER"))
-            self.printFiles(list(dest_diffs.keys()), dest_diffs)
-        # compare directories, this is where CRC mode = match takes place
+        if self.config.load_json:
+            self.log.append(["### DATABASE CONFLICTS ###"])
+            if self.config.main_mode == "sync":
+                sync_conflicts = []
+                for f in source_diffs:
+                    if f in dest_diffs:
+                        sync_conflicts.append(f)
+                if len(sync_conflicts) >= 1:
+                    print(self.colourString("WARNING: found files modified in both source and destination since last scan", "WARNING"))
+                print(self.colourString("Sync Database Conflicts: %s" %(len(sync_conflicts)), "HEADER"))
+                self.printChangedFiles(sync_conflicts, source_diffs, dest_diffs)
+            else:
+                if len(dest_diffs) >= 1:
+                    print(self.colourString("WARNING: found files modified in the destination since last scan", "WARNING"))
+                print(self.colourString("Destination Database Conflicts: %s" %(len(dest_diffs)), "HEADER"))
+                self.printFiles(list(dest_diffs.keys()), dest_diffs)
+        # compare directories, this is where CRC mode = both takes place
         self.colourPrint("Comparing directories...", "OKGREEN")
         sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves, self.config.filter_list)
         # prepare diff messages
