@@ -612,8 +612,9 @@ class BackupManager:
         if self.config.load_json:
             self.source.loadJson()
             self.dest.loadJson()
+            database_load_success = True
             if self.source.loaded_dicts == {} and self.dest.loaded_dicts == {}:
-                self.config.load = False
+                database_load_success = False
         # scan directories, this is where CRC mode = all takes place
         self.colourPrint("Scanning files on source:\n%s" %(self.config.source), "OKBLUE")
         self.source.scanDir(self.config.verbose)
@@ -624,7 +625,7 @@ class BackupManager:
         dest_dict = self.dest.getDirDict()
         dest_diffs = self.dest.getLoadedDiffs()
         # print database conflicts
-        if self.config.load_json:
+        if self.config.load_json and database_load_success:
             self.log.append(["### DATABASE CONFLICTS ###"])
             if self.config.main_mode == "sync":
                 sync_conflicts = []
