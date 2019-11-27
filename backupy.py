@@ -394,9 +394,12 @@ class BackupManager:
             print(self.colourString("The specified source does not match the loaded config file, exiting", "FAIL"))
             sys.exit()
 
-    def writeLog(self) -> None:
+    def writeLog(self, db: bool = False) -> None:
         if self.config.csv:
             writeCsv(os.path.join(self.config.source, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
+        if self.config.save_json and db:
+            self.source.saveJson()
+            self.dest.saveJson()
 
     ###################################
     ### String manipulation methods ###
@@ -685,9 +688,7 @@ class BackupManager:
             if len(sourceOnly) == 0 and len(destOnly) == 0 and len(changed) == 0 and len(moved) == 0:
                 print(self.colourString("Directories already match, completed!", "OKGREEN"))
                 self.log.append(["### NO CHANGES FOUND ###"])
-                self.writeLog()
-                self.source.saveJson()
-                self.dest.saveJson()
+                self.writeLog(db=True)
                 return 0
             print(self.colourString("Scan complete, continue with %s%s (y/N)?" %(simulation, self.config.main_mode), "OKGREEN"))
             self.writeLog() # for inspection before decision if necessary
@@ -722,11 +723,7 @@ class BackupManager:
                 self.movedFiles(moved)
             self.handleConflicts(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         self.log.append(["### COMPLETED ###"])
-        self.writeLog()
-        # save scan data (updated to reflect backup operations)
-        if self.config.save_json:
-            self.source.saveJson()
-            self.dest.saveJson()
+        self.writeLog(db=True)
         print(self.colourString("Completed!", "OKGREEN"))
 
 
