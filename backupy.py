@@ -143,8 +143,8 @@ class ConfigObject:
         self.compare_mode = "attr"
         self.nomoves = False
         self.noarchive = False
-        self.suppress = False
-        self.goahead = False
+        self.nolog = False
+        self.noprompt = False
         self.norun = False
         self.save = False
         self.load = False
@@ -153,7 +153,7 @@ class ConfigObject:
         self.config_dir = ".backupy"
         self.cleanup = True
         self.filter_list = False
-        self.filter_list_test = r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]"
+        self.filter_list_example = r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]"
         self.backup_time_override = False
         self.csv = True
         self.load_json = True
@@ -162,8 +162,8 @@ class ConfigObject:
         # load config
         for key in config:
             self.__setattr__(key, config[key])
-        # suppress logging
-        if self.suppress:
+        # disable logging of files and changes
+        if self.nolog:
             self.csv, self.save_json = False, False
 
 
@@ -678,7 +678,7 @@ class BackupManager:
             self.log.append(["### MOVED FILES ###"])
             self.printMovedFiles(moved, source_dict, dest_dict)
         # wait for go ahead
-        if not self.config.goahead:
+        if not self.config.noprompt:
             simulation = ""
             if self.config.norun:
                 simulation = "simulated "
@@ -771,13 +771,18 @@ def main():
     parser.add_argument("--nomoves", action="store_true",
                         help="Do not detect moved or renamed files")
     parser.add_argument("--noarchive", action="store_true",
-                        help="Disable archiving, by default files are moved to /.backupy/yymmdd-HHMM/ on their respective side before being removed or overwritten")
-    parser.add_argument("--suppress", action="store_true",
-                        help="Suppress logging; source/.backupy/log-yymmdd-HHMM.csv and <source|dest>/.backupy/database.json will not be written")
-    parser.add_argument("--goahead", action="store_true",
-                        help="Go ahead without prompting for confirmation")
+                        help="F!\n"
+                             "Disable archiving files before deleting/overwriting to:\n"
+                             "  <source|dest>/.backupy/yymmdd-HHMM/\n")
+    parser.add_argument("--nolog", action="store_true",
+                        help="F!\n"
+                             "Disable writing to:\n"
+                             "  <source>/.backupy/log-yymmdd-HHMM.csv\n"
+                             "  <source|dest>/.backupy/database.json")
+    parser.add_argument("--noprompt", action="store_true",
+                        help="Complete run without prompting for confirmation")
     parser.add_argument("--norun", action="store_true",
-                        help="Simulate the run according to your configuration")
+                        help="Perform a dry run according to your configuration")
     parser.add_argument("--save", action="store_true",
                         help="Save configuration in source")
     parser.add_argument("--load", action="store_true",
