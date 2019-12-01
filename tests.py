@@ -97,7 +97,7 @@ def rewriteLogRelPaths(fName):
         for row in data:
             writer.writerow(row)
 
-def runTest(test_name, config, set=0, rewrite_log=False):
+def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=True):
     setupTestDir(test_name)
     if set == 0:
         dir_A = "dir A"
@@ -111,15 +111,18 @@ def runTest(test_name, config, set=0, rewrite_log=False):
     backup_man.backup()
     if rewrite_log:
         rewriteLogRelPaths(os.path.join(test_name, dir_A, ".backupy", "log-000000-0000.csv"))
-    dirA_stats = dirStats(os.path.join(test_name, dir_A))
-    dirB_stats = dirStats(os.path.join(test_name, dir_B))
-    dirAsol_stats = dirStats(os.path.join("backupy_test_solutions", test_name, "dir A"))
-    dirBsol_stats = dirStats(os.path.join("backupy_test_solutions", test_name, "dir B"))
-    a_test, a_sol, a_diff = dirCompare(os.path.join(test_name, dir_A), os.path.join("backupy_test_solutions", test_name, "dir A"))
-    b_test, b_sol, b_diff = dirCompare(os.path.join(test_name, dir_B), os.path.join("backupy_test_solutions", test_name, "dir B"))
-    compDict = {"a_test_only": a_test, "a_sol_only": a_sol, "a_diff": a_diff, "b_test_only": b_test, "b_sol_only": b_sol, "b_diff": b_diff}
-    cleanupTestDir(test_name)
-    return dirA_stats, dirB_stats, dirAsol_stats, dirBsol_stats, compDict
+    if compare:
+        dirA_stats = dirStats(os.path.join(test_name, dir_A))
+        dirB_stats = dirStats(os.path.join(test_name, dir_B))
+        dirAsol_stats = dirStats(os.path.join("backupy_test_solutions", test_name, "dir A"))
+        dirBsol_stats = dirStats(os.path.join("backupy_test_solutions", test_name, "dir B"))
+        a_test, a_sol, a_diff = dirCompare(os.path.join(test_name, dir_A), os.path.join("backupy_test_solutions", test_name, "dir A"))
+        b_test, b_sol, b_diff = dirCompare(os.path.join(test_name, dir_B), os.path.join("backupy_test_solutions", test_name, "dir B"))
+        compDict = {"a_test_only": a_test, "a_sol_only": a_sol, "a_diff": a_diff, "b_test_only": b_test, "b_sol_only": b_sol, "b_diff": b_diff}
+    if cleanup:
+        cleanupTestDir(test_name)
+    if compare:
+        return dirA_stats, dirB_stats, dirAsol_stats, dirBsol_stats, compDict
 
 class TestBackupy(unittest.TestCase):
     @classmethod
