@@ -38,13 +38,16 @@ def main_gui():
     parser.add_argument("--nomoves", action="store_true",
                         help="Do not detect moved or renamed files")
     parser.add_argument("--noarchive", action="store_true",
-                        help="Disable archiving, by default files are moved to /.backupy/yymmdd-HHMM/ on their respective side before being removed or overwritten")
-    parser.add_argument("--suppress", action="store_true",
-                        help="Suppress logging; by default logs are written to source/.backupy/log-yymmdd-HHMM.csv and /.backupy/dirinfo.json")
-    parser.add_argument("--goahead", action="store_true",
-                        help="Go ahead without prompting for confirmation (MUST BE ENABLED)") # https://github.com/chriskiehl/Gooey/issues/222
+                        help="Disable archiving files before deleting/overwriting to:\n"
+                             "  <source|dest>/.backupy/yymmdd-HHMM/\n")
+    parser.add_argument("--nolog", action="store_true",
+                        help="Disable writing to:\n"
+                             "  <source>/.backupy/log-yymmdd-HHMM.csv\n"
+                             "  <source|dest>/.backupy/database.json")
+    parser.add_argument("--noprompt", action="store_true",
+                        help="Complete run without prompting for confirmation (MUST BE ENABLED)") # https://github.com/chriskiehl/Gooey/issues/222
     parser.add_argument("--norun", action="store_true",
-                        help="Simulate the run according to your configuration")
+                        help="Perform a dry run according to your configuration")
     parser.add_argument("--save", action="store_true",
                         help="Save configuration in source")
     parser.add_argument("--load", action="store_true",

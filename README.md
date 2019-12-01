@@ -2,7 +2,7 @@
 
 ```
 usage: backupy [-h] [-m mode] [-s mode] [-c mode] [--nomoves] [--noarchive]
-               [--suppress] [--goahead] [--norun] [--save] [--load]
+               [--nolog] [--noprompt] [--norun] [--save] [--load]
                source [dest]
 
 BackuPy: A small python program for backing up directories with an emphasis on
@@ -41,13 +41,13 @@ optional arguments:
                  CRC
                    [compare CRC only, ignoring file attributes]
   --nomoves    Do not detect moved or renamed files
-  --noarchive  Disable archiving, by default files are moved to
-               /.backupy/yymmdd-HHMM/ on their respective side before being
-               removed or overwritten
-  --suppress   Suppress logging; by default logs are written to
-               source/.backupy/log-yymmdd-HHMM.csv and /.backupy/dirinfo.json
-  --goahead    Go ahead without prompting for confirmation
-  --norun      Simulate the run according to your configuration
+  --noarchive  Disable archiving files before deleting/overwriting to:
+                 <source|dest>/.backupy/yymmdd-HHMM/
+  --nolog      Disable writing to:
+                 <source>/.backupy/log-yymmdd-HHMM.csv
+                 <source|dest>/.backupy/database.json
+  --noprompt   Complete run without prompting for confirmation
+  --norun      Perform a dry run according to your configuration
   --save       Save configuration in source
   --load       Load configuration from source
 ```
