@@ -4,7 +4,7 @@ from gooey import Gooey, GooeyParser
 
 @Gooey(richtext_controls=False)
 def main_gui():
-    parser = GooeyParser(description="BackuPy: A small python program for backing up directories with an emphasis on clear rules, simple usage and logging changes")
+    parser = GooeyParser(description="BackuPy: A small python program for backing up directories with an emphasis on clear rules, simple usage, and logging changes")
     parser.add_argument("--source", action="store", type=str, widget='DirChooser', required=True,
                         help="Path of source")
     parser.add_argument("--dest", action="store", type=str, default=None, widget='DirChooser',

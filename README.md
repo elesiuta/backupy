@@ -6,7 +6,7 @@ usage: backupy [-h] [-m mode] [-s mode] [-c mode] [--nomoves] [--noarchive]
                source [dest]
 
 BackuPy: A small python program for backing up directories with an emphasis on
-clear rules, simple usage and logging changes
+clear rules, simple usage, and logging changes
 
 positional arguments:
   source       Path of source
