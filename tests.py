@@ -4,6 +4,7 @@ import shutil
 import zlib
 import zipfile
 import time
+import csv
 
 import backupy
 
@@ -76,21 +77,49 @@ def setupTestDir(test_name):
 def cleanupTestDir(test_name):
     shutil.rmtree(test_name)
 
-def runTest(test_name, config):
+def rewriteLogRelPaths(fName):
+    cwd = os.getcwd()
+    cwd = cwd.replace(os.path.sep, "\\")
+    cwd2 = cwd.replace("\\", "\\\\")
+    with open(fName, "r") as f:
+        data = []
+        reader = csv.reader(f)
+        for row in reader:
+            new_row = []
+            for col in row:
+                if type(col) == str:
+                    col = col.replace(cwd, "")
+                    col = col.replace(cwd2, "")
+                new_row.append(col)
+            data.append(new_row)
+    with open(fName, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
+        writer = csv.writer(f, delimiter=",")
+        for row in data:
+            writer.writerow(row)
+
+def runTest(test_name, config, set=0, rewrite_log=False):
     setupTestDir(test_name)
-    config["source"] = os.path.join(test_name, "dir A")
-    config["dest"] = os.path.join(test_name, "dir B")
+    if set == 0:
+        dir_A = "dir A"
+        dir_B = "dir B"
+    elif set == 1:
+        dir_A = "dir A set 1"
+        dir_B = "dir B set 1"
+    config["source"] = os.path.join(test_name, dir_A)
+    config["dest"] = os.path.join(test_name, dir_B)
     backup_man = backupy.BackupManager(config)
     backup_man.backup()
-    dirA = dirStats(os.path.join(test_name, "dir A"))
-    dirB = dirStats(os.path.join(test_name, "dir B"))
-    dirAsol = dirStats(os.path.join("backupy_test_solutions", test_name, "dir A"))
-    dirBsol = dirStats(os.path.join("backupy_test_solutions", test_name, "dir B"))
-    a_test, a_sol, a_diff = dirCompare(os.path.join(test_name, "dir A"), os.path.join("backupy_test_solutions", test_name, "dir A"))
-    b_test, b_sol, b_diff = dirCompare(os.path.join(test_name, "dir B"), os.path.join("backupy_test_solutions", test_name, "dir B"))
+    if rewrite_log:
+        rewriteLogRelPaths(os.path.join(test_name, dir_A, ".backupy", "log-000000-0000.csv"))
+    dirA_stats = dirStats(os.path.join(test_name, dir_A))
+    dirB_stats = dirStats(os.path.join(test_name, dir_B))
+    dirAsol_stats = dirStats(os.path.join("backupy_test_solutions", test_name, "dir A"))
+    dirBsol_stats = dirStats(os.path.join("backupy_test_solutions", test_name, "dir B"))
+    a_test, a_sol, a_diff = dirCompare(os.path.join(test_name, dir_A), os.path.join("backupy_test_solutions", test_name, "dir A"))
+    b_test, b_sol, b_diff = dirCompare(os.path.join(test_name, dir_B), os.path.join("backupy_test_solutions", test_name, "dir B"))
     compDict = {"a_test_only": a_test, "a_sol_only": a_sol, "a_diff": a_diff, "b_test_only": b_test, "b_sol_only": b_sol, "b_diff": b_diff}
     cleanupTestDir(test_name)
-    return dirA, dirB, dirAsol, dirBsol, compDict
+    return dirA_stats, dirB_stats, dirAsol_stats, dirBsol_stats, compDict
 
 class TestBackupy(unittest.TestCase):
     @classmethod
@@ -220,6 +249,13 @@ class TestBackupy(unittest.TestCase):
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
+
+    # def test_sync_new_log(self):
+    #     test_name = "sync-new-log"
+    #     config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "noarchive": False, "backup_time_override": "000000-0000"}
+    #     dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True)
+    #     self.assertEqual(dirA, dirAsol, str(compDict))
+    #     self.assertEqual(dirB, dirBsol, str(compDict))
 
 if __name__ == '__main__':
     unittest.main()
