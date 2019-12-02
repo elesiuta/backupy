@@ -98,6 +98,7 @@ def rewriteLogRelPaths(fName):
             writer.writerow(row)
 
 def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=True):
+    print("####### TEST: " + test_name + " #######")
     setupTestDir(test_name)
     if set == 0:
         dir_A = "dir A"
@@ -114,10 +115,10 @@ def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=T
     if compare:
         dirA_stats = dirStats(os.path.join(test_name, dir_A))
         dirB_stats = dirStats(os.path.join(test_name, dir_B))
-        dirAsol_stats = dirStats(os.path.join("backupy_test_solutions", test_name, "dir A"))
-        dirBsol_stats = dirStats(os.path.join("backupy_test_solutions", test_name, "dir B"))
-        a_test, a_sol, a_diff = dirCompare(os.path.join(test_name, dir_A), os.path.join("backupy_test_solutions", test_name, "dir A"))
-        b_test, b_sol, b_diff = dirCompare(os.path.join(test_name, dir_B), os.path.join("backupy_test_solutions", test_name, "dir B"))
+        dirAsol_stats = dirStats(os.path.join("backupy_test_solutions", test_name, dir_A))
+        dirBsol_stats = dirStats(os.path.join("backupy_test_solutions", test_name, dir_B))
+        a_test, a_sol, a_diff = dirCompare(os.path.join(test_name, dir_A), os.path.join("backupy_test_solutions", test_name, dir_A))
+        b_test, b_sol, b_diff = dirCompare(os.path.join(test_name, dir_B), os.path.join("backupy_test_solutions", test_name, dir_B))
         compDict = {"a_test_only": a_test, "a_sol_only": a_sol, "a_diff": a_diff, "b_test_only": b_test, "b_sol_only": b_sol, "b_diff": b_diff}
     if cleanup:
         cleanupTestDir(test_name)
@@ -253,12 +254,26 @@ class TestBackupy(unittest.TestCase):
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
-    # def test_sync_new_log(self):
-    #     test_name = "sync-new-log"
-    #     config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "noarchive": False, "backup_time_override": "000000-0000"}
-    #     dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True)
-    #     self.assertEqual(dirA, dirAsol, str(compDict))
-    #     self.assertEqual(dirB, dirBsol, str(compDict))
+    def test_sync_new_log(self):
+        test_name = "sync-new-log"
+        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "noarchive": False, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_sync_new_log_set1(self):
+        test_name = "sync-new-log-set1"
+        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "noarchive": False, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_mirror_source_log_set1(self):
+        test_name = "mirror-source-log-set1"
+        config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "noarchive": False, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
 
 if __name__ == '__main__':
     unittest.main()
