@@ -608,7 +608,7 @@ class BackupManager:
 
     def backup(self):
         if self.config.norun:
-            print(self.colourString("Simulation Run", "HEADER"))
+            print(self.colourString("Dry Run", "HEADER"))
         # init dir scanning and load previous scan data if available
         self.source = DirInfo(self.config.source, self.config.compare_mode, self.config.config_dir, [self.config.archive_dir])
         self.dest = DirInfo(self.config.dest, self.config.compare_mode, self.config.config_dir, [self.config.archive_dir])
@@ -684,7 +684,7 @@ class BackupManager:
         if not self.config.noprompt:
             simulation = ""
             if self.config.norun:
-                simulation = "simulated "
+                simulation = "dry run "
             if len(sourceOnly) == 0 and len(destOnly) == 0 and len(changed) == 0 and len(moved) == 0:
                 print(self.colourString("Directories already match, completed!", "OKGREEN"))
                 self.log.append(["### NO CHANGES FOUND ###"])
@@ -699,7 +699,10 @@ class BackupManager:
                 print(self.colourString("Run aborted", "WARNING"))
                 return 1
         # backup operations
-        self.log.append(["### START " + self.config.main_mode.upper() + " ###"])
+        if self.config.norun:
+            self.log.append(["### START " + self.config.main_mode.upper() + " DRY RUN ###"])
+        else:
+            self.log.append(["### START " + self.config.main_mode.upper() + " ###"])
         print(self.colourString("Starting " + self.config.main_mode, "OKGREEN"))
         if self.config.main_mode == "mirror":
             self.copyFiles(self.config.source, self.config.dest, sourceOnly, sourceOnly)
