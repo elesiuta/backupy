@@ -272,6 +272,20 @@ class TestBackupy(unittest.TestCase):
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
+    def test_sync_new_log_norun_set1(self):
+        test_name = "sync-new-log-norun-set1"
+        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "noarchive": False, "norun": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_sync_new_nolog_norun_set1(self):
+        test_name = "sync-new-nolog-norun-set1"
+        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": True, "noarchive": False, "norun": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=False, set=1)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
     def test_mirror_source_log_set1(self):
         test_name = "mirror-source-log-set1"
         config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "noarchive": False, "backup_time_override": "000000-0000"}
