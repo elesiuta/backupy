@@ -66,9 +66,9 @@ def dirStats(path):
             total_crc %= (0xFFFFFFFF + 1)
     return {"total_crc": total_crc, "file_count": file_count, "dir_count": dir_count, "total_file_size": total_file_size, "total_folder_size": total_folder_size}
 
-def setupTestDir(test_name):
-    shutil.unpack_archive("backupy_test_dir.zip", test_name)
-    with zipfile.ZipFile("backupy_test_dir.zip", "r") as z:
+def setupTestDir(test_name, test_zip):
+    shutil.unpack_archive(test_zip, test_name)
+    with zipfile.ZipFile(test_zip, "r") as z:
         for f in z.infolist():
             file_name = os.path.join(test_name, f.filename)
             date_time = time.mktime(f.date_time + (0, 0, -1))
@@ -99,11 +99,13 @@ def rewriteLogRelPaths(fName):
 
 def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=True):
     print("####### TEST: " + test_name + " #######")
-    setupTestDir(test_name)
+    setupTestDir(test_name, "backupy_test_dir.zip")
     if set == 0:
+        # setupTestDir(test_name, "tests/backupy_test_dir.zip")
         dir_A = "dir A"
         dir_B = "dir B"
     elif set == 1:
+        # setupTestDir(test_name, "tests/backupy_test_dir_set1.zip")
         dir_A = "dir A set 1"
         dir_B = "dir B set 1"
     config["source"] = os.path.join(test_name, dir_A)
@@ -130,6 +132,8 @@ class TestBackupy(unittest.TestCase):
     def setUpClass(cls):
         shutil.rmtree("backupy_test_solutions", ignore_errors=True)
         shutil.unpack_archive("backupy_test_solutions.zip", "backupy_test_solutions")
+        # shutil.unpack_archive("tests/backupy_test_solutions.zip", "backupy_test_solutions")
+        # shutil.unpack_archive("tests/backupy_test_solutions_set1.zip", "backupy_test_solutions")
 
     @classmethod
     def tearDownClass(cls):
