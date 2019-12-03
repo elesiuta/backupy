@@ -234,9 +234,11 @@ class DirInfo:
             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
         return self.file_dicts[relativePath]["crc"]
 
-    def timeWithinTolerance(self, t1: float, t2: float) -> bool:
+    def timeMatch(self, t1: float, t2: float, exact_only: bool = False) -> bool:
         if t1 == t2:
             return True
+        elif exact_only:
+            return False
         diff = abs(int(t1) - int(t2))
         if diff <= 1 or diff == 3600:
             return True
@@ -264,7 +266,7 @@ class DirInfo:
                     size = os.path.getsize(full_path)
                     mtime = os.path.getmtime(full_path)
                     if relativePath in self.loaded_dicts:
-                        if self.loaded_dicts[relativePath]["size"] == size and self.loaded_dicts[relativePath]["mtime"] == mtime:
+                        if self.loaded_dicts[relativePath]["size"] == size and self.timeMatch(self.loaded_dicts[relativePath]["mtime"], mtime, True):
                             self.file_dicts[relativePath] = self.loaded_dicts[relativePath]
                         else:
                             self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
@@ -285,7 +287,7 @@ class DirInfo:
             else:
                 return False
         if file_dict1["size"] == file_dict2["size"]:
-            if self.timeWithinTolerance(file_dict1["mtime"], file_dict2["mtime"]):
+            if self.timeMatch(file_dict1["mtime"], file_dict2["mtime"]):
                 if compare_mode == "both" and self.scanCrc(f) != secondInfo.scanCrc(f):
                     return False
                 return True
