@@ -234,6 +234,13 @@ class DirInfo:
             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
         return self.file_dicts[relativePath]["crc"]
 
+    def timeWithinTolerance(self, t1: float, t2: float) -> bool:
+        diff = abs(int(t1) - int(t2))
+        if diff <= 1 or diff == 3600:
+            return True
+        else:
+            return False
+
     def scanDir(self, verbose: bool) -> None:
         if os.path.isdir(self.dir):
             self.file_dicts = {}
@@ -281,8 +288,7 @@ class DirInfo:
                     return False
                 return True
             else:
-                diff = abs(int(file_dict1["mtime"]) - int(file_dict2["mtime"]))
-                if diff <= 1 or diff == 3600:
+                if self.timeWithinTolerance(file_dict1["mtime"], file_dict2["mtime"]):
                     if compare_mode == "both" and self.scanCrc(f) != secondInfo.scanCrc(f):
                         return False
                     return True
