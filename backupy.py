@@ -188,6 +188,9 @@ class DirInfo:
     def getLoadedDiffs(self) -> dict:
         return self.loaded_diffs
 
+    def getLoadedDicts(self) -> dict:
+        return self.loaded_dicts
+
     def saveJson(self) -> None:
         writeJson(os.path.join(self.dir, self.config_dir, "database.json"), self.file_dicts)
 
@@ -481,6 +484,21 @@ class BackupManager:
             self.printFileInfo("Source: ", f["source"], d1, skip_info=True)
             self.printFileInfo("  Dest: ", f["dest"], d2)
 
+    def printDbConflicts(self, l: list, d: dict, ddb: dict) -> None:
+        for f in l:
+            self.printFileInfo("File: ", f, d, "   Dest")
+            if f in ddb:
+                self.printFileInfo("", f, ddb, "     DB")
+
+    def printSyncDbConflicts(self, l: list, d1: dict, d2: dict, d1db: dict, d2db: dict) -> None:
+        for f in l:
+            self.printFileInfo("File: ", f, d1, " Source")
+            if f in d1db:
+                self.printFileInfo("", f, d1db, "     DB")
+            self.printFileInfo("", f, d2, "   Dest")
+            if f in d2db:
+                self.printFileInfo("", f, d2db, "     DB")
+
     #############################################################################
     ### File operation methods (only use these methods to perform operations) ###
     #############################################################################
@@ -641,12 +659,12 @@ class BackupManager:
                 if len(sync_conflicts) >= 1:
                     print(self.colourString("WARNING: found files modified in both source and destination since last scan", "WARNING"))
                 print(self.colourString("Sync Database Conflicts: %s" %(len(sync_conflicts)), "HEADER"))
-                self.printChangedFiles(sync_conflicts, source_diffs, dest_diffs)
+                self.printSyncDbConflicts(sync_conflicts, source_diffs, dest_diffs, self.source.getLoadedDicts(), self.dest.getLoadedDicts())
             else:
                 if len(dest_diffs) >= 1:
                     print(self.colourString("WARNING: found files modified in the destination since last scan", "WARNING"))
                 print(self.colourString("Destination Database Conflicts: %s" %(len(dest_diffs)), "HEADER"))
-                self.printFiles(list(dest_diffs.keys()), dest_diffs)
+                self.printDbConflicts(list(dest_diffs.keys()), dest_diffs, self.dest.getLoadedDicts())
         # compare directories, this is where CRC mode = both takes place
         self.colourPrint("Comparing directories...", "OKGREEN")
         sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves, self.config.filter_list)
