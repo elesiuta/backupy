@@ -188,9 +188,6 @@ class DirInfo:
     def getLoadedDiffs(self) -> dict:
         return self.loaded_diffs
 
-    def getLoadedDicts(self) -> dict:
-        return self.loaded_dicts
-
     def saveJson(self) -> None:
         writeJson(os.path.join(self.dir, self.config_dir, "database.json"), self.file_dicts)
 
@@ -273,12 +270,12 @@ class DirInfo:
                             self.file_dicts[relativePath] = self.loaded_dicts[relativePath]
                         else:
                             self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
-                            self.loaded_diffs[relativePath] = self.file_dicts[relativePath]
+                            self.loaded_diffs[relativePath] = self.loaded_dicts[relativePath]
                         if self.compare_mode == "crc" and "crc" not in self.file_dicts[relativePath]:
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
                     else:
                         self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
-                        self.loaded_diffs[relativePath] = self.file_dicts[relativePath]
+                        self.loaded_diffs[relativePath] = {"size": 0, "mtime": 0}
                         if self.compare_mode == "crc":
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
             scan_status.endProgress()
@@ -487,17 +484,14 @@ class BackupManager:
     def printDbConflicts(self, l: list, d: dict, ddb: dict) -> None:
         for f in l:
             self.printFileInfo("File: ", f, d, "   Dest")
-            if f in ddb:
-                self.printFileInfo("", f, ddb, "     DB")
+            self.printFileInfo("", f, ddb, "     DB")
 
     def printSyncDbConflicts(self, l: list, d1: dict, d2: dict, d1db: dict, d2db: dict) -> None:
         for f in l:
             self.printFileInfo("File: ", f, d1, " Source")
-            if f in d1db:
-                self.printFileInfo("", f, d1db, "     DB")
+            self.printFileInfo("", f, d1db, "     DB")
             self.printFileInfo("", f, d2, "   Dest")
-            if f in d2db:
-                self.printFileInfo("", f, d2db, "     DB")
+            self.printFileInfo("", f, d2db, "     DB")
 
     #############################################################################
     ### File operation methods (only use these methods to perform operations) ###
@@ -648,7 +642,7 @@ class BackupManager:
         self.dest.scanDir(self.config.verbose)
         dest_dict = self.dest.getDirDict()
         dest_diffs = self.dest.getLoadedDiffs()
-        # print database conflicts
+        # print database conflicts, note: this is intended to prevent collisions from files being modified independently on both sides and does not detect deletions, it can also be triggered by time zone or dst changes
         if database_load_success:
             self.log.append(["### DATABASE CONFLICTS ###"])
             if self.config.main_mode == "sync":
@@ -659,12 +653,12 @@ class BackupManager:
                 if len(sync_conflicts) >= 1:
                     print(self.colourString("WARNING: found files modified in both source and destination since last scan", "WARNING"))
                 print(self.colourString("Sync Database Conflicts: %s" %(len(sync_conflicts)), "HEADER"))
-                self.printSyncDbConflicts(sync_conflicts, source_diffs, dest_diffs, self.source.getLoadedDicts(), self.dest.getLoadedDicts())
+                self.printSyncDbConflicts(sync_conflicts, source_dict, dest_dict, source_diffs, dest_diffs)
             else:
                 if len(dest_diffs) >= 1:
                     print(self.colourString("WARNING: found files modified in the destination since last scan", "WARNING"))
                 print(self.colourString("Destination Database Conflicts: %s" %(len(dest_diffs)), "HEADER"))
-                self.printDbConflicts(list(dest_diffs.keys()), dest_diffs, self.dest.getLoadedDicts())
+                self.printDbConflicts(list(dest_diffs.keys()), dest_dict, dest_diffs)
         # compare directories, this is where CRC mode = both takes place
         self.colourPrint("Comparing directories...", "OKGREEN")
         sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves, self.config.filter_list)
