@@ -506,20 +506,23 @@ class BackupManager:
 
     def printSyncDbConflicts(self, l: list, d1: dict, d2: dict, d1db: dict, d2db: dict) -> None:
         for f in l:
-            header = "File: "
-            sub_header_1 = "     DB"
-            sub_header_2 = "     DB"
             if f in d1:
-                self.printFileInfo(header, f, d1, " Source")
-                header = ""
+                self.printFileInfo("File: ", f, d1, " Source")
+            else:
+                print(self.colourString("File: ", "OKBLUE") + self.replaceSurrogates(f))
+                print(self.colourString(" Source\t Missing", "OKBLUE"))
             if f in d1db:
-                self.printFileInfo(header, f, d1db, sub_header_1)
-                header = ""
+                self.printFileInfo("", f, d1db, "     DB")
+            else:
+                print(self.colourString("     DB\t Missing", "OKBLUE"))
             if f in d2:
-                self.printFileInfo(header, f, d2, "   Dest")
-                header = ""
+                self.printFileInfo("", f, d2, "   Dest")
+            else:
+                print(self.colourString("   Dest\t Missing", "OKBLUE"))
             if f in d2db:
-                self.printFileInfo(header, f, d2db, sub_header_2)
+                self.printFileInfo("", f, d2db, "     DB")
+            else:
+                print(self.colourString("     DB\t Missing", "OKBLUE"))
 
     #############################################################################
     ### File operation methods (only use these methods to perform operations) ###
