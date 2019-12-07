@@ -497,33 +497,27 @@ class BackupManager:
     def printDbConflicts(self, l: list, d: dict, ddb: dict) -> None:
         for f in l:
             if f in d and f in ddb:
-                header = "File: "
+                self.printFileInfo("File (conflict): ", f, d, "   Dest")
+                self.printFileInfo("", f, ddb, "     DB")
             elif f in d and f not in ddb:
-                header = "File (added): "
+                self.printFileInfo("File (added): ", f, d, "   Dest")
             elif f not in d and f in ddb:
-                header = "File (missing): "
-            if f in d:
-                self.printFileInfo(header, f, d, "   Dest")
-                header = ""
-            if f in ddb:
-                self.printFileInfo(header, f, ddb, "     DB")
+                self.printFileInfo("File (missing): ", f, ddb, "     DB")
 
     def printSyncDbConflicts(self, l: list, d1: dict, d2: dict, d1db: dict, d2db: dict) -> None:
         for f in l:
             header = "File: "
-            sub_header_1 = "   S-DB"
-            sub_header_2 = "   D-DB"
+            sub_header_1 = "     DB"
+            sub_header_2 = "     DB"
             if f in d1:
                 self.printFileInfo(header, f, d1, " Source")
                 header = ""
-                sub_header_1 = "     DB"
             if f in d1db:
                 self.printFileInfo(header, f, d1db, sub_header_1)
                 header = ""
             if f in d2:
                 self.printFileInfo(header, f, d2, "   Dest")
                 header = ""
-                sub_header_2 = "     DB"
             if f in d2db:
                 self.printFileInfo(header, f, d2db, sub_header_2)
 
