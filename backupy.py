@@ -177,6 +177,7 @@ class DirInfo:
         self.file_dicts = {}
         self.loaded_dicts = {}
         self.loaded_diffs = {}
+        self.missing_file_dicts = {}
         self.dir = directory
         self.compare_mode = compare_mode
         self.config_dir = config_dir
@@ -595,8 +596,8 @@ class BackupManager:
             archive_path = os.path.join(self.config.archive_dir, self.backup_time, file_path)
             self.moveFile(root_path, root_path, file_path, archive_path)
 
-    def handleConflicts(self, source: str, dest: str, source_dict: dict, dest_dict:dict, changed: list) -> None:
-        self.colourPrint("Handling %s file conflicts per selection mode" %(len(changed)), "OKBLUE")
+    def handleChanges(self, source: str, dest: str, source_dict: dict, dest_dict:dict, changed: list) -> None:
+        self.colourPrint("Handling %s file changes per selection mode" %(len(changed)), "OKBLUE")
         copy_status = StatusBar(len(changed), self.config.verbose)
         for fp in changed:
             copy_status.update(fp)
@@ -674,13 +675,13 @@ class BackupManager:
         elif self.config.main_mode == "mirror":
             dest_msg = "(to be " + archive_msg + "d)"
         if self.config.select_mode == "source":
-            conflict_msg = "(" + archive_msg + " dest and copy from source)"
+            change_msg = "(" + archive_msg + " dest and copy from source)"
         elif self.config.select_mode == "dest":
-            conflict_msg = "(" + archive_msg + " source and copy from dest)"
+            change_msg = "(" + archive_msg + " source and copy from dest)"
         elif self.config.select_mode == "new":
-            conflict_msg = "(" + archive_msg + " older and copy newer)"
+            change_msg = "(" + archive_msg + " older and copy newer)"
         elif self.config.select_mode == "no":
-            conflict_msg = "(left as is)"
+            change_msg = "(left as is)"
         # print differences
         print(self.colourString("Source Only (copy to dest): %s" %(len(sourceOnly)), "HEADER"))
         self.log.append(["### SOURCE ONLY ###"])
@@ -688,8 +689,8 @@ class BackupManager:
         print(self.colourString("Destination Only %s: %s" %(dest_msg, len(destOnly)), "HEADER"))
         self.log.append(["### DESTINATION ONLY ###"])
         self.printFiles(destOnly, dest_dict)
-        print(self.colourString("File Conflicts %s: %s" %(conflict_msg, len(changed)), "HEADER"))
-        self.log.append(["### FILE CONFLICTS ###"])
+        print(self.colourString("File Changes %s: %s" %(change_msg, len(changed)), "HEADER"))
+        self.log.append(["### FILE CHANGES ###"])
         self.printChangedFiles(changed, source_dict, dest_dict)
         if not self.config.nomoves:
             print(self.colourString("Moved Files (move on dest to match source): %s" %(len(moved)), "HEADER"))
@@ -728,18 +729,18 @@ class BackupManager:
                 self.moveFiles(self.config.dest, recycle_bin, destOnly, destOnly)
             if not self.config.nomoves:
                 self.movedFiles(moved)
-            self.handleConflicts(self.config.source, self.config.dest, source_dict, dest_dict, changed)
+            self.handleChanges(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         elif self.config.main_mode == "backup":
             self.copyFiles(self.config.source, self.config.dest, sourceOnly, sourceOnly)
             if not self.config.nomoves:
                 self.movedFiles(moved)
-            self.handleConflicts(self.config.source, self.config.dest, source_dict, dest_dict, changed)
+            self.handleChanges(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         elif self.config.main_mode == "sync":
             self.copyFiles(self.config.source, self.config.dest, sourceOnly, sourceOnly)
             self.copyFiles(self.config.dest, self.config.source, destOnly, destOnly)
             if not self.config.nomoves:
                 self.movedFiles(moved)
-            self.handleConflicts(self.config.source, self.config.dest, source_dict, dest_dict, changed)
+            self.handleChanges(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         self.log.append(["### COMPLETED ###"])
         self.writeLog(db=True)
         print(self.colourString("Completed!", "OKGREEN"))
