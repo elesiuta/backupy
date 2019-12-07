@@ -177,7 +177,7 @@ class DirInfo:
         self.file_dicts = {}
         self.loaded_dicts = {}
         self.loaded_diffs = {}
-        self.missing_file_dicts = {}
+        self.missing_files = {}
         self.dir = directory
         self.compare_mode = compare_mode
         self.config_dir = config_dir
@@ -188,6 +188,9 @@ class DirInfo:
 
     def getLoadedDiffs(self) -> dict:
         return self.loaded_diffs
+
+    def getMissingFiles(self) -> dict:
+        return self.missing_files
 
     def saveJson(self) -> None:
         writeJson(os.path.join(self.dir, self.config_dir, "database.json"), self.file_dicts)
@@ -280,6 +283,9 @@ class DirInfo:
                         if self.compare_mode == "crc":
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
             scan_status.endProgress()
+            for relativePath in self.loaded_dicts:
+                if relativePath not in self.file_dicts:
+                    self.missing_files[relativePath] = self.loaded_dicts[relativePath]
 
     def fileMatch(self, f: str, file_dict1: dict, file_dict2: dict, secondInfo: 'DirInfo', compare_mode: str) -> bool:
         if compare_mode == "crc":
@@ -328,6 +334,8 @@ class DirInfo:
                     # if "dir" not in self.file_dicts[f1] and "dir" not in second_dict[f2]:
                     if self.fileMatch(f, self.file_dicts[f1], second_dict[f2], secondInfo, compare_mode):
                         moved.append({"source": f1, "dest": f2})
+                        _ = secondInfo.missing_files.pop(f1, 1)
+                        _ = self.missing_files.pop(f2, 1)
             for pair in moved:
                 selfOnly.remove(pair["source"])
                 secondOnly.remove(pair["dest"])
@@ -577,7 +585,7 @@ class BackupManager:
 
     def movedFiles(self, moved: list, reverse: bool = False) -> None:
         # conflicts shouldn't happen since moved is a subset of files from sourceOnly and destOnly
-        # depends on source_info.dirCompare(dest_info) otherwise source and dest will be reversed
+        # depends on source_info.dirCompare(dest_info) otherwise source and dest keys will be reversed
         self.colourPrint("Moving %s files on destination to match source" %(len(moved)), "OKBLUE")
         for f in moved:
             if reverse:
@@ -643,6 +651,9 @@ class BackupManager:
         self.dest.scanDir(self.config.verbose)
         dest_dict = self.dest.getDirDict()
         dest_diffs = self.dest.getLoadedDiffs()
+        # compare directories, this is where CRC mode = both takes place
+        self.colourPrint("Comparing directories...", "OKGREEN")
+        sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves, self.config.filter_list)
         # print database conflicts, note: this is intended to prevent collisions from files being modified independently on both sides and does not detect deletions, it can also be triggered by time zone or dst changes
         if database_load_success:
             self.log.append(["### DATABASE CONFLICTS ###"])
@@ -660,9 +671,6 @@ class BackupManager:
                     print(self.colourString("WARNING: found files modified in the destination since last scan", "WARNING"))
                 print(self.colourString("Destination Database Conflicts: %s" %(len(dest_diffs)), "HEADER"))
                 self.printDbConflicts(list(dest_diffs.keys()), dest_dict, dest_diffs)
-        # compare directories, this is where CRC mode = both takes place
-        self.colourPrint("Comparing directories...", "OKGREEN")
-        sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves, self.config.filter_list)
         # prepare diff messages
         if self.config.noarchive:
             archive_msg = "delete"
