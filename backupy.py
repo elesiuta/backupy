@@ -186,6 +186,9 @@ class DirInfo:
     def getDirDict(self) -> dict:
         return self.file_dicts
 
+    def getLoadedDicts(self) -> dict:
+        return self.loaded_dicts
+
     def getLoadedDiffs(self) -> dict:
         return self.loaded_diffs
 
@@ -279,7 +282,7 @@ class DirInfo:
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
                     else:
                         self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
-                        self.loaded_diffs[relativePath] = {"size": 0, "mtime": 0}
+                        # self.loaded_diffs[relativePath] = {"size": 0, "mtime": 0}
                         if self.compare_mode == "crc":
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
             scan_status.endProgress()
@@ -492,15 +495,27 @@ class BackupManager:
 
     def printDbConflicts(self, l: list, d: dict, ddb: dict) -> None:
         for f in l:
-            self.printFileInfo("File: ", f, d, "   Dest")
-            self.printFileInfo("", f, ddb, "     DB")
+            header = "File: "
+            if f in d:
+                self.printFileInfo(header, f, d, "   Dest")
+                header = ""
+            if f in ddb:
+                self.printFileInfo(header, f, ddb, "     DB")
 
     def printSyncDbConflicts(self, l: list, d1: dict, d2: dict, d1db: dict, d2db: dict) -> None:
         for f in l:
-            self.printFileInfo("File: ", f, d1, " Source")
-            self.printFileInfo("", f, d1db, "     DB")
-            self.printFileInfo("", f, d2, "   Dest")
-            self.printFileInfo("", f, d2db, "     DB")
+            header = "File: "
+            if f in d1:
+                self.printFileInfo(header, f, d1, " Source")
+                header = ""
+            if f in d1db:
+                self.printFileInfo(header, f, d1db, "     DB")
+                header = ""
+            if f in d2:
+                self.printFileInfo(header, f, d2, "   Dest")
+                header = ""
+            if f in d2db:
+                self.printFileInfo(header, f, d2db, "     DB")
 
     #############################################################################
     ### File operation methods (only use these methods to perform operations) ###
@@ -645,16 +660,22 @@ class BackupManager:
         # scan directories, this is where CRC mode = all takes place
         self.colourPrint("Scanning files on source:\n%s" %(self.config.source), "OKBLUE")
         self.source.scanDir(self.config.verbose)
-        source_dict = self.source.getDirDict()
-        source_diffs = self.source.getLoadedDiffs()
         self.colourPrint("Scanning files on destination:\n%s" %(self.config.dest), "OKBLUE")
         self.dest.scanDir(self.config.verbose)
-        dest_dict = self.dest.getDirDict()
-        dest_diffs = self.dest.getLoadedDiffs()
         # compare directories, this is where CRC mode = both takes place
         self.colourPrint("Comparing directories...", "OKGREEN")
         sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves, self.config.filter_list)
-        # print database conflicts, note: this is intended to prevent collisions from files being modified independently on both sides and does not detect deletions, it can also be triggered by time zone or dst changes
+        # get databases
+        source_dict = self.source.getDirDict()
+        source_diffs = self.source.getLoadedDiffs()
+        source_missing = self.source.getMissingFiles()
+        source_loaded_db = self.source.getLoadedDicts()
+        dest_dict = self.dest.getDirDict()
+        dest_diffs = self.dest.getLoadedDiffs()
+        dest_missing = self.dest.getMissingFiles()
+        dest_loaded_db = self.dest.getLoadedDicts()
+        # print database conflicts, including both collisions from files being modified independently on both sides and unexpected missing files
+        # note: this only notifies the user so they can intervene, it does not handle them in any special way, treating them as regular file changes, it can also be triggered by time zone or dst changes
         if database_load_success:
             self.log.append(["### DATABASE CONFLICTS ###"])
             if self.config.main_mode == "sync":
@@ -662,15 +683,18 @@ class BackupManager:
                 for f in source_diffs:
                     if f in dest_diffs:
                         sync_conflicts.append(f)
+                sync_conflicts += list(source_missing.keys())
+                sync_conflicts += list(dest_missing.keys())
                 if len(sync_conflicts) >= 1:
                     print(self.colourString("WARNING: found files modified in both source and destination since last scan", "WARNING"))
                 print(self.colourString("Sync Database Conflicts: %s" %(len(sync_conflicts)), "HEADER"))
-                self.printSyncDbConflicts(sync_conflicts, source_dict, dest_dict, source_diffs, dest_diffs)
+                self.printSyncDbConflicts(sync_conflicts, source_dict, dest_dict, source_loaded_db, dest_loaded_db)
             else:
                 if len(dest_diffs) >= 1:
                     print(self.colourString("WARNING: found files modified in the destination since last scan", "WARNING"))
                 print(self.colourString("Destination Database Conflicts: %s" %(len(dest_diffs)), "HEADER"))
-                self.printDbConflicts(list(dest_diffs.keys()), dest_dict, dest_diffs)
+                dest_conflicts = list(dest_diffs.keys()) + list(dest_missing.keys())
+                self.printDbConflicts(dest_conflicts, dest_dict, dest_loaded_db)
         # prepare diff messages
         if self.config.noarchive:
             archive_msg = "delete"
