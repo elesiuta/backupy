@@ -477,15 +477,15 @@ class BackupManager:
             s = self.colourString(header, "OKBLUE") + self.replaceSurrogates(f)
             if not skip_info:
                 s = s + "\n"
-        if not skip_info and not missing:
+        if not skip_info:
             s = s + self.colourString(sub_header, "OKBLUE") + "\t"
-            s = s + self.colourString(" Size: ", "OKBLUE") + self.prettySize(d[f]["size"])
-            s = s + self.colourString(" Modified: ", "OKBLUE") + time.ctime(d[f]["mtime"])
-            if "crc" in d[f]:
-                s = s + self.colourString(" Hash: ", "OKBLUE") + self.prettyCrc(d[f]["crc"])
-        elif not skip_info and missing:
-            s = s + self.colourString(sub_header, "OKBLUE") + "\t"
-            s = s + self.colourString(" Missing", "OKBLUE")
+            if not missing:
+                s = s + self.colourString(" Size: ", "OKBLUE") + self.prettySize(d[f]["size"])
+                s = s + self.colourString(" Modified: ", "OKBLUE") + time.ctime(d[f]["mtime"])
+                if "crc" in d[f]:
+                    s = s + self.colourString(" Hash: ", "OKBLUE") + self.prettyCrc(d[f]["crc"])
+            else:
+                s = s + self.colourString(" Missing", "OKBLUE")
         print(s)
 
     def printFiles(self, l: list, d: dict) -> None:
