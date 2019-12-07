@@ -282,7 +282,6 @@ class DirInfo:
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
                     else:
                         self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
-                        # self.loaded_diffs[relativePath] = {"size": 0, "mtime": 0}
                         if self.compare_mode == "crc":
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
             scan_status.endProgress()
