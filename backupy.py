@@ -287,8 +287,9 @@ class DirInfo:
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
             scan_status.endProgress()
             for relativePath in self.loaded_dicts:
-                if relativePath not in self.file_dicts:
-                    self.missing_files[relativePath] = self.loaded_dicts[relativePath]
+                if os.path.normpath(relativePath).split(os.path.sep)[0] not in self.ignored_folders:
+                    if relativePath not in self.file_dicts:
+                        self.missing_files[relativePath] = self.loaded_dicts[relativePath]
 
     def fileMatch(self, f: str, file_dict1: dict, file_dict2: dict, secondInfo: 'DirInfo', compare_mode: str) -> bool:
         if compare_mode == "crc":
@@ -505,17 +506,21 @@ class BackupManager:
     def printSyncDbConflicts(self, l: list, d1: dict, d2: dict, d1db: dict, d2db: dict) -> None:
         for f in l:
             header = "File: "
+            sub_header_1 = "   S-DB"
+            sub_header_2 = "   D-DB"
             if f in d1:
                 self.printFileInfo(header, f, d1, " Source")
                 header = ""
+                sub_header_1 = "     DB"
             if f in d1db:
-                self.printFileInfo(header, f, d1db, "     DB")
+                self.printFileInfo(header, f, d1db, sub_header_1)
                 header = ""
             if f in d2:
                 self.printFileInfo(header, f, d2, "   Dest")
                 header = ""
+                sub_header_2 = "     DB"
             if f in d2db:
-                self.printFileInfo(header, f, d2db, "     DB")
+                self.printFileInfo(header, f, d2db, sub_header_2)
 
     #############################################################################
     ### File operation methods (only use these methods to perform operations) ###
@@ -683,8 +688,7 @@ class BackupManager:
                 for f in source_diffs:
                     if f in dest_diffs:
                         sync_conflicts.append(f)
-                sync_conflicts += list(source_missing.keys())
-                sync_conflicts += list(dest_missing.keys())
+                sync_conflicts += list(set(list(source_missing.keys()) + list(dest_missing.keys())))
                 if len(sync_conflicts) >= 1:
                     print(self.colourString("WARNING: found files modified in both source and destination since last scan", "WARNING"))
                 print(self.colourString("Sync Database Conflicts: %s" %(len(sync_conflicts)), "HEADER"))
