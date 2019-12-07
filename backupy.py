@@ -504,13 +504,8 @@ class BackupManager:
 
     def printDbConflicts(self, l: list, d: dict, ddb: dict) -> None:
         for f in l:
-            if f in d and f in ddb:
-                self.printFileInfo("File (conflict): ", f, d, "   Dest")
-                self.printFileInfo("", f, ddb, "     DB")
-            elif f in d and f not in ddb:
-                self.printFileInfo("File (added): ", f, d, "   Dest")
-            elif f not in d and f in ddb:
-                self.printFileInfo("File (missing): ", f, ddb, "     DB")
+            self.printFileInfo("File: ", f, d, "   Dest")
+            self.printFileInfo("", f, ddb, "     DB")
 
     def printSyncDbConflicts(self, l: list, d1: dict, d2: dict, d1db: dict, d2db: dict) -> None:
         for f in l:
