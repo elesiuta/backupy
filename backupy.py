@@ -465,19 +465,27 @@ class BackupManager:
                 print(self.colourString(msg, colour))
 
     def printFileInfo(self, header: str, f: str, d: dict, sub_header: str = "", skip_info: bool = False) -> None:
-        self.log.append([header, f] + [str(d[f])])
+        if f in d:
+            self.log.append([header, f] + [str(d[f])])
+            missing = False
+        else:
+            self.log.append([header, f] + ["Missing"])
+            missing = True
         if header == "":
             s = ""
         else:
             s = self.colourString(header, "OKBLUE") + self.replaceSurrogates(f)
             if not skip_info:
                 s = s + "\n"
-        if not skip_info:
+        if not skip_info and not missing:
             s = s + self.colourString(sub_header, "OKBLUE") + "\t"
             s = s + self.colourString(" Size: ", "OKBLUE") + self.prettySize(d[f]["size"])
             s = s + self.colourString(" Modified: ", "OKBLUE") + time.ctime(d[f]["mtime"])
             if "crc" in d[f]:
                 s = s + self.colourString(" Hash: ", "OKBLUE") + self.prettyCrc(d[f]["crc"])
+        elif not skip_info and missing:
+            s = s + self.colourString(sub_header, "OKBLUE") + "\t"
+            s = s + self.colourString(" Missing", "OKBLUE")
         print(s)
 
     def printFiles(self, l: list, d: dict) -> None:
@@ -506,23 +514,10 @@ class BackupManager:
 
     def printSyncDbConflicts(self, l: list, d1: dict, d2: dict, d1db: dict, d2db: dict) -> None:
         for f in l:
-            if f in d1:
-                self.printFileInfo("File: ", f, d1, " Source")
-            else:
-                print(self.colourString("File: ", "OKBLUE") + self.replaceSurrogates(f))
-                print(self.colourString(" Source\t Missing", "OKBLUE"))
-            if f in d1db:
-                self.printFileInfo("", f, d1db, "     DB")
-            else:
-                print(self.colourString("     DB\t Missing", "OKBLUE"))
-            if f in d2:
-                self.printFileInfo("", f, d2, "   Dest")
-            else:
-                print(self.colourString("   Dest\t Missing", "OKBLUE"))
-            if f in d2db:
-                self.printFileInfo("", f, d2db, "     DB")
-            else:
-                print(self.colourString("     DB\t Missing", "OKBLUE"))
+            self.printFileInfo("File: ", f, d1, " Source")
+            self.printFileInfo("", f, d1db, "     DB")
+            self.printFileInfo("", f, d2, "   Dest")
+            self.printFileInfo("", f, d2db, "     DB")
 
     #############################################################################
     ### File operation methods (only use these methods to perform operations) ###
