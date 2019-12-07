@@ -496,7 +496,12 @@ class BackupManager:
 
     def printDbConflicts(self, l: list, d: dict, ddb: dict) -> None:
         for f in l:
-            header = "File: "
+            if f in d and f in ddb:
+                header = "File: "
+            elif f in d and f not in ddb:
+                header = "File (added): "
+            elif f not in d and f in ddb:
+                header = "File (missing): "
             if f in d:
                 self.printFileInfo(header, f, d, "   Dest")
                 header = ""
