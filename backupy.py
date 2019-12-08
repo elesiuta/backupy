@@ -385,7 +385,8 @@ class BackupManager:
         if self.config.save:
             self.saveJson()
         # debugging/testing
-        self.log.append(["CONFIG", str(vars(self.config))])
+        self.log.append(["### CONFIG ###"])
+        self.log += [[str(line)] for line in json.dumps(vars(self.config),separators=("\n",": "))[1:-1].split("\n")]
         if self.config.backup_time_override:
             self.backup_time = self.config.backup_time_override
 
@@ -465,10 +466,10 @@ class BackupManager:
 
     def printFileInfo(self, header: str, f: str, d: dict, sub_header: str = "", skip_info: bool = False) -> None:
         if f in d:
-            self.log.append([header, f] + [str(d[f])])
+            self.log.append([header.strip(), sub_header.strip(), f] + [str(d[f])])
             missing = False
         else:
-            self.log.append([header, f] + ["Missing"])
+            self.log.append([header.strip(), sub_header.strip(), f] + ["Missing"])
             missing = True
         if header == "":
             s = ""
@@ -519,7 +520,7 @@ class BackupManager:
 
     def removeFile(self, root: str, fPath: str) -> None:
         try:
-            self.log.append(["removeFile()", root, fPath])
+            self.log.append(["removeFile()", "", root, fPath])
             self.source.updateDictRemove(root, fPath, self.dest)
             if not self.config.norun:
                 path = os.path.join(root, fPath)
@@ -537,7 +538,7 @@ class BackupManager:
 
     def copyFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
-            self.log.append(["copyFile()", source_root, dest_root, source_file, dest_file])
+            self.log.append(["copyFile()", "", source_root, dest_root, source_file, dest_file])
             self.source.updateDictCopy(source_root, dest_root, source_file, dest_file, self.dest)
             if not self.config.norun:
                 source = os.path.join(source_root, source_file)
@@ -554,7 +555,7 @@ class BackupManager:
 
     def moveFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
-            self.log.append(["moveFile()", source_root, dest_root, source_file, dest_file])
+            self.log.append(["moveFile()", "", source_root, dest_root, source_file, dest_file])
             self.source.updateDictMove(source_root, dest_root, source_file, dest_file, self.dest)
             if not self.config.norun:
                 source = os.path.join(source_root, source_file)
