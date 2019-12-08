@@ -386,7 +386,7 @@ class BackupManager:
             self.saveJson()
         # debugging/testing
         self.log.append(["### CONFIG ###"])
-        self.log += [[str(line)] for line in json.dumps(vars(self.config),separators=("\n",": "))[1:-1].split("\n")]
+        self.log.append(["", "", str(vars(self.config))])
         if self.config.backup_time_override:
             self.backup_time = self.config.backup_time_override
 
