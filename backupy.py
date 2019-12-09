@@ -736,16 +736,17 @@ class BackupManager:
             print(self.colourString("Moved Files (move on dest to match source): %s" %(len(moved)), "HEADER"))
             self.log.append(["### MOVED FILES ###"])
             self.printMovedFiles(moved, source_dict, dest_dict)
+        # exit if directories already match
+        if len(sourceOnly) == 0 and len(destOnly) == 0 and len(changed) == 0 and len(moved) == 0:
+            print(self.colourString("Directories already match, completed!", "OKGREEN"))
+            self.log.append(["### NO CHANGES FOUND ###"])
+            self.writeLog(db=True)
+            return 0
         # wait for go ahead
         if not self.config.noprompt:
             simulation = ""
             if self.config.norun:
                 simulation = " dry run"
-            if len(sourceOnly) == 0 and len(destOnly) == 0 and len(changed) == 0 and len(moved) == 0:
-                print(self.colourString("Directories already match, completed!", "OKGREEN"))
-                self.log.append(["### NO CHANGES FOUND ###"])
-                self.writeLog(db=True)
-                return 0
             print(self.colourString("Scan complete, continue with %s%s (y/N)?" %(self.config.main_mode, simulation), "OKGREEN"))
             self.writeLog() # for inspection before decision if necessary
             go = input("> ")
