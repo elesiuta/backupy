@@ -97,9 +97,10 @@ def rewriteLogRelPaths(fName):
         for row in data:
             writer.writerow(row)
 
-def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=True):
-    print("####### TEST: " + test_name + " #######")
-    setupTestDir(test_name, "backupy_test_dir.zip")
+def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=True, setup=True):
+    if setup:
+        print("####### TEST: " + test_name + " #######")
+        setupTestDir(test_name, "backupy_test_dir.zip")
     if set == 0:
         # setupTestDir(test_name, "tests/backupy_test_dir.zip")
         dir_A = "dir A"
@@ -290,6 +291,14 @@ class TestBackupy(unittest.TestCase):
         test_name = "mirror-source-log-set1"
         config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "noarchive": False, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_sync_twice_nochanges(self):
+        test_name = "sync-twice-nochanges-set1"
+        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "noarchive": False, "backup_time_override": "000000-0000"}
+        runTest(test_name, config, rewrite_log=True, set=1, compare=False, setup=True, cleanup=False)
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1, setup=False, cleanup=True)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
