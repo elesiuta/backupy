@@ -750,10 +750,7 @@ class BackupManager:
             self.writeLog() # for inspection before decision if necessary
             go = input("> ")
             if go[0].lower() != "y":
-                self.log.append(["### ABORTED ###"])
-                self.writeLog()
-                print(self.colourString("Run aborted", "WARNING"))
-                return 1
+                return self.abortRun()
         # backup operations
         if self.config.norun:
             self.log.append(["### START " + self.config.main_mode.upper() + " DRY RUN ###"])
@@ -784,6 +781,7 @@ class BackupManager:
         self.log.append(["### COMPLETED ###"])
         self.writeLog(db=True)
         print(self.colourString("Completed!", "OKGREEN"))
+        return 0
 
 
 def main():
