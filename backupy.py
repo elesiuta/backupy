@@ -688,7 +688,7 @@ class BackupManager:
                 for f in source_diffs:
                     if f in dest_diffs:
                         sync_conflicts.append(f)
-                sync_conflicts += list(set(list(source_missing.keys()) + list(dest_missing.keys())))
+                sync_conflicts += sorted(list(set(list(source_missing.keys()) + list(dest_missing.keys()))))
                 if len(sync_conflicts) >= 1:
                     print(self.colourString("WARNING: found files modified in both source and destination since last scan", "WARNING"))
                 print(self.colourString("Sync Database Conflicts: %s" %(len(sync_conflicts)), "HEADER"))
