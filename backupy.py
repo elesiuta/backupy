@@ -729,8 +729,8 @@ class BackupManager:
         print(self.colourString("Destination Only %s: %s" %(dest_msg, len(destOnly)), "HEADER"))
         self.log.append(["### DESTINATION ONLY ###"])
         self.printFiles(destOnly, dest_dict)
-        print(self.colourString("File Changes %s: %s" %(change_msg, len(changed)), "HEADER"))
-        self.log.append(["### FILE CHANGES ###"])
+        print(self.colourString("Changed Files %s: %s" %(change_msg, len(changed)), "HEADER"))
+        self.log.append(["### CHANGED FILES ###"])
         self.printChangedFiles(changed, source_dict, dest_dict)
         if not self.config.nomoves:
             print(self.colourString("Moved Files (move on dest to match source): %s" %(len(moved)), "HEADER"))
