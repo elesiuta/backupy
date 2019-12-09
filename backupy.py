@@ -151,7 +151,7 @@ class ConfigObject:
         # default config (additional)
         self.archive_dir = ".backupy"
         self.config_dir = ".backupy"
-        self.cleanup = True
+        self.cleanup_empty_dirs = True
         self.filter_list = False
         self.filter_list_example = r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]"
         self.backup_time_override = False
@@ -159,6 +159,7 @@ class ConfigObject:
         self.load_json = True
         self.save_json = True
         self.verbose = True
+        self.quit_on_db_conflict = False
         # load config
         for key in config:
             self.__setattr__(key, config[key])
@@ -418,6 +419,12 @@ class BackupManager:
             self.source.saveJson()
             self.dest.saveJson()
 
+    def abortRun(self) -> int:
+        self.log.append(["### ABORTED ###"])
+        self.writeLog()
+        print(self.colourString("Run aborted", "WARNING"))
+        return 1
+
     ###################################
     ### String manipulation methods ###
     ###################################
@@ -529,7 +536,7 @@ class BackupManager:
                     os.rmdir(path)
                 else:
                     os.remove(path)
-                if self.config.cleanup:
+                if self.config.cleanup_empty_dirs:
                     head = os.path.dirname(path)
                     if len(os.listdir(head)) == 0:
                         os.removedirs(head)
@@ -564,7 +571,7 @@ class BackupManager:
                 if not os.path.isdir(os.path.dirname(dest)):
                     os.makedirs(os.path.dirname(dest))
                 shutil.move(source, dest)
-                if self.config.cleanup:
+                if self.config.cleanup_empty_dirs:
                     head = os.path.dirname(source)
                     if len(os.listdir(head)) == 0:
                         os.removedirs(head)
@@ -686,12 +693,16 @@ class BackupManager:
                     print(self.colourString("WARNING: found files modified in both source and destination since last scan", "WARNING"))
                 print(self.colourString("Sync Database Conflicts: %s" %(len(sync_conflicts)), "HEADER"))
                 self.printSyncDbConflicts(sync_conflicts, source_dict, dest_dict, source_loaded_db, dest_loaded_db)
+                if self.config.quit_on_db_conflict and len(sync_conflicts) >= 1:
+                    return self.abortRun()
             else:
                 if len(dest_diffs) >= 1:
                     print(self.colourString("WARNING: found files modified in the destination since last scan", "WARNING"))
                 print(self.colourString("Destination Database Conflicts: %s" %(len(dest_diffs)), "HEADER"))
                 dest_conflicts = list(dest_diffs.keys()) + list(dest_missing.keys())
                 self.printDbConflicts(dest_conflicts, dest_dict, dest_loaded_db)
+                if self.config.quit_on_db_conflict and len(dest_conflicts) >= 1:
+                    return self.abortRun()
         # prepare diff messages
         if self.config.noarchive:
             archive_msg = "delete"
