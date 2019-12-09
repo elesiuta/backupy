@@ -386,9 +386,10 @@ class BackupManager:
             self.saveJson()
         # debugging/testing
         self.log.append(["### CONFIG ###"])
-        self.log.append(["", "", str(vars(self.config))])
+        self.log.append(["Settings:", str(vars(self.config))])
         if self.config.backup_time_override:
             self.backup_time = self.config.backup_time_override
+        self.log.append(["Time:", self.backup_time])
 
     ######################################
     ### Saving/loading/logging methods ###
@@ -520,7 +521,7 @@ class BackupManager:
 
     def removeFile(self, root: str, fPath: str) -> None:
         try:
-            self.log.append(["removeFile()", "", root, fPath])
+            self.log.append(["removeFile()", root, fPath])
             self.source.updateDictRemove(root, fPath, self.dest)
             if not self.config.norun:
                 path = os.path.join(root, fPath)
@@ -538,7 +539,7 @@ class BackupManager:
 
     def copyFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
-            self.log.append(["copyFile()", "", source_root, dest_root, source_file, dest_file])
+            self.log.append(["copyFile()", source_root, dest_root, source_file, dest_file])
             self.source.updateDictCopy(source_root, dest_root, source_file, dest_file, self.dest)
             if not self.config.norun:
                 source = os.path.join(source_root, source_file)
@@ -555,7 +556,7 @@ class BackupManager:
 
     def moveFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
-            self.log.append(["moveFile()", "", source_root, dest_root, source_file, dest_file])
+            self.log.append(["moveFile()", source_root, dest_root, source_file, dest_file])
             self.source.updateDictMove(source_root, dest_root, source_file, dest_file, self.dest)
             if not self.config.norun:
                 source = os.path.join(source_root, source_file)
