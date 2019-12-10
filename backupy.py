@@ -696,10 +696,10 @@ class BackupManager:
                 if self.config.quit_on_db_conflict and len(sync_conflicts) >= 1:
                     return self.abortRun()
             else:
+                dest_conflicts = list(dest_diffs.keys()) + list(dest_missing.keys())
                 if len(dest_diffs) >= 1:
                     print(self.colourString("WARNING: found files modified in the destination since last scan", "WARNING"))
                 print(self.colourString("Destination Database Conflicts: %s" %(len(dest_diffs)), "HEADER"))
-                dest_conflicts = list(dest_diffs.keys()) + list(dest_missing.keys())
                 self.printDbConflicts(dest_conflicts, dest_dict, dest_loaded_db)
                 if self.config.quit_on_db_conflict and len(dest_conflicts) >= 1:
                     return self.abortRun()
@@ -722,6 +722,10 @@ class BackupManager:
             change_msg = "(" + archive_msg + " older and copy newer)"
         elif self.config.select_mode == "no":
             change_msg = "(left as is)"
+        if self.config.norun:
+            simulation_msg = " dry run"
+        else:
+            simulation_msg = ""
         # print differences
         print(self.colourString("Source Only (copy to dest): %s" %(len(sourceOnly)), "HEADER"))
         self.log.append(["### SOURCE ONLY ###"])
@@ -744,19 +748,13 @@ class BackupManager:
             return 0
         # wait for go ahead
         if not self.config.noprompt:
-            simulation = ""
-            if self.config.norun:
-                simulation = " dry run"
-            print(self.colourString("Scan complete, continue with %s%s (y/N)?" %(self.config.main_mode, simulation), "OKGREEN"))
+            print(self.colourString("Scan complete, continue with %s%s (y/N)?" %(self.config.main_mode, simulation_msg), "OKGREEN"))
             self.writeLog() # for inspection before decision if necessary
             go = input("> ")
             if go[0].lower() != "y":
                 return self.abortRun()
         # backup operations
-        if self.config.norun:
-            self.log.append(["### START " + self.config.main_mode.upper() + " DRY RUN ###"])
-        else:
-            self.log.append(["### START " + self.config.main_mode.upper() + " ###"])
+        self.log.append(["### START " + self.config.main_mode.upper() + simulation_msg.upper() + " ###"])
         print(self.colourString("Starting " + self.config.main_mode, "OKGREEN"))
         if self.config.main_mode == "mirror":
             self.copyFiles(self.config.source, self.config.dest, sourceOnly, sourceOnly)
