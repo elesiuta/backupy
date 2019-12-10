@@ -408,8 +408,8 @@ class BackupManager:
         config = readJson(config_dir)
         print(self.colourString("Loaded config from:\n" + config_dir, "OKGREEN"))
         self.config = ConfigObject(config)
-        if os.path.abspath(current_source) != os.path.abspath(self.config.source):
-            print(self.colourString("The specified source does not match the loaded config file, exiting", "FAIL"))
+        if self.config.source is None or os.path.abspath(current_source) != os.path.abspath(self.config.source):
+            print(self.colourString("A config file matching the specified was not found", "FAIL"))
             sys.exit()
 
     def writeLog(self, db: bool = False) -> None:
