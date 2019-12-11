@@ -77,7 +77,7 @@ def main_gui():
                         help="Load configuration from source")
     args = vars(parser.parse_args())
     args["stdout_status_bar"] = False # https://github.com/chriskiehl/Gooey/issues/213
-    if args.loadprofile != None:
+    if args["loadprofile"] != None:
         args["source"] = args.loadprofile
         args["load"] = True
     if args["save"] and args["source"] not in list_profiles:
