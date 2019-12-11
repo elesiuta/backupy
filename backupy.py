@@ -445,8 +445,8 @@ class BackupManager:
             "UNDERLINE" : '\033[4m'
         }
         string = self.replaceSurrogates(string)
-        # if self.gui:
-        #     return string
+        if self.gui:
+            return string
         return colours[colour] + string + colours["ENDC"]
 
     def prettyCrc(self, prev: int) -> str:

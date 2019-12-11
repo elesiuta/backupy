@@ -15,7 +15,7 @@ def simplePrompt(msg):
     else:
         return "n"
 
-@Gooey(program_name="BackuPy", richtext_controls=True, tabbed_groups=True)
+@Gooey(program_name="BackuPy", richtext_controls=False, tabbed_groups=True)
 def main_gui():
     dict_profiles = backupy.readJson("profiles.json")
     if "list" in dict_profiles:
@@ -78,7 +78,7 @@ def main_gui():
     args = vars(parser.parse_args())
     args["stdout_status_bar"] = False # https://github.com/chriskiehl/Gooey/issues/213
     if args["loadprofile"] != None:
-        args["source"] = args.loadprofile
+        args["source"] = args["loadprofile"]
         args["load"] = True
     if args["save"] and args["source"] not in list_profiles:
         list_profiles.append(args["source"])
