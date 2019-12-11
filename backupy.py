@@ -444,8 +444,8 @@ class BackupManager:
             "UNDERLINE" : '\033[4m'
         }
         string = self.replaceSurrogates(string)
-        if self.gui:
-            return string
+        # if self.gui:
+        #     return string
         return colours[colour] + string + colours["ENDC"]
 
     def prettyCrc(self, prev: int) -> str:
@@ -748,9 +748,13 @@ class BackupManager:
             return 0
         # wait for go ahead
         if not self.config.noprompt:
-            print(self.colourString("Scan complete, continue with %s%s (y/N)?" %(self.config.main_mode, simulation_msg), "OKGREEN"))
             self.writeLog() # for inspection before decision if necessary
-            go = input("> ")
+            if self.gui:
+                from backupy_gui import simplePrompt
+                go = simplePrompt("Scan complete, continue with %s%s?" %(self.config.main_mode, simulation_msg))
+            else:
+                print(self.colourString("Scan complete, continue with %s%s (y/N)?" %(self.config.main_mode, simulation_msg), "OKGREEN"))
+                go = input("> ")
             if go[0].lower() != "y":
                 return self.abortRun()
         # backup operations
@@ -784,7 +788,7 @@ class BackupManager:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="BackuPy: A small python program for backing up directories with an emphasis on clear rules, simple usage and logging changes", formatter_class=ArgparseCustomFormatter)
+    parser = argparse.ArgumentParser(description="BackuPy: A small python program for backing up directories with an emphasis on clear rules, simple usage, and logging changes", formatter_class=ArgparseCustomFormatter)
     parser.add_argument("source", action="store", type=str,
                         help="Path of source")
     parser.add_argument("dest", action="store", type=str, nargs="?", default=None,

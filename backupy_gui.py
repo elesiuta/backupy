@@ -1,8 +1,21 @@
 import sys
 import backupy
+import PySimpleGUI as sg
 from gooey import Gooey, GooeyParser
 
-@Gooey(richtext_controls=False)
+def simplePrompt(msg):
+     sg.change_look_and_feel('System Default For Real')
+     layout = [ [sg.Text(msg)],
+                [sg.Button('Ok'), sg.Button('Cancel')] ]
+     window = sg.Window('BackuPy', layout)
+     event, _ = window.Read()
+     window.close()
+     if event == "Ok":
+          return "y"
+     else:
+          return "n"
+
+@Gooey(richtext_controls=True)
 def main_gui():
     parser = GooeyParser(description="BackuPy: A small python program for backing up directories with an emphasis on clear rules, simple usage, and logging changes")
     parser.add_argument("--source", action="store", type=str, widget='DirChooser', required=True,
@@ -45,7 +58,7 @@ def main_gui():
                              "  <source>/.backupy/log-yymmdd-HHMM.csv\n"
                              "  <source|dest>/.backupy/database.json")
     parser.add_argument("--noprompt", action="store_true",
-                        help="Complete run without prompting for confirmation (MUST BE ENABLED)") # https://github.com/chriskiehl/Gooey/issues/222
+                        help="Complete run without prompting for confirmation")
     parser.add_argument("--norun", action="store_true",
                         help="Perform a dry run according to your configuration")
     parser.add_argument("--save", action="store_true",
