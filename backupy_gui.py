@@ -15,14 +15,14 @@ def simplePrompt(msg):
     else:
         return "n"
 
-@Gooey(richtext_controls=True, tabbed_groups=True)
+@Gooey(program_name="BackuPy", richtext_controls=True, tabbed_groups=True)
 def main_gui():
     dict_profiles = backupy.readJson("profiles.json")
     if "list" in dict_profiles:
         list_profiles = dict_profiles["list"]
     else:
         list_profiles = []
-    parser = GooeyParser(description="BackuPy: A small python program for backing up directories with an emphasis on clear rules, simple usage, and logging changes")
+    parser = GooeyParser(description="A simple python program for backing up directories")
     group1 = parser.add_argument_group("Profiles", "")
     group2 = parser.add_argument_group("Directories", "")
     group3 = parser.add_argument_group("Configuration", "")
