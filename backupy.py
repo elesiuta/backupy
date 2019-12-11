@@ -31,8 +31,8 @@ def readJson(fName: str) -> dict:
         return data
     return {}
 
-def writeJson(fName: str, data: dict) -> None:
-    if not os.path.isdir(os.path.dirname(fName)):
+def writeJson(fName: str, data: dict, subdir: bool = True) -> None:
+    if subdir and not os.path.isdir(os.path.dirname(fName)):
         os.makedirs(os.path.dirname(fName))
     with open(fName, "w", encoding="utf-8", errors="surrogateescape") as json_file:
         json.dump(data, json_file, indent=1, separators=(',', ': '))
