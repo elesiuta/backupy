@@ -75,12 +75,13 @@ def main_gui():
                         help="Save configuration in source")
     group2.add_argument("--load", action="store_true",
                         help="Load configuration from source")
-    args = parser.parse_args()
+    args = vars(parser.parse_args())
+    args["stdout_status_bar"] = False # https://github.com/chriskiehl/Gooey/issues/213
     if args.loadprofile != None:
-        args.source = args.loadprofile
-        args.load = True
-    if args.save and args.source not in list_profiles:
-        list_profiles.append(args.source)
+        args["source"] = args.loadprofile
+        args["load"] = True
+    if args["save"] and args["source"] not in list_profiles:
+        list_profiles.append(args["source"])
         backupy.writeJson("profiles.json", {"list": list_profiles}, False)
     backup_manager = backupy.BackupManager(args, gui=True)
     backup_manager.backup()

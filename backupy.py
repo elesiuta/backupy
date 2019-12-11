@@ -51,15 +51,15 @@ class ArgparseCustomFormatter(argparse.HelpFormatter):
 
 
 class StatusBar:
-    def __init__(self, total: int, verbose: bool, progress_bar: bool = False):
-        self.verbose = verbose
+    def __init__(self, total: int, stdout_status_bar: bool, progress_bar: bool = False):
+        self.stdout_status_bar = stdout_status_bar
         self.progress_bar = progress_bar
         terminal_width = shutil.get_terminal_size()[0]
         if terminal_width < 16:
-            self.verbose = False
+            self.stdout_status_bar = False
         elif total < 0:
             self.progress_bar = False
-        if self.verbose:
+        if self.stdout_status_bar:
             if self.progress_bar:
                 self.bar_len = min(68, terminal_width - 15)
                 self.progress_scaled = 0
@@ -93,7 +93,7 @@ class StatusBar:
         return width
 
     def update(self, msg:str) -> None:
-        if self.verbose:
+        if self.stdout_status_bar:
             if self.progress_bar:
                 self.progress += 1
                 bar_progression = int(self.bar_len * self.progress // self.total) - self.progress_scaled
@@ -114,7 +114,7 @@ class StatusBar:
                 print(self.title + progress_str + msg, end="\r")
 
     def endProgress(self) -> None:
-        if self.verbose:
+        if self.stdout_status_bar:
             if self.progress_bar:
                 sys.stdout.write("#" * (self.bar_len - self.progress_scaled) + "]\n")
                 sys.stdout.flush()
@@ -158,6 +158,7 @@ class ConfigObject:
         self.csv = True
         self.load_json = True
         self.save_json = True
+        self.stdout_status_bar = True
         self.verbose = True
         self.quit_on_db_conflict = False
         # load config
@@ -253,10 +254,10 @@ class DirInfo:
         else:
             return False
 
-    def scanDir(self, verbose: bool) -> None:
+    def scanDir(self, stdout_status_bar: bool) -> None:
         if os.path.isdir(self.dir):
             self.file_dicts = {}
-            scan_status = StatusBar(-1, verbose)
+            scan_status = StatusBar(-1, stdout_status_bar)
             for dir_path, subdir_list, file_list in os.walk(self.dir):
                 for folder in subdir_list:
                     if folder in self.ignored_folders:
@@ -591,7 +592,7 @@ class BackupManager:
 
     def copyFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str) -> None:
         self.colourPrint("Copying %s unique files from:\n%s\nto:\n%s" %(len(source_files), source_root, dest_root), "OKBLUE")
-        copy_status = StatusBar(len(source_files), self.config.verbose)
+        copy_status = StatusBar(len(source_files), self.config.stdout_status_bar)
         for i in range(len(source_files)):
             copy_status.update(source_files[i])
             self.copyFile(source_root, dest_root, source_files[i], dest_files[i])
@@ -626,7 +627,7 @@ class BackupManager:
 
     def handleChanges(self, source: str, dest: str, source_dict: dict, dest_dict:dict, changed: list) -> None:
         self.colourPrint("Handling %s file changes per selection mode" %(len(changed)), "OKBLUE")
-        copy_status = StatusBar(len(changed), self.config.verbose)
+        copy_status = StatusBar(len(changed), self.config.stdout_status_bar)
         for fp in changed:
             copy_status.update(fp)
             if self.config.select_mode == "source":
@@ -664,9 +665,9 @@ class BackupManager:
                 database_load_success = True
         # scan directories, this is where CRC mode = all takes place
         self.colourPrint("Scanning files on source:\n%s" %(self.config.source), "OKBLUE")
-        self.source.scanDir(self.config.verbose)
+        self.source.scanDir(self.config.stdout_status_bar)
         self.colourPrint("Scanning files on destination:\n%s" %(self.config.dest), "OKBLUE")
-        self.dest.scanDir(self.config.verbose)
+        self.dest.scanDir(self.config.stdout_status_bar)
         # compare directories, this is where CRC mode = both takes place
         self.colourPrint("Comparing directories...", "OKGREEN")
         sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves, self.config.filter_list)
