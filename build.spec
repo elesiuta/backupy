@@ -1,3 +1,5 @@
+# pyi-makespec backupy_gui.py
+
 import gooey
 gooey_root = os.path.dirname(gooey.__file__)
 gooey_languages = Tree(os.path.join(gooey_root, 'languages'), prefix = 'gooey/languages')
