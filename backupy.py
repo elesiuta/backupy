@@ -37,6 +37,16 @@ def writeJson(fName: str, data: dict, subdir: bool = True) -> None:
     with open(fName, "w", encoding="utf-8", errors="surrogateescape") as json_file:
         json.dump(data, json_file, indent=1, separators=(',', ': '))
 
+####################
+### Localisation ###
+####################
+
+def getString(text: str) -> str:
+    # logic for localisation goes here, set language with either a global or singleton
+    # store strings in a dictionary, either by language then string, or string then language
+    # or use this as an alias for gettext
+    return text
+
 
 ######################################################
 ### Classes for helping the command line interface ###
@@ -65,19 +75,19 @@ class StatusBar:
                 self.progress_scaled = 0
                 self.progress = 0
                 self.total = total # note self.total is an int when progress_bar is true
-                sys.stdout.write("Copying: [" + "-"*self.bar_len + "]\b" + "\b"*self.bar_len)
+                sys.stdout.write(getString("Copying: [") + "-"*self.bar_len + "]\b" + "\b"*self.bar_len)
                 sys.stdout.flush()
             else:
                 self.char_display = terminal_width - 2
                 self.progress = 0
                 self.total = str(total) # note self.total is a str when progress_bar is false
                 if self.total == "-1":
-                    self.title = "Scanning file "
+                    self.title = getString("Scanning file ")
                     progress_str = str(self.progress) + ": "
                     self.msg_len = self.char_display - len(progress_str) - len(self.title)
                 else:
                     self.digits = str(len(self.total))
-                    self.title = "Copying file "
+                    self.title = getString("Copying file ")
                     progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + self.total + ": "
                     self.msg_len = self.char_display - len(progress_str) - len(self.title)
                 msg = " " * self.msg_len
@@ -120,11 +130,11 @@ class StatusBar:
                 sys.stdout.flush()
             else:
                 if self.total == "-1":
-                    title = "Scanning completed!"
+                    title = getString("Scanning completed!")
                 # elif self.total == "0":
                 #     title = "No action necessary"
                 else:
-                    title = "File operations completed!"
+                    title = getString("File operations completed!")
                 print(title + " " * (self.char_display - len(title)))
 
 
@@ -373,10 +383,10 @@ class BackupManager:
             self.config.norun = norun
         # check source & dest
         if not os.path.isdir(self.config.source):
-            print(self.colourString("Invalid source directory: " + self.config.source, "FAIL"))
+            print(self.colourString(getString("Invalid source directory: ") + self.config.source, "FAIL"))
             sys.exit()
         if self.config.dest == None:
-            print(self.colourString("Destination directory not provided or config failed to load", "FAIL"))
+            print(self.colourString(getString("Destination directory not provided or config failed to load"), "FAIL"))
             sys.exit()
         self.config.source = os.path.abspath(self.config.source)
         self.config.dest = os.path.abspath(self.config.dest)
@@ -400,17 +410,17 @@ class BackupManager:
     def saveJson(self) -> None:
         self.config.save, self.config.load = False, False
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
-        print(self.colourString("Config saved", "OKGREEN"))
+        print(self.colourString(getString("Config saved"), "OKGREEN"))
         sys.exit()
 
     def loadJson(self) -> None:
         current_source = self.config.source
         config_dir = os.path.abspath(os.path.join(self.config.source, self.config.config_dir, "config.json"))
         config = readJson(config_dir)
-        print(self.colourString("Loaded config from:\n" + config_dir, "OKGREEN"))
+        print(self.colourString(getString("Loaded config from:\n") + config_dir, "OKGREEN"))
         self.config = ConfigObject(config)
         if self.config.source is None or os.path.abspath(current_source) != os.path.abspath(self.config.source):
-            print(self.colourString("A config file matching the specified source was not found", "FAIL"))
+            print(self.colourString(getString("A config file matching the specified source was not found"), "FAIL"))
             sys.exit()
 
     def writeLog(self, db: bool = False) -> None:
@@ -423,7 +433,7 @@ class BackupManager:
     def abortRun(self) -> int:
         self.log.append(["### ABORTED ###"])
         self.writeLog()
-        print(self.colourString("Run aborted", "WARNING"))
+        print(self.colourString(getString("Run aborted"), "WARNING"))
         return 1
 
     ###################################
