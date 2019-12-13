@@ -18,8 +18,8 @@ def simplePrompt(msg):
 @Gooey(program_name="BackuPy", richtext_controls=False, tabbed_groups=True)
 def main_gui():
     dict_profiles = backupy.readJson("profiles.json")
-    if "list" in dict_profiles:
-        list_profiles = dict_profiles["list"]
+    if "profiles" in dict_profiles:
+        list_profiles = dict_profiles["profiles"]
     else:
         list_profiles = []
     parser = GooeyParser(description="A simple python program for backing up directories")
@@ -82,10 +82,19 @@ def main_gui():
         args["load"] = True
     if args["save"] and args["source"] not in list_profiles:
         list_profiles.append(args["source"])
-        backupy.writeJson("profiles.json", {"list": list_profiles}, False)
+        backupy.writeJson("profiles.json", {"profiles": list_profiles}, False)
     backup_manager = backupy.BackupManager(args, gui=True)
     backup_manager.backup()
 
 
 if __name__ == "__main__":
     sys.exit(main_gui())
+
+
+# TODO
+# About dialog - https://github.com/chriskiehl/Gooey#menus
+# Richtext - https://github.com/chriskiehl/GooeyExamples/blob/master/examples/richtext_demo.py
+# add gui imports (colored, etc) to BackupManager init if gui
+# use radio group for mode (only if there is a way to add a title and description without putting it on a new tab) https://github.com/chriskiehl/Gooey/blob/master/docs/Gooey-Options.md
+# build with onedir and create installer with inno setup - https://github.com/jrsoftware/issrc
+# replace gooey with pysimplegui if output windows improves (better richtext and refresh) for smaller build size
