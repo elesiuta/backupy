@@ -1,3 +1,4 @@
+import os
 import sys
 import typing
 import PySimpleGUI as sg
@@ -30,15 +31,18 @@ def main_gui():
         list_profiles = []
     # argparse setup
     parser = GooeyParser(description="A simple python program for backing up directories")
-    group1 = parser.add_argument_group("Profiles", "Load previously saved profile(s)")
+    group1 = parser.add_argument_group("Profiles", "")
     group2 = parser.add_argument_group("Directories", "")
     group3 = parser.add_argument_group("Configuration", "")
     for source_dir in list_profiles:
-        group1.add_argument("--load_profile_"+source_dir, action="store_true", gooey_options={"full_width":True, "show_label":False},
+        group1.add_argument("--load_profile_"+source_dir, action="store_true", metavar="Load: "+os.path.basename(source_dir),
+                            gooey_options={"full_width":True, "show_label":True},
                             help=" " + source_dir)
-    group2.add_argument("--source", metavar="Source", action="store", type=str, default=None, widget="DirChooser", gooey_options={"full_width":True},
+    group2.add_argument("--source", metavar="Source", action="store", type=str, default=None,
+                        widget="DirChooser", gooey_options={"full_width":True},
                         help="Path of source")
-    group2.add_argument("--dest", metavar="Destination", action="store", type=str, default=None, widget="DirChooser", gooey_options={"full_width":True},
+    group2.add_argument("--dest", metavar="Destination", action="store", type=str, default=None,
+                        widget="DirChooser", gooey_options={"full_width":True},
                         help="Path of destination")
     group3_main = group3.add_mutually_exclusive_group(required=True,
                                                       gooey_options={"title":"Main mode: How to handle files that exist only on one side?",
@@ -77,11 +81,11 @@ def main_gui():
     group3.add_argument("--noarchive", action="store_true", metavar="No archiving", gooey_options={"full_width":True},
                         help="Disable archiving files before deleting/overwriting to:\n"
                              "  <source|dest>/.backupy/yymmdd-HHMM/\n")
-    group3.add_argument("--nolog", action="store_true", metavar="No logs",  gooey_options={"full_width":True},
+    group3.add_argument("--nolog", action="store_true", metavar="No logs", gooey_options={"full_width":True},
                         help="Disable writing to:\n"
                              "  <source>/.backupy/log-yymmdd-HHMM.csv\n"
                              "  <source|dest>/.backupy/database.json")
-    group3.add_argument("--noprompt", action="store_true", metavar="No prompt",  gooey_options={"full_width":True},
+    group3.add_argument("--noprompt", action="store_true", metavar="No prompt", gooey_options={"full_width":True},
                         help="Complete run without prompting for confirmation")
     group3.add_argument("--norun", action="store_true", metavar="No run", gooey_options={"full_width":True},
                         help="Perform a dry run according to your configuration")
@@ -98,20 +102,25 @@ def main_gui():
             if args[key] == True:
                 key_split = key.split("_radio_")
                 args[key_split[0]] = key_split[1]
+    # check for loaded profiles
+    loaded_profiles = []
+    for key in list(args.keys()):
+        if "load_profile_" in key:
+            loaded_profiles.append(key.lstrip("load_profile_"))
     # execute selected profiles or config
-    if args["loadprofile"] != None:
-        for i in range(len(args["loadprofile"])):
-            args["source"] = args["loadprofile"][i]
+    if len(loaded_profiles) >= 1:
+        for source_dir in loaded_profiles:
+            args["source"] = source_dir
             args["load"] = True
             backup_manager = backupy.BackupManager(args, gui=True)
             backup_manager.backup()
     else:
         backup_manager = backupy.BackupManager(args, gui=True)
         backup_manager.backup()
-    # store profile if new
-    if args["save"] and args["source"] not in list_profiles:
-        list_profiles.append(args["source"])
-        backupy.writeJson("profiles.json", {"profiles": list_profiles}, False)
+        # store profile if new
+        if args["save"] and args["source"] not in list_profiles:
+            list_profiles.append(args["source"])
+            backupy.writeJson("profiles.json", {"profiles": list_profiles}, False)
 
 
 if __name__ == "__main__":
