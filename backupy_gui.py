@@ -43,33 +43,33 @@ def main_gui():
                                                       gooey_options={"title":"Main mode: How to handle files that exist only on one side?",
                                                                      "full_width":True,
                                                                      'initial_selection':0})
-    group3_main.add_argument("--main_mirror", metavar="Mirror", action="store_true",
+    group3_main.add_argument("--main_mode_radio_mirror", metavar="Mirror", action="store_true",
                              help="[source-only -> destination, delete destination-only]")
-    group3_main.add_argument("--main_backup", metavar="Backup", action="store_true",
+    group3_main.add_argument("--main_mode_radio_backup", metavar="Backup", action="store_true",
                              help="[source-only -> destination, keep destination-only]")
-    group3_main.add_argument("--main_sync", metavar="Sync", action="store_true",
+    group3_main.add_argument("--main_mode_radio_sync", metavar="Sync", action="store_true",
                              help="[source-only -> destination, destination-only -> source]")
     group3_select = group3.add_mutually_exclusive_group(required=True,
                                                         gooey_options={"title":"Selection mode: How to handle files that exist on both sides but differ?",
                                                                        "full_width":True,
                                                                        'initial_selection':0})
-    group3_select.add_argument("--select_source", metavar="Source", action="store_true",
+    group3_select.add_argument("--select_mode_radio_source", metavar="Source", action="store_true",
                                help="[copy source to destination]")
-    group3_select.add_argument("--select_dest", metavar="Destination", action="store_true",
+    group3_select.add_argument("--select_mode_radio_dest", metavar="Destination", action="store_true",
                                help="[copy destination to source]")
-    group3_select.add_argument("--select_new", metavar="New", action="store_true",
+    group3_select.add_argument("--select_mode_radio_new", metavar="New", action="store_true",
                                help="[copy newer to opposite side]")
-    group3_select.add_argument("--select_no", metavar="None", action="store_true",
+    group3_select.add_argument("--select_mode_radio_no", metavar="None", action="store_true",
                                help="[do nothing]")
     group3_compare = group3.add_mutually_exclusive_group(required=True,
-                                                         gooey_options={"title":"Selection mode: How to handle files that exist on both sides but differ?",
+                                                         gooey_options={"title":"Compare mode: How to detect files that exist on both sides but differ?",
                                                                         "full_width":True,
                                                                         'initial_selection':0})
-    group3_compare.add_argument("--compare_attr", metavar="Attributes", action= "store_true",
+    group3_compare.add_argument("--compare_mode_radio_attr", metavar="Attributes", action= "store_true",
                                 help="[compare file attributes: mod-time and size]")
-    group3_compare.add_argument("--compare_both", metavar="Both", action= "store_true",
+    group3_compare.add_argument("--compare_mode_radio_both", metavar="Both", action= "store_true",
                                 help="[compare file attributes first, then check CRC]")
-    group3_compare.add_argument("--compare_crc", metavar="CRC", action= "store_true",
+    group3_compare.add_argument("--compare_mode_radio_crc", metavar="CRC", action= "store_true",
                                 help="[compare CRC only, ignoring file attributes]")
     group3.add_argument("--nomoves", action="store_true",
                         help="Do not detect moved or renamed files")
@@ -92,32 +92,17 @@ def main_gui():
     args = vars(parser.parse_args())
     args["stdout_status_bar"] = False # https://github.com/chriskiehl/Gooey/issues/213 , use a simpler expression and hide_progress_msg
     # convert radio groups back to choice of string
-    if args["main_mirror"] == True:
-        args["main_mode"] = "mirror"
-    elif args["main_backup"] == True:
-        args["main_mode"] = "backup"
-    elif args["main_sync"] == True:
-        args["main_mode"] = "sync"
-    if args["select_source"] == True:
-        args["select_mode"] = "source"
-    elif args["select_dest"] == True:
-        args["select_mode"] = "dest"
-    elif args["select_new"] == True:
-        args["select_mode"] = "new"
-    elif args["select_no"] == True:
-        args["select_mode"] = "no"
-    if args["compare_attr"] == True:
-        args["compare_mode"] = "attr"
-    elif args["compare_both"] == True:
-        args["compare_mode"] = "both"
-    elif args["compare_crc"] == True:
-        args["compare_mode"] = "crc"
+    for key in list(args.keys()):
+        if "_radio_" in key:
+            if args[key] == True:
+                key_split = key.split("_radio_")
+                args[key_split[0]] = key_split[1]
     # store profile if new
     if args["save"] and args["source"] not in list_profiles:
         list_profiles.append(args["source"])
         backupy.writeJson("profiles.json", {"profiles": list_profiles}, False)
     # execute selected profiles or config
-    if args["loadprofile"] != []:
+    if args["loadprofile"] != None:
         for i in range(len(args["loadprofile"])):
             args["source"] = args["loadprofile"][i]
             args["load"] = True
