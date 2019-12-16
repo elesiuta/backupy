@@ -30,11 +30,12 @@ def main_gui():
         list_profiles = []
     # argparse setup
     parser = GooeyParser(description="A simple python program for backing up directories")
-    group1 = parser.add_argument_group("Profiles", "")
+    group1 = parser.add_argument_group("Profiles", "Load previously saved profile(s)")
     group2 = parser.add_argument_group("Directories", "")
     group3 = parser.add_argument_group("Configuration", "")
-    group1.add_argument("--loadprofile", metavar="Load Saved Profile", nargs="*", widget="Listbox", choices=list_profiles,
-                        help="Load a previously saved profile")
+    for source_dir in list_profiles:
+        group1.add_argument("--load_profile_"+source_dir, action="store_true", gooey_options={"full_width":True, "show_label":False},
+                            help=" " + source_dir)
     group2.add_argument("--source", metavar="Source", action="store", type=str, default=None, widget="DirChooser", gooey_options={"full_width":True},
                         help="Path of source")
     group2.add_argument("--dest", metavar="Destination", action="store", type=str, default=None, widget="DirChooser", gooey_options={"full_width":True},
@@ -97,10 +98,6 @@ def main_gui():
             if args[key] == True:
                 key_split = key.split("_radio_")
                 args[key_split[0]] = key_split[1]
-    # store profile if new
-    if args["save"] and args["source"] not in list_profiles:
-        list_profiles.append(args["source"])
-        backupy.writeJson("profiles.json", {"profiles": list_profiles}, False)
     # execute selected profiles or config
     if args["loadprofile"] != None:
         for i in range(len(args["loadprofile"])):
@@ -111,6 +108,10 @@ def main_gui():
     else:
         backup_manager = backupy.BackupManager(args, gui=True)
         backup_manager.backup()
+    # store profile if new
+    if args["save"] and args["source"] not in list_profiles:
+        list_profiles.append(args["source"])
+        backupy.writeJson("profiles.json", {"profiles": list_profiles}, False)
 
 
 if __name__ == "__main__":
