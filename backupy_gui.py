@@ -35,9 +35,9 @@ def main_gui():
     group3 = parser.add_argument_group("Configuration", "")
     group1.add_argument("--loadprofile", metavar="Load Saved Profile", nargs="*", widget="Listbox", choices=list_profiles,
                         help="Load a previously saved profile")
-    group2.add_argument("--source", action="store", type=str, default=None, widget="DirChooser", gooey_options={"full_width":True},
+    group2.add_argument("--source", metavar="Source", action="store", type=str, default=None, widget="DirChooser", gooey_options={"full_width":True},
                         help="Path of source")
-    group2.add_argument("--dest", action="store", type=str, default=None, widget="DirChooser", gooey_options={"full_width":True},
+    group2.add_argument("--dest", metavar="Destination", action="store", type=str, default=None, widget="DirChooser", gooey_options={"full_width":True},
                         help="Path of destination")
     group3_main = group3.add_mutually_exclusive_group(required=True,
                                                       gooey_options={"title":"Main mode: How to handle files that exist only on one side?",
@@ -71,22 +71,22 @@ def main_gui():
                                 help="[compare file attributes first, then check CRC]")
     group3_compare.add_argument("--compare_mode_radio_crc", metavar="CRC", action= "store_true",
                                 help="[compare CRC only, ignoring file attributes]")
-    group3.add_argument("--nomoves", action="store_true",
+    group3.add_argument("--nomoves", action="store_true", metavar="No moves", gooey_options={"full_width":True},
                         help="Do not detect moved or renamed files")
-    group3.add_argument("--noarchive", action="store_true",
+    group3.add_argument("--noarchive", action="store_true", metavar="No archiving", gooey_options={"full_width":True},
                         help="Disable archiving files before deleting/overwriting to:\n"
                              "  <source|dest>/.backupy/yymmdd-HHMM/\n")
-    group3.add_argument("--nolog", action="store_true",
+    group3.add_argument("--nolog", action="store_true", metavar="No logs",  gooey_options={"full_width":True},
                         help="Disable writing to:\n"
                              "  <source>/.backupy/log-yymmdd-HHMM.csv\n"
                              "  <source|dest>/.backupy/database.json")
-    group3.add_argument("--noprompt", action="store_true",
+    group3.add_argument("--noprompt", action="store_true", metavar="No prompt",  gooey_options={"full_width":True},
                         help="Complete run without prompting for confirmation")
-    group3.add_argument("--norun", action="store_true",
+    group3.add_argument("--norun", action="store_true", metavar="No run", gooey_options={"full_width":True},
                         help="Perform a dry run according to your configuration")
-    group2.add_argument("--save", action="store_true",
+    group2.add_argument("--save", action="store_true", metavar="Save",
                         help="Save configuration in source")
-    group2.add_argument("--load", action="store_true",
+    group2.add_argument("--load", action="store_true", metavar="Load",
                         help="Load configuration from source")
     # parse args and store dictionary
     args = vars(parser.parse_args())
@@ -121,5 +121,5 @@ if __name__ == "__main__":
 # About dialog - https://github.com/chriskiehl/Gooey#menus
 # Richtext - https://github.com/chriskiehl/GooeyExamples/blob/master/examples/richtext_demo.py
 # add gui imports (functions from here) to BackupManager init if gui
-# use radio group for mode (needs testing, title use in gooey-options is undocumented)
+# use radio group for mode (title use in gooey-options is undocumented)
 # build with onedir and create installer with inno setup - https://github.com/jrsoftware/issrc
