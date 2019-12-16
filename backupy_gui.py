@@ -7,13 +7,22 @@ from gooey import Gooey, GooeyParser
 import backupy
 
 def colourize(string: str, colour: str) -> str:
-    return string
-    
+    colours = {
+            "HEADER" : fg("magenta"),
+            "OKBLUE" : fg("blue"),
+            "OKGREEN" : fg("green"),
+            "WARNING" : fg("yellow"),
+            "FAIL" : fg("red"),
+            "BOLD" : attr("bold"),
+            "UNDERLINE" : attr("underlined")
+        }
+    return stylize(string, colours[colour])
+
 def simplePrompt(msg: str) -> str:
-    sg.change_look_and_feel('System Default For Real')
+    sg.change_look_and_feel("System Default For Real")
     layout = [ [sg.Text(msg)],
-               [sg.Button('Ok'), sg.Button('Cancel')] ]
-    window = sg.Window('BackuPy', layout)
+               [sg.Button("Ok"), sg.Button("Cancel")] ]
+    window = sg.Window("BackuPy", layout)
     event, _ = window.Read()
     window.close()
     if event == "Ok":
@@ -21,7 +30,7 @@ def simplePrompt(msg: str) -> str:
     else:
         return "n"
 
-@Gooey(program_name="BackuPy", richtext_controls=False, tabbed_groups=True)
+@Gooey(program_name="BackuPy", richtext_controls=True, tabbed_groups=True)
 def main_gui():
     # load profiles
     dict_profiles = backupy.readJson("profiles.json")
@@ -106,7 +115,8 @@ def main_gui():
     loaded_profiles = []
     for key in list(args.keys()):
         if "load_profile_" in key:
-            loaded_profiles.append(key.lstrip("load_profile_"))
+            if args[key] == True:
+                loaded_profiles.append(key.lstrip("load_profile_"))
     # execute selected profiles or config
     if len(loaded_profiles) >= 1:
         for source_dir in loaded_profiles:
@@ -129,7 +139,6 @@ if __name__ == "__main__":
 
 # TODO
 # About dialog - https://github.com/chriskiehl/Gooey#menus
-# Richtext - https://github.com/chriskiehl/GooeyExamples/blob/master/examples/richtext_demo.py
-# add gui imports (functions from here) to BackupManager init if gui
+# add gui imports (functions from here) to BackupManager init if gui, not necessary, seems fine to just import where needed https://stackoverflow.com/questions/12487549/how-safe-is-it-to-import-a-module-multiple-times?lq=1
 # use radio group for mode (title use in gooey-options is undocumented)
 # build with onedir and create installer with inno setup - https://github.com/jrsoftware/issrc
