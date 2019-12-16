@@ -1,9 +1,14 @@
 import sys
-import backupy
+import typing
 import PySimpleGUI as sg
+from colored import stylize, attr, fg
 from gooey import Gooey, GooeyParser
+import backupy
 
-def simplePrompt(msg):
+def colourize(string: str, colour: str) -> str:
+    return string
+    
+def simplePrompt(msg: str) -> str:
     sg.change_look_and_feel('System Default For Real')
     layout = [ [sg.Text(msg)],
                [sg.Button('Ok'), sg.Button('Cancel')] ]
@@ -26,7 +31,7 @@ def main_gui():
     group1 = parser.add_argument_group("Profiles", "")
     group2 = parser.add_argument_group("Directories", "")
     group3 = parser.add_argument_group("Configuration", "")
-    group1.add_argument("--loadprofile", metavar="Load Saved Profile", default=None, widget='Dropdown', choices=list_profiles,
+    group1.add_argument("--loadprofile", metavar="Load Saved Profile", nargs="*", widget='Listbox', choices=list_profiles,
                         help='Load a previously saved profile')
     group2.add_argument("--source", action="store", type=str, default=None, widget='DirChooser',
                         help="Path of source")
@@ -76,15 +81,19 @@ def main_gui():
     group2.add_argument("--load", action="store_true",
                         help="Load configuration from source")
     args = vars(parser.parse_args())
-    args["stdout_status_bar"] = False # https://github.com/chriskiehl/Gooey/issues/213
-    if args["loadprofile"] != None:
-        args["source"] = args["loadprofile"]
-        args["load"] = True
+    args["stdout_status_bar"] = False # https://github.com/chriskiehl/Gooey/issues/213 , use a simpler expression and hide_progress_msg
     if args["save"] and args["source"] not in list_profiles:
         list_profiles.append(args["source"])
         backupy.writeJson("profiles.json", {"profiles": list_profiles}, False)
-    backup_manager = backupy.BackupManager(args, gui=True)
-    backup_manager.backup()
+    if args["loadprofile"] != []:
+        for i in range(len(args["loadprofile"])):
+            args["source"] = args["loadprofile"][i]
+            args["load"] = True
+            backup_manager = backupy.BackupManager(args, gui=True)
+            backup_manager.backup()
+    else:
+        backup_manager = backupy.BackupManager(args, gui=True)
+        backup_manager.backup()
 
 
 if __name__ == "__main__":
@@ -94,7 +103,7 @@ if __name__ == "__main__":
 # TODO
 # About dialog - https://github.com/chriskiehl/Gooey#menus
 # Richtext - https://github.com/chriskiehl/GooeyExamples/blob/master/examples/richtext_demo.py
-# add gui imports (colored, etc) to BackupManager init if gui
+# add gui imports (functions from here) to BackupManager init if gui
 # use radio group for mode (only if there is a way to add a title and description without putting it on a new tab) https://github.com/chriskiehl/Gooey/blob/master/docs/Gooey-Options.md
 # build with onedir and create installer with inno setup - https://github.com/jrsoftware/issrc
 # replace gooey with pysimplegui if output windows improves (better richtext and refresh) for smaller build size
