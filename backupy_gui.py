@@ -30,7 +30,21 @@ def simplePrompt(msg: str) -> str:
     else:
         return "n"
 
-@Gooey(program_name="BackuPy", richtext_controls=True, tabbed_groups=True)
+@Gooey(program_name="BackuPy",
+       richtext_controls=True,
+       tabbed_groups=True,
+       menu=[{
+            'name': 'File',
+            'items': [{
+                    'type': 'AboutDialog',
+                    'menuTitle': 'About',
+                    'name': 'BackuPy',
+                    'description': 'A simple python program for backing up directories',
+                    'version': '0.5.5',
+                    'website': 'https://github.com/elesiuta/backupy',
+                    'license': 'GPLv3'
+                }]
+            }])
 def main_gui():
     # load profiles
     dict_profiles = backupy.readJson("profiles.json")
@@ -147,7 +161,4 @@ if __name__ == "__main__":
 
 
 # TODO
-# About dialog - https://github.com/chriskiehl/Gooey#menus
-# add gui imports (functions from here) to BackupManager init if gui, not necessary, seems fine to just import where needed https://stackoverflow.com/questions/12487549/how-safe-is-it-to-import-a-module-multiple-times?lq=1
-# use radio group for mode (title use in gooey-options is undocumented)
 # build with onedir and create installer with inno setup - https://github.com/jrsoftware/issrc
