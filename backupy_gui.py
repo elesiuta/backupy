@@ -148,7 +148,6 @@ def main_gui():
                         help=" Load configuration from source")
     # parse args and store dictionary
     args = vars(parser.parse_args())
-    args["stdout_status_bar"] = False # https://github.com/chriskiehl/Gooey/issues/213 , use a simpler expression and hide_progress_msg
     # convert radio groups back to choice of string
     for key in list(args.keys()):
         if "_radio_" in key:

@@ -410,6 +410,12 @@ class BackupManager:
         # save config
         if self.config.save:
             self.saveJson()
+        # gui modifications
+        if self.gui:
+            from backupy_gui import colourize, simplePrompt
+            self.gui_colourize = colourize
+            self.gui_simplePrompt = simplePrompt
+            self.config.stdout_status_bar = False
         # debugging/testing
         self.log.append(["### SETTINGS ###"])
         self.log.append(["Config:", str(vars(self.config))])
@@ -460,8 +466,7 @@ class BackupManager:
     def colourString(self, string: str, colour: str) -> str:
         string = self.replaceSurrogates(string)
         if self.gui:
-            from backupy_gui import colourize
-            return colourize(string, colour)
+            return self.gui_colourize(string, colour)
         colours = {
             "HEADER" : '\033[95m',
             "OKBLUE" : '\033[94m',
@@ -776,8 +781,7 @@ class BackupManager:
         if not self.config.noprompt:
             self.writeLog() # for inspection before decision if necessary
             if self.gui:
-                from backupy_gui import simplePrompt
-                go = simplePrompt("Scan complete, continue with %s%s?" %(self.config.main_mode, simulation_msg))
+                go = self.gui_simplePrompt("Scan complete, continue with %s%s?" %(self.config.main_mode, simulation_msg))
             else:
                 print(self.colourString("Scan complete, continue with %s%s (y/N)?" %(self.config.main_mode, simulation_msg), "OKGREEN"))
                 go = input("> ")
