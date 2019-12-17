@@ -9,8 +9,10 @@ from colored import stylize, attr, fg
 from gooey import Gooey, GooeyParser
 
 import backupy
+sys.stdout = sys.__stdout__
 
 def colourize(string: str, colour: str) -> str:
+    sys.stdout = sys.__stdout__
     colours = {
             "HEADER" : fg("magenta"),
             "OKBLUE" : fg("blue"),
@@ -50,6 +52,8 @@ def simplePrompt(msg: str) -> str:
                 }]
             }])
 def main_gui():
+    # restore stdout, fix for richtext and colored https://stackoverflow.com/questions/13429924/pyinstaller-packaged-application-works-fine-in-console-mode-crashes-in-window-m
+    sys.stdout = sys.__stdout__
     # load profiles
     dict_profiles = backupy.readJson("profiles.json")
     if "profiles" in dict_profiles:
@@ -123,8 +127,6 @@ def main_gui():
     # parse args and store dictionary
     args = vars(parser.parse_args())
     args["stdout_status_bar"] = False # https://github.com/chriskiehl/Gooey/issues/213 , use a simpler expression and hide_progress_msg
-    # restore stdout, fix for richtext and colored https://stackoverflow.com/questions/13429924/pyinstaller-packaged-application-works-fine-in-console-mode-crashes-in-window-m
-    sys.stdout = sys.__stdout__
     # convert radio groups back to choice of string
     for key in list(args.keys()):
         if "_radio_" in key:
