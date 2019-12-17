@@ -24,7 +24,7 @@ pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 exe = EXE(pyz,
           a.scripts,
-          [],
+          [('u', None, 'OPTION')],
           exclude_binaries=True,
           name='BackuPy',
           debug=False,

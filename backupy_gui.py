@@ -9,7 +9,19 @@ from colored import stylize, attr, fg
 from gooey import Gooey, GooeyParser
 
 import backupy
-sys.stdout = sys.__stdout__
+
+class Unbuffered(object):
+   def __init__(self, stream):
+       self.stream = stream
+   def write(self, data):
+       self.stream.write(data)
+       self.stream.flush()
+   def writelines(self, datas):
+       self.stream.writelines(datas)
+       self.stream.flush()
+   def __getattr__(self, attr):
+       return getattr(self.stream, attr)
+sys.stdout = Unbuffered(sys.__stdout__)
 
 GPLv3 = """This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
