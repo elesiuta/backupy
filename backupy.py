@@ -185,7 +185,7 @@ class ConfigObject:
 
 
 class DirInfo:
-    def __init__(self, directory: str, compare_mode: str,  config_dir: str, ignored_folders: list = []):
+    def __init__(self, directory: str, compare_mode: str,  config_dir: str, ignored_toplevel_folders: list = []):
         self.file_dicts = {}
         self.loaded_dicts = {}
         self.loaded_diffs = {}
@@ -193,7 +193,7 @@ class DirInfo:
         self.dir = directory
         self.compare_mode = compare_mode
         self.config_dir = config_dir
-        self.ignored_folders = ignored_folders[:]
+        self.ignored_toplevel_folders = ignored_toplevel_folders[:]
 
     def getDirDict(self) -> dict:
         return self.file_dicts
@@ -269,9 +269,10 @@ class DirInfo:
             self.file_dicts = {}
             scan_status = StatusBar(-1, stdout_status_bar)
             for dir_path, subdir_list, file_list in os.walk(self.dir):
-                for folder in subdir_list:
-                    if folder in self.ignored_folders:
-                        subdir_list.remove(folder)
+                if os.path.relpath(dir_path, self.dir) == ".":
+                    for folder in subdir_list:
+                        if folder in self.ignored_toplevel_folders:
+                            subdir_list.remove(folder)
                 subdir_list.sort()
                 for subdir in subdir_list:
                     full_path = os.path.join(dir_path, subdir)
@@ -298,7 +299,7 @@ class DirInfo:
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
             scan_status.endProgress()
             for relativePath in self.loaded_dicts:
-                if os.path.normpath(relativePath).split(os.path.sep)[0] not in self.ignored_folders:
+                if os.path.normpath(relativePath).split(os.path.sep)[0] not in self.ignored_toplevel_folders:
                     if relativePath not in self.file_dicts:
                         self.missing_files[relativePath] = self.loaded_dicts[relativePath]
 
