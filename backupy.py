@@ -383,6 +383,11 @@ class BackupManager:
         self.backup_time = datetime.datetime.now().strftime("%y%m%d-%H%M")
         # init gui flag
         self.gui = gui
+        # gui imports
+        if self.gui:
+            from backupy_gui import colourize, simplePrompt
+            self.gui_colourize = colourize
+            self.gui_simplePrompt = simplePrompt
         # init config
         if type(args) != dict:
             args = vars(args)
@@ -412,9 +417,6 @@ class BackupManager:
             self.saveJson()
         # gui modifications
         if self.gui:
-            from backupy_gui import colourize, simplePrompt
-            self.gui_colourize = colourize
-            self.gui_simplePrompt = simplePrompt
             self.config.stdout_status_bar = False
         # debugging/testing
         self.log.append(["### SETTINGS ###"])
