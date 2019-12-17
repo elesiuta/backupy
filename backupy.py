@@ -193,7 +193,7 @@ class DirInfo:
         self.dir = directory
         self.compare_mode = compare_mode
         self.config_dir = config_dir
-        self.ignored_toplevel_folders = ignored_toplevel_folders[:]
+        self.ignored_toplevel_folders = list(set(ignored_toplevel_folders[:] + [config_dir]))
 
     def getDirDict(self) -> dict:
         return self.file_dicts
