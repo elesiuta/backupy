@@ -100,22 +100,22 @@ def main_gui():
     group3_compare.add_argument("--compare_mode_radio_crc", metavar="CRC", action= "store_true",
                                 help="[compare CRC only, ignoring file attributes]")
     group3.add_argument("--nomoves", action="store_true", metavar="No moves", gooey_options={"full_width":True},
-                        help="Do not detect moved or renamed files")
+                        help=" Do not detect moved or renamed files")
     group3.add_argument("--noarchive", action="store_true", metavar="No archiving", gooey_options={"full_width":True},
-                        help="Disable archiving files before deleting/overwriting to:\n"
-                             "  <source|dest>/.backupy/yymmdd-HHMM/\n")
+                        help=" Disable archiving files before deleting/overwriting to:\n"
+                             "  <source|dest>/.backupy/yymmdd-HHMM/")
     group3.add_argument("--nolog", action="store_true", metavar="No logs", gooey_options={"full_width":True},
-                        help="Disable writing to:\n"
+                        help=" Disable writing to:\n"
                              "  <source>/.backupy/log-yymmdd-HHMM.csv\n"
                              "  <source|dest>/.backupy/database.json")
     group3.add_argument("--noprompt", action="store_true", metavar="No prompt", gooey_options={"full_width":True},
-                        help="Complete run without prompting for confirmation")
+                        help=" Complete run without prompting for confirmation")
     group3.add_argument("--norun", action="store_true", metavar="No run", gooey_options={"full_width":True},
-                        help="Perform a dry run according to your configuration")
+                        help=" Perform a dry run according to your configuration")
     group2.add_argument("--save", action="store_true", metavar="Save",
-                        help="Save configuration in source")
+                        help=" Save configuration in source")
     group2.add_argument("--load", action="store_true", metavar="Load",
-                        help="Load configuration from source")
+                        help=" Load configuration from source")
     # parse args and store dictionary
     args = vars(parser.parse_args())
     args["stdout_status_bar"] = False # https://github.com/chriskiehl/Gooey/issues/213 , use a simpler expression and hide_progress_msg
