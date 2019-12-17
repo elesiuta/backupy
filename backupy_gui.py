@@ -117,16 +117,25 @@ def main_gui():
         if "load_profile_" in key:
             if args[key] == True:
                 loaded_profiles.append(key.lstrip("load_profile_"))
-    # execute selected profiles or config
+    # execute selected profiles or execute config
     if len(loaded_profiles) >= 1:
         for source_dir in loaded_profiles:
             args["source"] = source_dir
             args["load"] = True
             backup_manager = backupy.BackupManager(args, gui=True)
             backup_manager.backup()
+            print("")
     else:
-        backup_manager = backupy.BackupManager(args, gui=True)
-        backup_manager.backup()
+        # check config and execute
+        if args["source"] != None and (args["dest"] != None or args["load"]):
+            backup_manager = backupy.BackupManager(args, gui=True)
+            backup_manager.backup()
+            print("")
+        else:
+            print(colourize("At least one of the following conditions must be satisfied:\n"
+                            "\t1) Select at least one profile\n"
+                            "\t2) Specify source and destination directories\n"
+                            "\t3) Specify source directory and load configuration\n", "FAIL"))
         # store profile if new
         if args["save"] and args["source"] not in list_profiles:
             list_profiles.append(args["source"])
