@@ -12,7 +12,6 @@ import backupy
 sys.stdout = sys.__stdout__
 
 def colourize(string: str, colour: str) -> str:
-    sys.stdout = sys.__stdout__
     colours = {
             "HEADER" : fg("magenta"),
             "OKBLUE" : fg("blue"),
@@ -52,8 +51,6 @@ def simplePrompt(msg: str) -> str:
                 }]
             }])
 def main_gui():
-    # restore stdout, fix for richtext and colored https://stackoverflow.com/questions/13429924/pyinstaller-packaged-application-works-fine-in-console-mode-crashes-in-window-m
-    sys.stdout = sys.__stdout__
     # load profiles
     dict_profiles = backupy.readJson("profiles.json")
     if "profiles" in dict_profiles:
