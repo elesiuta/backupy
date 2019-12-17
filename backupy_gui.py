@@ -188,7 +188,3 @@ def main_gui():
 
 if __name__ == "__main__":
     sys.exit(main_gui())
-
-
-# TODO
-# build with onedir and create installer with inno setup - https://github.com/jrsoftware/issrc
