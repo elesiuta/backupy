@@ -180,7 +180,7 @@ def main_gui():
                             "\t2) Specify source and destination directories\n"
                             "\t3) Specify source directory and load configuration\n", "FAIL"))
         # store profile if new
-        if args["save"] and args["source"] not in list_profiles:
+        if (args["save"] or args["load"]) and args["source"] not in list_profiles:
             list_profiles.append(args["source"])
             backupy.writeJson("profiles.json", {"profiles": list_profiles}, False)
 
