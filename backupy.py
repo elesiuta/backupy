@@ -519,7 +519,7 @@ class BackupManager:
             if not skip_info:
                 s = s + "\n"
         if not skip_info:
-            s = s + self.colourString(sub_header, "OKBLUE") + "\t"
+            s = s + self.colourString(sub_header, "OKBLUE") + " "*(8-len(sub_header))
             if not missing:
                 s = s + self.colourString(" Size: ", "OKBLUE") + self.prettySize(d[f]["size"])
                 s = s + self.colourString(" Modified: ", "OKBLUE") + time.ctime(d[f]["mtime"])
