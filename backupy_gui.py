@@ -63,6 +63,7 @@ def simplePrompt(msg: str) -> str:
 @Gooey(program_name="BackuPy",
        richtext_controls=True,
        tabbed_groups=True,
+       monospace_display = True,
        menu=[{
             'name': 'File',
             'items': [{
