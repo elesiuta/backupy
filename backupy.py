@@ -74,39 +74,39 @@ class ArgparseCustomFormatter(argparse.HelpFormatter):
 
 
 class StatusBar:
-    def __init__(self, title_str: str, total: int, stdout_status_bar: bool, progress_bar: bool = False, gui: bool = False):
-        self.title_str = title_str
+    def __init__(self, title: str, total: int, stdout_status_bar: bool, simplified_bar: bool = False, gui: bool = False):
+        self.title = title
         self.stdout_status_bar = stdout_status_bar
-        self.progress_bar = progress_bar
+        self.simplified_bar = simplified_bar
         self.gui = gui
         terminal_width = shutil.get_terminal_size()[0]
         if terminal_width < 16:
             self.stdout_status_bar = False
         elif total < 0:
-            self.progress_bar = False
+            self.simplified_bar = False
         if self.stdout_status_bar:
-            if self.progress_bar:
+            if self.simplified_bar:
                 self.bar_len = min(68, terminal_width - 15)
                 self.progress_scaled = 0
                 self.progress = 0
-                self.total = total # note self.total is an int when progress_bar is true
-                sys.stdout.write(getString(self.title_str) + ": [" + "-"*self.bar_len + "]\b" + "\b"*self.bar_len)
+                self.total = total # note self.total is an int when simplified_bar is true
+                sys.stdout.write(getString(self.title) + ": [" + "-"*self.bar_len + "]\b" + "\b"*self.bar_len)
                 sys.stdout.flush()
             else:
                 self.char_display = terminal_width - 2
                 self.progress = 0
-                self.total = str(total) # note self.total is a str when progress_bar is false
+                self.total = str(total) # note self.total is a str when simplified_bar is false
                 if self.total == "-1":
-                    self.title = getString(self.title_str + " file ")
+                    self.title_str = getString(self.title + " file ")
                     progress_str = str(self.progress) + ": "
-                    self.msg_len = self.char_display - len(progress_str) - len(self.title)
+                    self.msg_len = self.char_display - len(progress_str) - len(self.title_str)
                 else:
                     self.digits = str(len(self.total))
-                    self.title = getString(self.title_str + " file ")
+                    self.title_str = getString(self.title + " file ")
                     progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + self.total + ": "
-                    self.msg_len = self.char_display - len(progress_str) - len(self.title)
+                    self.msg_len = self.char_display - len(progress_str) - len(self.title_str)
                 msg = " " * self.msg_len
-                print(self.title + progress_str + msg, end="\r")
+                print(self.title_str + progress_str + msg, end="\r")
         elif self.gui and total > 0:
             self.progress = 0
             self.total = total
@@ -125,7 +125,7 @@ class StatusBar:
 
     def update(self, msg:str) -> None:
         if self.stdout_status_bar:
-            if self.progress_bar:
+            if self.simplified_bar:
                 self.progress += 1
                 bar_progression = int(self.bar_len * self.progress // self.total) - self.progress_scaled
                 self.progress_scaled += bar_progression
@@ -135,31 +135,31 @@ class StatusBar:
                 self.progress += 1
                 if self.total == "-1":
                     progress_str = str(self.progress) + ": "
-                    self.msg_len = self.char_display - len(progress_str) - len(self.title)
+                    self.msg_len = self.char_display - len(progress_str) - len(self.title_str)
                 else:
                     progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + self.total + ": "
                 while self.getStringMaxWidth(msg) > self.msg_len:
                     splice = (len(msg) - 4) // 2
                     msg = msg[:splice] + "..." + msg[-splice:]
                 msg = msg + " " * int(self.msg_len - self.getStringMaxWidth(msg))
-                print(self.title + progress_str + msg, end="\r")
+                print(self.title_str + progress_str + msg, end="\r")
         elif self.gui:
             self.progress += 1
             print("progress: %s/%s" %(self.progress, self.total))
 
     def endProgress(self) -> None:
         if self.stdout_status_bar:
-            if self.progress_bar:
+            if self.simplified_bar:
                 sys.stdout.write("#" * (self.bar_len - self.progress_scaled) + "]\n")
                 sys.stdout.flush()
             else:
-                if self.title_str == "Copying":
-                    title = getString("File operations completed!")
+                if self.title == "Copying":
+                    title_str = getString("File operations completed!")
                 else:
-                    title = getString(self.title_str + " completed!")
+                    title_str = getString(self.title + " completed!")
                 # if self.total == "0":
-                #     title = "No action necessary"
-                print(title + " " * (self.char_display - len(title)))
+                #     title_str = "No action necessary"
+                print(title_str + " " * (self.char_display - len(title_str)))
         elif self.gui and self.total > 0:
             self.progress = self.total
             print("progress: %s/%s" %(self.progress, self.total))
