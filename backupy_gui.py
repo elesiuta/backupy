@@ -66,6 +66,7 @@ def simplePrompt(msg: str) -> str:
        monospace_display = True,
        progress_regex = r"^progress: (?P<current>\d+)/(?P<total>\d+)$",
        progress_expr = "current / total * 100",
+       hide_progress_msg = True,
        menu=[{
             'name': 'File',
             'items': [{
