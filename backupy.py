@@ -74,9 +74,10 @@ class ArgparseCustomFormatter(argparse.HelpFormatter):
 
 
 class StatusBar:
-    def __init__(self, total: int, stdout_status_bar: bool, progress_bar: bool = False):
+    def __init__(self, total: int, stdout_status_bar: bool, progress_bar: bool = False, gui: bool = False):
         self.stdout_status_bar = stdout_status_bar
         self.progress_bar = progress_bar
+        self.gui = gui
         terminal_width = shutil.get_terminal_size()[0]
         if terminal_width < 16:
             self.stdout_status_bar = False
@@ -105,6 +106,12 @@ class StatusBar:
                     self.msg_len = self.char_display - len(progress_str) - len(self.title)
                 msg = " " * self.msg_len
                 print(self.title + progress_str + msg, end="\r")
+        elif self.gui and total > 0:
+            self.progress = 0
+            self.total = total
+            print("progress: %s/%s" %(self.progress, self.total))
+        else:
+            self.total = total
 
     def getStringMaxWidth(self, string: str) -> int:
         width = 0
@@ -135,6 +142,9 @@ class StatusBar:
                     msg = msg[:splice] + "..." + msg[-splice:]
                 msg = msg + " " * int(self.msg_len - self.getStringMaxWidth(msg))
                 print(self.title + progress_str + msg, end="\r")
+        elif self.gui:
+            self.progress += 1
+            print("progress: %s/%s" %(self.progress, self.total))
 
     def endProgress(self) -> None:
         if self.stdout_status_bar:
@@ -149,6 +159,9 @@ class StatusBar:
                 else:
                     title = getString("File operations completed!")
                 print(title + " " * (self.char_display - len(title)))
+        elif self.gui and self.total > 0:
+            self.progress = self.total
+            print("progress: %s/%s" %(self.progress, self.total))
 
 
 ###########################
@@ -280,6 +293,7 @@ class DirInfo:
     def scanDir(self, stdout_status_bar: bool) -> None:
         if os.path.isdir(self.dir):
             self.file_dicts = {}
+            # total = len(glob.glob(self.dir, *, recursive=True)) # approximate since includes .backupy, don't print count in cli
             scan_status = StatusBar(-1, stdout_status_bar)
             for dir_path, subdir_list, file_list in os.walk(self.dir):
                 if os.path.relpath(dir_path, self.dir) == ".":
@@ -624,7 +638,7 @@ class BackupManager:
 
     def copyFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str) -> None:
         self.colourPrint("Copying %s unique files from:\n%s\nto:\n%s" %(len(source_files), source_root, dest_root), "OKBLUE")
-        copy_status = StatusBar(len(source_files), self.config.stdout_status_bar)
+        copy_status = StatusBar(len(source_files), self.config.stdout_status_bar, gui=self.gui)
         for i in range(len(source_files)):
             copy_status.update(source_files[i])
             self.copyFile(source_root, dest_root, source_files[i], dest_files[i])
@@ -659,7 +673,7 @@ class BackupManager:
 
     def handleChanges(self, source: str, dest: str, source_dict: dict, dest_dict:dict, changed: list) -> None:
         self.colourPrint("Handling %s file changes per selection mode" %(len(changed)), "OKBLUE")
-        copy_status = StatusBar(len(changed), self.config.stdout_status_bar)
+        copy_status = StatusBar(len(changed), self.config.stdout_status_bar, gui=self.gui)
         for fp in changed:
             copy_status.update(fp)
             if self.config.select_mode == "source":
