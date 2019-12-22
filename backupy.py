@@ -77,7 +77,6 @@ class StatusBar:
     def __init__(self, title: str, total: int, stdout_status_bar: bool, simplified_bar: bool = False, gui: bool = False):
         self.title = title
         self.total = total
-        self.total_str = str(total)
         self.stdout_status_bar = stdout_status_bar
         self.simplified_bar = simplified_bar
         self.gui = gui
@@ -96,14 +95,14 @@ class StatusBar:
             else:
                 self.char_display = terminal_width - 2
                 self.progress = 0
-                if self.total_str == "-1":
+                if self.total == -1:
                     self.title_str = getString(self.title) + " "
                     progress_str = str(self.progress) + ": "
                     self.msg_len = self.char_display - len(progress_str) - len(self.title_str)
                 else:
-                    self.digits = str(len(self.total_str))
+                    self.digits = str(len(str(self.total)))
                     self.title_str = getString(self.title) + " "
-                    progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + self.total_str + ": "
+                    progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + str(self.total) + ": "
                     self.msg_len = self.char_display - len(progress_str) - len(self.title_str)
                 msg = " " * self.msg_len
                 print(self.title_str + progress_str + msg, end="\r")
@@ -130,11 +129,11 @@ class StatusBar:
                 sys.stdout.flush()
             else:
                 self.progress += 1
-                if self.total_str == "-1":
+                if self.total == -1:
                     progress_str = str(self.progress) + ": "
                     self.msg_len = self.char_display - len(progress_str) - len(self.title_str)
                 else:
-                    progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + self.total_str + ": "
+                    progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + str(self.total) + ": "
                 while self.getStringMaxWidth(msg) > self.msg_len:
                     splice = (len(msg) - 4) // 2
                     msg = msg[:splice] + "..." + msg[-splice:]
