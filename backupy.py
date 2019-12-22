@@ -755,31 +755,27 @@ class BackupManager:
                     return self.abortRun()
         # prepare diff messages
         if self.config.noarchive:
-            archive_msg = "delete"
+            archive_msg = getString("delete")
         else:
-            archive_msg = "archive"
+            archive_msg = getString("archive")
         if self.config.main_mode == "sync":
-            dest_msg = "(copy to source)"
+            dest_msg = getString("(copy to source)")
         elif self.config.main_mode == "backup":
-            dest_msg = "(left as is)"
+            dest_msg = getString("(left as is)")
         elif self.config.main_mode == "mirror":
-            dest_msg = "(to be " + archive_msg + "d)"
+            dest_msg = getString("(to be %sd)" %(archive_msg))
         if self.config.select_mode == "source":
-            change_msg = "(" + archive_msg + " dest and copy from source)"
+            change_msg = getString("(%s dest and copy from source)" %(archive_msg))
         elif self.config.select_mode == "dest":
-            change_msg = "(" + archive_msg + " source and copy from dest)"
+            change_msg = getString("(%s source and copy from dest)" %(archive_msg))
         elif self.config.select_mode == "new":
-            change_msg = "(" + archive_msg + " older and copy newer)"
+            change_msg = getString("(%s older and copy newer)" %(archive_msg))
         elif self.config.select_mode == "no":
-            change_msg = "(left as is)"
+            change_msg = getString("(left as is)")
         if self.config.norun:
-            simulation_msg = " dry run"
+            simulation_msg = getString(" dry run")
         else:
             simulation_msg = ""
-        archive_msg = getString(archive_msg)
-        dest_msg = getString(dest_msg)
-        change_msg = getString(change_msg)
-        simulation_msg = getString(simulation_msg)
         # print differences
         print(self.colourString(getString("Source Only (copy to dest): %s") %(len(sourceOnly)), "HEADER"))
         self.log.append([getString("### SOURCE ONLY ###")])
