@@ -185,10 +185,10 @@ class ConfigObject:
         self.save = False
         self.load = False
         # default config (additional)
-        self.archive_dir = ".backupy"
+        self.archive_dir = ".backupy/Archive"
         self.config_dir = ".backupy"
-        self.log_dir = ".backupy"
-        self.trash_dir = ".backupy/Deleted"
+        self.log_dir = ".backupy/Logs"
+        self.trash_dir = ".backupy/Trash"
         self.cleanup_empty_dirs = True
         self.filter_list = False
         self.filter_list_example = r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]"
