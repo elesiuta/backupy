@@ -105,13 +105,13 @@ def rewriteLog(fName):
 def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=True, setup=True):
     if setup:
         print("####### TEST: " + test_name + " #######")
-        setupTestDir(test_name, "backupy_test_dir.zip")
+        setupTestDir(test_name, "test_dir.zip")
     if set == 0:
-        # setupTestDir(test_name, "tests/backupy_test_dir.zip")
+        # setupTestDir(test_name, "tests/test_dir.zip")
         dir_A = "dir A"
         dir_B = "dir B"
     elif set == 1:
-        # setupTestDir(test_name, "tests/backupy_test_dir_set1.zip")
+        # setupTestDir(test_name, "tests/test_dir_set1.zip")
         dir_A = "dir A set 1"
         dir_B = "dir B set 1"
     config["source"] = os.path.join(test_name, dir_A)
@@ -127,10 +127,10 @@ def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=T
     if compare:
         dirA_stats = dirStats(os.path.join(test_name, dir_A))
         dirB_stats = dirStats(os.path.join(test_name, dir_B))
-        dirAsol_stats = dirStats(os.path.join("backupy_test_solutions", test_name, dir_A))
-        dirBsol_stats = dirStats(os.path.join("backupy_test_solutions", test_name, dir_B))
-        a_test, a_sol, a_diff = dirCompare(os.path.join(test_name, dir_A), os.path.join("backupy_test_solutions", test_name, dir_A))
-        b_test, b_sol, b_diff = dirCompare(os.path.join(test_name, dir_B), os.path.join("backupy_test_solutions", test_name, dir_B))
+        dirAsol_stats = dirStats(os.path.join("test_solutions", test_name, dir_A))
+        dirBsol_stats = dirStats(os.path.join("test_solutions", test_name, dir_B))
+        a_test, a_sol, a_diff = dirCompare(os.path.join(test_name, dir_A), os.path.join("test_solutions", test_name, dir_A))
+        b_test, b_sol, b_diff = dirCompare(os.path.join(test_name, dir_B), os.path.join("test_solutions", test_name, dir_B))
         compDict = {"a_test_only": a_test, "a_sol_only": a_sol, "a_diff": a_diff, "b_test_only": b_test, "b_sol_only": b_sol, "b_diff": b_diff}
     if cleanup:
         cleanupTestDir(test_name)
@@ -140,14 +140,14 @@ def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=T
 class TestBackupy(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        shutil.rmtree("backupy_test_solutions", ignore_errors=True)
-        shutil.unpack_archive("backupy_test_solutions.zip", "backupy_test_solutions")
-        # shutil.unpack_archive("tests/backupy_test_solutions.zip", "backupy_test_solutions")
-        # shutil.unpack_archive("tests/backupy_test_solutions_set1.zip", "backupy_test_solutions")
+        shutil.rmtree("test_solutions", ignore_errors=True)
+        shutil.unpack_archive("test_solutions.zip", "test_solutions")
+        # shutil.unpack_archive("tests/test_solutions.zip", "test_solutions")
+        # shutil.unpack_archive("tests/test_solutions_set1.zip", "test_solutions")
 
     @classmethod
     def tearDownClass(cls):
-        shutil.rmtree("backupy_test_solutions")
+        shutil.rmtree("test_solutions")
 
     def test_mirror_new(self):
         test_name = "mirror-new"
