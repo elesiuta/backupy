@@ -77,14 +77,19 @@ def setupTestDir(test_name, test_zip):
 def cleanupTestDir(test_name):
     shutil.rmtree(test_name)
 
-def rewriteLogRelPaths(fName):
+def rewriteLog(fName):
+    # rewrite paths as relative to cwd and remove settings
     cwd = os.getcwd()
     cwd = cwd.replace(os.path.sep, "\\")
     cwd2 = cwd.replace("\\", "\\\\")
     with open(fName, "r") as f:
         data = []
         reader = csv.reader(f)
+        settings_line_count = 3
         for row in reader:
+            if settings_line_count > 0:
+                settings_line_count -= 1
+                continue
             new_row = []
             for col in row:
                 if type(col) == str:
@@ -114,7 +119,7 @@ def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=T
     backup_man = backupy.BackupManager(config)
     backup_man.backup()
     if rewrite_log:
-        rewriteLogRelPaths(os.path.join(test_name, dir_A, ".backupy", "log-000000-0000.csv"))
+        rewriteLog(os.path.join(test_name, dir_A, ".backupy", "log-000000-0000.csv"))
     if compare:
         dirA_stats = dirStats(os.path.join(test_name, dir_A))
         dirB_stats = dirStats(os.path.join(test_name, dir_B))
