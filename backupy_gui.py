@@ -74,7 +74,7 @@ def simplePrompt(msg: str) -> str:
                     'menuTitle': 'About',
                     'name': 'BackuPy',
                     'description': 'A simple python program for backing up directories',
-                    'version': '0.5.6',
+                    'version': backupy.getVersion(),
                     'website': 'https://github.com/elesiuta/backupy',
                     'license': GPLv3
                 }]

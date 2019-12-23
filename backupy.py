@@ -24,6 +24,9 @@ import typing
 import sys
 import unicodedata
 
+def getVersion() -> str:
+    return "0.5.7"
+
 
 #########################
 ### File IO functions ###
@@ -288,13 +291,29 @@ class DirInfo:
         else:
             return False
 
+    def pathMatch(self, path: str, path_list: list) -> bool:
+        # is path in path_list or a subdir of it
+        if os.path.isabs(path):
+            relpath, abspath = os.path.relpath(path, self.dir), path
+        else:
+            relpath, abspath = path, os.path.join(self.dir, path)
+        for p in path_list:
+            p = os.path.normpath(p)
+            if os.path.isabs(p):
+                if os.path.commonpath([p, abspath]) == p:
+                    return True
+            else:
+                if os.path.commonpath([p, relpath]) == p:
+                    return True
+        return False
+
     def scanDir(self, stdout_status_bar: bool) -> None:
         if os.path.isdir(self.dir):
             self.file_dicts = {}
             total = sum([len(f) for r, d, f in os.walk(self.dir)])
             scan_status = StatusBar("Scanning", total, stdout_status_bar, gui=self.gui)
             for dir_path, subdir_list, file_list in os.walk(self.dir):
-                if os.path.relpath(dir_path, start=self.dir) in self.ignored_toplevel_folders:
+                if self.pathMatch(dir_path, self.ignored_toplevel_folders):
                     subdir_list.clear()
                     continue
                 subdir_list.sort()
@@ -323,7 +342,7 @@ class DirInfo:
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
             scan_status.endProgress()
             for relativePath in self.loaded_dicts:
-                if os.path.normpath(relativePath).split(os.path.sep)[0] not in self.ignored_toplevel_folders:
+                if not self.pathMatch(relativePath, self.ignored_toplevel_folders):
                     if relativePath not in self.file_dicts:
                         self.missing_files[relativePath] = self.loaded_dicts[relativePath]
 
