@@ -187,6 +187,8 @@ class ConfigObject:
         # default config (additional)
         self.archive_dir = ".backupy"
         self.config_dir = ".backupy"
+        self.log_dir = ".backupy"
+        self.trash_dir = ".backupy/Deleted"
         self.cleanup_empty_dirs = True
         self.filter_list = False
         self.filter_list_example = r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]"
@@ -200,6 +202,11 @@ class ConfigObject:
         # load config
         for key in config:
             self.__setattr__(key, config[key])
+        # normalize paths (these should be relative, not absolute!)
+        self.archive_dir = os.path.normpath(self.archive_dir)
+        self.config_dir = os.path.normpath(self.config_dir)
+        self.log_dir = os.path.normpath(self.log_dir)
+        self.trash_dir = os.path.normpath(self.trash_dir)
         # disable logging of files and changes
         if self.nolog:
             self.csv, self.save_json = False, False
@@ -298,13 +305,13 @@ class DirInfo:
         else:
             relpath, abspath = path, os.path.join(self.dir, path)
         for p in path_list:
-            p = os.path.normpath(p)
-            if os.path.isabs(p):
-                if os.path.commonpath([p, abspath]) == p:
-                    return True
-            else:
-                if os.path.commonpath([p, relpath]) == p:
-                    return True
+            # p = os.path.normpath(p)
+            # if os.path.isabs(p):
+            #     if os.path.commonpath([p, abspath]) == p:
+            #         return True
+            # else:
+            if os.path.commonpath([p, relpath]) == p:
+                return True
         return False
 
     def scanDir(self, stdout_status_bar: bool) -> None:
@@ -478,7 +485,7 @@ class BackupManager:
 
     def writeLog(self, db: bool = False) -> None:
         if self.config.csv:
-            writeCsv(os.path.join(self.config.source, self.config.config_dir, "log-" + self.backup_time + ".csv"), self.log)
+            writeCsv(os.path.join(self.config.source, self.config.log_dir, "log-" + self.backup_time + ".csv"), self.log)
         if self.config.save_json and db:
             self.source.saveJson()
             self.dest.saveJson()
@@ -719,8 +726,12 @@ class BackupManager:
         if self.config.norun:
             print(self.colourString(getString("Dry Run"), "HEADER"))
         # init dir scanning and load previous scan data if available
-        self.source = DirInfo(self.config.source, self.config.compare_mode, self.config.config_dir, [self.config.archive_dir], self.gui)
-        self.dest = DirInfo(self.config.dest, self.config.compare_mode, self.config.config_dir, [self.config.archive_dir], self.gui)
+        self.source = DirInfo(self.config.source, self.config.compare_mode, self.config.config_dir,
+                              [self.config.archive_dir, self.config.log_dir, self.config.trash_dir],
+                              self.gui)
+        self.dest = DirInfo(self.config.dest, self.config.compare_mode, self.config.config_dir,
+                            [self.config.archive_dir, self.config.log_dir, self.config.trash_dir],
+                            self.gui)
         database_load_success = False
         if self.config.load_json:
             self.source.loadJson()
@@ -829,7 +840,7 @@ class BackupManager:
             if self.config.noarchive:
                 self.removeFiles(self.config.dest, destOnly)
             else:
-                recycle_bin = os.path.join(self.config.dest, self.config.archive_dir, getString("Deleted"), self.backup_time)
+                recycle_bin = os.path.join(self.config.dest, self.config.trash_dir, self.backup_time)
                 self.moveFiles(self.config.dest, recycle_bin, destOnly, destOnly)
             if not self.config.nomoves:
                 self.movedFiles(moved)
