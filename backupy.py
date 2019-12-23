@@ -294,10 +294,9 @@ class DirInfo:
             total = sum([len(f) for r, d, f in os.walk(self.dir)])
             scan_status = StatusBar("Scanning", total, stdout_status_bar, gui=self.gui)
             for dir_path, subdir_list, file_list in os.walk(self.dir):
-                if os.path.relpath(dir_path, self.dir) == ".":
-                    for folder in subdir_list:
-                        if folder in self.ignored_toplevel_folders:
-                            subdir_list.remove(folder)
+                if os.path.relpath(dir_path, start=self.dir) in self.ignored_toplevel_folders:
+                    subdir_list.clear()
+                    continue
                 subdir_list.sort()
                 for subdir in subdir_list:
                     full_path = os.path.join(dir_path, subdir)
