@@ -904,12 +904,13 @@ def main():
                         help=getString("Do not detect moved or renamed files"))
     parser.add_argument("--noarchive", action="store_true",
                         help=getString("F!\n"
-                             "Disable archiving files before deleting/overwriting to:\n"
-                             "  <source|dest>/.backupy/yymmdd-HHMM/\n"))
+                             "Disable archiving files before overwriting/deleting to:\n"
+                             "  <source|dest>/.backupy/Archives/yymmdd-HHMM/\n"
+                             "  <source|dest>/.backupy/Trash/yymmdd-HHMM/"))
     parser.add_argument("--nolog", action="store_true",
                         help=getString("F!\n"
                              "Disable writing to:\n"
-                             "  <source>/.backupy/log-yymmdd-HHMM.csv\n"
+                             "  <source>/.backupy/Logs/log-yymmdd-HHMM.csv\n"
                              "  <source|dest>/.backupy/database.json"))
     parser.add_argument("--noprompt", action="store_true",
                         help=getString("Complete run without prompting for confirmation"))

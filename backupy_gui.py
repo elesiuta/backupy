@@ -136,11 +136,12 @@ def main_gui():
     group3.add_argument("--nomoves", action="store_true", metavar="No moves", gooey_options={"full_width":True},
                         help=" Do not detect moved or renamed files")
     group3.add_argument("--noarchive", action="store_true", metavar="No archiving", gooey_options={"full_width":True},
-                        help=" Disable archiving files before deleting/overwriting to:\n"
-                             "  <source|dest>/.backupy/yymmdd-HHMM/")
+                        help=" Disable archiving files before overwriting/deleting to:\n"
+                             "  <source|dest>/.backupy/Archives/yymmdd-HHMM/\n"
+                             "  <source|dest>/.backupy/Trash/yymmdd-HHMM/")
     group3.add_argument("--nolog", action="store_true", metavar="No logs", gooey_options={"full_width":True},
                         help=" Disable writing to:\n"
-                             "  <source>/.backupy/log-yymmdd-HHMM.csv\n"
+                             "  <source>/.backupy/Logs/log-yymmdd-HHMM.csv\n"
                              "  <source|dest>/.backupy/database.json")
     group3.add_argument("--noprompt", action="store_true", metavar="No prompt", gooey_options={"full_width":True},
                         help=" Complete run without prompting for confirmation")

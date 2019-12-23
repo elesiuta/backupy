@@ -41,10 +41,11 @@ optional arguments:
                  CRC
                    [compare CRC only, ignoring file attributes]
   --nomoves    Do not detect moved or renamed files
-  --noarchive  Disable archiving files before deleting/overwriting to:
-                 <source|dest>/.backupy/yymmdd-HHMM/
+  --noarchive  Disable archiving files before overwriting/deleting to:
+                 <source|dest>/.backupy/Archives/yymmdd-HHMM/
+                 <source|dest>/.backupy/Trash/yymmdd-HHMM/
   --nolog      Disable writing to:
-                 <source>/.backupy/log-yymmdd-HHMM.csv
+                 <source>/.backupy/Logs/log-yymmdd-HHMM.csv
                  <source|dest>/.backupy/database.json
   --noprompt   Complete run without prompting for confirmation
   --norun      Perform a dry run according to your configuration
