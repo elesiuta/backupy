@@ -85,7 +85,7 @@ def rewriteLog(fName):
     with open(fName, "r") as f:
         data = []
         reader = csv.reader(f)
-        settings_line_count = 3
+        settings_line_count = 2
         for row in reader:
             if settings_line_count > 0:
                 settings_line_count -= 1

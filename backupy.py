@@ -450,10 +450,11 @@ class BackupManager:
             self.config.stdout_status_bar = False
         # debugging/testing
         self.log.append([getString("### SETTINGS ###")])
-        self.log.append([getString("Config:"), str(vars(self.config))])
         if self.config.backup_time_override:
             self.backup_time = self.config.backup_time_override
-        self.log.append([getString("Time:"), self.backup_time])
+        self.log.append([getString("Time:"), self.backup_time,
+                         getString("Version:"), getVersion(),
+                         getString("Config:"), str(vars(self.config))])
 
     ######################################
     ### Saving/loading/logging methods ###
