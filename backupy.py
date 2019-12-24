@@ -58,9 +58,9 @@ def writeJson(fName: str, data: dict, subdir: bool = True) -> None:
 ####################
 
 def getString(text: str) -> str:
+    # import locale
     # logic for localisation goes here, set language with either a global or singleton
-    # store strings in a dictionary, either by language then string, or string then language
-    # or use this as an alias for gettext
+    # store strings in a dictionary or use this as an alias for gettext
     return text
 
 
@@ -299,7 +299,7 @@ class DirInfo:
             return False
 
     def pathMatch(self, path: str, path_list: list) -> bool:
-        # is path in path_list or a subdir of it
+        # is path in path_list (or a subdir of one in it)
         if os.path.isabs(path):
             relpath, abspath = os.path.relpath(path, self.dir), path
         else:
@@ -431,7 +431,7 @@ class BackupManager:
         self.config = ConfigObject(args)
         # copy norun value to survive load
         norun = self.config.norun
-        # load config
+        # load config (be careful if using a non-default config_dir!)
         if self.config.load:
             self.loadJson()
         # set norun = True iff flag was set, no other args survive a load
@@ -824,7 +824,7 @@ class BackupManager:
             return 0
         # wait for go ahead
         if not self.config.noprompt:
-            self.writeLog() # for inspection before decision if necessary
+            self.writeLog()
             if self.gui:
                 go = self.gui_simplePrompt(getString("Scan complete, continue with %s%s?") %(self.config.main_mode, simulation_msg))
             else:
