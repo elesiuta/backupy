@@ -1,12 +1,15 @@
 # BackuPy
 
+https://github.com/elesiuta/backupy
+https://pypi.org/project/BackuPy/
+
 ```
 usage: backupy [-h] [-m mode] [-s mode] [-c mode] [--nomoves] [--noarchive]
                [--nolog] [--noprompt] [--norun] [--save] [--load]
                source [dest]
 
-BackuPy: A small python program for backing up directories with an emphasis on
-clear rules, simple usage, and logging changes
+BackuPy: A succinct python program for backing up directories with an emphasis
+on simple usage and transparent behavior
 
 positional arguments:
   source       Path of source

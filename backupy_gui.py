@@ -73,7 +73,7 @@ def simplePrompt(msg: str) -> str:
                     'type': 'AboutDialog',
                     'menuTitle': 'About',
                     'name': 'BackuPy',
-                    'description': 'A simple python program for backing up directories',
+                    'description': 'A simple backup program in python',
                     'version': backupy.getVersion(),
                     'website': 'https://github.com/elesiuta/backupy',
                     'license': GPLv3
@@ -87,7 +87,7 @@ def main_gui():
     else:
         list_profiles = []
     # argparse setup
-    parser = GooeyParser(description="A simple python program for backing up directories")
+    parser = GooeyParser(description="A simple backup program in python")
     group1 = parser.add_argument_group("Profiles", "")
     group2 = parser.add_argument_group("Directories", "")
     group3 = parser.add_argument_group("Configuration", "")

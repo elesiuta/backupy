@@ -863,7 +863,7 @@ class BackupManager:
 
 
 def main():
-    parser = argparse.ArgumentParser(description=getString("BackuPy: A small python program for backing up directories with an emphasis on clear rules, simple usage, and logging changes"), formatter_class=ArgparseCustomFormatter)
+    parser = argparse.ArgumentParser(description=getString("BackuPy: A succinct python program for backing up directories with an emphasis on simple usage and transparent behavior"), formatter_class=ArgparseCustomFormatter)
     parser.add_argument("source", action="store", type=str,
                         help=getString("Path of source"))
     parser.add_argument("dest", action="store", type=str, nargs="?", default=None,

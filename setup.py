@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="BackuPy",
     version=backupy.getVersion(),
-    description="BackuPy: A small python program for backing up directories with an emphasis on clear rules, simple usage, and logging changes",
+    description="BackuPy: A succinct python program for backing up directories with an emphasis on simple usage and transparent behavior",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/elesiuta/backupy",
