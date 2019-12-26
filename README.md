@@ -15,13 +15,13 @@
 - Console version uses only the Python standard library
 - GUI available through Gooey and PySimpleGUI
 ## Usage Description
-- Source and destination directories can be any accesible directory
+- Source and destination directories can be any accessible directory
 - Destination can be empty or contain files from a previous backup, matching files on both sides will be skipped
 - Main modes
    - Backup mode: copies files that are only in source to destination
    - Mirror mode: copies files that are only in source to destination and deletes files that are only in destination
    - Sync mode: copies files that are only in source to destination and copies files that are only in destination to source
-- Selection modes (which file to select in cases where different versions exists on both sides)
+- Selection modes (which file to select in cases where different versions exist on both sides)
   - Source
   - Destination
   - Newer
