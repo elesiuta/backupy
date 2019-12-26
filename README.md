@@ -1,8 +1,33 @@
 # BackuPy
-
-https://github.com/elesiuta/backupy
-https://pypi.org/project/BackuPy/
-
+## Features
+- Backup, Mirror, and Sync Modes
+- Compare files using attributes or CRCs
+- Files are always archived before being deleted or overwritten by default
+- JSON formatted database for tracking files
+- Concise logs as csv files
+- Save and load your configuration
+- Perform a dry run to test your configuration
+- Works on both new and existing backup directories
+- Filter files with regular expressions
+## Under the hood
+- Easy to use in scripts
+- Clear and easy to verify code, the only functions that touch your files are: copyFile(), moveFile(), and  removeFile()
+- Console version uses only the Python standard library
+- GUI available through Gooey and PySimpleGUI
+## Usage Description
+- Source and destination directories can be any accesible directory
+- Destination can be empty or contain files from a previous backup, matching files on both sides will be skipped
+- Main modes
+   - Backup mode: copies files that are only in source to destination
+   - Mirror mode: copies files that are only in source to destination and deletes files that are only in destination
+   - Sync mode: copies files that are only in source to destination and copies files that are only in destination to source
+- Selection modes (which file to select in cases where different versions exists on both sides)
+  - Source
+  - Destination
+  - Newer
+  - None (differing files will only be logged for manual intervention)
+- Test your settings first with the 'norun' flag
+## Command Line Interface
 ```
 usage: backupy [-h] [-m mode] [-s mode] [-c mode] [--nomoves] [--noarchive]
                [--nolog] [--noprompt] [--norun] [--save] [--load]
@@ -55,3 +80,6 @@ optional arguments:
   --save       Save configuration in source
   --load       Load configuration from source
 ```
+## Links
+- https://github.com/elesiuta/backupy
+- https://pypi.org/project/BackuPy/
