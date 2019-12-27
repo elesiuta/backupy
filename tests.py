@@ -105,7 +105,7 @@ def rewriteLog(fName):
 def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=True, setup=True):
     if setup:
         print("####### TEST: " + test_name + " #######")
-        setupTestDir(test_name, "test_dir.zip")
+        setupTestDir(test_name, "tests/test_dir.zip")
     if set == 0:
         # setupTestDir(test_name, "tests/test_dir.zip")
         dir_A = "dir A"
@@ -141,8 +141,7 @@ class TestBackupy(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         shutil.rmtree("test_solutions", ignore_errors=True)
-        shutil.unpack_archive("test_solutions.zip", "test_solutions")
-        # shutil.unpack_archive("tests/test_solutions.zip", "test_solutions")
+        shutil.unpack_archive("tests/test_solutions.zip", "test_solutions")
         # shutil.unpack_archive("tests/test_solutions_set1.zip", "test_solutions")
 
     @classmethod
