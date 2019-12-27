@@ -6,7 +6,7 @@ sys.stdout = tempfile.TemporaryFile()
 
 import PySimpleGUI as sg
 from colored import stylize, attr, fg
-from gooey import Gooey, GooeyParser
+from gooey import Gooey, GooeyParser, local_resource_path
 
 import backupy
 
@@ -61,6 +61,7 @@ def simplePrompt(msg: str) -> str:
         return "n"
 
 @Gooey(program_name="BackuPy",
+       image_dir="images/",
        richtext_controls=True,
        tabbed_groups=True,
        monospace_display = True,

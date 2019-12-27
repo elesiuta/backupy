@@ -4,6 +4,7 @@ import gooey
 gooey_root = os.path.dirname(gooey.__file__)
 gooey_languages = Tree(os.path.join(gooey_root, 'languages'), prefix = 'gooey/languages')
 gooey_images = Tree(os.path.join(gooey_root, 'images'), prefix = 'gooey/images')
+image_overrides = Tree('images', prefix='images')
 
 block_cipher = None
 
@@ -33,13 +34,14 @@ exe = EXE(pyz,
           upx=True,
           console=False,
           windowed=True,
-          icon=os.path.join(gooey_root, 'images', 'program_icon.ico'))
+          icon='images/program_icon.ico')
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
                a.datas,
-               gooey_languages, # Add them in to collected files
-               gooey_images, # Same here.
+               image_overrides,
+               gooey_languages,
+               gooey_images,
                strip=False,
                upx=True,
                upx_exclude=[],
