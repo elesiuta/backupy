@@ -919,9 +919,9 @@ def main():
     parser.add_argument("--norun", action="store_true",
                         help=getString("Perform a dry run according to your configuration"))
     parser.add_argument("--save", action="store_true",
-                        help=getString("Save configuration in source"))
+                        help=getString("Save configuration to <source>/.backupy/config.json"))
     parser.add_argument("--load", action="store_true",
-                        help=getString("Load configuration from source"))
+                        help=getString("Load configuration from <source>/.backupy/config.json"))
     args = parser.parse_args()
     backup_manager = BackupManager(args)
     backup_manager.backup()

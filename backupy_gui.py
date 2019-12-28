@@ -149,9 +149,9 @@ def main_gui():
     group3.add_argument("--norun", action="store_true", metavar="No run", gooey_options={"full_width":True},
                         help=" Perform a dry run according to your configuration")
     group2.add_argument("--save", action="store_true", metavar="Save",
-                        help=" Save configuration in source")
+                        help=" Save configuration to <source>/.backupy/config.json")
     group2.add_argument("--load", action="store_true", metavar="Load",
-                        help=" Load configuration from source")
+                        help=" Load configuration from <source>/.backupy/config.json")
     # parse args and store dictionary
     args = vars(parser.parse_args())
     # convert radio groups back to choice of string

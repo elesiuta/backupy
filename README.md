@@ -77,8 +77,8 @@ optional arguments:
                  <source|dest>/.backupy/database.json
   --noprompt   Complete run without prompting for confirmation
   --norun      Perform a dry run according to your configuration
-  --save       Save configuration in source
-  --load       Load configuration from source
+  --save       Save configuration to <source>/.backupy/config.json
+  --load       Load configuration from <source>/.backupy/config.json
 ```
 ## Links
 - https://github.com/elesiuta/backupy
