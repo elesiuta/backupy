@@ -61,7 +61,7 @@ def simplePrompt(msg: str) -> str:
         return "n"
 
 @Gooey(program_name="BackuPy",
-       image_dir="images/",
+       image_dir=local_resource_path("images/"),
        richtext_controls=True,
        tabbed_groups=True,
        monospace_display = True,
