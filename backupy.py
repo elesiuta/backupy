@@ -489,20 +489,11 @@ class BackupManager:
     def writeLog(self, db: bool = False) -> None:
         if self.config.csv:
             # if self.alias_root_log:
-            #     aliased_log = []
-            #     settings_line_count = 2
-            #     for row in self.log:
-            #         if settings_line_count > 0:
-            #             settings_line_count -= 1
-            #             aliased_log.append(row)
-            #             continue
-            #         new_row = []
-            #         for col in row:
-            #             if type(col) == str:
-            #                 col = col.replace(self.source, getString("<source>"))
-            #                 col = col.replace(self.dest, getString("<dest>"))
-            #             new_row.append(col)
-            #         aliased_log.append(new_row)
+            #     for i in range(2, len(self.log)):
+            #         for j in range(len(self.log[i])):
+            #             if type(self.log[i][j]) == str:
+            #                 self.log[i][j] = self.log[i][j].replace(self.source, getString("<source>"))
+            #                 self.log[i][j] = self.log[i][j].replace(self.dest, getString("<dest>"))
             writeCsv(os.path.join(self.config.source, self.config.log_dir, "log-" + self.backup_time + ".csv"), self.log)
         if self.config.save_json and db:
             self.source.saveJson()
