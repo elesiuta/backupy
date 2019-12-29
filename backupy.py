@@ -27,7 +27,7 @@ import sys
 import unicodedata
 
 def getVersion() -> str:
-    return "1.0.0"
+    return "1.0.1"
 
 
 #########################
@@ -196,7 +196,7 @@ class ConfigObject:
         self.filter_list_example = r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]"
         self.backup_time_override = False
         self.csv = True
-        # self.alias_root_log = False
+        self.alias_root_log = False
         self.load_json = True
         self.save_json = True
         self.stdout_status_bar = True
@@ -488,12 +488,12 @@ class BackupManager:
 
     def writeLog(self, db: bool = False) -> None:
         if self.config.csv:
-            # if self.alias_root_log:
-            #     for i in range(2, len(self.log)):
-            #         for j in range(len(self.log[i])):
-            #             if type(self.log[i][j]) == str:
-            #                 self.log[i][j] = self.log[i][j].replace(self.source, getString("<source>"))
-            #                 self.log[i][j] = self.log[i][j].replace(self.dest, getString("<dest>"))
+            if self.config.alias_root_log:
+                for i in range(2, len(self.log)):
+                    for j in range(len(self.log[i])):
+                        if type(self.log[i][j]) == str:
+                            self.log[i][j] = self.log[i][j].replace(self.source, getString("<source>"))
+                            self.log[i][j] = self.log[i][j].replace(self.dest, getString("<dest>"))
             writeCsv(os.path.join(self.config.source, self.config.log_dir, "log-" + self.backup_time + ".csv"), self.log)
         if self.config.save_json and db:
             self.source.saveJson()
