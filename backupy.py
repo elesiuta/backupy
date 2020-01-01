@@ -196,9 +196,13 @@ class ConfigObject:
         self.filters_example0 = r"[r'.+', r'^[a-z]+$', r'^\d+$'] # provide a list of regular expressions, only matching files will be included"
         self.filters_example1 = r"[re.compile(x, 0) for x in [r'.+', r'^[a-z]+$', r'^\d+$']] # specify a flags value"
         self.filters_example2 = {
-            "include": r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']] # include list is optional",
-            "exclude": r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']] # exclude list has higher priority"
+            "include": r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']] # include list is optional, omit to include all",
+            "exclude": r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']] # exclude list has higher priority, omit to exclude none"
         }
+        self.filters_example3 = """{
+            "include": r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']],
+            "exclude": r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]"
+        } # you can also encapsulate it in a string for the CLI, newlines not required"""
         self.backup_time_override = False
         self.csv = True
         self.root_alias_log = False
@@ -374,24 +378,46 @@ class DirInfo:
                 return True
         return False
 
-    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filter_list: typing.Union[str, bool] = False) -> tuple:
+    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filters: typing.Union[str, list, dict, bool] = False) -> tuple:
+        # init variables
         file_list = list(self.file_dicts)
         second_dict = secondInfo.getDirDict()
         second_list = list(second_dict)
+        selfOnly = []
+        secondOnly = []
+        changed = []
+        moved = []
         if self.compare_mode == secondInfo.compare_mode:
             compare_mode = self.compare_mode
         else:
             # this shouldn't happen, but "both" is safe if compare_modes differ
             compare_mode = "both"
-        if type(filter_list) == str:
-            filter_list = eval(filter_list)
-            if type(filter_list) == list:
-                file_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), file_list)
-                second_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), second_list)
-        selfOnly = []
-        secondOnly = []
-        changed = []
-        moved = []
+        # apply filters
+        filter_list = False
+        filter_false_list = False
+        if type(filters) == str:
+            filters = eval(filters)
+        if type(filters) == dict:
+            if "inlcude" in filters:
+                filter_list = filters["include"]
+                if type(filter_list) == str:
+                    filter_list = eval(filter_list)
+            if "exlucde" in filters:
+                filter_false_list = filters["exclude"]
+                if type(filter_false_list) == str:
+                    filter_false_list = eval(filter_false_list)
+        if type(filter_list) == list:
+            if len(filters) >= 1 and all(type(r) == str for r in filters):
+                filter_list = [re.compile(r) for r in filters]
+            elif 
+
+        
+        if type(filter_list) == list:
+            file_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), file_list)
+            second_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), second_list)
+        if type(filter_false_list)== list:
+            pass
+        # compare
         for f in file_list:
             if f in second_list:
                 if not self.fileMatch(f, self.file_dicts[f], second_dict[f], secondInfo, compare_mode):
@@ -759,7 +785,7 @@ class BackupManager:
         self.dest.scanDir(self.config.stdout_status_bar)
         # compare directories, this is where CRC mode = both takes place
         self.colourPrint(getString("Comparing directories..."), "OKGREEN")
-        sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves, self.config.filter_list)
+        sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves, self.config.filters)
         # get databases
         source_dict = self.source.getDirDict()
         source_diffs = self.source.getLoadedDiffs()
@@ -914,6 +940,10 @@ def main():
                              "    [compare file attributes first, then check CRC]\n"
                              "  CRC\n"
                              "    [compare CRC only, ignoring file attributes]"))
+    parser.add_argument("-f", action="store", type=str, nargs="*", default=False,
+                        help=getString("Filter: Only include files matching the regular expression"))
+    parser.add_argument("-ff", action="store", type=str, nargs="*", default=False,
+                        help=getString("Filter False: Exclude files matching the regular expression"))
     parser.add_argument("--nomoves", action="store_true",
                         help=getString("Do not detect moved or renamed files"))
     parser.add_argument("--noarchive", action="store_true",
