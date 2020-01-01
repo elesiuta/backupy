@@ -33,8 +33,8 @@ usage: backupy [-h] [-m mode] [-s mode] [-c mode] [--nomoves] [--noarchive]
                [--nolog] [--noprompt] [--norun] [--save] [--load]
                source [dest]
 
-BackuPy: A succinct python program for backing up directories with an emphasis
-on simple usage and transparent behavior
+BackuPy: A simple backup program in python with an emphasis on transparent
+behaviour
 
 positional arguments:
   source       Path of source

@@ -27,7 +27,7 @@ import sys
 import unicodedata
 
 def getVersion() -> str:
-    return "1.0.2"
+    return "1.0.3"
 
 
 #########################
@@ -192,8 +192,13 @@ class ConfigObject:
         self.log_dir = ".backupy/Logs"
         self.trash_dir = ".backupy/Trash"
         self.cleanup_empty_dirs = True
-        self.filter_list = False
-        self.filter_list_example = r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]"
+        self.filters = False
+        self.filters_example0 = r"[r'.+', r'^[a-z]+$', r'^\d+$'] # provide a list of regular expressions, only matching files will be included"
+        self.filters_example1 = r"[re.compile(x, 0) for x in [r'.+', r'^[a-z]+$', r'^\d+$']] # specify a flags value"
+        self.filters_example2 = {
+            "include": r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']] # include list is optional",
+            "exclude": r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']] # exclude list has higher priority"
+        }
         self.backup_time_override = False
         self.csv = True
         self.root_alias_log = False
@@ -872,7 +877,7 @@ class BackupManager:
 
 
 def main():
-    parser = argparse.ArgumentParser(description=getString("BackuPy: A succinct python program for backing up directories with an emphasis on simple usage and transparent behavior"), formatter_class=ArgparseCustomFormatter)
+    parser = argparse.ArgumentParser(description=getString("BackuPy: A simple backup program in python with an emphasis on transparent behaviour"), formatter_class=ArgparseCustomFormatter)
     parser.add_argument("source", action="store", type=str,
                         help=getString("Path of source"))
     parser.add_argument("dest", action="store", type=str, nargs="?", default=None,
