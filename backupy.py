@@ -384,31 +384,20 @@ class DirInfo:
             # this shouldn't happen, but "both" is safe if compare_modes differ
             compare_mode = "both"
         # apply filters
-        # if type(filters) == str:
-        #     filters = eval(filters)
-        # if type(filters) == dict:
-        #     if "inlcude" in filters:
-        #         filter_list = filters["include"]
-        #         if type(filter_list) == str:
-        #             filter_list = eval(filter_list)
-        #     if "exlucde" in filters:
-        #         filter_false_list = filters["exclude"]
-        #         if type(filter_false_list) == str:
-        #             filter_false_list = eval(filter_false_list)
         if type(filter_list) == list:
             for i in range(len(filter_list)):
                 if type(filter_list[i]) == str:
                     filter_list[i] = re.compile[filter_list[i]]
                 if type(filter_list[i]) != re.Pattern:
                     filter_list = None
-                    break
+                    raise Exception("Filter Processing Error")
         if type(filter_false_list) == list:
             for i in range(len(filter_false_list)):
                 if type(filter_false_list[i]) == str:
                     filter_false_list[i] = re.compile[filter_false_list[i]]
                 if type(filter_false_list[i]) != re.Pattern:
                     filter_false_list = None
-                    break
+                    raise Exception("Filter False Processing Error")
         if type(filter_list) == list:
             file_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), file_list)
             second_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), second_list)
@@ -940,9 +929,9 @@ def main():
                              "  CRC\n"
                              "    [compare CRC only, ignoring file attributes]"))
     parser.add_argument("-f", action="store", type=str, nargs="*", default=None, dest="filter_list", metavar="regex",
-                        help=getString("Filter: Only include files matching the regular expression"))
+                        help=getString("Filter: Only include files matching the regular expression(s) (include all by default)"))
     parser.add_argument("-ff", action="store", type=str, nargs="*", default=None, dest="filter_false_list", metavar="regex",
-                        help=getString("Filter False: Exclude files matching the regular expression"))
+                        help=getString("Filter False: Exclude files matching the regular expression(s) (exclude has priority over include)"))
     parser.add_argument("--nomoves", action="store_true",
                         help=getString("Do not detect moved or renamed files"))
     parser.add_argument("--noarchive", action="store_true",
