@@ -369,7 +369,7 @@ class DirInfo:
                 return True
         return False
 
-    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filters: typing.Union[str, list, dict, None] = None) -> tuple:
+    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filter_list: typing.Union[list, None] = None, filter_false_list: typing.Union[list, None] = None) -> tuple:
         # init variables
         file_list = list(self.file_dicts)
         second_dict = secondInfo.getDirDict()
@@ -384,19 +384,17 @@ class DirInfo:
             # this shouldn't happen, but "both" is safe if compare_modes differ
             compare_mode = "both"
         # apply filters
-        filter_list = None
-        filter_false_list = None
-        if type(filters) == str:
-            filters = eval(filters)
-        if type(filters) == dict:
-            if "inlcude" in filters:
-                filter_list = filters["include"]
-                if type(filter_list) == str:
-                    filter_list = eval(filter_list)
-            if "exlucde" in filters:
-                filter_false_list = filters["exclude"]
-                if type(filter_false_list) == str:
-                    filter_false_list = eval(filter_false_list)
+        # if type(filters) == str:
+        #     filters = eval(filters)
+        # if type(filters) == dict:
+        #     if "inlcude" in filters:
+        #         filter_list = filters["include"]
+        #         if type(filter_list) == str:
+        #             filter_list = eval(filter_list)
+        #     if "exlucde" in filters:
+        #         filter_false_list = filters["exclude"]
+        #         if type(filter_false_list) == str:
+        #             filter_false_list = eval(filter_false_list)
         if type(filter_list) == list:
             for i in range(len(filter_list)):
                 if type(filter_list[i]) == str:
@@ -785,7 +783,7 @@ class BackupManager:
         self.dest.scanDir(self.config.stdout_status_bar)
         # compare directories, this is where CRC mode = both takes place
         self.colourPrint(getString("Comparing directories..."), "OKGREEN")
-        sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves, self.config.filters)
+        sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves, self.config.filter_list, self.config.filter_false_list)
         # get databases
         source_dict = self.source.getDirDict()
         source_diffs = self.source.getLoadedDiffs()
@@ -941,9 +939,9 @@ def main():
                              "    [compare file attributes first, then check CRC]\n"
                              "  CRC\n"
                              "    [compare CRC only, ignoring file attributes]"))
-    parser.add_argument("-f", action="store", type=str, nargs="*", default=False, dest="filter_list", metavar="regex",
+    parser.add_argument("-f", action="store", type=str, nargs="*", default=None, dest="filter_list", metavar="regex",
                         help=getString("Filter: Only include files matching the regular expression"))
-    parser.add_argument("-ff", action="store", type=str, nargs="*", default=False, dest="filter_false_list", metavar="regex",
+    parser.add_argument("-ff", action="store", type=str, nargs="*", default=None, dest="filter_false_list", metavar="regex",
                         help=getString("Filter False: Exclude files matching the regular expression"))
     parser.add_argument("--nomoves", action="store_true",
                         help=getString("Do not detect moved or renamed files"))
