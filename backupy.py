@@ -389,19 +389,15 @@ class DirInfo:
                 if type(filter_list[i]) == str:
                     filter_list[i] = re.compile(filter_list[i])
                 if type(filter_list[i]) != re.Pattern:
-                    filter_list = None
                     raise Exception("Filter Processing Error")
+            file_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), file_list)
+            second_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), second_list)
         if type(filter_false_list) == list:
             for i in range(len(filter_false_list)):
                 if type(filter_false_list[i]) == str:
                     filter_false_list[i] = re.compile(filter_false_list[i])
                 if type(filter_false_list[i]) != re.Pattern:
-                    filter_false_list = None
                     raise Exception("Filter False Processing Error")
-        if type(filter_list) == list:
-            file_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), file_list)
-            second_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), second_list)
-        if type(filter_false_list) == list:
             file_list = filter(lambda x: all([False if r.match(x) else True for r in filter_false_list]), file_list)
             second_list = filter(lambda x: all([False if r.match(x) else True for r in filter_false_list]), second_list)
         # compare
@@ -891,7 +887,8 @@ class BackupManager:
 
 def main():
     parser = argparse.ArgumentParser(description=getString("BackuPy: A simple backup program in python with an emphasis on transparent behaviour"),
-                                     formatter_class=lambda prog: ArgparseCustomFormatter(prog, max_help_position=15))
+                                     formatter_class=lambda prog: ArgparseCustomFormatter(prog, max_help_position=15),
+                                     usage='%(prog)s [--help] source [dest] [options]')
     parser.add_argument("source", action="store", type=str,
                         help=getString("Path of source"))
     parser.add_argument("dest", action="store", type=str, nargs="?", default=None,

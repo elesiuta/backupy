@@ -29,9 +29,7 @@
 - Test your settings first with the 'norun' flag
 ## Command Line Interface
 ```
-usage: backupy [-h] [-m mode] [-s mode] [-c mode] [--nomoves] [--noarchive]
-               [--nolog] [--noprompt] [--norun] [--save] [--load]
-               source [dest]
+usage: backupy [--help] source [dest] [options]
 
 BackuPy: A simple backup program in python with an emphasis on transparent
 behaviour
@@ -68,6 +66,12 @@ optional arguments:
                    [compare file attributes first, then check CRC]
                  CRC
                    [compare CRC only, ignoring file attributes]
+  -f [regex [regex ...]]
+               Filter: Only include files matching the regular expression(s)
+               (include all by default)
+  -ff [regex [regex ...]]
+               Filter False: Exclude files matching the regular expression(s)
+               (exclude has priority over include)
   --nomoves    Do not detect moved or renamed files
   --noarchive  Disable archiving files before overwriting/deleting to:
                  <source|dest>/.backupy/Archives/yymmdd-HHMM/
