@@ -179,6 +179,8 @@ class ConfigObject:
         self.main_mode = "mirror"
         self.select_mode = "source"
         self.compare_mode = "attr"
+        self.filter_list = None
+        self.filter_false_list = None
         self.nomoves = False
         self.noarchive = False
         self.nolog = False
@@ -192,17 +194,6 @@ class ConfigObject:
         self.log_dir = ".backupy/Logs"
         self.trash_dir = ".backupy/Trash"
         self.cleanup_empty_dirs = True
-        self.filters = None
-        self.filters_example0 = r"[r'.+', r'^[a-z]+$', r'^\d+$'] # provide a list of regular expressions, only matching files will be included"
-        self.filters_example1 = r"[re.compile(x, 0) for x in [r'.+', r'^[a-z]+$', r'^\d+$']] # specify a flags value"
-        self.filters_example2 = {
-            "include": r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']] # include list is optional, omit to include all",
-            "exclude": r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']] # exclude list has higher priority, omit to exclude none"
-        }
-        self.filters_example3 = """{
-            "include": r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']],
-            "exclude": r"[re.compile(x) for x in [r'.+', r'^[a-z]+$', r'^\d+$']]"
-        } # you can also encapsulate it in a string for the CLI, newlines not required"""
         self.backup_time_override = False
         self.csv = True
         self.root_alias_log = True
@@ -912,7 +903,8 @@ class BackupManager:
 
 
 def main():
-    parser = argparse.ArgumentParser(description=getString("BackuPy: A simple backup program in python with an emphasis on transparent behaviour"), formatter_class=ArgparseCustomFormatter)
+    parser = argparse.ArgumentParser(description=getString("BackuPy: A simple backup program in python with an emphasis on transparent behaviour"),
+                                     formatter_class=lambda prog: ArgparseCustomFormatter(prog, max_help_position=15))
     parser.add_argument("source", action="store", type=str,
                         help=getString("Path of source"))
     parser.add_argument("dest", action="store", type=str, nargs="?", default=None,
@@ -949,6 +941,10 @@ def main():
                              "    [compare file attributes first, then check CRC]\n"
                              "  CRC\n"
                              "    [compare CRC only, ignoring file attributes]"))
+    parser.add_argument("-f", action="store", type=str, nargs="*", default=False, dest="filter_list", metavar="regex",
+                        help=getString("Filter: Only include files matching the regular expression"))
+    parser.add_argument("-ff", action="store", type=str, nargs="*", default=False, dest="filter_false_list", metavar="regex",
+                        help=getString("Filter False: Exclude files matching the regular expression"))
     parser.add_argument("--nomoves", action="store_true",
                         help=getString("Do not detect moved or renamed files"))
     parser.add_argument("--noarchive", action="store_true",
@@ -969,10 +965,6 @@ def main():
                         help=getString("Save configuration to <source>/.backupy/config.json"))
     parser.add_argument("--load", action="store_true",
                         help=getString("Load configuration from <source>/.backupy/config.json"))
-    parser.add_argument("-f", action="store", type=str, nargs="*", default=False, dest="filter", metavar="regex",
-                        help=argparse.SUPPRESS)
-    parser.add_argument("-ff", action="store", type=str, nargs="*", default=False, dest="filter_false", metavar="regex",
-                        help=argparse.SUPPRESS)
     args = parser.parse_args()
     backup_manager = BackupManager(args)
     backup_manager.backup()
