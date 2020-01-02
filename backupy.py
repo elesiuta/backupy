@@ -407,16 +407,26 @@ class DirInfo:
                 if type(filter_false_list) == str:
                     filter_false_list = eval(filter_false_list)
         if type(filter_list) == list:
-            if len(filters) >= 1 and all(type(r) == str for r in filters):
-                filter_list = [re.compile(r) for r in filters]
-            elif 
-
-        
+            for i in range(len(filter_list)):
+                if type(filter_list[i]) == str:
+                    filter_list[i] = re.compile[filter_list[i]]
+                if type(filter_list[i]) != re.Pattern:
+                    filter_list = False
+                    break
+        if type(filter_false_list) == list:
+            for i in range(len(filter_false_list)):
+                if type(filter_false_list[i]) == str:
+                    filter_false_list[i] = re.compile[filter_false_list[i]]
+                if type(filter_false_list[i]) != re.Pattern:
+                    filter_false_list = False
+                    break
         if type(filter_list) == list:
+            # this might be made more efficient by filtering the set(file_list + second_list) then iterating over the set (but then there's an extra if x in list)
             file_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), file_list)
             second_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), second_list)
         if type(filter_false_list)== list:
-            pass
+            file_list = filter(lambda x: all([False if r.match(x) else True for r in filter_false_list]), file_list)
+            second_list = filter(lambda x: all([False if r.match(x) else True for r in filter_false_list]), second_list)
         # compare
         for f in file_list:
             if f in second_list:
