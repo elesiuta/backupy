@@ -192,7 +192,7 @@ class ConfigObject:
         self.log_dir = ".backupy/Logs"
         self.trash_dir = ".backupy/Trash"
         self.cleanup_empty_dirs = True
-        self.filters = False
+        self.filters = None
         self.filters_example0 = r"[r'.+', r'^[a-z]+$', r'^\d+$'] # provide a list of regular expressions, only matching files will be included"
         self.filters_example1 = r"[re.compile(x, 0) for x in [r'.+', r'^[a-z]+$', r'^\d+$']] # specify a flags value"
         self.filters_example2 = {
@@ -378,7 +378,7 @@ class DirInfo:
                 return True
         return False
 
-    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filters: typing.Union[str, list, dict, bool] = False) -> tuple:
+    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filters: typing.Union[str, list, dict, None] = None) -> tuple:
         # init variables
         file_list = list(self.file_dicts)
         second_dict = secondInfo.getDirDict()
@@ -393,8 +393,8 @@ class DirInfo:
             # this shouldn't happen, but "both" is safe if compare_modes differ
             compare_mode = "both"
         # apply filters
-        filter_list = False
-        filter_false_list = False
+        filter_list = None
+        filter_false_list = None
         if type(filters) == str:
             filters = eval(filters)
         if type(filters) == dict:
@@ -411,20 +411,19 @@ class DirInfo:
                 if type(filter_list[i]) == str:
                     filter_list[i] = re.compile[filter_list[i]]
                 if type(filter_list[i]) != re.Pattern:
-                    filter_list = False
+                    filter_list = None
                     break
         if type(filter_false_list) == list:
             for i in range(len(filter_false_list)):
                 if type(filter_false_list[i]) == str:
                     filter_false_list[i] = re.compile[filter_false_list[i]]
                 if type(filter_false_list[i]) != re.Pattern:
-                    filter_false_list = False
+                    filter_false_list = None
                     break
         if type(filter_list) == list:
-            # this might be made more efficient by filtering the set(file_list + second_list) then iterating over the set (but then there's an extra if x in list)
             file_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), file_list)
             second_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), second_list)
-        if type(filter_false_list)== list:
+        if type(filter_false_list) == list:
             file_list = filter(lambda x: all([False if r.match(x) else True for r in filter_false_list]), file_list)
             second_list = filter(lambda x: all([False if r.match(x) else True for r in filter_false_list]), second_list)
         # compare
@@ -485,7 +484,7 @@ class BackupManager:
         if not os.path.isdir(self.config.source):
             print(self.colourString(getString("Invalid source directory: ") + self.config.source, "FAIL"))
             sys.exit()
-        if self.config.dest == None:
+        if self.config.dest is None:
             print(self.colourString(getString("Destination directory not provided or config failed to load"), "FAIL"))
             sys.exit()
         self.config.source = os.path.abspath(self.config.source)
@@ -950,10 +949,6 @@ def main():
                              "    [compare file attributes first, then check CRC]\n"
                              "  CRC\n"
                              "    [compare CRC only, ignoring file attributes]"))
-    parser.add_argument("-f", action="store", type=str, nargs="*", default=False,
-                        help=getString("Filter: Only include files matching the regular expression"))
-    parser.add_argument("-ff", action="store", type=str, nargs="*", default=False,
-                        help=getString("Filter False: Exclude files matching the regular expression"))
     parser.add_argument("--nomoves", action="store_true",
                         help=getString("Do not detect moved or renamed files"))
     parser.add_argument("--noarchive", action="store_true",
@@ -974,6 +969,10 @@ def main():
                         help=getString("Save configuration to <source>/.backupy/config.json"))
     parser.add_argument("--load", action="store_true",
                         help=getString("Load configuration from <source>/.backupy/config.json"))
+    parser.add_argument("-f", action="store", type=str, nargs="*", default=False, dest="filter", metavar="regex",
+                        help=argparse.SUPPRESS)
+    parser.add_argument("-ff", action="store", type=str, nargs="*", default=False, dest="filter_false", metavar="regex",
+                        help=argparse.SUPPRESS)
     args = parser.parse_args()
     backup_manager = BackupManager(args)
     backup_manager.backup()
