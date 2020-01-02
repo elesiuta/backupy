@@ -269,21 +269,21 @@ class TestBackupy(unittest.TestCase):
 
     def test_sync_new_log(self):
         test_name = "sync-new-log"
-        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
+        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_new_log_set1(self):
         test_name = "sync-new-log-set1"
-        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
+        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_new_log_norun_set1(self):
         test_name = "sync-new-log-norun-set1"
-        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "norun": True, "backup_time_override": "000000-0000"}
+        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "norun": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
@@ -297,28 +297,28 @@ class TestBackupy(unittest.TestCase):
 
     def test_mirror_source_log_set1(self):
         test_name = "mirror-source-log-set1"
-        config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
+        config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_log_dirs_set1(self):
         test_name = "mirror-source-log-dir-set1"
-        config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy/Config", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
+        config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy/Config", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_log_dirs_set0(self):
         test_name = "mirror-source-log-dir-set0"
-        config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy/Config", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
+        config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy/Config", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=0)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_twice_nochanges(self):
         test_name = "sync-twice-nochanges-set1"
-        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
+        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
         runTest(test_name, config, rewrite_log=True, set=1, compare=False, setup=True, cleanup=False)
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1, setup=False, cleanup=True)
         self.assertEqual(dirA, dirAsol, str(compDict))

@@ -205,7 +205,7 @@ class ConfigObject:
         } # you can also encapsulate it in a string for the CLI, newlines not required"""
         self.backup_time_override = False
         self.csv = True
-        self.root_alias_log = False
+        self.root_alias_log = True
         self.load_json = True
         self.save_json = True
         self.stdout_status_bar = True
