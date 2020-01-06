@@ -2,6 +2,7 @@ import os
 import sys
 import typing
 import tempfile
+import glob
 sys.stdout = tempfile.TemporaryFile()
 
 import PySimpleGUI as sg
@@ -22,6 +23,11 @@ class Unbuffered(object):
    def __getattr__(self, attr):
        return getattr(self.stream, attr)
 sys.stdout = Unbuffered(sys.__stdout__)
+
+if sys.executable[-33:] == r"VFS\SystemX86\BackuPy\BackuPy.exe":
+    BUILD_WINDOWS_MSIX = True
+else:
+    BUILD_WINDOWS_MSIX = False
 
 GPLv3 = """This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -60,26 +66,40 @@ def simplePrompt(msg: str) -> str:
     else:
         return "n"
 
+def target_resource_path():
+    if BUILD_WINDOWS_MSIX:
+        return '"' + local_resource_path("BackuPy.exe") + '"'
+        # return os.path.join(os.path.abspath("."), "BackuPy", "BackuPy.exe")
+        # return r"C:\Windows\System32\BackuPy\BackuPy.exe"
+        # return os.path.join(os.getenv("LOCALAPPDATA"), "Programs", "BackuPy", "BackuPy.exe")
+        # str(os.path.basename(__file__))
+        # str(sys.argv[0])
+        # str(os.getcwd())
+        # str(sys.path)
+    else:
+        return None
+
 @Gooey(program_name="BackuPy",
-       image_dir=local_resource_path("images/"),
-       richtext_controls=True,
-       tabbed_groups=True,
+       image_dir = local_resource_path("images/"),
+       richtext_controls = True,
+       tabbed_groups = True,
        monospace_display = True,
        progress_regex = r"^progress: (?P<current>\d+)/(?P<total>\d+)$",
        progress_expr = "current / total * 100",
        hide_progress_msg = True,
-       menu=[{
-            'name': 'File',
-            'items': [{
-                    'type': 'AboutDialog',
-                    'menuTitle': 'About',
-                    'name': 'BackuPy',
-                    'description': 'A simple backup program in python',
-                    'version': backupy.getVersion(),
-                    'website': 'https://github.com/elesiuta/backupy',
-                    'license': GPLv3
-                }]
-            }])
+       target = target_resource_path(),
+       menu = [{
+                'name': 'File',
+                'items': [{
+                        'type': 'AboutDialog',
+                        'menuTitle': 'About',
+                        'name': 'BackuPy',
+                        'description': 'A simple backup program in python',
+                        'version': backupy.getVersion(),
+                        'website': 'https://github.com/elesiuta/backupy',
+                        'license': GPLv3
+                    }]
+                }])
 def main_gui():
     # load profiles
     dict_profiles = backupy.readJson("profiles.json")

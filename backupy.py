@@ -888,7 +888,7 @@ class BackupManager:
 def main():
     parser = argparse.ArgumentParser(description=getString("BackuPy: A simple backup program in python with an emphasis on transparent behaviour"),
                                      formatter_class=lambda prog: ArgparseCustomFormatter(prog, max_help_position=15),
-                                     usage='%(prog)s [--help] source [dest] [options]')
+                                     usage="%(prog)s [--help] source [dest] [options]")
     parser.add_argument("source", action="store", type=str,
                         help=getString("Path of source"))
     parser.add_argument("dest", action="store", type=str, nargs="?", default=None,
