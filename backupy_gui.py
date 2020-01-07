@@ -2,61 +2,13 @@ import os
 import sys
 import typing
 import tempfile
-import time
 sys.stdout = tempfile.TemporaryFile()
 
 import PySimpleGUI as sg
 from colored import stylize, attr, fg
 from gooey import Gooey, GooeyParser, local_resource_path
-from gooey.gui import events, processor
-from gooey.gui.pubsub import pub
 
 import backupy
-
-def gooey_print(self, text):
-    _progress = self._extract_progress(text.encode())
-    pub.send_message(events.PROGRESS_UPDATE, progress=_progress)
-    if _progress is None or self.hide_progress_msg is False:
-        pub.send_message(events.CONSOLE_UPDATE,
-                            msg=text)
-
-def gooey_execution_complete():
-    pub.send_message(events.EXECUTION_COMPLETE)
-
-def gooey_was_success_patched(self):
-    return True
-    # get return code from backupy and store in self
-
-def gooey_poll_patched(self):
-    pass
-
-def gooey_stop_patched(self):
-    pass
-    # kill self
-
-def gooey_running_patched(self):
-    return True
-
-def gooey_run_patched(self, command):
-    self.wasForcefullyStopped = False
-    env = os.environ.copy()
-    env["GOOEY"] = "1"
-    env["PYTHONIOENCODING"] = self.encoding
-    test_program(self)
-    gooey_execution_complete()
-
-processor.ProcessController.run = gooey_run_patched
-processor.ProcessController.running = gooey_running_patched
-processor.ProcessController.stop = gooey_stop_patched
-processor.ProcessController.poll = gooey_poll_patched
-processor.ProcessController.was_success = gooey_was_success_patched
-
-def test_program(self):
-    gooey_print(self, "hello world")
-    time.sleep(1)
-    gooey_print(self, "waiting")
-    time.sleep(1)
-    gooey_print(self, "goodbye world")
 
 class Unbuffered(object):
    def __init__(self, stream):
