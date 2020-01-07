@@ -3,7 +3,6 @@ import sys
 import typing
 import tempfile
 import time
-from multiprocessing import Pool
 sys.stdout = tempfile.TemporaryFile()
 
 import PySimpleGUI as sg
@@ -43,9 +42,8 @@ def gooey_run_patched(self, command):
     env = os.environ.copy()
     env["GOOEY"] = "1"
     env["PYTHONIOENCODING"] = self.encoding
-    if __name__ == '__main__':
-        with Pool(processes=1) as pool:
-            res = pool.apply_async(test_program, (self,))
+    test_program(self)
+    gooey_execution_complete()
 
 processor.ProcessController.run = gooey_run_patched
 processor.ProcessController.running = gooey_running_patched
@@ -59,7 +57,6 @@ def test_program(self):
     gooey_print(self, "waiting")
     time.sleep(1)
     gooey_print(self, "goodbye world")
-    gooey_execution_complete()
 
 class Unbuffered(object):
    def __init__(self, stream):
