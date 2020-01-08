@@ -374,8 +374,8 @@ class DirInfo:
         file_list = list(self.file_dicts)
         second_dict = secondInfo.getDirDict()
         second_list = list(second_dict)
-        selfOnly = []
-        secondOnly = []
+        self_only = []
+        second_only = []
         changed = []
         moved = []
         if self.compare_mode == secondInfo.compare_mode:
@@ -406,13 +406,13 @@ class DirInfo:
                 if not self.fileMatch(f, self.file_dicts[f], second_dict[f], secondInfo, compare_mode):
                     changed.append(f)
             else:
-                selfOnly.append(f)
+                self_only.append(f)
         for f in second_list:
             if not f in file_list:
-                secondOnly.append(f)
+                second_only.append(f)
         if not no_moves:
-            for f1 in selfOnly:
-                for f2 in secondOnly:
+            for f1 in self_only:
+                for f2 in second_only:
                     # should empty dirs be moved?
                     # if "dir" not in self.file_dicts[f1] and "dir" not in second_dict[f2]:
                     if self.fileMatch(f, self.file_dicts[f1], second_dict[f2], secondInfo, compare_mode):
@@ -420,9 +420,9 @@ class DirInfo:
                         _ = secondInfo.missing_files.pop(f1, 1)
                         _ = self.missing_files.pop(f2, 1)
             for pair in moved:
-                selfOnly.remove(pair["source"])
-                secondOnly.remove(pair["dest"])
-        return selfOnly, secondOnly, changed, moved
+                self_only.remove(pair["source"])
+                second_only.remove(pair["dest"])
+        return self_only, second_only, changed, moved
 
 
 ##################
@@ -699,7 +699,7 @@ class BackupManager:
         self.colourPrint(getString("Archiving completed!"), "NONE")
 
     def movedFiles(self, moved: list, reverse: bool = False) -> None:
-        # conflicts shouldn't happen since moved is a subset of files from sourceOnly and destOnly
+        # conflicts shouldn't happen since moved is a subset of files from source_only and dest_only
         # depends on source_info.dirCompare(dest_info) otherwise source and dest keys will be reversed
         self.colourPrint(getString("Moving %s files on destination to match source") %(len(moved)), "OKBLUE")
         for f in moved:
@@ -768,7 +768,7 @@ class BackupManager:
         self.dest.scanDir(self.config.stdout_status_bar)
         # compare directories, this is where CRC mode = both takes place
         self.colourPrint(getString("Comparing directories..."), "OKGREEN")
-        sourceOnly, destOnly, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves, self.config.filter_list, self.config.filter_false_list)
+        source_only, dest_only, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves, self.config.filter_list, self.config.filter_false_list)
         # get databases
         source_dict = self.source.getDirDict()
         source_diffs = self.source.getLoadedDiffs()
@@ -826,12 +826,12 @@ class BackupManager:
         else:
             simulation_msg = ""
         # print differences
-        print(self.colourString(getString("Source Only (copy to dest): %s") %(len(sourceOnly)), "HEADER"))
+        print(self.colourString(getString("Source Only (copy to dest): %s") %(len(source_only)), "HEADER"))
         self.log.append([getString("### SOURCE ONLY ###")])
-        self.printFiles(sourceOnly, source_dict)
-        print(self.colourString(getString("Destination Only %s: %s") %(dest_msg, len(destOnly)), "HEADER"))
+        self.printFiles(source_only, source_dict)
+        print(self.colourString(getString("Destination Only %s: %s") %(dest_msg, len(dest_only)), "HEADER"))
         self.log.append([getString("### DESTINATION ONLY ###")])
-        self.printFiles(destOnly, dest_dict)
+        self.printFiles(dest_only, dest_dict)
         print(self.colourString(getString("Changed Files %s: %s") %(change_msg, len(changed)), "HEADER"))
         self.log.append([getString("### CHANGED FILES ###")])
         self.printChangedFiles(changed, source_dict, dest_dict)
@@ -840,7 +840,7 @@ class BackupManager:
             self.log.append([getString("### MOVED FILES ###")])
             self.printMovedFiles(moved, source_dict, dest_dict)
         # exit if directories already match
-        if len(sourceOnly) == 0 and len(destOnly) == 0 and len(changed) == 0 and len(moved) == 0:
+        if len(source_only) == 0 and len(dest_only) == 0 and len(changed) == 0 and len(moved) == 0:
             print(self.colourString(getString("Directories already match, completed!"), "OKGREEN"))
             self.log.append([getString("### NO CHANGES FOUND ###")])
             self.writeLog(db=True)
@@ -859,23 +859,23 @@ class BackupManager:
         self.log.append([getString("### START ") + self.config.main_mode.upper() + simulation_msg.upper() + " ###"])
         print(self.colourString(getString("Starting ") + self.config.main_mode, "OKGREEN"))
         if self.config.main_mode == "mirror":
-            self.copyFiles(self.config.source, self.config.dest, sourceOnly, sourceOnly)
+            self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
             if self.config.noarchive:
-                self.removeFiles(self.config.dest, destOnly)
+                self.removeFiles(self.config.dest, dest_only)
             else:
                 recycle_bin = os.path.join(self.config.dest, self.config.trash_dir, self.backup_time)
-                self.moveFiles(self.config.dest, recycle_bin, destOnly, destOnly)
+                self.moveFiles(self.config.dest, recycle_bin, dest_only, dest_only)
             if not self.config.nomoves:
                 self.movedFiles(moved)
             self.handleChanges(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         elif self.config.main_mode == "backup":
-            self.copyFiles(self.config.source, self.config.dest, sourceOnly, sourceOnly)
+            self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
             if not self.config.nomoves:
                 self.movedFiles(moved)
             self.handleChanges(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         elif self.config.main_mode == "sync":
-            self.copyFiles(self.config.source, self.config.dest, sourceOnly, sourceOnly)
-            self.copyFiles(self.config.dest, self.config.source, destOnly, destOnly)
+            self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
+            self.copyFiles(self.config.dest, self.config.source, dest_only, dest_only)
             if not self.config.nomoves:
                 self.movedFiles(moved)
             self.handleChanges(self.config.source, self.config.dest, source_dict, dest_dict, changed)
