@@ -27,7 +27,7 @@ import sys
 import unicodedata
 
 def getVersion() -> str:
-    return "1.1.0"
+    return "1.1.1"
 
 
 #########################
@@ -853,7 +853,7 @@ class BackupManager:
             else:
                 print(self.colourString(getString("Scan complete, continue with %s%s (y/N)?") %(self.config.main_mode, simulation_msg), "OKGREEN"))
                 go = input("> ")
-            if go[0].lower() != "y":
+            if len(go) == 0 or go[0].lower() != "y":
                 return self.abortRun()
         # backup operations
         self.log.append([getString("### START ") + self.config.main_mode.upper() + simulation_msg.upper() + " ###"])
