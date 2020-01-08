@@ -69,10 +69,10 @@ optional arguments:
                    [compare file attributes first, then check CRC]
                  CRC
                    [compare CRC only, ignoring file attributes]
-  -f [regex [regex ...]]
+  -f regex [regex ...]
                Filter: Only include files matching the regular expression(s)
                (include all by default)
-  -ff [regex [regex ...]]
+  -ff regex [regex ...]
                Filter False: Exclude files matching the regular expression(s)
                (exclude has priority over include)
   --nomoves    Do not detect moved or renamed files

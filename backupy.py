@@ -928,9 +928,9 @@ def main():
                              "    [compare file attributes first, then check CRC]\n"
                              "  CRC\n"
                              "    [compare CRC only, ignoring file attributes]"))
-    parser.add_argument("-f", action="store", type=str, nargs="*", default=None, dest="filter_list", metavar="regex",
+    parser.add_argument("-f", action="store", type=str, nargs="+", default=None, dest="filter_list", metavar="regex",
                         help=getString("Filter: Only include files matching the regular expression(s) (include all by default)"))
-    parser.add_argument("-ff", action="store", type=str, nargs="*", default=None, dest="filter_false_list", metavar="regex",
+    parser.add_argument("-ff", action="store", type=str, nargs="+", default=None, dest="filter_false_list", metavar="regex",
                         help=getString("Filter False: Exclude files matching the regular expression(s) (exclude has priority over include)"))
     parser.add_argument("--nomoves", action="store_true",
                         help=getString("Do not detect moved or renamed files"))
