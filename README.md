@@ -29,7 +29,10 @@
 - Test your settings first with the 'norun' flag
 ## Command Line Interface
 ```
-usage: backupy [--help] source [dest] [options]
+usage: backupy [options] -- <source> <dest>
+       backupy <source> <dest> [options]
+       backupy <source> --load [--norun]
+       backupy -h | --help
 
 BackuPy: A simple backup program in python with an emphasis on transparent
 behaviour
