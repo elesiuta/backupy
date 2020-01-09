@@ -624,8 +624,8 @@ class BackupManager:
     def removeFile(self, root: str, fPath: str) -> None:
         try:
             self.log.append(["removeFile()", root, fPath])
-            self.source.updateDictRemove(root, fPath, self.dest)
             if not self.config.norun:
+                self.source.updateDictRemove(root, fPath, self.dest)
                 path = os.path.join(root, fPath)
                 if os.path.isdir(path):
                     os.rmdir(path)
@@ -642,8 +642,8 @@ class BackupManager:
     def copyFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
             self.log.append(["copyFile()", source_root, dest_root, source_file, dest_file])
-            self.source.updateDictCopy(source_root, dest_root, source_file, dest_file, self.dest)
             if not self.config.norun:
+                self.source.updateDictCopy(source_root, dest_root, source_file, dest_file, self.dest)
                 source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
                 if os.path.isdir(source):
@@ -659,8 +659,8 @@ class BackupManager:
     def moveFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
             self.log.append(["moveFile()", source_root, dest_root, source_file, dest_file])
-            self.source.updateDictMove(source_root, dest_root, source_file, dest_file, self.dest)
             if not self.config.norun:
+                self.source.updateDictMove(source_root, dest_root, source_file, dest_file, self.dest)
                 source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
                 if not os.path.isdir(os.path.dirname(dest)):
