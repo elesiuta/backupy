@@ -296,7 +296,7 @@ class DirInfo:
         elif exact_only:
             return False
         diff = abs(int(t1) - int(t2))
-        if diff <= 1 or diff in [3600, 3601]:
+        if diff <= 2 or diff in [3600, 3601, 3602]:
             return True
         else:
             return False
