@@ -497,7 +497,7 @@ class BackupManager:
         print(self.colourString(getString("Loaded config from:") + "\n" + config_dir, "OKGREEN"))
         self.config = ConfigObject(config)
         if self.config.source is None or os.path.abspath(current_source) != os.path.abspath(self.config.source):
-            print(self.colourString(getString("A config file matching the specified source was not found"), "FAIL"))
+            print(self.colourString(getString("A config file matching the specified source was not found (case sensitive)"), "FAIL"))
             sys.exit()
 
     def writeLog(self, db: bool = False) -> None:
