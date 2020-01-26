@@ -13,21 +13,21 @@
 
 # https://github.com/elesiuta/backupy
 
-import os
 import argparse
 import csv
-import zlib
-import shutil
-import re
-import json
-import time
 import datetime
-import typing
+import json
+import os
+import re
+import shutil
 import sys
+import time
+import typing
 import unicodedata
+import zlib
 
 def getVersion() -> str:
-    return "1.1.2"
+    return "1.1.3"
 
 
 #########################
@@ -390,16 +390,16 @@ class DirInfo:
                     filter_list[i] = re.compile(filter_list[i])
                 if type(filter_list[i]) != re.Pattern:
                     raise Exception("Filter Processing Error")
-            file_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), file_list)
-            second_list = filter(lambda x: any([True if r.match(x) else False for r in filter_list]), second_list)
+            file_list = filter(lambda x: any([True if r.search(x) else False for r in filter_list]), file_list)
+            second_list = filter(lambda x: any([True if r.search(x) else False for r in filter_list]), second_list)
         if type(filter_false_list) == list:
             for i in range(len(filter_false_list)):
                 if type(filter_false_list[i]) == str:
                     filter_false_list[i] = re.compile(filter_false_list[i])
                 if type(filter_false_list[i]) != re.Pattern:
                     raise Exception("Filter False Processing Error")
-            file_list = filter(lambda x: all([False if r.match(x) else True for r in filter_false_list]), file_list)
-            second_list = filter(lambda x: all([False if r.match(x) else True for r in filter_false_list]), second_list)
+            file_list = filter(lambda x: all([False if r.search(x) else True for r in filter_false_list]), file_list)
+            second_list = filter(lambda x: all([False if r.search(x) else True for r in filter_false_list]), second_list)
         # compare
         for f in file_list:
             if f in second_list:
