@@ -21,5 +21,11 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
+        "Topic :: System :: Archiving :: Backup",
+        "Topic :: System :: Archiving :: Mirroring",
+        "Topic :: Utilities",
+        "Intended Audience :: End Users/Desktop",
+        "Environment :: Console",
+        "Development Status :: 5 - Production/Stable",
     ],
 )
