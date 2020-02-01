@@ -320,7 +320,7 @@ class DirInfo:
     def scanDir(self, stdout_status_bar: bool) -> None:
         if os.path.isdir(self.dir):
             self.file_dicts = {}
-            total = sum([len(f) for r, d, f in os.walk(self.dir)])
+            total = sum(len(f) for r, d, f in os.walk(self.dir))
             scan_status = StatusBar("Scanning", total, stdout_status_bar, gui=self.gui)
             for dir_path, subdir_list, file_list in os.walk(self.dir):
                 if self.pathMatch(dir_path, self.ignored_toplevel_folders):
