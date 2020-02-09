@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="BackuPy",
     version=backupy.getVersion(),
-    description="BackuPy: A simple backup program in python with an emphasis on transparent behaviour",
+    description="A simple backup program in python with an emphasis on transparent behaviour",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/elesiuta/backupy",
@@ -28,4 +28,5 @@ setuptools.setup(
         "Environment :: Console",
         "Development Status :: 5 - Production/Stable",
     ],
+    test_suite = 'tests',
 )
