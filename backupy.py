@@ -324,7 +324,7 @@ class DirInfo:
                         else:
                             self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
                             self.loaded_diffs[relativePath] = self.loaded_dicts[relativePath]
-                        if self.compare_mode == "crc" and "crc" not in self.file_dicts[relativePath]:
+                        if self.compare_mode == "crc":
                             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
                     else:
                         self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
@@ -905,7 +905,7 @@ def main():
                              "  ATTR (default)\n"
                              "    [compare file attributes: mod-time and size]\n"
                              "  BOTH\n"
-                             "    [compare file attributes first, then check CRC]\n"
+                             "    [compare file attributes and CRC]\n"
                              "  CRC\n"
                              "    [compare CRC only, ignoring file attributes]"))
     parser.add_argument("-f", action="store", type=str, nargs="+", default=None, dest="filter_list", metavar="regex",
