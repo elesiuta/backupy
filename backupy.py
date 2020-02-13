@@ -264,7 +264,7 @@ class DirInfo:
                 prev = zlib.crc32(line, prev)
         return prev
 
-    def scanCrc(self, relativePath: str) -> int:
+    def getCrc(self, relativePath: str) -> int:
         if "crc" not in self.file_dicts[relativePath]:
             full_path = os.path.join(self.dir, relativePath)
             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
@@ -326,7 +326,7 @@ class DirInfo:
                             self.loaded_diffs[relativePath] = self.loaded_dicts[relativePath]
                     else:
                         self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
-                    if self.compare_mode == "crc":
+                    if self.compare_mode in ["crc", "both"]:
                         self.file_dicts[relativePath]["crc"] = self.crc(full_path)
             scan_status.endProgress()
             for relativePath in self.loaded_dicts:
@@ -342,7 +342,7 @@ class DirInfo:
                 return False
         if file_dict1["size"] == file_dict2["size"]:
             if self.timeMatch(file_dict1["mtime"], file_dict2["mtime"]):
-                if compare_mode == "both" and self.scanCrc(f) != secondInfo.scanCrc(f):
+                if compare_mode == "both" and self.getCrc(f) != secondInfo.getCrc(f):
                     return False
                 return True
         return False
@@ -359,7 +359,7 @@ class DirInfo:
         if self.compare_mode == secondInfo.compare_mode:
             compare_mode = self.compare_mode
         else:
-            # this shouldn't happen, but "both" is safe if compare_modes differ
+            # this shouldn't happen unless you've imported DirInfo, but "both" is safe if compare_modes differ
             compare_mode = "both"
         # apply filters
         if type(filter_list) == list:
