@@ -324,12 +324,10 @@ class DirInfo:
                         else:
                             self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
                             self.loaded_diffs[relativePath] = self.loaded_dicts[relativePath]
-                        if self.compare_mode == "crc":
-                            self.file_dicts[relativePath]["crc"] = self.crc(full_path)
                     else:
                         self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
-                        if self.compare_mode == "crc":
-                            self.file_dicts[relativePath]["crc"] = self.crc(full_path)
+                    if self.compare_mode == "crc":
+                        self.file_dicts[relativePath]["crc"] = self.crc(full_path)
             scan_status.endProgress()
             for relativePath in self.loaded_dicts:
                 if not self.pathMatch(relativePath, self.ignored_toplevel_folders):
