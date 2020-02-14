@@ -114,7 +114,7 @@ class StatusBar:
                 width += 1
         return width
 
-    def update(self, msg:str) -> None:
+    def update(self, msg: str) -> None:
         if self.display:
             self.progress += 1
             if self.total == -1:
@@ -264,11 +264,11 @@ class DirInfo:
                 prev = zlib.crc32(line, prev)
         return prev
 
-    def getCrc(self, relativePath: str, recalc: bool = False) -> int:
-        if recalc or "crc" not in self.file_dicts[relativePath]:
-            full_path = os.path.join(self.dir, relativePath)
-            self.file_dicts[relativePath]["crc"] = self.crc(full_path)
-        return self.file_dicts[relativePath]["crc"]
+    def getCrc(self, relative_path: str, recalc: bool = False) -> int:
+        if recalc or "crc" not in self.file_dicts[relative_path]:
+            full_path = os.path.join(self.dir, relative_path)
+            self.file_dicts[relative_path]["crc"] = self.crc(full_path)
+        return self.file_dicts[relative_path]["crc"]
 
     def timeMatch(self, t1: float, t2: float, exact_only: bool = False) -> bool:
         if t1 == t2:
@@ -310,44 +310,44 @@ class DirInfo:
                 for subdir in subdir_list:
                     full_path = os.path.join(dir_path, subdir)
                     if len(os.listdir(full_path)) == 0:
-                        relativePath = os.path.relpath(full_path, self.dir)
-                        self.file_dicts[relativePath] = {"size": 0, "mtime": 0, "crc": 0, "dir": True}
+                        relative_path = os.path.relpath(full_path, self.dir)
+                        self.file_dicts[relative_path] = {"size": 0, "mtime": 0, "crc": 0, "dir": True}
                 for file_name in sorted(file_list):
                     full_path = os.path.join(dir_path, file_name)
-                    relativePath = os.path.relpath(full_path, self.dir)
-                    scan_status.update(relativePath)
+                    relative_path = os.path.relpath(full_path, self.dir)
+                    scan_status.update(relative_path)
                     size = os.path.getsize(full_path)
                     mtime = os.path.getmtime(full_path)
-                    if relativePath in self.loaded_dicts:
-                        if (self.loaded_dicts[relativePath]["size"] == size and
-                            self.timeMatch(self.loaded_dicts[relativePath]["mtime"], mtime, True)):
+                    if relative_path in self.loaded_dicts:
+                        if (self.loaded_dicts[relative_path]["size"] == size and
+                            self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, True)):
                             # unchanged file (probably)
-                            self.file_dicts[relativePath] = self.loaded_dicts[relativePath]
+                            self.file_dicts[relative_path] = self.loaded_dicts[relative_path]
                         else:
                             # changed file
-                            self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
-                            self.loaded_diffs[relativePath] = self.loaded_dicts[relativePath]
+                            self.file_dicts[relative_path] = {"size": size, "mtime": mtime}
+                            self.loaded_diffs[relative_path] = self.loaded_dicts[relative_path]
                     else:
                         # new file
-                        self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
+                        self.file_dicts[relative_path] = {"size": size, "mtime": mtime}
                     if self.compare_mode in ["crc", "both"]:
                         # scanning all files is simplest
                         # time can be saved by defering the scan of probably unchanged files to compare so only 'probably unchanged files' on both sides are scanned
-                        self.file_dicts[relativePath]["crc"] = self.crc(full_path)
-                        if (relativePath in self.loaded_dicts and
-                            "crc" in self.loaded_dicts[relativePath] and
-                            self.loaded_dicts[relativePath]["crc"] != self.file_dicts[relativePath]["crc"]):
+                        self.file_dicts[relative_path]["crc"] = self.crc(full_path)
+                        if (relative_path in self.loaded_dicts and
+                            "crc" in self.loaded_dicts[relative_path] and
+                            self.loaded_dicts[relative_path]["crc"] != self.file_dicts[relative_path]["crc"]):
                             # changed file (probably purposefully and also detected above)
-                            self.loaded_diffs[relativePath] = self.loaded_dicts[relativePath]
-                    elif self.compare_mode == "attr+" and "crc" not in self.file_dicts[relativePath]:
+                            self.loaded_diffs[relative_path] = self.loaded_dicts[relative_path]
+                    elif self.compare_mode == "attr+" and "crc" not in self.file_dicts[relative_path]:
                         # save time by only scanning files that don't have a crc so we can still check for corruption or bit rot later
                         # useless to use crc for comparison in this mode since we already know these files are new/modified
-                        self.file_dicts[relativePath]["crc"] = self.crc(full_path)
+                        self.file_dicts[relative_path]["crc"] = self.crc(full_path)
             scan_status.endProgress()
-            for relativePath in self.loaded_dicts:
-                if not self.pathMatch(relativePath, self.ignored_toplevel_folders):
-                    if relativePath not in self.file_dicts:
-                        self.missing_files[relativePath] = self.loaded_dicts[relativePath]
+            for relative_path in self.loaded_dicts:
+                if not self.pathMatch(relative_path, self.ignored_toplevel_folders):
+                    if relative_path not in self.file_dicts:
+                        self.missing_files[relative_path] = self.loaded_dicts[relative_path]
 
     def fileMatch(self, f: str, file_dict1: dict, file_dict2: dict, secondInfo: 'DirInfo', compare_mode: str) -> bool:
         if compare_mode == "crc":
