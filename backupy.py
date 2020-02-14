@@ -354,28 +354,27 @@ class DirInfo:
                     if relative_path not in self.file_dicts:
                         self.missing_files[relative_path] = self.loaded_dicts[relative_path]
 
-    def fileMatch(self, f: str, file_dict1: dict, file_dict2: dict, secondInfo: 'DirInfo', compare_mode: str) -> bool:
+    def fileMatch(self, f1: str, f2: str, secondInfo: 'DirInfo', compare_mode: str) -> bool:
         if compare_mode == "crc":
-            if file_dict1["crc"] == file_dict2["crc"]:
+            if self.file_dicts[f1]["crc"] == secondInfo.file_dicts[f2]["crc"]:
                 return True
             return False
-        if file_dict1["size"] == file_dict2["size"]:
-            if self.timeMatch(file_dict1["mtime"], file_dict2["mtime"]):
+        if self.file_dicts[f1]["size"] == secondInfo.file_dicts[f2]["size"]:
+            if self.timeMatch(self.file_dicts[f1]["mtime"], secondInfo.file_dicts[f2]["mtime"]):
                 # these are the 'probably unchanged files' and should force a recalculation of crc if it was deferred from the scan
-                if compare_mode == "both" and self.getCrc(f) != secondInfo.getCrc(f):
+                if compare_mode == "both" and self.getCrc(f1) != secondInfo.getCrc(f2):
                     return False
                 # detect mismatched crc values (usually if corruption happened before crc database was created)
-                if compare_mode == "attr+" and self.getCrc(f) != secondInfo.getCrc(f):
-                    self.crc_errors_detected[f] = self.file_dicts[f]
-                    secondInfo.crc_errors_detected[f] = secondInfo.file_dicts[f]
+                if compare_mode == "attr+" and self.getCrc(f1) != secondInfo.getCrc(f2):
+                    self.crc_errors_detected[f1] = self.file_dicts[f1]
+                    secondInfo.crc_errors_detected[f2] = secondInfo.file_dicts[f2]
                 return True
         return False
 
     def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filter_list: typing.Union[list, None] = None, filter_false_list: typing.Union[list, None] = None) -> tuple:
         # init variables
         file_list = list(self.file_dicts)
-        second_dict = secondInfo.getDirDict()
-        second_list = list(second_dict)
+        second_list = list(secondInfo.getDirDict())
         self_only = []
         second_only = []
         changed = []
@@ -404,7 +403,7 @@ class DirInfo:
         # compare
         for f in file_list:
             if f in second_list:
-                if not self.fileMatch(f, self.file_dicts[f], second_dict[f], secondInfo, compare_mode):
+                if not self.fileMatch(f, f, secondInfo, compare_mode):
                     changed.append(f)
             else:
                 self_only.append(f)
@@ -415,8 +414,8 @@ class DirInfo:
             for f1 in self_only:
                 for f2 in second_only:
                     # should empty dirs be moved?
-                    # if "dir" not in self.file_dicts[f1] and "dir" not in second_dict[f2]:
-                    if self.fileMatch(f, self.file_dicts[f1], second_dict[f2], secondInfo, compare_mode):
+                    # if "dir" not in self.file_dicts[f1] and "dir" not in secondInfo.file_dicts[f2]:
+                    if self.fileMatch(f1, f2, secondInfo, compare_mode):
                         moved.append({"source": f1, "dest": f2})
                         _ = secondInfo.missing_files.pop(f1, 1)
                         _ = self.missing_files.pop(f2, 1)
