@@ -330,7 +330,14 @@ class DirInfo:
                         # new file
                         self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
                     if self.compare_mode in ["crc", "both"]:
-                        # scanning all files is simplist, time can be saved by defering the scan of probably unchanged files to compare
+                        # scanning all files is simplest, time can be saved by defering the scan of probably unchanged files to compare so only 'probably unchanged files' on both sides are scanned
+                        self.file_dicts[relativePath]["crc"] = self.crc(full_path)
+                        if "crc" in self.loaded_dicts[relativePath] and self.loaded_dicts[relativePath]["crc"] != self.file_dicts[relativePath]["crc"]:
+                            # changed file (probably purposefully and also detected above)
+                            self.loaded_diffs[relativePath] = self.loaded_dicts[relativePath]
+                    elif self.compare_mode == "attr+" and "crc" not in self.file_dicts[relativePath]:
+                        # save time by only scanning files that don't have a crc so we can still check for corruption or bit rot later
+                        # useless to use crc for comparison in this mode since we already know these files are new/modified
                         self.file_dicts[relativePath]["crc"] = self.crc(full_path)
             scan_status.endProgress()
             for relativePath in self.loaded_dicts:
@@ -899,12 +906,14 @@ def main():
                              "    [copy newer to opposite side]\n"
                              "  NO\n"
                              "    [do nothing]"))
-    parser.add_argument("-c", type=str.lower, dest="compare_mode", default="attr", metavar="mode", choices=["attr", "both", "crc"],
+    parser.add_argument("-c", type=str.lower, dest="compare_mode", default="attr", metavar="mode", choices=["attr", "attr+" "both", "crc"],
                         help=getString("F!\n"
                              "Compare mode:\n"
                              "How to detect files that exist on both sides but differ?\n"
                              "  ATTR (default)\n"
                              "    [compare file attributes: mod-time and size]\n"
+                             "  ATTR+\n"
+                             "    [compare file attributes and store new CRC data]\n"
                              "  BOTH\n"
                              "    [compare file attributes and CRC]\n"
                              "  CRC\n"
