@@ -319,7 +319,8 @@ class DirInfo:
                     size = os.path.getsize(full_path)
                     mtime = os.path.getmtime(full_path)
                     if relativePath in self.loaded_dicts:
-                        if self.loaded_dicts[relativePath]["size"] == size and self.timeMatch(self.loaded_dicts[relativePath]["mtime"], mtime, True):
+                        if (self.loaded_dicts[relativePath]["size"] == size and
+                            self.timeMatch(self.loaded_dicts[relativePath]["mtime"], mtime, True)):
                             # unchanged file (probably)
                             self.file_dicts[relativePath] = self.loaded_dicts[relativePath]
                         else:
@@ -330,9 +331,13 @@ class DirInfo:
                         # new file
                         self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
                     if self.compare_mode in ["crc", "both"]:
-                        # scanning all files is simplest, time can be saved by defering the scan of probably unchanged files to compare so only 'probably unchanged files' on both sides are scanned
+                        # scanning all files is simplest
+                        # time can be saved by defering the scan of probably unchanged files to compare
+                        # so only 'probably unchanged files' on both sides are scanned
                         self.file_dicts[relativePath]["crc"] = self.crc(full_path)
-                        if "crc" in self.loaded_dicts[relativePath] and self.loaded_dicts[relativePath]["crc"] != self.file_dicts[relativePath]["crc"]:
+                        if (relativePath in self.loaded_dicts and
+                            "crc" in self.loaded_dicts[relativePath] and
+                            self.loaded_dicts[relativePath]["crc"] != self.file_dicts[relativePath]["crc"]):
                             # changed file (probably purposefully and also detected above)
                             self.loaded_diffs[relativePath] = self.loaded_dicts[relativePath]
                     elif self.compare_mode == "attr+" and "crc" not in self.file_dicts[relativePath]:
@@ -756,7 +761,10 @@ class BackupManager:
         self.dest.scanDir(self.config.stdout_status_bar)
         # compare directories, this is where CRC mode = both takes place
         self.colourPrint(getString("Comparing directories..."), "OKGREEN")
-        source_only, dest_only, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves, self.config.filter_list, self.config.filter_false_list)
+        source_only, dest_only, changed, moved = self.source.dirCompare(self.dest,
+                                                                        self.config.nomoves,
+                                                                        self.config.filter_list,
+                                                                        self.config.filter_false_list)
         # get databases
         source_dict = self.source.getDirDict()
         source_diffs = self.source.getLoadedDiffs()
@@ -767,7 +775,8 @@ class BackupManager:
         dest_missing = self.dest.getMissingFiles()
         dest_loaded_db = self.dest.getLoadedDicts()
         # print database conflicts, including both collisions from files being modified independently on both sides and unexpected missing files
-        # note: this only notifies the user so they can intervene, it does not handle them in any special way, treating them as regular file changes, it can also be triggered by time zone or dst changes
+        # note: this only notifies the user so they can intervene, it does not handle them in any special way, treating them as regular file changes
+        # it can also be triggered by time zone or dst changes, lower file system mod time precision, and corruption or bit rot if using CRCs
         if database_load_success:
             self.log.append([getString("### DATABASE CONFLICTS ###")])
             if self.config.main_mode == "sync":
