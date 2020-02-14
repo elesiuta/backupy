@@ -790,11 +790,8 @@ class BackupManager:
         if database_load_success:
             self.log.append([getString("### DATABASE CONFLICTS ###")])
             if self.config.main_mode == "sync":
-                sync_conflicts = []
-                for f in source_diffs:
-                    if f in dest_diffs:
-                        sync_conflicts.append(f)
-                sync_conflicts += sorted(list(set(list(source_missing.keys()) + list(dest_missing.keys()))))
+                sync_conflicts = sorted(list(set(source_diffs) & set(dest_diffs)))
+                sync_conflicts += sorted(list(set(source_missing) | set(dest_missing)))
                 if len(sync_conflicts) >= 1:
                     print(self.colourString(getString("WARNING: found files modified in both source and destination since last scan"), "WARNING"))
                 print(self.colourString(getString("Sync Database Conflicts: %s") %(len(sync_conflicts)), "HEADER"))
@@ -812,15 +809,15 @@ class BackupManager:
         if len(source_crc_errors) > 0 or len(dest_crc_errors) > 0:
             self.log.append([getString("### CRC ERRORS DETECTED ###")])
             print(self.colourString(getString("WARNING: found non matching CRC values, possible corruption detected"), "WARNING"))
-            if self.config.compare_mode == "attr+":
+            if self.config.compare_mode in ["both", "crc"]:
+                crc_errors_detected = sorted(list(set(source_crc_errors) | set(dest_crc_errors)))
+                print(self.colourString(getString("CRC Errors Detected: %s") %(len(crc_errors_detected)), "HEADER"))
+                self.printSyncDbConflicts(crc_errors_detected, source_dict, dest_dict, source_loaded_db, dest_loaded_db)
+            elif self.config.compare_mode == "attr+":
                 if set(source_crc_errors) != set(dest_crc_errors):
                     raise Exception("Inconsistent CRC error detection between source and dest")
                 print(self.colourString(getString("CRC Errors Detected: %s") %(len(source_crc_errors)), "HEADER"))
                 self.printChangedFiles(list(source_crc_errors.keys()), source_crc_errors, dest_crc_errors)
-            elif self.config.compare_mode in ["both", "crc"]:
-                crc_errors_detected = sorted(list(set(source_crc_errors) | set(dest_crc_errors)))
-                print(self.colourString(getString("CRC Errors Detected: %s") %(len(crc_errors_detected)), "HEADER"))
-                self.printSyncDbConflicts(crc_errors_detected, source_dict, dest_dict, source_loaded_db, dest_loaded_db)
             if self.config.quit_on_db_conflict:
                 return self.abortRun()
         # prepare diff messages
