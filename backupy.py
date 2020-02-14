@@ -264,8 +264,8 @@ class DirInfo:
                 prev = zlib.crc32(line, prev)
         return prev
 
-    def getCrc(self, relativePath: str) -> int:
-        if "crc" not in self.file_dicts[relativePath]:
+    def getCrc(self, relativePath: str, recalc: bool = False) -> int:
+        if recalc or "crc" not in self.file_dicts[relativePath]:
             full_path = os.path.join(self.dir, relativePath)
             self.file_dicts[relativePath]["crc"] = self.crc(full_path)
         return self.file_dicts[relativePath]["crc"]
@@ -284,9 +284,9 @@ class DirInfo:
     def pathMatch(self, path: str, path_list: list) -> bool:
         # is path in path_list (or a subdir of one in it)
         if os.path.isabs(path):
-            relpath, abspath = os.path.relpath(path, self.dir), path
+            relpath, _abspath = os.path.relpath(path, self.dir), path
         else:
-            relpath, abspath = path, os.path.join(self.dir, path)
+            relpath, _abspath = path, os.path.join(self.dir, path)
         for p in path_list:
             # p = os.path.normpath(p)
             # if os.path.isabs(p):
@@ -320,13 +320,17 @@ class DirInfo:
                     mtime = os.path.getmtime(full_path)
                     if relativePath in self.loaded_dicts:
                         if self.loaded_dicts[relativePath]["size"] == size and self.timeMatch(self.loaded_dicts[relativePath]["mtime"], mtime, True):
+                            # unchanged file (probably)
                             self.file_dicts[relativePath] = self.loaded_dicts[relativePath]
                         else:
+                            # changed file
                             self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
                             self.loaded_diffs[relativePath] = self.loaded_dicts[relativePath]
                     else:
+                        # new file
                         self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
                     if self.compare_mode in ["crc", "both"]:
+                        # scanning all files is simplist, time can be saved by defering the scan of probably unchanged files to compare
                         self.file_dicts[relativePath]["crc"] = self.crc(full_path)
             scan_status.endProgress()
             for relativePath in self.loaded_dicts:
@@ -338,10 +342,10 @@ class DirInfo:
         if compare_mode == "crc":
             if file_dict1["crc"] == file_dict2["crc"]:
                 return True
-            else:
-                return False
+            return False
         if file_dict1["size"] == file_dict2["size"]:
             if self.timeMatch(file_dict1["mtime"], file_dict2["mtime"]):
+                # these are the 'probably unchanged files' and should force a recalculation of crc if it was deferred from the scan
                 if compare_mode == "both" and self.getCrc(f) != secondInfo.getCrc(f):
                     return False
                 return True
@@ -359,8 +363,7 @@ class DirInfo:
         if self.compare_mode == secondInfo.compare_mode:
             compare_mode = self.compare_mode
         else:
-            # this shouldn't happen unless you've imported DirInfo, but "both" is safe if compare_modes differ
-            compare_mode = "both"
+            raise Exception("Inconsistent compare mode between directories")
         # apply filters
         if type(filter_list) == list:
             for i in range(len(filter_list)):
