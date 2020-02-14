@@ -206,6 +206,7 @@ class DirInfo:
         self.loaded_dicts = {}
         self.loaded_diffs = {}
         self.missing_files = {}
+        self.crc_errors_detected = {}
         self.dir = directory
         self.compare_mode = compare_mode
         self.config_dir = config_dir
@@ -223,6 +224,9 @@ class DirInfo:
 
     def getMissingFiles(self) -> dict:
         return self.missing_files
+
+    def getCrcErrorsDetected(self) -> dict:
+        return self.crc_errors_detected
 
     def saveJson(self) -> None:
         writeJson(os.path.join(self.dir, self.config_dir, "database.json"), self.file_dicts)
@@ -332,13 +336,14 @@ class DirInfo:
                         self.file_dicts[relative_path] = {"size": size, "mtime": mtime}
                     if self.compare_mode in ["crc", "both"]:
                         # scanning all files is simplest
-                        # time can be saved by defering the scan of probably unchanged files to compare so only 'probably unchanged files' on both sides are scanned
+                        # time could be saved by defering the scan of probably unchanged files to compare so only 'probably unchanged files' on both sides are scanned
                         self.file_dicts[relative_path]["crc"] = self.crc(full_path)
                         if (relative_path in self.loaded_dicts and
                             "crc" in self.loaded_dicts[relative_path] and
                             self.loaded_dicts[relative_path]["crc"] != self.file_dicts[relative_path]["crc"]):
-                            # changed file (probably purposefully and also detected above)
-                            self.loaded_diffs[relative_path] = self.loaded_dicts[relative_path]
+                            # changed file (changed crc, unchanged size and mtime)
+                            if relative_path not in self.loaded_diffs:
+                                self.crc_errors_detected[relative_path] = self.loaded_dicts[relative_path]
                     elif self.compare_mode == "attr+" and "crc" not in self.file_dicts[relative_path]:
                         # save time by only scanning files that don't have a crc so we can still check for corruption or bit rot later
                         # useless to use crc for comparison in this mode since we already know these files are new/modified
@@ -359,6 +364,10 @@ class DirInfo:
                 # these are the 'probably unchanged files' and should force a recalculation of crc if it was deferred from the scan
                 if compare_mode == "both" and self.getCrc(f) != secondInfo.getCrc(f):
                     return False
+                # detect mismatched crc values (usually if corruption happened before crc database was created)
+                if compare_mode == "attr+" and self.getCrc(f) != secondInfo.getCrc(f):
+                    self.crc_errors_detected[f] = self.file_dicts[f]
+                    secondInfo.crc_errors_detected[f] = secondInfo.file_dicts[f]
                 return True
         return False
 
@@ -769,10 +778,12 @@ class BackupManager:
         source_diffs = self.source.getLoadedDiffs()
         source_missing = self.source.getMissingFiles()
         source_loaded_db = self.source.getLoadedDicts()
+        source_crc_errors = self.source.getCrcErrorsDetected()
         dest_dict = self.dest.getDirDict()
         dest_diffs = self.dest.getLoadedDiffs()
         dest_missing = self.dest.getMissingFiles()
         dest_loaded_db = self.dest.getLoadedDicts()
+        dest_crc_errors = self.dest.getCrcErrorsDetected()
         # print database conflicts, including both collisions from files being modified independently on both sides and unexpected missing files
         # note: this only notifies the user so they can intervene, it does not handle them in any special way, treating them as regular file changes
         # it can also be triggered by time zone or dst changes, lower file system mod time precision, and corruption or bit rot if using CRCs
@@ -798,6 +809,20 @@ class BackupManager:
                 self.printDbConflicts(dest_conflicts, dest_dict, dest_loaded_db)
                 if self.config.quit_on_db_conflict and len(dest_conflicts) >= 1:
                     return self.abortRun()
+        if len(source_crc_errors) > 0 or len(dest_crc_errors) > 0:
+            self.log.append([getString("### CRC ERRORS DETECTED ###")])
+            print(self.colourString(getString("WARNING: found non matching CRC values, possible corruption detected"), "WARNING"))
+            if self.config.compare_mode == "attr+":
+                if set(source_crc_errors) != set(dest_crc_errors):
+                    raise Exception("Inconsistent CRC error detection between source and dest")
+                print(self.colourString(getString("CRC Errors Detected: %s") %(len(source_crc_errors)), "HEADER"))
+                self.printChangedFiles(list(source_crc_errors.keys()), source_crc_errors, dest_crc_errors)
+            elif self.config.compare_mode in ["both", "crc"]:
+                crc_errors_detected = sorted(list(set(source_crc_errors) | set(dest_crc_errors)))
+                print(self.colourString(getString("CRC Errors Detected: %s") %(len(crc_errors_detected)), "HEADER"))
+                self.printSyncDbConflicts(crc_errors_detected, source_dict, dest_dict, source_loaded_db, dest_loaded_db)
+            if self.config.quit_on_db_conflict:
+                return self.abortRun()
         # prepare diff messages
         if self.config.noarchive:
             archive_msg = getString("delete")
