@@ -34,25 +34,25 @@ def getVersion() -> str:
 ### File IO functions ###
 #########################
 
-def writeCsv(fName: str, data: list) -> None:
-    if not os.path.isdir(os.path.dirname(fName)):
-        os.makedirs(os.path.dirname(fName))
-    with open(fName, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
+def writeCsv(file_path: str, data: list) -> None:
+    if not os.path.isdir(os.path.dirname(file_path)):
+        os.makedirs(os.path.dirname(file_path))
+    with open(file_path, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
         writer = csv.writer(f, delimiter=",")
         for row in data:
             writer.writerow(row)
 
-def readJson(fName: str) -> dict:
-    if os.path.exists(fName):
-        with open(fName, "r", encoding="utf-8", errors="surrogateescape") as json_file:
+def readJson(file_path: str) -> dict:
+    if os.path.exists(file_path):
+        with open(file_path, "r", encoding="utf-8", errors="surrogateescape") as json_file:
             data = json.load(json_file)
         return data
     return {}
 
-def writeJson(fName: str, data: dict, subdir: bool = True) -> None:
-    if subdir and not os.path.isdir(os.path.dirname(fName)):
-        os.makedirs(os.path.dirname(fName))
-    with open(fName, "w", encoding="utf-8", errors="surrogateescape") as json_file:
+def writeJson(file_path: str, data: dict, subdir: bool = True) -> None:
+    if subdir and not os.path.isdir(os.path.dirname(file_path)):
+        os.makedirs(os.path.dirname(file_path))
+    with open(file_path, "w", encoding="utf-8", errors="surrogateescape") as json_file:
         json.dump(data, json_file, indent=1, separators=(',', ': '))
 
 ####################
@@ -250,16 +250,16 @@ class DirInfo:
         else:
             raise Exception("Update Dict Error")
 
-    def updateDictRemove(self, root: str, fPath: str, secondInfo: 'DirInfo') -> None:
+    def updateDictRemove(self, root: str, relative_path: str, secondInfo: 'DirInfo') -> None:
         if root == self.dir:
-            _ = self.file_dicts.pop(fPath)
+            _ = self.file_dicts.pop(relative_path)
         elif root == secondInfo.dir:
-            _ = secondInfo.file_dicts.pop(fPath)
+            _ = secondInfo.file_dicts.pop(relative_path)
         else:
             raise Exception("Update Dict Error")
 
-    def crc(self, fileName: str, prev: int = 0) -> int:
-        with open(fileName,"rb") as f:
+    def crc(self, file_path: str, prev: int = 0) -> int:
+        with open(file_path, "rb") as f:
             for line in f:
                 prev = zlib.crc32(line, prev)
         return prev
@@ -312,8 +312,8 @@ class DirInfo:
                     if len(os.listdir(full_path)) == 0:
                         relativePath = os.path.relpath(full_path, self.dir)
                         self.file_dicts[relativePath] = {"size": 0, "mtime": 0, "crc": 0, "dir": True}
-                for fName in sorted(file_list):
-                    full_path = os.path.join(dir_path, fName)
+                for file_name in sorted(file_list):
+                    full_path = os.path.join(dir_path, file_name)
                     relativePath = os.path.relpath(full_path, self.dir)
                     scan_status.update(relativePath)
                     size = os.path.getsize(full_path)
@@ -332,8 +332,7 @@ class DirInfo:
                         self.file_dicts[relativePath] = {"size": size, "mtime": mtime}
                     if self.compare_mode in ["crc", "both"]:
                         # scanning all files is simplest
-                        # time can be saved by defering the scan of probably unchanged files to compare
-                        # so only 'probably unchanged files' on both sides are scanned
+                        # time can be saved by defering the scan of probably unchanged files to compare so only 'probably unchanged files' on both sides are scanned
                         self.file_dicts[relativePath]["crc"] = self.crc(full_path)
                         if (relativePath in self.loaded_dicts and
                             "crc" in self.loaded_dicts[relativePath] and
@@ -614,12 +613,12 @@ class BackupManager:
     ### File operation methods (only use these methods to perform operations) ###
     #############################################################################
 
-    def removeFile(self, root: str, fPath: str) -> None:
+    def removeFile(self, root: str, relative_path: str) -> None:
         try:
-            self.log.append(["removeFile()", root, fPath])
-            self.source.updateDictRemove(root, fPath, self.dest)
+            self.log.append(["removeFile()", root, relative_path])
+            self.source.updateDictRemove(root, relative_path, self.dest)
             if not self.config.norun:
-                path = os.path.join(root, fPath)
+                path = os.path.join(root, relative_path)
                 if os.path.isdir(path):
                     os.rmdir(path)
                 else:
