@@ -698,21 +698,22 @@ class BackupManager:
             self.moveFile(source_root, dest_root, source_files[i], dest_files[i])
         self.colourPrint(getString("Archiving completed!"), "NONE")
 
-    def movedFiles(self, moved: list, reverse: bool = False) -> None:
-        # conflicts shouldn't happen since moved is a subset of files from source_only and dest_only
-        # depends on source_info.dirCompare(dest_info) otherwise source and dest keys will be reversed
-        self.colourPrint(getString("Moving %s files on destination to match source") %(len(moved)), "OKBLUE")
-        for f in moved:
-            if reverse:
-                dest = self.config.source
-                oldLoc = f["source"]
-                newLoc = f["dest"]
-            else:
-                dest = self.config.dest
-                oldLoc = f["dest"]
-                newLoc = f["source"]
-            self.moveFile(dest, dest, oldLoc, newLoc)
-        self.colourPrint(getString("Moving completed!"), "NONE")
+    def handleMovedFiles(self, moved: list, reverse: bool = False) -> None:
+        if not self.config.nomoves:
+            # conflicts shouldn't happen since moved is a subset of files from source_only and dest_only
+            # depends on source_info.dirCompare(dest_info) otherwise source and dest keys will be reversed
+            self.colourPrint(getString("Moving %s files on destination to match source") %(len(moved)), "OKBLUE")
+            for f in moved:
+                if reverse:
+                    dest = self.config.source
+                    oldLoc = f["source"]
+                    newLoc = f["dest"]
+                else:
+                    dest = self.config.dest
+                    oldLoc = f["dest"]
+                    newLoc = f["source"]
+                self.moveFile(dest, dest, oldLoc, newLoc)
+            self.colourPrint(getString("Moving completed!"), "NONE")
 
     def archiveFile(self, root_path: str, file_path: str) -> None:
         if not self.config.noarchive:
@@ -882,19 +883,16 @@ class BackupManager:
             else:
                 recycle_bin = os.path.join(self.config.dest, self.config.trash_dir, self.backup_time)
                 self.moveFiles(self.config.dest, recycle_bin, dest_only, dest_only)
-            if not self.config.nomoves:
-                self.movedFiles(moved)
+            self.handleMovedFiles(moved)
             self.handleChanges(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         elif self.config.main_mode == "backup":
             self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
-            if not self.config.nomoves:
-                self.movedFiles(moved)
+            self.handleMovedFiles(moved)
             self.handleChanges(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         elif self.config.main_mode == "sync":
             self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
             self.copyFiles(self.config.dest, self.config.source, dest_only, dest_only)
-            if not self.config.nomoves:
-                self.movedFiles(moved)
+            self.handleMovedFiles(moved)
             self.handleChanges(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         self.log.append([getString("### COMPLETED ###")])
         self.writeLog(db=True)
@@ -949,8 +947,6 @@ def main():
                         help=getString("Filter: Only include files matching the regular expression(s) (include all by default)"))
     parser.add_argument("-ff", action="store", type=str, nargs="+", default=None, dest="filter_false_list", metavar="regex",
                         help=getString("Filter False: Exclude files matching the regular expression(s) (exclude has priority over include)"))
-    parser.add_argument("--nomoves", action="store_true",
-                        help=getString("Do not detect moved or renamed files"))
     parser.add_argument("--noarchive", action="store_true",
                         help=getString("F!\n"
                              "Disable archiving files before overwriting/deleting to:\n"
@@ -961,6 +957,8 @@ def main():
                              "Disable writing to:\n"
                              "  <source>/.backupy/Logs/log-yymmdd-HHMM.csv\n"
                              "  <source|dest>/.backupy/database.json"))
+    parser.add_argument("--nomoves", action="store_true",
+                        help=getString("Do not detect when files are moved or renamed"))
     parser.add_argument("--noprompt", action="store_true",
                         help=getString("Complete run without prompting for confirmation"))
     parser.add_argument("--norun", action="store_true",

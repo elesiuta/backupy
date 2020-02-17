@@ -17,19 +17,19 @@
 ## Usage Description
 - Source and destination directories can be any accessible directory
 - Destination can be empty or contain files from a previous backup, matching files on both sides will be skipped
-- Main modes
+- Main modes (how to handle new and deleted files)
   - Backup mode: copies files that are only in source to destination
   - Mirror mode: copies files that are only in source to destination and deletes files that are only in destination
   - Sync mode: copies files that are only in source to destination and copies files that are only in destination to source
 - Selection modes (which file to select in cases where different versions exist on both sides)
-  - Source
-  - Destination
-  - Newer (based on last modified time)
-  - None (differing files will only be logged for manual intervention)
+  - Source mode: copy source files to destination
+  - Destination mode: copy destination files to source
+  - Newer mode: copy newer files based on last modified time
+  - None mode: don't copy either, differing files will only be logged for manual intervention
 - Compare modes (how to detect which files have changed)
-  - Attributes: compare file attributes (size and last modified time)
-  - Attributes+: save time by only calculating CRCs for new files and ones with changed attributes then store it for future verification
-  - CRC: compare file attributes and CRC for every file, and checks previously stored CRCs to detect corruption
+  - Attribute mode: compare file attributes (size and last modified time)
+  - Attribute+ mode: save time by only calculating CRCs for new files and ones with changed attributes then store it for future verification
+  - CRC mode: compare file attributes and CRC for every file, and checks previously stored CRCs to detect corruption
 - Test your settings first with the 'norun' flag
 ## Command Line Interface
 ```
@@ -79,13 +79,13 @@ optional arguments:
   -ff regex [regex ...]
                Filter False: Exclude files matching the regular expression(s)
                (exclude has priority over include)
-  --nomoves    Do not detect moved or renamed files
   --noarchive  Disable archiving files before overwriting/deleting to:
                  <source|dest>/.backupy/Archives/yymmdd-HHMM/
                  <source|dest>/.backupy/Trash/yymmdd-HHMM/
   --nolog      Disable writing to:
                  <source>/.backupy/Logs/log-yymmdd-HHMM.csv
                  <source|dest>/.backupy/database.json
+  --nomoves    Do not detect when files are moved or renamed
   --noprompt   Complete run without prompting for confirmation
   --norun      Perform a dry run according to your configuration
   --save       Save configuration to <source>/.backupy/config.json
