@@ -305,8 +305,11 @@ class DirInfo:
             if self.timeMatch(self.file_dicts[f1]["mtime"], secondInfo.file_dicts[f2]["mtime"]):
                 # these are the 'probably unchanged files' and should force a recalculation of crc if it was deferred from the scan
                 if compare_mode == "crc" and self.getCrc(f1) != secondInfo.getCrc(f2):
-                    # should this be flagged simply as a changed file or a possibly corrupted one since since and date still match?
-                    # (should already be flagged as it wouldn't match the dictionary anymore on the side it changed, no harm making sure though)
+                    # size and date match, but crc does not, probably corrupted
+                    if f1 not in self.crc_errors_detected and f2 not in secondInfo.crc_errors_detected:
+                        # log error, since it wasn't already detected during scan, that implies neither file has a past record
+                        self.crc_errors_detected[f1] = self.file_dicts[f1]
+                        secondInfo.crc_errors_detected[f2] = secondInfo.file_dicts[f2]
                     return False
                 # detect mismatched crc values across both sides (usually if corruption happened before crc database was created)
                 if compare_mode == "attr+" and self.getCrc(f1) != secondInfo.getCrc(f2):
