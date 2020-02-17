@@ -248,7 +248,7 @@ class TestBackupy(unittest.TestCase):
 
     def test_backup_new_moved_match(self):
         test_name = "backup-new-moved-match"
-        config = {"main_mode": "backup", "select_mode": "new", "compare_mode": "both", "nomoves": False, "noprompt": True, "nolog": True, "noarchive": True}
+        config = {"main_mode": "backup", "select_mode": "new", "compare_mode": "crc", "nomoves": False, "noprompt": True, "nolog": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))

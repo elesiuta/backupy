@@ -334,7 +334,7 @@ class DirInfo:
                     else:
                         # new file
                         self.file_dicts[relative_path] = {"size": size, "mtime": mtime}
-                    if self.compare_mode in ["crc", "both"]:
+                    if self.compare_mode == "crc":
                         # scanning all files is simplest
                         # time could be saved by defering the scan of probably unchanged files to compare so only 'probably unchanged files' on both sides are scanned
                         self.file_dicts[relative_path]["crc"] = self.crc(full_path)
@@ -355,14 +355,10 @@ class DirInfo:
                         self.missing_files[relative_path] = self.loaded_dicts[relative_path]
 
     def fileMatch(self, f1: str, f2: str, secondInfo: 'DirInfo', compare_mode: str) -> bool:
-        if compare_mode == "crc":
-            if self.file_dicts[f1]["crc"] == secondInfo.file_dicts[f2]["crc"]:
-                return True
-            return False
         if self.file_dicts[f1]["size"] == secondInfo.file_dicts[f2]["size"]:
             if self.timeMatch(self.file_dicts[f1]["mtime"], secondInfo.file_dicts[f2]["mtime"]):
                 # these are the 'probably unchanged files' and should force a recalculation of crc if it was deferred from the scan
-                if compare_mode == "both" and self.getCrc(f1) != secondInfo.getCrc(f2):
+                if compare_mode == "crc" and self.getCrc(f1) != secondInfo.getCrc(f2):
                     return False
                 # detect mismatched crc values (usually if corruption happened before crc database was created)
                 if compare_mode == "attr+" and self.getCrc(f1) != secondInfo.getCrc(f2):
@@ -808,7 +804,7 @@ class BackupManager:
         if len(source_crc_errors) > 0 or len(dest_crc_errors) > 0:
             self.log.append([getString("### CRC ERRORS DETECTED ###")])
             print(self.colourString(getString("WARNING: found non matching CRC values, possible corruption detected"), "WARNING"))
-            if self.config.compare_mode in ["both", "crc"]:
+            if self.config.compare_mode == "crc":
                 crc_errors_detected = sorted(list(set(source_crc_errors) | set(dest_crc_errors)))
                 print(self.colourString(getString("CRC Errors Detected: %s") %(len(crc_errors_detected)), "HEADER"))
                 self.printSyncDbConflicts(crc_errors_detected, source_dict, dest_dict, source_loaded_db, dest_loaded_db)
@@ -935,18 +931,16 @@ def main():
                              "    [copy newer to opposite side]\n"
                              "  NO\n"
                              "    [do nothing]"))
-    parser.add_argument("-c", type=str.lower, dest="compare_mode", default="attr", metavar="mode", choices=["attr", "attr+" "both", "crc"],
+    parser.add_argument("-c", type=str.lower, dest="compare_mode", default="attr", metavar="mode", choices=["attr", "attr+", "crc"],
                         help=getString("F!\n"
                              "Compare mode:\n"
                              "How to detect files that exist on both sides but differ?\n"
                              "  ATTR (default)\n"
                              "    [compare file attributes: mod-time and size]\n"
                              "  ATTR+\n"
-                             "    [compare file attributes and store new CRC data]\n"
-                             "  BOTH\n"
-                             "    [compare file attributes and CRC]\n"
+                             "    [compare file attributes and only store new CRC data]\n"
                              "  CRC\n"
-                             "    [compare CRC only, ignoring file attributes]"))
+                             "    [compare file attributes and CRC for every file]"))
     parser.add_argument("-f", action="store", type=str, nargs="+", default=None, dest="filter_list", metavar="regex",
                         help=getString("Filter: Only include files matching the regular expression(s) (include all by default)"))
     parser.add_argument("-ff", action="store", type=str, nargs="+", default=None, dest="filter_false_list", metavar="regex",
