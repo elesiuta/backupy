@@ -91,14 +91,12 @@ class StatusBar:
             self.char_display = terminal_width - 2
             self.progress = 0
             if self.total == -1:
-                self.title_str = getString(self.title) + " "
                 progress_str = str(self.progress) + ": "
-                self.msg_len = self.char_display - len(progress_str) - len(self.title_str)
             else:
                 self.digits = str(len(str(self.total)))
-                self.title_str = getString(self.title) + " "
                 progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + str(self.total) + ": "
-                self.msg_len = self.char_display - len(progress_str) - len(self.title_str)
+            self.title_str = getString(self.title) + " "
+            self.msg_len = self.char_display - len(progress_str) - len(self.title_str)
             msg = " " * self.msg_len
             print(self.title_str + progress_str + msg, end="\r")
         elif self.gui and total > 0:
@@ -174,7 +172,6 @@ class ConfigObject:
         self.log_dir = ".backupy/Logs"
         self.trash_dir = ".backupy/Trash"
         self.cleanup_empty_dirs = True
-        self.backup_time_override = False
         self.csv = True
         self.root_alias_log = True
         self.load_json = True
@@ -182,6 +179,8 @@ class ConfigObject:
         self.stdout_status_bar = True
         self.verbose = True
         self.quit_on_db_conflict = False
+        # config for testing and debugging
+        self.backup_time_override = False
         # load config
         for key in config:
             self.__setattr__(key, config[key])
@@ -301,6 +300,21 @@ class DirInfo:
                 return True
         return False
 
+    def fileMatch(self, f1: str, f2: str, secondInfo: 'DirInfo', compare_mode: str) -> bool:
+        if self.file_dicts[f1]["size"] == secondInfo.file_dicts[f2]["size"]:
+            if self.timeMatch(self.file_dicts[f1]["mtime"], secondInfo.file_dicts[f2]["mtime"]):
+                # these are the 'probably unchanged files' and should force a recalculation of crc if it was deferred from the scan
+                if compare_mode == "crc" and self.getCrc(f1) != secondInfo.getCrc(f2):
+                    # should this be flagged simply as a changed file or a possibly corrupted one since since and date still match?
+                    # (should already be flagged as it wouldn't match the dictionary anymore on the side it changed, no harm making sure though)
+                    return False
+                # detect mismatched crc values across both sides (usually if corruption happened before crc database was created)
+                if compare_mode == "attr+" and self.getCrc(f1) != secondInfo.getCrc(f2):
+                    self.crc_errors_detected[f1] = self.file_dicts[f1]
+                    secondInfo.crc_errors_detected[f2] = secondInfo.file_dicts[f2]
+                return True
+        return False
+
     def scanDir(self, stdout_status_bar: bool) -> None:
         if os.path.isdir(self.dir):
             self.file_dicts = {}
@@ -353,20 +367,6 @@ class DirInfo:
                 if not self.pathMatch(relative_path, self.ignored_toplevel_folders):
                     if relative_path not in self.file_dicts:
                         self.missing_files[relative_path] = self.loaded_dicts[relative_path]
-
-    def fileMatch(self, f1: str, f2: str, secondInfo: 'DirInfo', compare_mode: str) -> bool:
-        if self.file_dicts[f1]["size"] == secondInfo.file_dicts[f2]["size"]:
-            if self.timeMatch(self.file_dicts[f1]["mtime"], secondInfo.file_dicts[f2]["mtime"]):
-                # these are the 'probably unchanged files' and should force a recalculation of crc if it was deferred from the scan
-                if compare_mode == "crc" and self.getCrc(f1) != secondInfo.getCrc(f2):
-                    # should this be flagged simply as a changed file or a possibly corrupted one since since and date still match?
-                    return False
-                # detect mismatched crc values across both sides (usually if corruption happened before crc database was created)
-                if compare_mode == "attr+" and self.getCrc(f1) != secondInfo.getCrc(f2):
-                    self.crc_errors_detected[f1] = self.file_dicts[f1]
-                    secondInfo.crc_errors_detected[f2] = secondInfo.file_dicts[f2]
-                return True
-        return False
 
     def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filter_list: typing.Union[list, None] = None, filter_false_list: typing.Union[list, None] = None) -> tuple:
         # init variables
