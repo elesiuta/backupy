@@ -28,7 +28,7 @@
   - None mode: don't copy either, differing files will only be logged for manual intervention
 - Compare modes (how to detect which files have changed)
   - Attribute mode: compare file attributes (size and last modified time)
-  - Attribute+ mode: save time by only calculating CRCs for new files and ones with changed attributes then store it for future verification
+  - Attribute+ mode: compare file attributes and calculate CRCs only for new and changed files for future verification
   - CRC mode: compare file attributes and CRC for every file, and checks previously stored CRCs to detect corruption
 - Test your settings first with the 'norun' flag
 ## Command Line Interface

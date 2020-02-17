@@ -27,7 +27,7 @@ import unicodedata
 import zlib
 
 def getVersion() -> str:
-    return "1.2.0"
+    return "1.2.1"
 
 
 #########################
@@ -303,11 +303,11 @@ class DirInfo:
     def fileMatch(self, f1: str, f2: str, secondInfo: 'DirInfo', compare_mode: str) -> bool:
         if self.file_dicts[f1]["size"] == secondInfo.file_dicts[f2]["size"]:
             if self.timeMatch(self.file_dicts[f1]["mtime"], secondInfo.file_dicts[f2]["mtime"]):
-                # these are the 'probably unchanged files' and should force a recalculation of crc if it was deferred from the scan
+                # these are the 'unchanged files (probably)' from both sides, crc should be up to date from the scan if using CRC mode
                 if compare_mode == "crc" and self.getCrc(f1) != secondInfo.getCrc(f2):
                     # size and date match, but crc does not, probably corrupted
                     if f1 not in self.crc_errors_detected and f2 not in secondInfo.crc_errors_detected:
-                        # log error, since it wasn't already detected during scan, that implies neither file has a past record
+                        # log error since it wasn't already detected during scan, that implies neither file has a past record
                         self.crc_errors_detected[f1] = None
                         secondInfo.crc_errors_detected[f2] = None
                     return False
@@ -337,8 +337,10 @@ class DirInfo:
                     full_path = os.path.join(dir_path, file_name)
                     relative_path = os.path.relpath(full_path, self.dir)
                     scan_status.update(relative_path)
+                    # get file attributes
                     size = os.path.getsize(full_path)
                     mtime = os.path.getmtime(full_path)
+                    # check and set database dictionaries
                     if relative_path in self.loaded_dicts:
                         if (self.loaded_dicts[relative_path]["size"] == size and
                             self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, True)):
@@ -352,20 +354,19 @@ class DirInfo:
                         # new file
                         self.file_dicts[relative_path] = {"size": size, "mtime": mtime}
                     if self.compare_mode == "crc":
-                        # scanning all files is simplest
-                        # time could be saved by defering the scan of probably unchanged files to compare so only 'probably unchanged files' on both sides are scanned
+                        # calculate CRC for all files (simpler code and potential warning sign disk issues)
                         self.file_dicts[relative_path]["crc"] = self.crc(full_path)
                         if (relative_path in self.loaded_dicts and
                             "crc" in self.loaded_dicts[relative_path] and
-                            self.loaded_dicts[relative_path]["crc"] != self.file_dicts[relative_path]["crc"]):
-                            # changed file (changed crc, unchanged size and mtime)
-                            if relative_path not in self.loaded_diffs:
-                                self.crc_errors_detected[relative_path] = self.loaded_dicts[relative_path]
+                            self.loaded_dicts[relative_path]["crc"] != self.file_dicts[relative_path]["crc"] and
+                            relative_path not in self.loaded_diffs):
+                            # corrupted file (probably, changed crc, unchanged size and mtime)
+                            self.crc_errors_detected[relative_path] = self.loaded_dicts[relative_path]
                     elif self.compare_mode == "attr+" and "crc" not in self.file_dicts[relative_path]:
-                        # save time by only scanning files that don't have a crc so we can still check for corruption or bit rot later
-                        # useless to use crc for comparison in this mode since we already know these files are new/modified
+                        # save time by only scanning files that don't have a crc so we can still check for corruption or bit rot later (and preexisting corruption)
                         self.file_dicts[relative_path]["crc"] = self.crc(full_path)
             scan_status.endProgress()
+            # check for missing (or moved) files
             for relative_path in self.loaded_dicts:
                 if not self.pathMatch(relative_path, self.ignored_toplevel_folders):
                     if relative_path not in self.file_dicts:
