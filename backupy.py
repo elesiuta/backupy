@@ -308,8 +308,8 @@ class DirInfo:
                     # size and date match, but crc does not, probably corrupted
                     if f1 not in self.crc_errors_detected and f2 not in secondInfo.crc_errors_detected:
                         # log error, since it wasn't already detected during scan, that implies neither file has a past record
-                        self.crc_errors_detected[f1] = self.file_dicts[f1]
-                        secondInfo.crc_errors_detected[f2] = secondInfo.file_dicts[f2]
+                        self.crc_errors_detected[f1] = None
+                        secondInfo.crc_errors_detected[f2] = None
                     return False
                 # detect mismatched crc values across both sides (usually if corruption happened before crc database was created)
                 if compare_mode == "attr+" and self.getCrc(f1) != secondInfo.getCrc(f2):
@@ -568,7 +568,7 @@ class BackupManager:
 
     def printFileInfo(self, header: str, f: str, d: dict, sub_header: str = "", skip_info: bool = False) -> None:
         header, sub_header = getString(header), getString(sub_header)
-        if f in d:
+        if f in d and d[f] is not None:
             self.log.append([header.strip(), sub_header.strip(), f] + [str(d[f])])
             missing = False
         else:
