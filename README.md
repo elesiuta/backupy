@@ -18,14 +18,18 @@
 - Source and destination directories can be any accessible directory
 - Destination can be empty or contain files from a previous backup, matching files on both sides will be skipped
 - Main modes
-   - Backup mode: copies files that are only in source to destination
-   - Mirror mode: copies files that are only in source to destination and deletes files that are only in destination
-   - Sync mode: copies files that are only in source to destination and copies files that are only in destination to source
+  - Backup mode: copies files that are only in source to destination
+  - Mirror mode: copies files that are only in source to destination and deletes files that are only in destination
+  - Sync mode: copies files that are only in source to destination and copies files that are only in destination to source
 - Selection modes (which file to select in cases where different versions exist on both sides)
   - Source
   - Destination
-  - Newer
+  - Newer (based on last modified time)
   - None (differing files will only be logged for manual intervention)
+- Compare modes (how to detect which files have changed)
+  - Attributes: compare file attributes (size and last modified time)
+  - Attributes+: save time by only calculating CRCs for new files and ones with changed attributes then store it for future verification
+  - CRC: compare file attributes and CRC for every file, and checks previously stored CRCs to detect corruption
 - Test your settings first with the 'norun' flag
 ## Command Line Interface
 ```
@@ -65,10 +69,10 @@ optional arguments:
                How to detect files that exist on both sides but differ?
                  ATTR (default)
                    [compare file attributes: mod-time and size]
-                 BOTH
-                   [compare file attributes first, then check CRC]
+                 ATTR+
+                   [compare file attributes and only store new CRC data]
                  CRC
-                   [compare CRC only, ignoring file attributes]
+                   [compare file attributes and CRC for every file]
   -f regex [regex ...]
                Filter: Only include files matching the regular expression(s)
                (include all by default)

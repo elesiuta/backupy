@@ -359,8 +359,9 @@ class DirInfo:
             if self.timeMatch(self.file_dicts[f1]["mtime"], secondInfo.file_dicts[f2]["mtime"]):
                 # these are the 'probably unchanged files' and should force a recalculation of crc if it was deferred from the scan
                 if compare_mode == "crc" and self.getCrc(f1) != secondInfo.getCrc(f2):
+                    # should this be flagged simply as a changed file or a possibly corrupted one since since and date still match?
                     return False
-                # detect mismatched crc values (usually if corruption happened before crc database was created)
+                # detect mismatched crc values across both sides (usually if corruption happened before crc database was created)
                 if compare_mode == "attr+" and self.getCrc(f1) != secondInfo.getCrc(f2):
                     self.crc_errors_detected[f1] = self.file_dicts[f1]
                     secondInfo.crc_errors_detected[f2] = secondInfo.file_dicts[f2]
@@ -757,12 +758,12 @@ class BackupManager:
             self.dest.loadJson()
             if self.source.loaded_dicts != {} or self.dest.loaded_dicts != {}:
                 database_load_success = True
-        # scan directories, this is where CRC mode = all takes place
+        # scan directories (also calculates CRC if enabled)
         self.colourPrint(getString("Scanning files on source:\n%s") %(self.config.source), "OKBLUE")
         self.source.scanDir(self.config.stdout_status_bar)
         self.colourPrint(getString("Scanning files on destination:\n%s") %(self.config.dest), "OKBLUE")
         self.dest.scanDir(self.config.stdout_status_bar)
-        # compare directories, this is where CRC mode = both takes place
+        # compare directories (should be relatively fast, all the read operations are done during scan)
         self.colourPrint(getString("Comparing directories..."), "OKGREEN")
         source_only, dest_only, changed, moved = self.source.dirCompare(self.dest,
                                                                         self.config.nomoves,
