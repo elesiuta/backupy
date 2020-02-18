@@ -233,7 +233,7 @@ class DirInfo:
     def loadJson(self) -> None:
         self.loaded_dicts = readJson(os.path.join(self.dir, self.config_dir, "database.json"))
 
-    def updateDictCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
+    def updateDictOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
         if self.dir == source_root and secondInfo.dir == dest_root:
             secondInfo.file_dicts[dest_file] = self.file_dicts[source_file]
         elif self.dir == dest_root and secondInfo.dir == source_root:
@@ -241,7 +241,7 @@ class DirInfo:
         else:
             raise Exception("Update Dict Error")
 
-    def updateDictMove(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
+    def updateDictOnMove(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
         if source_root == dest_root == self.dir:
             self.file_dicts[dest_file] = self.file_dicts.pop(source_file)
         elif source_root == dest_root == secondInfo.dir:
@@ -253,7 +253,7 @@ class DirInfo:
         else:
             raise Exception("Update Dict Error")
 
-    def updateDictRemove(self, root: str, relative_path: str, secondInfo: 'DirInfo') -> None:
+    def updateDictOnRemove(self, root: str, relative_path: str, secondInfo: 'DirInfo') -> None:
         if root == self.dir:
             _ = self.file_dicts.pop(relative_path)
         elif root == secondInfo.dir:
@@ -395,16 +395,16 @@ class DirInfo:
                     filter_list[i] = re.compile(filter_list[i])
                 if type(filter_list[i]) != re.Pattern:
                     raise Exception("Filter Processing Error")
-            file_list = filter(lambda x: any([True if r.search(x) else False for r in filter_list]), file_list)
-            second_list = filter(lambda x: any([True if r.search(x) else False for r in filter_list]), second_list)
+            file_list = list(filter(lambda x: any([True if r.search(x) else False for r in filter_list]), file_list))
+            second_list = list(filter(lambda x: any([True if r.search(x) else False for r in filter_list]), second_list))
         if type(filter_false_list) == list:
             for i in range(len(filter_false_list)):
                 if type(filter_false_list[i]) == str:
                     filter_false_list[i] = re.compile(filter_false_list[i])
                 if type(filter_false_list[i]) != re.Pattern:
                     raise Exception("Filter False Processing Error")
-            file_list = filter(lambda x: all([False if r.search(x) else True for r in filter_false_list]), file_list)
-            second_list = filter(lambda x: all([False if r.search(x) else True for r in filter_false_list]), second_list)
+            file_list = list(filter(lambda x: all([False if r.search(x) else True for r in filter_false_list]), file_list))
+            second_list = list(filter(lambda x: all([False if r.search(x) else True for r in filter_false_list]), second_list))
         # compare
         for f in file_list:
             if f in second_list:
@@ -629,7 +629,7 @@ class BackupManager:
     def removeFile(self, root: str, relative_path: str) -> None:
         try:
             self.log.append(["removeFile()", root, relative_path])
-            self.source.updateDictRemove(root, relative_path, self.dest)
+            self.source.updateDictOnRemove(root, relative_path, self.dest)
             if not self.config.norun:
                 path = os.path.join(root, relative_path)
                 if os.path.isdir(path):
@@ -647,7 +647,7 @@ class BackupManager:
     def copyFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
             self.log.append(["copyFile()", source_root, dest_root, source_file, dest_file])
-            self.source.updateDictCopy(source_root, dest_root, source_file, dest_file, self.dest)
+            self.source.updateDictOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
             if not self.config.norun:
                 source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
@@ -664,7 +664,7 @@ class BackupManager:
     def moveFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
             self.log.append(["moveFile()", source_root, dest_root, source_file, dest_file])
-            self.source.updateDictMove(source_root, dest_root, source_file, dest_file, self.dest)
+            self.source.updateDictOnMove(source_root, dest_root, source_file, dest_file, self.dest)
             if not self.config.norun:
                 source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
