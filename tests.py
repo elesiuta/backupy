@@ -35,11 +35,11 @@ def dirInfo(path):
         for subdir in subdir_list:
             full_path = os.path.join(dir_path, subdir)
             if len(os.listdir(full_path)) == 0:
-                relativePath = os.path.relpath(full_path, path)
+                relativePath = os.path.relpath(full_path, path).replace(os.path.sep, "/")
                 file_dicts[relativePath] = {"size": 0, "mtime": 0, "crc": 0, "dir": True}
         for fName in sorted(file_list):
             full_path = os.path.join(dir_path, fName)
-            relativePath = os.path.relpath(full_path, path)
+            relativePath = os.path.relpath(full_path, path).replace(os.path.sep, "/")
             size = os.path.getsize(full_path)
             mtime = os.path.getmtime(full_path)
             file_dicts[relativePath] = {"size": size, "mtime": mtime, "crc": crc(full_path)}
@@ -70,7 +70,7 @@ def dirStats(path):
         sub_dir_list.sort()
         dir_count += len(sub_dir_list)
         file_count += len(file_list)
-        total_folder_size += os.path.getsize(dir_path)
+        # total_folder_size += os.path.getsize(dir_path)
         for f in sorted(file_list):
             full_path = os.path.join(dir_path, f)
             total_file_size += os.path.getsize(full_path)
