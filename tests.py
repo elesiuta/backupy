@@ -56,9 +56,9 @@ def dirStats(path):
     total_folder_size = 0
     for dir_path, sub_dir_list, file_list in os.walk(path):
         sub_dir_list.sort()
-        dir_count += len(sub_dir_list)
+        # dir_count += len(sub_dir_list)
         file_count += len(file_list)
-        total_folder_size += os.path.getsize(dir_path)
+        # total_folder_size += os.path.getsize(dir_path)
         for f in sorted(file_list):
             full_path = os.path.join(dir_path, f)
             total_file_size += os.path.getsize(full_path)
@@ -127,10 +127,10 @@ def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=T
     if compare:
         dirA_stats = dirStats(os.path.join(test_name, dir_A))
         dirB_stats = dirStats(os.path.join(test_name, dir_B))
-        dirAsol_stats = dirStats(os.path.join("tests/test_solutions", test_name, dir_A))
-        dirBsol_stats = dirStats(os.path.join("tests/test_solutions", test_name, dir_B))
-        a_test, a_sol, a_diff = dirCompare(os.path.join(test_name, dir_A), os.path.join("tests/test_solutions", test_name, dir_A))
-        b_test, b_sol, b_diff = dirCompare(os.path.join(test_name, dir_B), os.path.join("tests/test_solutions", test_name, dir_B))
+        dirAsol_stats = dirStats(os.path.join("tests", "test_solutions", test_name, dir_A))
+        dirBsol_stats = dirStats(os.path.join("tests", "test_solutions", test_name, dir_B))
+        a_test, a_sol, a_diff = dirCompare(os.path.join(test_name, dir_A), os.path.join("tests", "test_solutions", test_name, dir_A))
+        b_test, b_sol, b_diff = dirCompare(os.path.join(test_name, dir_B), os.path.join("tests", "test_solutions", test_name, dir_B))
         compDict = {"a_test_only": a_test, "a_sol_only": a_sol, "a_diff": a_diff, "b_test_only": b_test, "b_sol_only": b_sol, "b_diff": b_diff}
     if cleanup:
         cleanupTestDir(test_name)
