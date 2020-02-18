@@ -1,0 +1,64 @@
+### DATABASE CONFLICTS ###
+File:,Source,file modified newer on A.txt,"{'size': 640, 'mtime': 1575245024.0}"
+,DB,file modified newer on A.txt,"{'size': 319, 'mtime': 1563369818.0}"
+,Dest,file modified newer on A.txt,"{'size': 319, 'mtime': 1563366218.0}"
+,DB,file modified newer on A.txt,"{'size': 319, 'mtime': 1563369818.0}"
+File:,Source,file modified newer on B.txt,"{'size': 100, 'mtime': 1563366148.0}"
+,DB,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
+,Dest,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0}"
+,DB,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
+File:,Source,same file.txt,"{'size': 2, 'mtime': 1563365844.0}"
+,DB,same file.txt,"{'size': 2, 'mtime': 1563369444.0}"
+,Dest,same file.txt,"{'size': 2, 'mtime': 1563365844.0}"
+,DB,same file.txt,"{'size': 2, 'mtime': 1563369444.0}"
+File:,Source,subdir\renamed dir A\file1.txt,"{'size': 11, 'mtime': 1563365760.0}"
+,DB,subdir\renamed dir A\file1.txt,"{'size': 11, 'mtime': 1563369360.0}"
+,Dest,subdir\renamed dir A\file1.txt,"{'size': 11, 'mtime': 1563365760.0}"
+,DB,subdir\renamed dir A\file1.txt,"{'size': 11, 'mtime': 1563369360.0}"
+File:,Source,subdir\renamed dir A\file2.txt,"{'size': 2, 'mtime': 1563365766.0}"
+,DB,subdir\renamed dir A\file2.txt,"{'size': 2, 'mtime': 1563369366.0}"
+,Dest,subdir\renamed dir A\file2.txt,"{'size': 2, 'mtime': 1563365766.0}"
+,DB,subdir\renamed dir A\file2.txt,"{'size': 2, 'mtime': 1563369366.0}"
+File:,Source,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563365786.0}"
+,DB,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
+,Dest,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563365786.0}"
+,DB,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
+File:,Source,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': 0, 'dir': True}"
+,DB,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': 0, 'dir': True}"
+,Dest,empty dir only A,Missing
+,DB,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': 0, 'dir': True}"
+File:,Source,file only A.txt,"{'size': 2, 'mtime': 1563365988.0}"
+,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
+,Dest,file only A.txt,Missing
+,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
+File:,Source,file only B.txt,Missing
+,DB,file only B.txt,"{'size': 9, 'mtime': 1563369616.0}"
+,Dest,file only B.txt,"{'size': 9, 'mtime': 1563366016.0}"
+,DB,file only B.txt,"{'size': 9, 'mtime': 1563369616.0}"
+### SOURCE ONLY ###
+File:,,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': 0, 'dir': True}"
+File:,,file only A.txt,"{'size': 2, 'mtime': 1563365988.0}"
+File:,,new file A.txt,"{'size': 11, 'mtime': 1575245254.0}"
+### DESTINATION ONLY ###
+File:,,file only B.txt,"{'size': 9, 'mtime': 1563366016.0}"
+File:,,new file B.txt,"{'size': 70, 'mtime': 1575245388.0}"
+### CHANGED FILES ###
+File:,Source,file modified newer on A.txt,"{'size': 640, 'mtime': 1575245024.0}"
+,Dest,file modified newer on A.txt,"{'size': 319, 'mtime': 1563366218.0}"
+File:,Source,file modified newer on B.txt,"{'size': 100, 'mtime': 1563366148.0}"
+,Dest,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0}"
+### MOVED FILES ###
+Source:,,renamed file A.txt,"{'size': 14, 'mtime': 1563365688.0}"
+Dest:,,renamed file B.txt,"{'size': 14, 'mtime': 1563365688.0}"
+### START SYNC DRY RUN ###
+copyFile(),\sync-new-log-norun-set1\dir A set 1,\sync-new-log-norun-set1\dir B set 1,empty dir only A,empty dir only A
+copyFile(),\sync-new-log-norun-set1\dir A set 1,\sync-new-log-norun-set1\dir B set 1,file only A.txt,file only A.txt
+copyFile(),\sync-new-log-norun-set1\dir A set 1,\sync-new-log-norun-set1\dir B set 1,new file A.txt,new file A.txt
+copyFile(),\sync-new-log-norun-set1\dir B set 1,\sync-new-log-norun-set1\dir A set 1,file only B.txt,file only B.txt
+copyFile(),\sync-new-log-norun-set1\dir B set 1,\sync-new-log-norun-set1\dir A set 1,new file B.txt,new file B.txt
+moveFile(),\sync-new-log-norun-set1\dir B set 1,\sync-new-log-norun-set1\dir B set 1,renamed file B.txt,renamed file A.txt
+moveFile(),\sync-new-log-norun-set1\dir B set 1,\sync-new-log-norun-set1\dir B set 1,file modified newer on A.txt,.backupy\000000-0000\file modified newer on A.txt
+copyFile(),\sync-new-log-norun-set1\dir A set 1,\sync-new-log-norun-set1\dir B set 1,file modified newer on A.txt,file modified newer on A.txt
+moveFile(),\sync-new-log-norun-set1\dir A set 1,\sync-new-log-norun-set1\dir A set 1,file modified newer on B.txt,.backupy\000000-0000\file modified newer on B.txt
+copyFile(),\sync-new-log-norun-set1\dir B set 1,\sync-new-log-norun-set1\dir A set 1,file modified newer on B.txt,file modified newer on B.txt
+### COMPLETED ###

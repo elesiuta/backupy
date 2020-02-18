@@ -1,0 +1,35 @@
+### SOURCE ONLY ###
+File:,,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': 0, 'dir': True}"
+File:,,file only A.txt,"{'size': 2, 'mtime': 1563365988.0}"
+File:,,new file A.txt,"{'size': 11, 'mtime': 1575245254.0}"
+File:,,.backupy\000000-0000\file modified newer on B.txt,"{'size': 35, 'mtime': 1563366092.0}"
+### DESTINATION ONLY ###
+File:,,file only B.txt,"{'size': 9, 'mtime': 1563366016.0}"
+File:,,new file B.txt,"{'size': 70, 'mtime': 1575245388.0}"
+File:,,.backupy\000000-0000\file modified newer on A.txt,"{'size': 158, 'mtime': 1563366166.0}"
+### CHANGED FILES ###
+File:,Source,file modified newer on A.txt,"{'size': 640, 'mtime': 1575245024.0}"
+,Dest,file modified newer on A.txt,"{'size': 319, 'mtime': 1563366218.0}"
+File:,Source,file modified newer on B.txt,"{'size': 100, 'mtime': 1563366148.0}"
+,Dest,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0}"
+File:,Source,.backupy\database.json,"{'size': 1066, 'mtime': 1575244362.0}"
+,Dest,.backupy\database.json,"{'size': 1067, 'mtime': 1575244362.0}"
+### MOVED FILES ###
+Source:,,renamed file A.txt,"{'size': 14, 'mtime': 1563365688.0}"
+Dest:,,renamed file B.txt,"{'size': 14, 'mtime': 1563365688.0}"
+### START MIRROR ###
+copyFile(),\mirror-source-log-dir-set1\dir A set 1,\mirror-source-log-dir-set1\dir B set 1,empty dir only A,empty dir only A
+copyFile(),\mirror-source-log-dir-set1\dir A set 1,\mirror-source-log-dir-set1\dir B set 1,file only A.txt,file only A.txt
+copyFile(),\mirror-source-log-dir-set1\dir A set 1,\mirror-source-log-dir-set1\dir B set 1,new file A.txt,new file A.txt
+copyFile(),\mirror-source-log-dir-set1\dir A set 1,\mirror-source-log-dir-set1\dir B set 1,.backupy\000000-0000\file modified newer on B.txt,.backupy\000000-0000\file modified newer on B.txt
+moveFile(),\mirror-source-log-dir-set1\dir B set 1,\mirror-source-log-dir-set1\dir B set 1\.backupy\Trash\000000-0000,file only B.txt,file only B.txt
+moveFile(),\mirror-source-log-dir-set1\dir B set 1,\mirror-source-log-dir-set1\dir B set 1\.backupy\Trash\000000-0000,new file B.txt,new file B.txt
+moveFile(),\mirror-source-log-dir-set1\dir B set 1,\mirror-source-log-dir-set1\dir B set 1\.backupy\Trash\000000-0000,.backupy\000000-0000\file modified newer on A.txt,.backupy\000000-0000\file modified newer on A.txt
+moveFile(),\mirror-source-log-dir-set1\dir B set 1,\mirror-source-log-dir-set1\dir B set 1,renamed file B.txt,renamed file A.txt
+moveFile(),\mirror-source-log-dir-set1\dir B set 1,\mirror-source-log-dir-set1\dir B set 1,file modified newer on A.txt,.backupy\Archive\000000-0000\file modified newer on A.txt
+copyFile(),\mirror-source-log-dir-set1\dir A set 1,\mirror-source-log-dir-set1\dir B set 1,file modified newer on A.txt,file modified newer on A.txt
+moveFile(),\mirror-source-log-dir-set1\dir B set 1,\mirror-source-log-dir-set1\dir B set 1,file modified newer on B.txt,.backupy\Archive\000000-0000\file modified newer on B.txt
+copyFile(),\mirror-source-log-dir-set1\dir A set 1,\mirror-source-log-dir-set1\dir B set 1,file modified newer on B.txt,file modified newer on B.txt
+moveFile(),\mirror-source-log-dir-set1\dir B set 1,\mirror-source-log-dir-set1\dir B set 1,.backupy\database.json,.backupy\Archive\000000-0000\.backupy\database.json
+copyFile(),\mirror-source-log-dir-set1\dir A set 1,\mirror-source-log-dir-set1\dir B set 1,.backupy\database.json,.backupy\database.json
+### COMPLETED ###
