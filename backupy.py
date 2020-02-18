@@ -367,7 +367,7 @@ class DirInfo:
                             # corrupted file (probably, changed crc, unchanged size and mtime)
                             self.crc_errors_detected[relative_path] = self.loaded_dicts[relative_path]
                     elif self.compare_mode == "attr+" and "crc" not in self.file_dicts[relative_path]:
-                        # save time by only scanning files that don't have a crc so we can still check for corruption or bit rot later (and preexisting corruption)
+                        # save time by only calculating crc for new and changed files (by attributes) so we can check for corruption later (and possibly preexisting)
                         self.file_dicts[relative_path]["crc"] = self.crc(full_path)
             scan_status.endProgress()
             # check for missing (or moved) files
@@ -791,7 +791,8 @@ class BackupManager:
         dest_crc_errors = self.dest.getCrcErrorsDetected()
         # print database conflicts, including both collisions from files being modified independently on both sides and unexpected missing files
         # note: this only notifies the user so they can intervene, it does not handle them in any special way, treating them as regular file changes
-        # it can also be triggered by time zone or dst changes, lower file system mod time precision, and corruption or bit rot if using CRCs
+        # it can also be triggered by time zone or dst changes, lower file system mod time precision, and corruption if using CRCs (handled next)
+        abort_run = False
         if database_load_success:
             self.log.append([getString("### DATABASE CONFLICTS ###")])
             if self.config.main_mode == "sync":
@@ -801,16 +802,17 @@ class BackupManager:
                     print(self.colourString(getString("WARNING: found files modified in both source and destination since last scan"), "WARNING"))
                 print(self.colourString(getString("Sync Database Conflicts: %s") %(len(sync_conflicts)), "HEADER"))
                 self.printSyncDbConflicts(sync_conflicts, source_dict, dest_dict, source_loaded_db, dest_loaded_db)
-                if self.config.quit_on_db_conflict and len(sync_conflicts) >= 1:
-                    return self.abortRun()
+                if len(sync_conflicts) >= 1:
+                    abort_run = True
             else:
                 dest_conflicts = list(dest_diffs.keys()) + list(dest_missing.keys())
                 if len(dest_diffs) >= 1:
                     print(self.colourString(getString("WARNING: found files modified in the destination since last scan"), "WARNING"))
                 print(self.colourString(getString("Destination Database Conflicts: %s") %(len(dest_diffs)), "HEADER"))
                 self.printDbConflicts(dest_conflicts, dest_dict, dest_loaded_db)
-                if self.config.quit_on_db_conflict and len(dest_conflicts) >= 1:
-                    return self.abortRun()
+                if len(dest_conflicts) >= 1:
+                    abort_run = True
+        # print database conflicts concerning CRCs if available, as well as CRC conflicts between source and dest if attributes otherwise match
         if len(source_crc_errors) > 0 or len(dest_crc_errors) > 0:
             self.log.append([getString("### CRC ERRORS DETECTED ###")])
             print(self.colourString(getString("WARNING: found non matching CRC values, possible corruption detected"), "WARNING"))
@@ -823,8 +825,9 @@ class BackupManager:
                     raise Exception("Inconsistent CRC error detection between source and dest")
                 print(self.colourString(getString("CRC Errors Detected: %s") %(len(source_crc_errors)), "HEADER"))
                 self.printChangedFiles(list(source_crc_errors.keys()), source_crc_errors, dest_crc_errors)
-            if self.config.quit_on_db_conflict:
-                return self.abortRun()
+            abort_run = True
+        if self.config.quit_on_db_conflict and abort_run:
+            return self.abortRun()
         # prepare diff messages
         if self.config.noarchive:
             archive_msg = getString("delete")
