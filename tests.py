@@ -5,8 +5,22 @@ import zlib
 import zipfile
 import time
 import csv
+import json
 
 import backupy
+
+def readJson(file_path: str) -> dict:
+    if os.path.exists(file_path):
+        with open(file_path, "r", encoding="utf-8", errors="surrogateescape") as json_file:
+            data = json.load(json_file)
+        return data
+    return {}
+
+def writeJson(file_path: str, data: dict, subdir: bool = True) -> None:
+    if subdir and not os.path.isdir(os.path.dirname(file_path)):
+        os.makedirs(os.path.dirname(file_path))
+    with open(file_path, "w", encoding="utf-8", errors="surrogateescape") as json_file:
+        json.dump(data, json_file, indent=1, separators=(',', ': '))
 
 def crc(fileName, prev = 0):
     with open(fileName,"rb") as f:
@@ -31,12 +45,10 @@ def dirInfo(path):
             file_dicts[relativePath] = {"size": size, "mtime": mtime, "crc": crc(full_path)}
     return file_dicts
 
-def dirCompare(path_a, path_b):
+def dirCompare(info_a, info_b):
     a_only = []
     b_only = []
     different = []
-    info_a = dirInfo(path_a)
-    info_b = dirInfo(path_b)
     for relativePath in info_a:
         if relativePath in info_b:
             if info_a[relativePath]["crc"] != info_b[relativePath]["crc"]:
@@ -56,9 +68,9 @@ def dirStats(path):
     total_folder_size = 0
     for dir_path, sub_dir_list, file_list in os.walk(path):
         sub_dir_list.sort()
-        # dir_count += len(sub_dir_list)
+        dir_count += len(sub_dir_list)
         file_count += len(file_list)
-        # total_folder_size += os.path.getsize(dir_path)
+        total_folder_size += os.path.getsize(dir_path)
         for f in sorted(file_list):
             full_path = os.path.join(dir_path, f)
             total_file_size += os.path.getsize(full_path)
@@ -102,7 +114,7 @@ def rewriteLog(fName):
         for row in data:
             writer.writerow(row)
 
-def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=True, setup=True):
+def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=True, setup=True, write_info=False):
     if setup:
         print("####### TEST: " + test_name + " #######")
         setupTestDir(test_name, "tests/test_dir.zip")
@@ -114,8 +126,13 @@ def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=T
         # setupTestDir(test_name, "tests/test_dir_set1.zip")
         dir_A = "dir A set 1"
         dir_B = "dir B set 1"
-    config["source"] = os.path.join(test_name, dir_A)
-    config["dest"] = os.path.join(test_name, dir_B)
+    dir_A_path = os.path.join(test_name, dir_A)
+    dir_B_path = os.path.join(test_name, dir_B)
+    sol_path = os.path.join("tests", "test_solutions", test_name)
+    dir_A_sol_path = os.path.join(sol_path, dir_A)
+    dir_B_sol_path = os.path.join(sol_path, dir_B)
+    config["source"] = dir_A_path
+    config["dest"] = dir_B_path
     backup_man = backupy.BackupManager(config)
     backup_man.backup()
     if rewrite_log:
@@ -124,13 +141,18 @@ def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=T
         else:
             log_dir = ".backupy"
         rewriteLog(os.path.join(test_name, dir_A, log_dir, "log-000000-0000.csv"))
+    if write_info:
+        writeJson(os.path.join(sol_path, "dir_A_stats.json"), dirStats(dir_A_sol_path))
+        writeJson(os.path.join(sol_path, "dir_B_stats.json"), dirStats(dir_B_sol_path))
+        writeJson(os.path.join(sol_path, "dir_A_info.json"), dirInfo(dir_A_sol_path))
+        writeJson(os.path.join(sol_path, "dir_B_info.json"), dirInfo(dir_B_sol_path))
     if compare:
-        dirA_stats = dirStats(os.path.join(test_name, dir_A))
-        dirB_stats = dirStats(os.path.join(test_name, dir_B))
-        dirAsol_stats = dirStats(os.path.join("tests", "test_solutions", test_name, dir_A))
-        dirBsol_stats = dirStats(os.path.join("tests", "test_solutions", test_name, dir_B))
-        a_test, a_sol, a_diff = dirCompare(os.path.join(test_name, dir_A), os.path.join("tests", "test_solutions", test_name, dir_A))
-        b_test, b_sol, b_diff = dirCompare(os.path.join(test_name, dir_B), os.path.join("tests", "test_solutions", test_name, dir_B))
+        dirA_stats = dirStats(dir_A_path)
+        dirB_stats = dirStats(dir_B_path)
+        dirAsol_stats = readJson(os.path.join(sol_path, "dir_A_stats.json"))
+        dirBsol_stats = readJson(os.path.join(sol_path, "dir_B_stats.json"))
+        a_test, a_sol, a_diff = dirCompare(dirInfo(dir_A_path), readJson(os.path.join(sol_path, "dir_A_info.json")))
+        b_test, b_sol, b_diff = dirCompare(dirInfo(dir_B_path), readJson(os.path.join(sol_path, "dir_B_info.json")))
         compDict = {"a_test_only": a_test, "a_sol_only": a_sol, "a_diff": a_diff, "b_test_only": b_test, "b_sol_only": b_sol, "b_diff": b_diff}
     if cleanup:
         cleanupTestDir(test_name)
