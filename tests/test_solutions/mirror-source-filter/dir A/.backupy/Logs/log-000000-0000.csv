@@ -1,0 +1,14 @@
+### SOURCE ONLY ###
+### DESTINATION ONLY ###
+### CHANGED FILES ###
+File:,Source,file modified newer on A.txt,"{'size': 319, 'mtime': 1563369818.0}"
+,Dest,file modified newer on A.txt,"{'size': 158, 'mtime': 1563369766.0}"
+File:,Source,file modified newer on B.txt,"{'size': 35, 'mtime': 1563369692.0}"
+,Dest,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
+### MOVED FILES ###
+### START MIRROR ###
+moveFile(),\mirror-source-filter\dir B,\mirror-source-filter\dir B,file modified newer on A.txt,.backupy\Archive\000000-0000\file modified newer on A.txt
+copyFile(),\mirror-source-filter\dir A,\mirror-source-filter\dir B,file modified newer on A.txt,file modified newer on A.txt
+moveFile(),\mirror-source-filter\dir B,\mirror-source-filter\dir B,file modified newer on B.txt,.backupy\Archive\000000-0000\file modified newer on B.txt
+copyFile(),\mirror-source-filter\dir A,\mirror-source-filter\dir B,file modified newer on B.txt,file modified newer on B.txt
+### COMPLETED ###
