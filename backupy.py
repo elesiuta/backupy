@@ -393,7 +393,7 @@ class DirInfo:
             for i in range(len(filter_list)):
                 if type(filter_list[i]) == str:
                     filter_list[i] = re.compile(filter_list[i])
-                if type(filter_list[i]) != re.Pattern:
+                else:
                     raise Exception("Filter Processing Error")
             file_list = set(filter(lambda x: any([True if r.search(x) else False for r in filter_list]), file_list))
             second_list = set(filter(lambda x: any([True if r.search(x) else False for r in filter_list]), second_list))
@@ -401,7 +401,7 @@ class DirInfo:
             for i in range(len(filter_false_list)):
                 if type(filter_false_list[i]) == str:
                     filter_false_list[i] = re.compile(filter_false_list[i])
-                if type(filter_false_list[i]) != re.Pattern:
+                else:
                     raise Exception("Filter False Processing Error")
             file_list = set(filter(lambda x: all([False if r.search(x) else True for r in filter_false_list]), file_list))
             second_list = set(filter(lambda x: all([False if r.search(x) else True for r in filter_false_list]), second_list))
