@@ -151,7 +151,7 @@ def rewriteTxt(fName):
         with open(fName, "w", encoding="utf-8", newline="\r\n") as f:
             f.writelines(data)
 
-def runTest(test_name, config, set=0, rewrite_log=True, prerewrite_db=False, compare=True, cleanup=True, setup=True, write_info=False):
+def runTest(test_name, config, set=0, rewrite_log=True, compare=True, cleanup=True, setup=True, write_info=False):
     # init dirs
     if setup:
         print("####### TEST: " + test_name + " #######")
@@ -170,7 +170,7 @@ def runTest(test_name, config, set=0, rewrite_log=True, prerewrite_db=False, com
     dir_A_sol_path = os.path.join(sol_path, dir_A)
     dir_B_sol_path = os.path.join(sol_path, dir_B)
     # fix seperators for running tests on linux (running this on windows still works, probably coincidence?)
-    if prerewrite_db and os.name != "nt":
+    if os.name != "nt" and not ("nolog" in config and config["nolog"] == True):
         if "config_dir" in config:
             db_dir = config["config_dir"]
         else:
@@ -363,14 +363,14 @@ class TestBackupy(unittest.TestCase):
     def test_sync_new_log_set1(self):
         test_name = "sync-new-log-set1"
         config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
-        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, prerewrite_db=True, set=1)
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_new_log_norun_set1(self):
         test_name = "sync-new-log-norun-set1"
         config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "norun": True, "backup_time_override": "000000-0000"}
-        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, prerewrite_db=True, set=1)
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
@@ -384,14 +384,14 @@ class TestBackupy(unittest.TestCase):
     def test_mirror_source_log_set1(self):
         test_name = "mirror-source-log-set1"
         config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
-        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, prerewrite_db=True, set=1)
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_log_dir_set1(self):
         test_name = "mirror-source-log-dir-set1"
         config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy/Config", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
-        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, prerewrite_db=True, set=1)
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
@@ -405,8 +405,8 @@ class TestBackupy(unittest.TestCase):
     def test_sync_twice_nochanges(self):
         test_name = "sync-twice-nochanges-set1"
         config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
-        runTest(test_name, config, rewrite_log=True, prerewrite_db=True, set=1, compare=False, setup=True, cleanup=False)
-        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, prerewrite_db=True, set=1, setup=False, cleanup=True)
+        runTest(test_name, config, rewrite_log=True, set=1, compare=False, setup=True, cleanup=False)
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1, setup=False, cleanup=True)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
