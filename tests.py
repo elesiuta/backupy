@@ -155,13 +155,14 @@ def runTest(test_name, config, set=0, rewrite_log=True, compare=True, cleanup=Tr
     # init dirs
     if setup:
         print("####### TEST: " + test_name + " #######")
-        setupTestDir(test_name, "tests/test_dir.zip")
+        if set == 0:
+            setupTestDir(test_name, "tests/test_dir_set0.zip")
+        elif set == 1:
+            setupTestDir(test_name, "tests/test_dir_set1.zip")
     if set == 0:
-        # setupTestDir(test_name, "tests/test_dir.zip")
         dir_A = "dir A"
         dir_B = "dir B"
     elif set == 1:
-        # setupTestDir(test_name, "tests/test_dir_set1.zip")
         dir_A = "dir A set 1"
         dir_B = "dir B set 1"
     dir_A_path = os.path.join(test_name, dir_A)
