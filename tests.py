@@ -98,6 +98,7 @@ def rewriteLog(fName):
         cwd = os.getcwd()
         cwd2 = cwd.replace(os.path.sep, "\\")
         cwd3 = cwd.replace("\\", "\\\\")
+        cwd4 = cwd.replace(os.path.sep, "/")
         with open(fName, "r") as f:
             data = []
             reader = csv.reader(f)
@@ -112,7 +113,7 @@ def rewriteLog(fName):
                         col = col.replace(cwd, "")
                         col = col.replace(cwd2, "")
                         col = col.replace(cwd3, "")
-                        col = col.replace(os.path.sep, "\\")
+                        col = col.replace(cwd4, "")
                     new_row.append(col)
                 data.append(new_row)
         with open(fName, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
@@ -121,13 +122,14 @@ def rewriteLog(fName):
                 writer.writerow(row)
 
 def replaceDictKeySep(d):
+    # replace path separators to windows for consistent testing
     new_d = {}
     for key in d:
         new_d[key.replace(os.path.sep, "\\")] = d[key]
     return new_d
 
 def prerewriteDb(fName):
-    # replace path seperators
+    # replace path separators so backupy can read database properly
     if os.path.exists(fName):
         db = readJson(fName)
         new_db = {}
@@ -136,13 +138,13 @@ def prerewriteDb(fName):
         writeJson(fName, new_db)
 
 def rewriteDb(fName):
-    # replace path seperators
+    # replace path separators to windows for consistent testing
     if os.path.exists(fName):
         db = readJson(fName)
         writeJson(fName, replaceDictKeySep(db))
 
-def rewriteTxt(fName):
-    # replace path seperators
+def rewriteSep(fName):
+    # replace path separators to windows for consistent testing
     if os.path.exists(fName):
         with open(fName, "r") as f:
             data = []
@@ -151,7 +153,7 @@ def rewriteTxt(fName):
         with open(fName, "w", encoding="utf-8", newline="\r\n") as f:
             f.writelines(data)
 
-def runTest(test_name, config, set=0, rewrite_log=True, compare=True, cleanup=True, setup=True, write_info=False):
+def runTest(test_name, config, set=0, rewrite_log=True, rewrite_sep=True, compare=True, cleanup=True, setup=True, write_info=False):
     # init dirs
     if setup:
         print("####### TEST: " + test_name + " #######")
@@ -159,19 +161,19 @@ def runTest(test_name, config, set=0, rewrite_log=True, compare=True, cleanup=Tr
             setupTestDir(test_name, "tests/test_dir_set0.zip")
         elif set == 1:
             setupTestDir(test_name, "tests/test_dir_set1.zip")
-    if set == 0:
-        dir_A = "dir A"
-        dir_B = "dir B"
-    elif set == 1:
+    if set == 1:
         dir_A = "dir A set 1"
         dir_B = "dir B set 1"
+    else:
+        dir_A = "dir A"
+        dir_B = "dir B"
     dir_A_path = os.path.join(test_name, dir_A)
     dir_B_path = os.path.join(test_name, dir_B)
     sol_path = os.path.join("tests", "test_solutions", test_name)
     dir_A_sol_path = os.path.join(sol_path, dir_A)
     dir_B_sol_path = os.path.join(sol_path, dir_B)
-    # fix seperators for running tests on linux (running this on windows still works, probably coincidence?)
-    if os.name != "nt" and not ("nolog" in config and config["nolog"] == True):
+    # fix separators for running tests on linux
+    if os.name != "nt" and rewrite_sep:
         if "config_dir" in config:
             db_dir = config["config_dir"]
         else:
@@ -183,13 +185,16 @@ def runTest(test_name, config, set=0, rewrite_log=True, compare=True, cleanup=Tr
     config["dest"] = dir_B_path
     backup_man = backupy.BackupManager(config)
     backup_man.backup()
-    # fix seperators again and remove absolute paths
+    # fix separators again and remove absolute paths
     if rewrite_log:
         if "log_dir" in config:
             log_dir = config["log_dir"]
         else:
             log_dir = ".backupy"
         rewriteLog(os.path.join(dir_A_path, log_dir, "log-000000-0000.csv"))
+        if rewrite_sep:
+            rewriteSep(os.path.join(dir_A_path, log_dir, "log-000000-0000.csv"))
+    if rewrite_sep:
         if "config_dir" in config:
             db_dir = config["config_dir"]
         else:
@@ -378,7 +383,7 @@ class TestBackupy(unittest.TestCase):
     def test_sync_new_nolog_norun_set1(self):
         test_name = "sync-new-nolog-norun-set1"
         config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": True, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "norun": True, "backup_time_override": "000000-0000"}
-        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=False, set=1)
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=False, rewrite_sep=False, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
