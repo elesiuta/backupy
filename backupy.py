@@ -302,7 +302,7 @@ class DirInfo:
                 return True
         return False
 
-    def fileMatch(self, f1: str, f2: str, secondInfo: 'DirInfo', compare_mode: str) -> bool:
+    def fileMatch(self, f1: str, f2: str, secondInfo: 'DirInfo', compare_mode: str, move_check: bool = False) -> bool:
         if self.file_dicts[f1]["size"] == secondInfo.file_dicts[f2]["size"]:
             if self.timeMatch(self.file_dicts[f1]["mtime"], secondInfo.file_dicts[f2]["mtime"]):
                 # these are the 'unchanged files (probably)' from both sides, crc should be up to date from the scan if using CRC mode
@@ -315,6 +315,9 @@ class DirInfo:
                     return False
                 # detect mismatched crc values across both sides (usually if corruption happened before crc database was created)
                 if compare_mode == "attr+" and self.getCrc(f1) != secondInfo.getCrc(f2):
+                    if move_check:
+                        # it may be corrupted or coincidence, just won't flag these files as matching
+                        return False
                     self.crc_errors_detected[f1] = self.file_dicts[f1]
                     secondInfo.crc_errors_detected[f2] = secondInfo.file_dicts[f2]
                 return True
@@ -411,17 +414,18 @@ class DirInfo:
         second_only = sorted(list(second_list - file_list))
         moved = []
         if not no_moves:
-            for f1 in self_only:
-                for f2 in second_only:
+            for f1 in reversed(self_only):
+                for f2 in reversed(second_only):
                     # should empty dirs be moved?
                     # if "dir" not in self.file_dicts[f1] and "dir" not in secondInfo.file_dicts[f2]:
-                    if self.fileMatch(f1, f2, secondInfo, compare_mode):
+                    if self.fileMatch(f1, f2, secondInfo, compare_mode, True):
                         moved.append({"source": f1, "dest": f2})
+                        self_only.remove(f1)
+                        second_only.remove(f2)
                         _ = secondInfo.missing_files.pop(f1, 1)
                         _ = self.missing_files.pop(f2, 1)
-            for pair in moved:
-                self_only.remove(pair["source"])
-                second_only.remove(pair["dest"])
+                        break
+            moved.reverse()
         return self_only, second_only, changed, moved
 
 
