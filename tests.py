@@ -19,7 +19,7 @@ def readJson(file_path: str) -> dict:
 def writeJson(file_path: str, data: dict, subdir: bool = True) -> None:
     if subdir and not os.path.isdir(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
-    with open(file_path, "w", encoding="utf-8", errors="surrogateescape") as json_file:
+    with open(file_path, "w", encoding="utf-8", errors="surrogateescape", newline="\r\n") as json_file:
         json.dump(data, json_file, indent=1, separators=(',', ': '))
 
 def crc(fileName, prev = 0):
@@ -79,6 +79,7 @@ def dirStats(path):
     return {"total_crc": total_crc, "file_count": file_count, "dir_count": dir_count, "total_file_size": total_file_size, "total_folder_size": total_folder_size}
 
 def setupTestDir(test_name, test_zip):
+    shutil.rmtree(test_name, ignore_errors=True)
     shutil.unpack_archive(test_zip, test_name)
     with zipfile.ZipFile(test_zip, "r") as z:
         for f in z.infolist():
@@ -91,30 +92,62 @@ def cleanupTestDir(test_name):
 
 def rewriteLog(fName):
     # rewrite paths as relative to cwd and remove settings
-    cwd = os.getcwd()
-    cwd = cwd.replace(os.path.sep, "\\")
-    cwd2 = cwd.replace("\\", "\\\\")
-    with open(fName, "r") as f:
-        data = []
-        reader = csv.reader(f)
-        settings_line_count = 2
-        for row in reader:
-            if settings_line_count > 0:
-                settings_line_count -= 1
-                continue
-            new_row = []
-            for col in row:
-                if type(col) == str:
-                    col = col.replace(cwd, "")
-                    col = col.replace(cwd2, "")
-                new_row.append(col)
-            data.append(new_row)
-    with open(fName, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
-        writer = csv.writer(f, delimiter=",")
-        for row in data:
-            writer.writerow(row)
+    if os.path.exists(fName):
+        cwd = os.getcwd()
+        cwd2 = cwd.replace(os.path.sep, "\\")
+        cwd3 = cwd.replace("\\", "\\\\")
+        with open(fName, "r") as f:
+            data = []
+            reader = csv.reader(f)
+            settings_line_count = 2
+            for row in reader:
+                if settings_line_count > 0:
+                    settings_line_count -= 1
+                    continue
+                new_row = []
+                for col in row:
+                    if type(col) == str:
+                        col = col.replace(cwd, "")
+                        col = col.replace(cwd2, "")
+                        col = col.replace(cwd3, "")
+                        col = col.replace(os.path.sep, "\\")
+                    new_row.append(col)
+                data.append(new_row)
+        with open(fName, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
+            writer = csv.writer(f, delimiter=",")
+            for row in data:
+                writer.writerow(row)
 
-def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=True, setup=True, write_info=False):
+def prerewriteDb(fName):
+    # replace path seperators
+    if os.path.exists(fName):
+        db = readJson(fName)
+        new_db = {}
+        for key in db:
+            new_db[key.replace("\\", os.path.sep)] = db[key]
+        writeJson(fName, new_db)
+
+def rewriteDb(fName):
+    # replace path seperators
+    if os.path.exists(fName):
+        db = readJson(fName)
+        new_db = {}
+        for key in db:
+            new_db[key.replace(os.path.sep, "\\")] = db[key]
+        writeJson(fName, new_db)
+
+def rewriteTxt(fName):
+    # replace path seperators
+    if os.path.exists(fName):
+        with open(fName, "r") as f:
+            data = []
+            for row in f.readlines():
+                data.append(row.replace(os.path.sep, "\\"))
+        with open(fName, "w", encoding="utf-8", newline="\r\n") as f:
+            f.writelines(data)
+
+def runTest(test_name, config, set=0, rewrite_log=True, prerewrite_db=False, compare=True, cleanup=True, setup=True, write_info=False):
+    # init dirs
     if setup:
         print("####### TEST: " + test_name + " #######")
         setupTestDir(test_name, "tests/test_dir.zip")
@@ -131,21 +164,39 @@ def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=T
     sol_path = os.path.join("tests", "test_solutions", test_name)
     dir_A_sol_path = os.path.join(sol_path, dir_A)
     dir_B_sol_path = os.path.join(sol_path, dir_B)
+    # fix seperators for running tests on windows or linux
+    if prerewrite_db:
+        if "config_dir" in config:
+            db_dir = config["config_dir"]
+        else:
+            db_dir = ".backupy"
+        prerewriteDb(os.path.join(dir_A_path, db_dir, "database.json"))
+        prerewriteDb(os.path.join(dir_B_path, db_dir, "database.json"))
+    # run backup
     config["source"] = dir_A_path
     config["dest"] = dir_B_path
     backup_man = backupy.BackupManager(config)
     backup_man.backup()
+    # fix seperators again and remove absolute paths
     if rewrite_log:
         if "log_dir" in config:
             log_dir = config["log_dir"]
         else:
             log_dir = ".backupy"
-        rewriteLog(os.path.join(test_name, dir_A, log_dir, "log-000000-0000.csv"))
+        rewriteLog(os.path.join(dir_A_path, log_dir, "log-000000-0000.csv"))
+        if "config_dir" in config:
+            db_dir = config["config_dir"]
+        else:
+            db_dir = ".backupy"
+        rewriteDb(os.path.join(dir_A_path, db_dir, "database.json"))
+        rewriteDb(os.path.join(dir_B_path, db_dir, "database.json"))
+    # save solution info (for creating new tests)
     if write_info:
         writeJson(os.path.join(sol_path, "dir_A_stats.json"), dirStats(dir_A_sol_path))
         writeJson(os.path.join(sol_path, "dir_B_stats.json"), dirStats(dir_B_sol_path))
         writeJson(os.path.join(sol_path, "dir_A_info.json"), dirInfo(dir_A_sol_path))
         writeJson(os.path.join(sol_path, "dir_B_info.json"), dirInfo(dir_B_sol_path))
+    # compare current run to solution
     if compare:
         dirA_stats = dirStats(dir_A_path)
         dirB_stats = dirStats(dir_B_path)
@@ -154,6 +205,7 @@ def runTest(test_name, config, set=0, rewrite_log=False, compare=True, cleanup=T
         a_test, a_sol, a_diff = dirCompare(dirInfo(dir_A_path), readJson(os.path.join(sol_path, "dir_A_info.json")))
         b_test, b_sol, b_diff = dirCompare(dirInfo(dir_B_path), readJson(os.path.join(sol_path, "dir_B_info.json")))
         compDict = {"a_test_only": a_test, "a_sol_only": a_sol, "a_diff": a_diff, "b_test_only": b_test, "b_sol_only": b_sol, "b_diff": b_diff}
+    # helps to leave this for debugging when tests fail, or creating new test solutions
     if cleanup:
         cleanupTestDir(test_name)
     if compare:
@@ -301,14 +353,14 @@ class TestBackupy(unittest.TestCase):
     def test_sync_new_log_set1(self):
         test_name = "sync-new-log-set1"
         config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
-        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, prerewrite_db=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_new_log_norun_set1(self):
         test_name = "sync-new-log-norun-set1"
         config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "norun": True, "backup_time_override": "000000-0000"}
-        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, prerewrite_db=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
@@ -322,14 +374,14 @@ class TestBackupy(unittest.TestCase):
     def test_mirror_source_log_set1(self):
         test_name = "mirror-source-log-set1"
         config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
-        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, prerewrite_db=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_log_dir_set1(self):
         test_name = "mirror-source-log-dir-set1"
         config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy/Config", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
-        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, prerewrite_db=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
@@ -343,8 +395,8 @@ class TestBackupy(unittest.TestCase):
     def test_sync_twice_nochanges(self):
         test_name = "sync-twice-nochanges-set1"
         config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
-        runTest(test_name, config, rewrite_log=True, set=1, compare=False, setup=True, cleanup=False)
-        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1, setup=False, cleanup=True)
+        runTest(test_name, config, rewrite_log=True, prerewrite_db=True, set=1, compare=False, setup=True, cleanup=False)
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, prerewrite_db=True, set=1, setup=False, cleanup=True)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
