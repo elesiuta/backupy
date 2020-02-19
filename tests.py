@@ -35,11 +35,11 @@ def dirInfo(path):
         for subdir in subdir_list:
             full_path = os.path.join(dir_path, subdir)
             if len(os.listdir(full_path)) == 0:
-                relativePath = os.path.relpath(full_path, path).replace(os.path.sep, "/")
+                relativePath = os.path.relpath(full_path, path).replace(os.path.sep, "\\")
                 file_dicts[relativePath] = {"size": 0, "mtime": 0, "crc": 0, "dir": True}
         for fName in sorted(file_list):
             full_path = os.path.join(dir_path, fName)
-            relativePath = os.path.relpath(full_path, path).replace(os.path.sep, "/")
+            relativePath = os.path.relpath(full_path, path).replace(os.path.sep, "\\")
             size = os.path.getsize(full_path)
             mtime = os.path.getmtime(full_path)
             file_dicts[relativePath] = {"size": size, "mtime": mtime, "crc": crc(full_path)}
@@ -49,6 +49,8 @@ def dirCompare(info_a, info_b):
     a_only = []
     b_only = []
     different = []
+    info_a = replaceDictKeySep(info_a)
+    info_b = replaceDictKeySep(info_b)    
     for relativePath in info_a:
         if relativePath in info_b:
             if info_a[relativePath]["crc"] != info_b[relativePath]["crc"]:
@@ -70,7 +72,7 @@ def dirStats(path):
         sub_dir_list.sort()
         dir_count += len(sub_dir_list)
         file_count += len(file_list)
-        # total_folder_size += os.path.getsize(dir_path)
+        total_folder_size += os.path.getsize(dir_path)
         for f in sorted(file_list):
             full_path = os.path.join(dir_path, f)
             total_file_size += os.path.getsize(full_path)
@@ -118,6 +120,12 @@ def rewriteLog(fName):
             for row in data:
                 writer.writerow(row)
 
+def replaceDictKeySep(d):
+    new_d = {}
+    for key in d:
+        new_d[key.replace(os.path.sep, "\\")] = d[key]
+    return new_d
+
 def prerewriteDb(fName):
     # replace path seperators
     if os.path.exists(fName):
@@ -131,10 +139,7 @@ def rewriteDb(fName):
     # replace path seperators
     if os.path.exists(fName):
         db = readJson(fName)
-        new_db = {}
-        for key in db:
-            new_db[key.replace(os.path.sep, "\\")] = db[key]
-        writeJson(fName, new_db)
+        writeJson(fName, replaceDictKeySep(db))
 
 def rewriteTxt(fName):
     # replace path seperators
@@ -164,8 +169,8 @@ def runTest(test_name, config, set=0, rewrite_log=True, prerewrite_db=False, com
     sol_path = os.path.join("tests", "test_solutions", test_name)
     dir_A_sol_path = os.path.join(sol_path, dir_A)
     dir_B_sol_path = os.path.join(sol_path, dir_B)
-    # fix seperators for running tests on windows or linux
-    if prerewrite_db:
+    # fix seperators for running tests on linux (running this on windows still works, probably coincidence?)
+    if prerewrite_db and os.name != "nt":
         if "config_dir" in config:
             db_dir = config["config_dir"]
         else:
@@ -205,6 +210,11 @@ def runTest(test_name, config, set=0, rewrite_log=True, prerewrite_db=False, com
         a_test, a_sol, a_diff = dirCompare(dirInfo(dir_A_path), readJson(os.path.join(sol_path, "dir_A_info.json")))
         b_test, b_sol, b_diff = dirCompare(dirInfo(dir_B_path), readJson(os.path.join(sol_path, "dir_B_info.json")))
         compDict = {"a_test_only": a_test, "a_sol_only": a_sol, "a_diff": a_diff, "b_test_only": b_test, "b_sol_only": b_sol, "b_diff": b_diff}
+        if os.name != "nt":
+            _ = dirA_stats.pop("total_folder_size")
+            _ = dirB_stats.pop("total_folder_size")
+            _ = dirAsol_stats.pop("total_folder_size")
+            _ = dirBsol_stats.pop("total_folder_size")
     # helps to leave this for debugging when tests fail, or creating new test solutions
     if cleanup:
         cleanupTestDir(test_name)

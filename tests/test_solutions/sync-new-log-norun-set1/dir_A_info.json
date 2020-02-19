@@ -41,38 +41,38 @@
   "mtime": 1563369444.0,
   "crc": 458074504
  },
- ".backupy/database.json": {
+ ".backupy\\database.json": {
   "size": 1201,
   "mtime": 1575252883.424673,
   "crc": 3429115994
  },
- ".backupy/log-000000-0000.csv": {
+ ".backupy\\log-000000-0000.csv": {
   "size": 4700,
   "mtime": 1577118029.2397518,
   "crc": 1952924673
  },
- ".backupy/000000-0000/file modified newer on B.txt": {
+ ".backupy\\000000-0000\\file modified newer on B.txt": {
   "size": 35,
   "mtime": 1563366092.0,
   "crc": 847206596
  },
- "same nested dir/same empty dir": {
+ "same nested dir\\same empty dir": {
   "size": 0,
   "mtime": 0,
   "crc": 0,
   "dir": true
  },
- "subdir/renamed dir A/file1.txt": {
+ "subdir\\renamed dir A\\file1.txt": {
   "size": 11,
   "mtime": 1563369360.0,
   "crc": 222957957
  },
- "subdir/renamed dir A/file2.txt": {
+ "subdir\\renamed dir A\\file2.txt": {
   "size": 2,
   "mtime": 1563369366.0,
   "crc": 841265288
  },
- "subdir/renamed dir A/file3.txt": {
+ "subdir\\renamed dir A\\file3.txt": {
   "size": 45,
   "mtime": 1563369386.0,
   "crc": 125021452
