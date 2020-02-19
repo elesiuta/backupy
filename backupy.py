@@ -178,6 +178,7 @@ class ConfigObject:
         self.save_json = True
         self.stdout_status_bar = True
         self.verbose = True
+        self.force_posix_path_sep = False
         self.quit_on_db_conflict = False
         # config for testing and debugging
         self.backup_time_override = False
@@ -200,7 +201,7 @@ class ConfigObject:
 
 
 class DirInfo:
-    def __init__(self, directory: str, compare_mode: str,  config_dir: str, ignored_toplevel_folders: list = [], gui: bool = False):
+    def __init__(self, directory: str, compare_mode: str,  config_dir: str, ignored_toplevel_folders: list = [], gui: bool = False, force_posix_path_sep: bool = False):
         self.file_dicts = {}
         self.loaded_dicts = {}
         self.loaded_diffs = {}
@@ -211,6 +212,7 @@ class DirInfo:
         self.config_dir = config_dir
         self.ignored_toplevel_folders = list(set(ignored_toplevel_folders[:] + [config_dir]))
         self.gui = gui
+        self.force_posix_path_sep = force_posix_path_sep
 
     def getDirDict(self) -> dict:
         return self.file_dicts
@@ -340,6 +342,8 @@ class DirInfo:
                 for file_name in sorted(file_list):
                     full_path = os.path.join(dir_path, file_name)
                     relative_path = os.path.relpath(full_path, self.dir)
+                    if self.force_posix_path_sep:
+                        relative_path = relative_path.replace(os.path.sep, "/")
                     scan_status.update(relative_path)
                     # get file attributes
                     size = os.path.getsize(full_path)
@@ -748,10 +752,10 @@ class BackupManager:
         # init dir scanning and load previous scan data if available
         self.source = DirInfo(self.config.source, self.config.compare_mode, self.config.config_dir,
                               [self.config.archive_dir, self.config.log_dir, self.config.trash_dir],
-                              self.gui)
+                              self.gui, self.config.force_posix_path_sep)
         self.dest = DirInfo(self.config.dest, self.config.compare_mode, self.config.config_dir,
                             [self.config.archive_dir, self.config.log_dir, self.config.trash_dir],
-                            self.gui)
+                            self.gui, self.config.force_posix_path_sep)
         database_load_success = False
         if self.config.load_json:
             self.source.loadJson()
