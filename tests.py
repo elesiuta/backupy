@@ -9,6 +9,12 @@ import json
 
 import backupy
 
+def crc(fileName, prev = 0):
+    with open(fileName,"rb") as f:
+        for line in f:
+            prev = zlib.crc32(line, prev)
+    return prev
+
 def readJson(file_path: str) -> dict:
     if os.path.exists(file_path):
         with open(file_path, "r", encoding="utf-8", errors="surrogateescape") as json_file:
@@ -21,109 +27,6 @@ def writeJson(file_path: str, data: dict, subdir: bool = True) -> None:
         os.makedirs(os.path.dirname(file_path))
     with open(file_path, "w", encoding="utf-8", errors="surrogateescape", newline="\r\n") as json_file:
         json.dump(data, json_file, indent=1, separators=(',', ': '))
-
-def crc(fileName, prev = 0):
-    with open(fileName,"rb") as f:
-        for line in f:
-            prev = zlib.crc32(line, prev)
-    return prev
-
-def dirInfo(path):
-    file_dicts = {}
-    for dir_path, subdir_list, file_list in os.walk(path):
-        subdir_list.sort()
-        for subdir in subdir_list:
-            full_path = os.path.join(dir_path, subdir)
-            if len(os.listdir(full_path)) == 0:
-                relativePath = os.path.relpath(full_path, path).replace(os.path.sep, "\\")
-                file_dicts[relativePath] = {"size": 0, "mtime": 0, "crc": 0, "dir": True}
-        for fName in sorted(file_list):
-            full_path = os.path.join(dir_path, fName)
-            relativePath = os.path.relpath(full_path, path).replace(os.path.sep, "\\")
-            size = os.path.getsize(full_path)
-            if ".backupy" in dir_path:
-                mtime = 0
-            else:
-                mtime = 0
-                # mtime = os.path.getmtime(full_path)
-            file_dicts[relativePath] = {"size": size, "mtime": mtime, "crc": crc(full_path)}
-    return file_dicts
-
-def dirCompare(info_a, info_b):
-    a_only = []
-    b_only = []
-    different = []
-    info_a = replaceDictKeySep(info_a)
-    info_b = replaceDictKeySep(info_b)    
-    for relativePath in info_a:
-        if relativePath in info_b:
-            if info_a[relativePath]["crc"] != info_b[relativePath]["crc"]:
-                    different.append(relativePath)
-        else:
-            a_only.append(relativePath)
-    for relativePath in info_b:
-        if relativePath not in info_a:
-            b_only.append(relativePath)
-    return a_only, b_only, different
-
-def dirStats(path):
-    total_crc = 0
-    file_count = 0
-    dir_count = 0
-    total_file_size = 0
-    total_folder_size = 0
-    for dir_path, sub_dir_list, file_list in os.walk(path):
-        sub_dir_list.sort()
-        dir_count += len(sub_dir_list)
-        file_count += len(file_list)
-        total_folder_size += os.path.getsize(dir_path)
-        for f in sorted(file_list):
-            full_path = os.path.join(dir_path, f)
-            total_file_size += os.path.getsize(full_path)
-            total_crc += crc(full_path)
-            total_crc %= (0xFFFFFFFF + 1)
-    return {"total_crc": total_crc, "file_count": file_count, "dir_count": dir_count, "total_file_size": total_file_size, "total_folder_size": total_folder_size}
-
-def setupTestDir(test_name, test_zip):
-    shutil.rmtree(test_name, ignore_errors=True)
-    shutil.unpack_archive(test_zip, test_name)
-    with zipfile.ZipFile(test_zip, "r") as z:
-        for f in z.infolist():
-            file_name = os.path.join(test_name, f.filename)
-            date_time = time.mktime(f.date_time + (0, 0, -1))
-            os.utime(file_name, (date_time, date_time))
-
-def cleanupTestDir(test_name):
-    shutil.rmtree(test_name)
-
-def rewriteLog(fName):
-    # rewrite paths as relative to cwd and remove settings
-    if os.path.exists(fName):
-        cwd = os.getcwd()
-        cwd2 = cwd.replace(os.path.sep, "\\")
-        cwd3 = cwd.replace("\\", "\\\\")
-        cwd4 = cwd.replace(os.path.sep, "/")
-        with open(fName, "r") as f:
-            data = []
-            reader = csv.reader(f)
-            settings_line_count = 2
-            for row in reader:
-                if settings_line_count > 0:
-                    settings_line_count -= 1
-                    continue
-                new_row = []
-                for col in row:
-                    if type(col) == str:
-                        col = col.replace(cwd, "")
-                        col = col.replace(cwd2, "")
-                        col = col.replace(cwd3, "")
-                        col = col.replace(cwd4, "")
-                    new_row.append(col)
-                data.append(new_row)
-        with open(fName, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
-            writer = csv.writer(f, delimiter=",")
-            for row in data:
-                writer.writerow(row)
 
 def replaceDictKeySep(d):
     # replace path separators to windows for consistent testing
@@ -165,7 +68,107 @@ def rewriteLineEndings(fName):
         with open(fName, "w", encoding="utf-8", newline="\r\n") as f:
             f.writelines(data)
 
-def runTest(test_name, config, set=0, rewrite_log=True, rewrite_sep=True, compare=True, cleanup=True, setup=True, write_info=False):
+def rewriteLog(fName):
+    # rewrite paths as relative to cwd and remove settings
+    if os.path.exists(fName):
+        cwd = os.getcwd()
+        cwd2 = cwd.replace(os.path.sep, "\\")
+        cwd3 = cwd.replace("\\", "\\\\")
+        cwd4 = cwd.replace(os.path.sep, "/")
+        with open(fName, "r") as f:
+            data = []
+            reader = csv.reader(f)
+            settings_line_count = 2
+            for row in reader:
+                if settings_line_count > 0:
+                    settings_line_count -= 1
+                    continue
+                new_row = []
+                for col in row:
+                    if type(col) == str:
+                        col = col.replace(cwd, "")
+                        col = col.replace(cwd2, "")
+                        col = col.replace(cwd3, "")
+                        col = col.replace(cwd4, "")
+                    new_row.append(col)
+                data.append(new_row)
+        with open(fName, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
+            writer = csv.writer(f, delimiter=",")
+            for row in data:
+                writer.writerow(row)
+
+def dirInfo(path):
+    # just used for assert message on failure to help with debugging
+    file_dicts = {}
+    for dir_path, subdir_list, file_list in os.walk(path):
+        subdir_list.sort()
+        for subdir in subdir_list:
+            full_path = os.path.join(dir_path, subdir)
+            if len(os.listdir(full_path)) == 0:
+                relativePath = os.path.relpath(full_path, path).replace(os.path.sep, "\\")
+                file_dicts[relativePath] = {"size": 0, "mtime": 0, "crc": 0, "dir": True}
+        for fName in sorted(file_list):
+            full_path = os.path.join(dir_path, fName)
+            relativePath = os.path.relpath(full_path, path).replace(os.path.sep, "\\")
+            size = os.path.getsize(full_path)
+            if ".backupy" in dir_path:
+                mtime = 0
+            else:
+                mtime = 0
+                # mtime = os.path.getmtime(full_path)
+            file_dicts[relativePath] = {"size": size, "mtime": mtime, "crc": crc(full_path)}
+    return file_dicts
+
+def dirCompare(info_a, info_b):
+    # just used for assert message on failure to help with debugging
+    a_only = []
+    b_only = []
+    different = []
+    info_a = replaceDictKeySep(info_a)
+    info_b = replaceDictKeySep(info_b)    
+    for relativePath in info_a:
+        if relativePath in info_b:
+            if info_a[relativePath]["crc"] != info_b[relativePath]["crc"]:
+                    different.append(relativePath)
+        else:
+            a_only.append(relativePath)
+    for relativePath in info_b:
+        if relativePath not in info_a:
+            b_only.append(relativePath)
+    return a_only, b_only, different
+
+def dirStats(path):
+    # used to check if the test run matches the solution
+    total_crc = 0
+    file_count = 0
+    dir_count = 0
+    total_file_size = 0
+    total_folder_size = 0
+    for dir_path, sub_dir_list, file_list in os.walk(path):
+        sub_dir_list.sort()
+        dir_count += len(sub_dir_list)
+        file_count += len(file_list)
+        total_folder_size += os.path.getsize(dir_path)
+        for f in sorted(file_list):
+            full_path = os.path.join(dir_path, f)
+            total_file_size += os.path.getsize(full_path)
+            total_crc += crc(full_path)
+            total_crc %= (0xFFFFFFFF + 1)
+    return {"total_crc": total_crc, "file_count": file_count, "dir_count": dir_count, "total_file_size": total_file_size, "total_folder_size": total_folder_size}
+
+def setupTestDir(test_name, test_zip):
+    shutil.rmtree(test_name, ignore_errors=True)
+    shutil.unpack_archive(test_zip, test_name)
+    with zipfile.ZipFile(test_zip, "r") as z:
+        for f in z.infolist():
+            file_name = os.path.join(test_name, f.filename)
+            date_time = time.mktime(f.date_time + (0, 0, -1))
+            os.utime(file_name, (date_time, date_time))
+
+def cleanupTestDir(test_name):
+    shutil.rmtree(test_name)
+
+def runTest(test_name, config, set=0, rewrite_log=True, rewrite_sep=True, compare=True, setup=True, cleanup=True, write_info=False):
     # init dirs
     if setup:
         print("####### TEST: " + test_name + " #######")

@@ -26,8 +26,8 @@ moveFile(),\sync-new-log\dir B,\sync-new-log\dir B,renamed file B.txt,renamed fi
 moveFile(),\sync-new-log\dir B,\sync-new-log\dir B,renamed dir B\file1.txt,subdir\renamed dir A\file1.txt
 moveFile(),\sync-new-log\dir B,\sync-new-log\dir B,renamed dir B\file2.txt,subdir\renamed dir A\file2.txt
 moveFile(),\sync-new-log\dir B,\sync-new-log\dir B,renamed dir B\file3.txt,subdir\renamed dir A\file3.txt
-moveFile(),\sync-new-log\dir B,\sync-new-log\dir B,file modified newer on A.txt,.backupy\000000-0000\file modified newer on A.txt
+moveFile(),\sync-new-log\dir B,\sync-new-log\dir B\.backupy\000000-0000,file modified newer on A.txt,file modified newer on A.txt
 copyFile(),\sync-new-log\dir A,\sync-new-log\dir B,file modified newer on A.txt,file modified newer on A.txt
-moveFile(),\sync-new-log\dir A,\sync-new-log\dir A,file modified newer on B.txt,.backupy\000000-0000\file modified newer on B.txt
+moveFile(),\sync-new-log\dir A,\sync-new-log\dir A\.backupy\000000-0000,file modified newer on B.txt,file modified newer on B.txt
 copyFile(),\sync-new-log\dir B,\sync-new-log\dir A,file modified newer on B.txt,file modified newer on B.txt
 ### COMPLETED ###

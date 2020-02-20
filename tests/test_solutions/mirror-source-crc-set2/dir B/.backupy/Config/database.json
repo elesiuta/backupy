@@ -92,27 +92,12 @@
   "mtime": 1563365688.0,
   "crc": 2097105078
  },
- ".backupy\\Archive\\000000-0000\\.backupy\\database.json": {
-  "size": 1249,
-  "mtime": 1582139350.0,
-  "crc": 4261732806
- },
  ".backupy\\database.json": {
   "size": 1262,
   "mtime": 1582139274.0,
   "crc": 2715264291
  },
- ".backupy\\Archive\\000000-0000\\corrupted file A.txt": {
-  "size": 2,
-  "mtime": 1563365844.0,
-  "crc": 458074504
- },
  "corrupted file A.txt": {
-  "size": 2,
-  "mtime": 1563365844.0,
-  "crc": 4063104189
- },
- ".backupy\\Archive\\000000-0000\\corrupted file B.txt": {
   "size": 2,
   "mtime": 1563365844.0,
   "crc": 4063104189
@@ -122,30 +107,15 @@
   "mtime": 1563365844.0,
   "crc": 458074504
  },
- ".backupy\\Archive\\000000-0000\\file modified newer on A.txt": {
-  "size": 319,
-  "mtime": 1563366218.0,
-  "crc": 1624980325
- },
  "file modified newer on A.txt": {
   "size": 640,
   "mtime": 1575245024.0,
   "crc": 4087299154
  },
- ".backupy\\Archive\\000000-0000\\file modified newer on B.txt": {
-  "size": 202,
-  "mtime": 1575245288.0,
-  "crc": 4256320678
- },
  "file modified newer on B.txt": {
   "size": 100,
   "mtime": 1563366148.0,
   "crc": 1459518598
- },
- ".backupy\\Archive\\000000-0000\\new corrupted file.txt": {
-  "size": 11,
-  "mtime": 1582137344.0,
-  "crc": 1470702120
  },
  "new corrupted file.txt": {
   "size": 11,

@@ -57,8 +57,8 @@ copyFile(),\sync-new-log-set1\dir A set 1,\sync-new-log-set1\dir B set 1,new fil
 copyFile(),\sync-new-log-set1\dir B set 1,\sync-new-log-set1\dir A set 1,file only B.txt,file only B.txt
 copyFile(),\sync-new-log-set1\dir B set 1,\sync-new-log-set1\dir A set 1,new file B.txt,new file B.txt
 moveFile(),\sync-new-log-set1\dir B set 1,\sync-new-log-set1\dir B set 1,renamed file B.txt,renamed file A.txt
-moveFile(),\sync-new-log-set1\dir B set 1,\sync-new-log-set1\dir B set 1,file modified newer on A.txt,.backupy\000000-0000\file modified newer on A.txt
+moveFile(),\sync-new-log-set1\dir B set 1,\sync-new-log-set1\dir B set 1\.backupy\000000-0000,file modified newer on A.txt,file modified newer on A.txt
 copyFile(),\sync-new-log-set1\dir A set 1,\sync-new-log-set1\dir B set 1,file modified newer on A.txt,file modified newer on A.txt
-moveFile(),\sync-new-log-set1\dir A set 1,\sync-new-log-set1\dir A set 1,file modified newer on B.txt,.backupy\000000-0000\file modified newer on B.txt
+moveFile(),\sync-new-log-set1\dir A set 1,\sync-new-log-set1\dir A set 1\.backupy\000000-0000,file modified newer on B.txt,file modified newer on B.txt
 copyFile(),\sync-new-log-set1\dir B set 1,\sync-new-log-set1\dir A set 1,file modified newer on B.txt,file modified newer on B.txt
 ### COMPLETED ###

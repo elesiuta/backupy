@@ -35,10 +35,10 @@ moveFile(),<dest>,<dest>,copied both - 2.txt,copied both - 1.txt
 moveFile(),<dest>,<dest>,moved and copied A.txt,moved and copied A - 2.txt
 moveFile(),<dest>,<dest>,renamed file B.txt,renamed file A.txt
 moveFile(),<dest>,<dest>,same file corrupted.txt,same file copied.txt
-moveFile(),<dest>,<dest>,.backupy\database.json,.backupy\Archive\000000-0000\.backupy\database.json
+moveFile(),<dest>,<dest>\.backupy\Archive\000000-0000,.backupy\database.json,.backupy\database.json
 copyFile(),<source>,<dest>,.backupy\database.json,.backupy\database.json
-moveFile(),<dest>,<dest>,file modified newer on A.txt,.backupy\Archive\000000-0000\file modified newer on A.txt
+moveFile(),<dest>,<dest>\.backupy\Archive\000000-0000,file modified newer on A.txt,file modified newer on A.txt
 copyFile(),<source>,<dest>,file modified newer on A.txt,file modified newer on A.txt
-moveFile(),<dest>,<dest>,file modified newer on B.txt,.backupy\Archive\000000-0000\file modified newer on B.txt
+moveFile(),<dest>,<dest>\.backupy\Archive\000000-0000,file modified newer on B.txt,file modified newer on B.txt
 copyFile(),<source>,<dest>,file modified newer on B.txt,file modified newer on B.txt
 ### COMPLETED ###

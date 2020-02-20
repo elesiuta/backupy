@@ -26,8 +26,8 @@ moveFile(),\mirror-source-log-dir-set0\dir B,\mirror-source-log-dir-set0\dir B,r
 moveFile(),\mirror-source-log-dir-set0\dir B,\mirror-source-log-dir-set0\dir B,renamed dir B\file1.txt,subdir\renamed dir A\file1.txt
 moveFile(),\mirror-source-log-dir-set0\dir B,\mirror-source-log-dir-set0\dir B,renamed dir B\file2.txt,subdir\renamed dir A\file2.txt
 moveFile(),\mirror-source-log-dir-set0\dir B,\mirror-source-log-dir-set0\dir B,renamed dir B\file3.txt,subdir\renamed dir A\file3.txt
-moveFile(),\mirror-source-log-dir-set0\dir B,\mirror-source-log-dir-set0\dir B,file modified newer on A.txt,.backupy\Archive\000000-0000\file modified newer on A.txt
+moveFile(),\mirror-source-log-dir-set0\dir B,\mirror-source-log-dir-set0\dir B\.backupy\Archive\000000-0000,file modified newer on A.txt,file modified newer on A.txt
 copyFile(),\mirror-source-log-dir-set0\dir A,\mirror-source-log-dir-set0\dir B,file modified newer on A.txt,file modified newer on A.txt
-moveFile(),\mirror-source-log-dir-set0\dir B,\mirror-source-log-dir-set0\dir B,file modified newer on B.txt,.backupy\Archive\000000-0000\file modified newer on B.txt
+moveFile(),\mirror-source-log-dir-set0\dir B,\mirror-source-log-dir-set0\dir B\.backupy\Archive\000000-0000,file modified newer on B.txt,file modified newer on B.txt
 copyFile(),\mirror-source-log-dir-set0\dir A,\mirror-source-log-dir-set0\dir B,file modified newer on B.txt,file modified newer on B.txt
 ### COMPLETED ###

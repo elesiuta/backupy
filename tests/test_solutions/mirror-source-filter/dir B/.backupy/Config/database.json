@@ -41,17 +41,9 @@
   "crc": 0,
   "dir": true
  },
- ".backupy\\Archive\\000000-0000\\file modified newer on A.txt": {
-  "size": 158,
-  "mtime": 1563369766.0
- },
  "file modified newer on A.txt": {
   "size": 319,
   "mtime": 1563369818.0
- },
- ".backupy\\Archive\\000000-0000\\file modified newer on B.txt": {
-  "size": 100,
-  "mtime": 1563369748.0
  },
  "file modified newer on B.txt": {
   "size": 35,

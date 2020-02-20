@@ -89,25 +89,13 @@
   "size": 2,
   "mtime": 1563365844.0
  },
- ".backupy\\Archive\\000000-0000\\.backupy\\database.json": {
-  "size": 1249,
-  "mtime": 1582139350.0
- },
  ".backupy\\database.json": {
   "size": 1262,
   "mtime": 1582139274.0
  },
- ".backupy\\Archive\\000000-0000\\file modified newer on A.txt": {
-  "size": 319,
-  "mtime": 1563366218.0
- },
  "file modified newer on A.txt": {
   "size": 640,
   "mtime": 1575245024.0
- },
- ".backupy\\Archive\\000000-0000\\file modified newer on B.txt": {
-  "size": 202,
-  "mtime": 1575245288.0
  },
  "file modified newer on B.txt": {
   "size": 100,
