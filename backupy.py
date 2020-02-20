@@ -803,7 +803,7 @@ class BackupManager:
                 print(self.colourString(getString("Sync Database Conflicts: %s") %(len(sync_conflicts)), "HEADER"))
                 self.printSyncDbConflicts(sync_conflicts, source_dict, dest_dict, source_loaded_db, dest_loaded_db)
             else:
-                dest_conflicts = list(dest_diffs.keys()) + list(dest_missing.keys())
+                dest_conflicts = sorted(list(set(dest_diffs) | set(dest_missing)))
                 if len(dest_conflicts) >= 1:
                     print(self.colourString(getString("WARNING: found files modified in the destination since last scan"), "WARNING"))
                     abort_run = True
@@ -822,7 +822,7 @@ class BackupManager:
                 if set(source_crc_errors) != set(dest_crc_errors):
                     raise Exception("Inconsistent CRC error detection between source and dest")
                 print(self.colourString(getString("CRC Errors Detected: %s") %(len(source_crc_errors)), "HEADER"))
-                self.printChangedFiles(list(source_crc_errors.keys()), source_crc_errors, dest_crc_errors)
+                self.printChangedFiles(sorted(list(source_crc_errors)), source_crc_errors, dest_crc_errors)
         if self.config.quit_on_db_conflict and abort_run:
             return self.abortRun()
         # prepare diff messages
