@@ -412,8 +412,8 @@ class TestBackupy(unittest.TestCase):
     def test_sync_twice_nochanges(self):
         test_name = "sync-twice-nochanges-set1"
         config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
-        runTest(test_name, config, rewrite_log=True, set=1, compare=False, setup=True, cleanup=False)
-        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1, setup=False, cleanup=True)
+        runTest(test_name, config, rewrite_log=True, set=1, compare=False, setup=True, cleanup=False, write_info=False)
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1, setup=False)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 

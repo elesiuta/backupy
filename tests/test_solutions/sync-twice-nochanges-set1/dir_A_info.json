@@ -1,4 +1,16 @@
 {
+ "empty dir only A": {
+  "size": 0,
+  "mtime": 0,
+  "crc": 0,
+  "dir": true
+ },
+ "same empty dir": {
+  "size": 0,
+  "mtime": 0,
+  "crc": 0,
+  "dir": true
+ },
  "file modified newer on A.txt": {
   "size": 640,
   "mtime": 0,
@@ -53,6 +65,12 @@
   "size": 100,
   "mtime": 0,
   "crc": 1459518598
+ },
+ "same nested dir\\same empty dir": {
+  "size": 0,
+  "mtime": 0,
+  "crc": 0,
+  "dir": true
  },
  "subdir\\renamed dir A\\file1.txt": {
   "size": 11,
