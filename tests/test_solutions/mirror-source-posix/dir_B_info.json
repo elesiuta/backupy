@@ -49,7 +49,13 @@
  ".backupy\\Config\\database.json": {
   "size": 887,
   "mtime": 0,
-  "crc": 3516432527
+  "crc": 3249643170
+ },
+ ".backupy\\Trash\\000000-0000\\empty dir only B": {
+  "size": 0,
+  "mtime": 0,
+  "crc": 0,
+  "dir": true
  },
  ".backupy\\Trash\\000000-0000\\file only B.txt": {
   "size": 9,

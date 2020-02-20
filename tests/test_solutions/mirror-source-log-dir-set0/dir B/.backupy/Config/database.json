@@ -15,15 +15,15 @@
   "crc": 0,
   "dir": true
  },
- "file only A.txt": {
-  "size": 2,
-  "mtime": 1563369588.0
- },
  "empty dir only A": {
   "size": 0,
   "mtime": 0,
   "crc": 0,
   "dir": true
+ },
+ "file only A.txt": {
+  "size": 2,
+  "mtime": 1563369588.0
  },
  "renamed file A.txt": {
   "size": 14,

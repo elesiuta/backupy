@@ -418,15 +418,14 @@ class DirInfo:
         if not no_moves:
             for f1 in reversed(self_only):
                 for f2 in reversed(second_only):
-                    # should empty dirs be moved?
-                    # if "dir" not in self.file_dicts[f1] and "dir" not in secondInfo.file_dicts[f2]:
-                    if self.fileMatch(f1, f2, secondInfo, compare_mode, True):
-                        moved.append({"source": f1, "dest": f2})
-                        self_only.remove(f1)
-                        second_only.remove(f2)
-                        _ = secondInfo.missing_files.pop(f1, 1)
-                        _ = self.missing_files.pop(f2, 1)
-                        break
+                    if "dir" not in self.file_dicts[f1] and "dir" not in secondInfo.file_dicts[f2]:
+                        if self.fileMatch(f1, f2, secondInfo, compare_mode, True):
+                            moved.append({"source": f1, "dest": f2})
+                            self_only.remove(f1)
+                            second_only.remove(f2)
+                            _ = secondInfo.missing_files.pop(f1, 1)
+                            _ = self.missing_files.pop(f2, 1)
+                            break
             moved.reverse()
         return self_only, second_only, changed, moved
 

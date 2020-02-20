@@ -41,6 +41,12 @@
   "mtime": 0,
   "crc": 399752217
  },
+ ".backupy\\Deleted\\000000-0000\\empty dir only B": {
+  "size": 0,
+  "mtime": 0,
+  "crc": 0,
+  "dir": true
+ },
  ".backupy\\Deleted\\000000-0000\\file only B.txt": {
   "size": 9,
   "mtime": 0,
