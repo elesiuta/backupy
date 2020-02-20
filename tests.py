@@ -41,7 +41,11 @@ def dirInfo(path):
             full_path = os.path.join(dir_path, fName)
             relativePath = os.path.relpath(full_path, path).replace(os.path.sep, "\\")
             size = os.path.getsize(full_path)
-            mtime = os.path.getmtime(full_path)
+            if ".backupy" in dir_path:
+                mtime = 0
+            else:
+                mtime = 0
+                # mtime = os.path.getmtime(full_path)
             file_dicts[relativePath] = {"size": size, "mtime": mtime, "crc": crc(full_path)}
     return file_dicts
 

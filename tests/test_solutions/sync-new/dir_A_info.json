@@ -19,52 +19,52 @@
  },
  "file modified newer on A.txt": {
   "size": 319,
-  "mtime": 1563369817.8317592,
+  "mtime": 0,
   "crc": 1624980325
  },
  "file modified newer on B.txt": {
   "size": 100,
-  "mtime": 1563369746.6046274,
+  "mtime": 0,
   "crc": 1459518598
  },
  "file only A.txt": {
   "size": 2,
-  "mtime": 1563369586.7372432,
+  "mtime": 0,
   "crc": 458074504
  },
  "file only B.txt": {
   "size": 9,
-  "mtime": 1563369614.3762193,
+  "mtime": 0,
   "crc": 69258562
  },
  "renamed file A.txt": {
   "size": 14,
-  "mtime": 1563369287.876119,
+  "mtime": 0,
   "crc": 2097105078
  },
  "renamed file B.txt": {
   "size": 14,
-  "mtime": 1563369287.876119,
+  "mtime": 0,
   "crc": 2097105078
  },
  "same file.txt": {
   "size": 2,
-  "mtime": 1563369442.1378298,
+  "mtime": 0,
   "crc": 458074504
  },
  "renamed dir B\\file1.txt": {
   "size": 11,
-  "mtime": 1563369359.884478,
+  "mtime": 0,
   "crc": 222957957
  },
  "renamed dir B\\file2.txt": {
   "size": 2,
-  "mtime": 1563369365.3224995,
+  "mtime": 0,
   "crc": 841265288
  },
  "renamed dir B\\file3.txt": {
   "size": 45,
-  "mtime": 1563369385.3142302,
+  "mtime": 0,
   "crc": 125021452
  },
  "same nested dir\\same empty dir": {
@@ -75,17 +75,17 @@
  },
  "subdir\\renamed dir A\\file1.txt": {
   "size": 11,
-  "mtime": 1563369359.884478,
+  "mtime": 0,
   "crc": 222957957
  },
  "subdir\\renamed dir A\\file2.txt": {
   "size": 2,
-  "mtime": 1563369365.3224995,
+  "mtime": 0,
   "crc": 841265288
  },
  "subdir\\renamed dir A\\file3.txt": {
   "size": 45,
-  "mtime": 1563369385.3142302,
+  "mtime": 0,
   "crc": 125021452
  }
 }

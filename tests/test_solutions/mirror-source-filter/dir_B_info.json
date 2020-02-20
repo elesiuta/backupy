@@ -13,57 +13,57 @@
  },
  "file modified newer on A.txt": {
   "size": 319,
-  "mtime": 1563369818.0,
+  "mtime": 0,
   "crc": 1624980325
  },
  "file modified newer on B.txt": {
   "size": 35,
-  "mtime": 1563369692.0,
+  "mtime": 0,
   "crc": 847206596
  },
  "file only B.txt": {
   "size": 9,
-  "mtime": 1563369616.0,
+  "mtime": 0,
   "crc": 69258562
  },
  "renamed file B.txt": {
   "size": 14,
-  "mtime": 1563369288.0,
+  "mtime": 0,
   "crc": 2097105078
  },
  "same file.txt": {
   "size": 2,
-  "mtime": 1563369444.0,
+  "mtime": 0,
   "crc": 458074504
  },
  ".backupy\\Archive\\000000-0000\\file modified newer on A.txt": {
   "size": 158,
-  "mtime": 1563369766.0,
+  "mtime": 0,
   "crc": 399752217
  },
  ".backupy\\Archive\\000000-0000\\file modified newer on B.txt": {
   "size": 100,
-  "mtime": 1563369748.0,
+  "mtime": 0,
   "crc": 1459518598
  },
  ".backupy\\Config\\database.json": {
   "size": 1098,
-  "mtime": 1582086407.454116,
+  "mtime": 0,
   "crc": 747273159
  },
  "renamed dir B\\file1.txt": {
   "size": 11,
-  "mtime": 1563369360.0,
+  "mtime": 0,
   "crc": 222957957
  },
  "renamed dir B\\file2.txt": {
   "size": 2,
-  "mtime": 1563369366.0,
+  "mtime": 0,
   "crc": 841265288
  },
  "renamed dir B\\file3.txt": {
   "size": 45,
-  "mtime": 1563369386.0,
+  "mtime": 0,
   "crc": 125021452
  },
  "same nested dir\\same empty dir": {
