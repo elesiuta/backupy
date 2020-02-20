@@ -19,15 +19,15 @@ Dest:,,renamed dir B/file2.txt,"{'size': 2, 'mtime': 1563369366.0}"
 Source:,,subdir/renamed dir A/file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
 Dest:,,renamed dir B/file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
 ### START MIRROR ###
-copyFile(),\mirror-source-posix\dir A,\mirror-source-posix\dir B,file only A.txt,file only A.txt
-moveFile(),\mirror-source-posix\dir B,\mirror-source-posix\dir B\.backupy\Trash\000000-0000,file only B.txt,file only B.txt
-moveFile(),\mirror-source-posix\dir B,\mirror-source-posix\dir B,empty dir only B,empty dir only A
-moveFile(),\mirror-source-posix\dir B,\mirror-source-posix\dir B,renamed file B.txt,renamed file A.txt
-moveFile(),\mirror-source-posix\dir B,\mirror-source-posix\dir B,renamed dir B/file1.txt,subdir/renamed dir A/file1.txt
-moveFile(),\mirror-source-posix\dir B,\mirror-source-posix\dir B,renamed dir B/file2.txt,subdir/renamed dir A/file2.txt
-moveFile(),\mirror-source-posix\dir B,\mirror-source-posix\dir B,renamed dir B/file3.txt,subdir/renamed dir A/file3.txt
-moveFile(),\mirror-source-posix\dir B,\mirror-source-posix\dir B,file modified newer on A.txt,.backupy\Archive\000000-0000\file modified newer on A.txt
-copyFile(),\mirror-source-posix\dir A,\mirror-source-posix\dir B,file modified newer on A.txt,file modified newer on A.txt
-moveFile(),\mirror-source-posix\dir B,\mirror-source-posix\dir B,file modified newer on B.txt,.backupy\Archive\000000-0000\file modified newer on B.txt
-copyFile(),\mirror-source-posix\dir A,\mirror-source-posix\dir B,file modified newer on B.txt,file modified newer on B.txt
+copyFile(),<source>,<dest>,file only A.txt,file only A.txt
+moveFile(),<dest>,<dest>/.backupy/Trash/000000-0000,file only B.txt,file only B.txt
+moveFile(),<dest>,<dest>,empty dir only B,empty dir only A
+moveFile(),<dest>,<dest>,renamed file B.txt,renamed file A.txt
+moveFile(),<dest>,<dest>,renamed dir B/file1.txt,subdir/renamed dir A/file1.txt
+moveFile(),<dest>,<dest>,renamed dir B/file2.txt,subdir/renamed dir A/file2.txt
+moveFile(),<dest>,<dest>,renamed dir B/file3.txt,subdir/renamed dir A/file3.txt
+moveFile(),<dest>,<dest>/.backupy/Archive/000000-0000,file modified newer on A.txt,file modified newer on A.txt
+copyFile(),<source>,<dest>,file modified newer on A.txt,file modified newer on A.txt
+moveFile(),<dest>,<dest>/.backupy/Archive/000000-0000,file modified newer on B.txt,file modified newer on B.txt
+copyFile(),<source>,<dest>,file modified newer on B.txt,file modified newer on B.txt
 ### COMPLETED ###

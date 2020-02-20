@@ -236,6 +236,9 @@ class DirInfo:
         self.loaded_dicts = readJson(os.path.join(self.dir, self.config_dir, "database.json"))
 
     def updateDictOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
+        if self.force_posix_path_sep:
+            source_file = source_file.replace(os.path.sep, "/")
+            dest_file = dest_file.replace(os.path.sep, "/")
         if self.dir == source_root and secondInfo.dir == dest_root:
             secondInfo.file_dicts[dest_file] = self.file_dicts[source_file]
         elif self.dir == dest_root and secondInfo.dir == source_root:
@@ -244,6 +247,9 @@ class DirInfo:
             raise Exception("Update Dict Error")
 
     def updateDictOnMove(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
+        if self.force_posix_path_sep:
+            source_file = source_file.replace(os.path.sep, "/")
+            dest_file = dest_file.replace(os.path.sep, "/")
         if source_root == dest_root == self.dir:
             self.file_dicts[dest_file] = self.file_dicts.pop(source_file)
         elif source_root == dest_root == secondInfo.dir:
@@ -256,6 +262,8 @@ class DirInfo:
             raise Exception("Update Dict Error")
 
     def updateDictOnRemove(self, root: str, relative_path: str, secondInfo: 'DirInfo') -> None:
+        if self.force_posix_path_sep:
+            relative_path = relative_path.replace(os.path.sep, "/")
         if root == self.dir:
             _ = self.file_dicts.pop(relative_path)
         elif root == secondInfo.dir:
@@ -340,6 +348,8 @@ class DirInfo:
                     full_path = os.path.join(dir_path, subdir)
                     if len(os.listdir(full_path)) == 0:
                         relative_path = os.path.relpath(full_path, self.dir)
+                        if self.force_posix_path_sep:
+                            relative_path = relative_path.replace(os.path.sep, "/")
                         self.file_dicts[relative_path] = {"size": 0, "mtime": 0, "crc": 0, "dir": True}
                 # scan files
                 for file_name in sorted(file_list):
@@ -506,12 +516,15 @@ class BackupManager:
 
     def writeLog(self, db: bool = False) -> None:
         if self.config.csv:
-            if self.config.root_alias_log:
+            if self.config.root_alias_log or self.config.force_posix_path_sep:
                 for i in range(2, len(self.log)):
                     for j in range(len(self.log[i])):
                         if type(self.log[i][j]) == str:
-                            self.log[i][j] = self.log[i][j].replace(self.config.source, getString("<source>"))
-                            self.log[i][j] = self.log[i][j].replace(self.config.dest, getString("<dest>"))
+                            if self.config.root_alias_log:
+                                self.log[i][j] = self.log[i][j].replace(self.config.source, getString("<source>"))
+                                self.log[i][j] = self.log[i][j].replace(self.config.dest, getString("<dest>"))
+                            if self.config.force_posix_path_sep:
+                                self.log[i][j] = self.log[i][j].replace(os.path.sep, "/")
             writeCsv(os.path.join(self.config.source, self.config.log_dir, "log-" + self.backup_time + ".csv"), self.log)
         if self.config.save_json and db:
             self.source.saveJson()
@@ -721,8 +734,8 @@ class BackupManager:
 
     def archiveFile(self, root_path: str, file_path: str) -> None:
         if not self.config.noarchive:
-            archive_path = os.path.join(self.config.archive_dir, self.backup_time, file_path)
-            self.moveFile(root_path, root_path, file_path, archive_path)
+            archive_path = os.path.join(root_path, self.config.archive_dir, self.backup_time)
+            self.moveFile(root_path, archive_path, file_path, file_path)
 
     def handleChanges(self, source: str, dest: str, source_dict: dict, dest_dict:dict, changed: list) -> None:
         self.colourPrint(getString("Handling %s file changes per selection mode") %(len(changed)), "OKBLUE")

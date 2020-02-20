@@ -157,6 +157,14 @@ def rewriteSep(fName):
         with open(fName, "w", encoding="utf-8", newline="\r\n") as f:
             f.writelines(data)
 
+def rewriteLineEndings(fName):
+    # rewrite line endings to windows (for the posix sep test)
+    if os.path.exists(fName):
+        with open(fName, "r") as f:
+            data = f.readlines()
+        with open(fName, "w", encoding="utf-8", newline="\r\n") as f:
+            f.writelines(data)
+
 def runTest(test_name, config, set=0, rewrite_log=True, rewrite_sep=True, compare=True, cleanup=True, setup=True, write_info=False):
     # init dirs
     if setup:
@@ -186,7 +194,7 @@ def runTest(test_name, config, set=0, rewrite_log=True, rewrite_sep=True, compar
     config["dest"] = dir_B_path
     backup_man = backupy.BackupManager(config)
     backup_man.backup()
-    # fix separators again and remove absolute paths
+    # fix separators and line endings again, and remove absolute paths
     if rewrite_log:
         if "log_dir" in config:
             log_dir = config["log_dir"]
@@ -195,13 +203,16 @@ def runTest(test_name, config, set=0, rewrite_log=True, rewrite_sep=True, compar
         rewriteLog(os.path.join(dir_A_path, log_dir, "log-000000-0000.csv"))
         if rewrite_sep:
             rewriteSep(os.path.join(dir_A_path, log_dir, "log-000000-0000.csv"))
+    if "config_dir" in config:
+        db_dir = config["config_dir"]
+    else:
+        db_dir = ".backupy"
     if rewrite_sep:
-        if "config_dir" in config:
-            db_dir = config["config_dir"]
-        else:
-            db_dir = ".backupy"
         rewriteDb(os.path.join(dir_A_path, db_dir, "database.json"))
         rewriteDb(os.path.join(dir_B_path, db_dir, "database.json"))
+    else:
+        rewriteLineEndings(os.path.join(dir_A_path, db_dir, "database.json"))
+        rewriteLineEndings(os.path.join(dir_B_path, db_dir, "database.json"))
     # save solution info (for creating new tests)
     if write_info:
         writeJson(os.path.join(sol_path, "dir_A_stats.json"), dirStats(dir_A_sol_path))
@@ -454,7 +465,7 @@ class TestBackupy(unittest.TestCase):
 
     def test_mirror_source_posix(self):
         test_name = "mirror-source-posix"
-        config = {"main_mode": "mirror", "select_mode": "source", "force_posix_path_sep": True, "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy/Config", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
+        config = {"main_mode": "mirror", "select_mode": "source", "force_posix_path_sep": True, "nomoves": False, "noprompt": True, "nolog": False, "csv": True, "root_alias_log": True, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy/Config", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, rewrite_sep=False, set=0)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))

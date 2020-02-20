@@ -9,7 +9,7 @@
   "size": 2,
   "mtime": 1563369444.0
  },
- "same nested dir\\same empty dir": {
+ "same nested dir/same empty dir": {
   "size": 0,
   "mtime": 0,
   "crc": 0,
@@ -41,17 +41,9 @@
   "size": 45,
   "mtime": 1563369386.0
  },
- ".backupy\\Archive\\000000-0000\\file modified newer on A.txt": {
-  "size": 158,
-  "mtime": 1563369766.0
- },
  "file modified newer on A.txt": {
   "size": 319,
   "mtime": 1563369818.0
- },
- ".backupy\\Archive\\000000-0000\\file modified newer on B.txt": {
-  "size": 100,
-  "mtime": 1563369748.0
  },
  "file modified newer on B.txt": {
   "size": 35,
