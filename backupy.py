@@ -236,9 +236,6 @@ class DirInfo:
         self.loaded_dicts = readJson(os.path.join(self.dir, self.config_dir, "database.json"))
 
     def updateDictOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
-        if self.force_posix_path_sep:
-            source_file = source_file.replace(os.path.sep, "/")
-            dest_file = dest_file.replace(os.path.sep, "/")
         if self.dir == source_root and secondInfo.dir == dest_root:
             secondInfo.file_dicts[dest_file] = self.file_dicts[source_file]
         elif self.dir == dest_root and secondInfo.dir == source_root:
@@ -247,9 +244,6 @@ class DirInfo:
             raise Exception("Update Dict Error")
 
     def updateDictOnMove(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
-        if self.force_posix_path_sep:
-            source_file = source_file.replace(os.path.sep, "/")
-            dest_file = dest_file.replace(os.path.sep, "/")
         if source_root == dest_root == self.dir:
             self.file_dicts[dest_file] = self.file_dicts.pop(source_file)
         elif source_root == dest_root == secondInfo.dir:
@@ -262,8 +256,6 @@ class DirInfo:
             raise Exception("Update Dict Error")
 
     def updateDictOnRemove(self, root: str, relative_path: str, secondInfo: 'DirInfo') -> None:
-        if self.force_posix_path_sep:
-            relative_path = relative_path.replace(os.path.sep, "/")
         if root == self.dir:
             _ = self.file_dicts.pop(relative_path)
         elif root == secondInfo.dir:
@@ -715,6 +707,13 @@ class BackupManager:
             self.moveFile(source_root, dest_root, source_files[i], dest_files[i])
         self.colourPrint(getString("Archiving completed!"), "NONE")
 
+    def handleDeletedFiles(self, root: str, files: list) -> None:
+        if self.config.noarchive:
+            self.removeFiles(root, files)
+        else:
+            recycle_bin = os.path.join(root, self.config.trash_dir, self.backup_time)
+            self.moveFiles(root, recycle_bin, files, files)
+
     def handleMovedFiles(self, moved: list, reverse: bool = False) -> None:
         if not self.config.nomoves:
             # conflicts shouldn't happen since moved is a subset of files from source_only and dest_only
@@ -896,11 +895,7 @@ class BackupManager:
         print(self.colourString(getString("Starting ") + self.config.main_mode, "OKGREEN"))
         if self.config.main_mode == "mirror":
             self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
-            if self.config.noarchive:
-                self.removeFiles(self.config.dest, dest_only)
-            else:
-                recycle_bin = os.path.join(self.config.dest, self.config.trash_dir, self.backup_time)
-                self.moveFiles(self.config.dest, recycle_bin, dest_only, dest_only)
+            self.handleDeletedFiles(self.config.dest, dest_only)
             self.handleMovedFiles(moved)
             self.handleChanges(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         elif self.config.main_mode == "backup":
