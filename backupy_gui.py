@@ -128,14 +128,12 @@ def main_gui():
                                                          gooey_options={"title":"Compare mode: How to detect files that exist on both sides but differ?",
                                                                         "full_width":True,
                                                                         'initial_selection':0})
-    group3_compare.add_argument("--compare_mode_radio_attr", metavar="Attributes", action= "store_true",
+    group3_compare.add_argument("--compare_mode_radio_attr", metavar="Attribute", action= "store_true",
                                 help="[compare file attributes: mod-time and size]")
-    group3_compare.add_argument("--compare_mode_radio_both", metavar="Both", action= "store_true",
-                                help="[compare file attributes first, then check CRC]")
+    group3_compare.add_argument("--compare_mode_radio_attr+", metavar="Attribute+", action= "store_true",
+                                help="[compare file attributes and only store new CRC data]")
     group3_compare.add_argument("--compare_mode_radio_crc", metavar="CRC", action= "store_true",
-                                help="[compare CRC only, ignoring file attributes]")
-    group3.add_argument("--nomoves", action="store_true", metavar="No moves", gooey_options={"full_width":True},
-                        help=" Do not detect moved or renamed files")
+                                help="[compare file attributes and CRC for every file]")
     group3.add_argument("--noarchive", action="store_true", metavar="No archiving", gooey_options={"full_width":True},
                         help=" Disable archiving files before overwriting/deleting to:\n"
                              "  <source|dest>/.backupy/Archives/yymmdd-HHMM/\n"
@@ -144,6 +142,8 @@ def main_gui():
                         help=" Disable writing to:\n"
                              "  <source>/.backupy/Logs/log-yymmdd-HHMM.csv\n"
                              "  <source|dest>/.backupy/database.json")
+    group3.add_argument("--nomoves", action="store_true", metavar="No moves", gooey_options={"full_width":True},
+                        help=" Do not detect when files are moved or renamed")
     group3.add_argument("--noprompt", action="store_true", metavar="No prompt", gooey_options={"full_width":True},
                         help=" Complete run without prompting for confirmation")
     group3.add_argument("--norun", action="store_true", metavar="No run", gooey_options={"full_width":True},
