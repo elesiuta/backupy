@@ -1,0 +1,78 @@
+### CRC ERRORS DETECTED ###
+File:,Source,corrupted file A.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 4063104189}"
+,DB,corrupted file A.txt,Missing
+,Dest,corrupted file A.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 458074504}"
+,DB,corrupted file A.txt,Missing
+File:,Source,corrupted file B.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 458074504}"
+,DB,corrupted file B.txt,Missing
+,Dest,corrupted file B.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 4063104189}"
+,DB,corrupted file B.txt,Missing
+File:,Source,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': 1597877419}"
+,DB,new corrupted file.txt,Missing
+,Dest,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': 1470702120}"
+,DB,new corrupted file.txt,Missing
+File:,Source,same file copied.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 458074504}"
+,DB,same file copied.txt,Missing
+,Dest,same file copied.txt,Missing
+,DB,same file copied.txt,Missing
+File:,Source,same file corrupted.txt,Missing
+,DB,same file corrupted.txt,Missing
+,Dest,same file corrupted.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 4063104189}"
+,DB,same file corrupted.txt,Missing
+### SOURCE ONLY ###
+File:,,copied A - copy.txt,"{'size': 353, 'mtime': 1582141538.0, 'crc': 3307925744}"
+File:,,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': 0, 'dir': True}"
+File:,,file only A.txt,"{'size': 2, 'mtime': 1563365988.0, 'crc': 458074504}"
+File:,,moved and copied A - 1.txt,"{'size': 362, 'mtime': 1582141424.0, 'crc': 2621798193}"
+File:,,new file A.txt,"{'size': 11, 'mtime': 1575245254.0, 'crc': 3100828052}"
+File:,,same file copied.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 458074504}"
+### DESTINATION ONLY ###
+File:,,file only B.txt,"{'size': 9, 'mtime': 1563366016.0, 'crc': 69258562}"
+File:,,new file B.txt,"{'size': 70, 'mtime': 1575245388.0, 'crc': 2716265695}"
+File:,,same file corrupted.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 4063104189}"
+### CHANGED FILES ###
+File:,Source,.backupy\database.json,"{'size': 1262, 'mtime': 1582139274.0, 'crc': 2715264291}"
+,Dest,.backupy\database.json,"{'size': 1249, 'mtime': 1582139350.0, 'crc': 4261732806}"
+File:,Source,corrupted file A.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 4063104189}"
+,Dest,corrupted file A.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 458074504}"
+File:,Source,corrupted file B.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 458074504}"
+,Dest,corrupted file B.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 4063104189}"
+File:,Source,file modified newer on A.txt,"{'size': 640, 'mtime': 1575245024.0, 'crc': 4087299154}"
+,Dest,file modified newer on A.txt,"{'size': 319, 'mtime': 1563366218.0, 'crc': 1624980325}"
+File:,Source,file modified newer on B.txt,"{'size': 100, 'mtime': 1563366148.0, 'crc': 1459518598}"
+,Dest,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0, 'crc': 4256320678}"
+File:,Source,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': 1597877419}"
+,Dest,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': 1470702120}"
+### MOVED FILES ###
+Source:,,copied both - 1.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 249491835}"
+Dest:,,copied both - 2.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 249491835}"
+Source:,,moved and copied A - 2.txt,"{'size': 362, 'mtime': 1582141424.0, 'crc': 2621798193}"
+Dest:,,moved and copied A.txt,"{'size': 362, 'mtime': 1582141424.0, 'crc': 2621798193}"
+Source:,,renamed file A.txt,"{'size': 14, 'mtime': 1563365688.0, 'crc': 2097105078}"
+Dest:,,renamed file B.txt,"{'size': 14, 'mtime': 1563365688.0, 'crc': 2097105078}"
+### START MIRROR ###
+copyFile(),\mirror-source-crc-set2\dir A,\mirror-source-crc-set2\dir B,copied A - copy.txt,copied A - copy.txt
+copyFile(),\mirror-source-crc-set2\dir A,\mirror-source-crc-set2\dir B,empty dir only A,empty dir only A
+copyFile(),\mirror-source-crc-set2\dir A,\mirror-source-crc-set2\dir B,file only A.txt,file only A.txt
+copyFile(),\mirror-source-crc-set2\dir A,\mirror-source-crc-set2\dir B,moved and copied A - 1.txt,moved and copied A - 1.txt
+copyFile(),\mirror-source-crc-set2\dir A,\mirror-source-crc-set2\dir B,new file A.txt,new file A.txt
+copyFile(),\mirror-source-crc-set2\dir A,\mirror-source-crc-set2\dir B,same file copied.txt,same file copied.txt
+moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B\.backupy\Trash\000000-0000,file only B.txt,file only B.txt
+moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B\.backupy\Trash\000000-0000,new file B.txt,new file B.txt
+moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B\.backupy\Trash\000000-0000,same file corrupted.txt,same file corrupted.txt
+moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B,copied both - 2.txt,copied both - 1.txt
+moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B,moved and copied A.txt,moved and copied A - 2.txt
+moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B,renamed file B.txt,renamed file A.txt
+moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B,.backupy\database.json,.backupy\Archive\000000-0000\.backupy\database.json
+copyFile(),\mirror-source-crc-set2\dir A,\mirror-source-crc-set2\dir B,.backupy\database.json,.backupy\database.json
+moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B,corrupted file A.txt,.backupy\Archive\000000-0000\corrupted file A.txt
+copyFile(),\mirror-source-crc-set2\dir A,\mirror-source-crc-set2\dir B,corrupted file A.txt,corrupted file A.txt
+moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B,corrupted file B.txt,.backupy\Archive\000000-0000\corrupted file B.txt
+copyFile(),\mirror-source-crc-set2\dir A,\mirror-source-crc-set2\dir B,corrupted file B.txt,corrupted file B.txt
+moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B,file modified newer on A.txt,.backupy\Archive\000000-0000\file modified newer on A.txt
+copyFile(),\mirror-source-crc-set2\dir A,\mirror-source-crc-set2\dir B,file modified newer on A.txt,file modified newer on A.txt
+moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B,file modified newer on B.txt,.backupy\Archive\000000-0000\file modified newer on B.txt
+copyFile(),\mirror-source-crc-set2\dir A,\mirror-source-crc-set2\dir B,file modified newer on B.txt,file modified newer on B.txt
+moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B,new corrupted file.txt,.backupy\Archive\000000-0000\new corrupted file.txt
+copyFile(),\mirror-source-crc-set2\dir A,\mirror-source-crc-set2\dir B,new corrupted file.txt,new corrupted file.txt
+### COMPLETED ###

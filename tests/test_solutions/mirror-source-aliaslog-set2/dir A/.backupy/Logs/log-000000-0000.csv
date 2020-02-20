@@ -1,0 +1,44 @@
+### SOURCE ONLY ###
+File:,,copied A - copy.txt,"{'size': 353, 'mtime': 1582141538.0}"
+File:,,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': 0, 'dir': True}"
+File:,,file only A.txt,"{'size': 2, 'mtime': 1563365988.0}"
+File:,,moved and copied A - 1.txt,"{'size': 362, 'mtime': 1582141424.0}"
+File:,,new file A.txt,"{'size': 11, 'mtime': 1575245254.0}"
+### DESTINATION ONLY ###
+File:,,file only B.txt,"{'size': 9, 'mtime': 1563366016.0}"
+File:,,new file B.txt,"{'size': 70, 'mtime': 1575245388.0}"
+### CHANGED FILES ###
+File:,Source,.backupy\database.json,"{'size': 1262, 'mtime': 1582139274.0}"
+,Dest,.backupy\database.json,"{'size': 1249, 'mtime': 1582139350.0}"
+File:,Source,file modified newer on A.txt,"{'size': 640, 'mtime': 1575245024.0}"
+,Dest,file modified newer on A.txt,"{'size': 319, 'mtime': 1563366218.0}"
+File:,Source,file modified newer on B.txt,"{'size': 100, 'mtime': 1563366148.0}"
+,Dest,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0}"
+### MOVED FILES ###
+Source:,,copied both - 1.txt,"{'size': 325, 'mtime': 1582141634.0}"
+Dest:,,copied both - 2.txt,"{'size': 325, 'mtime': 1582141634.0}"
+Source:,,moved and copied A - 2.txt,"{'size': 362, 'mtime': 1582141424.0}"
+Dest:,,moved and copied A.txt,"{'size': 362, 'mtime': 1582141424.0}"
+Source:,,renamed file A.txt,"{'size': 14, 'mtime': 1563365688.0}"
+Dest:,,renamed file B.txt,"{'size': 14, 'mtime': 1563365688.0}"
+Source:,,same file copied.txt,"{'size': 2, 'mtime': 1563365844.0}"
+Dest:,,same file corrupted.txt,"{'size': 2, 'mtime': 1563365844.0}"
+### START MIRROR ###
+copyFile(),<source>,<dest>,copied A - copy.txt,copied A - copy.txt
+copyFile(),<source>,<dest>,empty dir only A,empty dir only A
+copyFile(),<source>,<dest>,file only A.txt,file only A.txt
+copyFile(),<source>,<dest>,moved and copied A - 1.txt,moved and copied A - 1.txt
+copyFile(),<source>,<dest>,new file A.txt,new file A.txt
+moveFile(),<dest>,<dest>\.backupy\Trash\000000-0000,file only B.txt,file only B.txt
+moveFile(),<dest>,<dest>\.backupy\Trash\000000-0000,new file B.txt,new file B.txt
+moveFile(),<dest>,<dest>,copied both - 2.txt,copied both - 1.txt
+moveFile(),<dest>,<dest>,moved and copied A.txt,moved and copied A - 2.txt
+moveFile(),<dest>,<dest>,renamed file B.txt,renamed file A.txt
+moveFile(),<dest>,<dest>,same file corrupted.txt,same file copied.txt
+moveFile(),<dest>,<dest>,.backupy\database.json,.backupy\Archive\000000-0000\.backupy\database.json
+copyFile(),<source>,<dest>,.backupy\database.json,.backupy\database.json
+moveFile(),<dest>,<dest>,file modified newer on A.txt,.backupy\Archive\000000-0000\file modified newer on A.txt
+copyFile(),<source>,<dest>,file modified newer on A.txt,file modified newer on A.txt
+moveFile(),<dest>,<dest>,file modified newer on B.txt,.backupy\Archive\000000-0000\file modified newer on B.txt
+copyFile(),<source>,<dest>,file modified newer on B.txt,file modified newer on B.txt
+### COMPLETED ###

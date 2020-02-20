@@ -43,13 +43,13 @@
  },
  ".backupy\\database.json": {
   "size": 962,
-  "mtime": 1575246725.3137789,
+  "mtime": 1582167833.5975244,
   "crc": 1206462962
  },
  ".backupy\\log-000000-0000.csv": {
   "size": 3505,
-  "mtime": 1577118044.3526468,
-  "crc": 2384150742
+  "mtime": 1582167833.596525,
+  "crc": 3023863378
  },
  ".backupy\\000000-0000\\file modified newer on B.txt": {
   "size": 35,
