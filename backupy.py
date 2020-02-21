@@ -27,7 +27,7 @@ import unicodedata
 import zlib
 
 def getVersion() -> str:
-    return "1.3.0"
+    return "1.3.1"
 
 
 #########################
@@ -305,7 +305,7 @@ class DirInfo:
 
     def fileMatch(self, f1: str, f2: str, secondInfo: 'DirInfo', compare_mode: str, move_check: bool = False) -> bool:
         if self.file_dicts[f1]["size"] == secondInfo.file_dicts[f2]["size"]:
-            if self.timeMatch(self.file_dicts[f1]["mtime"], secondInfo.file_dicts[f2]["mtime"]):
+            if self.timeMatch(self.file_dicts[f1]["mtime"], secondInfo.file_dicts[f2]["mtime"], False, [3600, 3601, 3602]):
                 # these are the 'unchanged files (probably)' from both sides, crc should be up to date from the scan if using CRC mode
                 if compare_mode == "crc" and self.getCrc(f1) != secondInfo.getCrc(f2):
                     # size and date match, but crc does not, probably corrupted
