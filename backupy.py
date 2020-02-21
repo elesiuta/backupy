@@ -336,7 +336,6 @@ class DirInfo:
                     subdir_list.clear()
                     continue
                 # scan folders
-                subdir_list.sort()
                 for subdir in subdir_list:
                     full_path = os.path.join(dir_path, subdir)
                     if len(os.listdir(full_path)) == 0:
@@ -346,7 +345,7 @@ class DirInfo:
                             relative_path = relative_path.replace(os.path.sep, "/")
                         self.file_dicts[relative_path] = {"size": 0, "mtime": 0, "crc": 0, "dir": True}
                 # scan files
-                for file_name in sorted(file_list):
+                for file_name in file_list:
                     full_path = os.path.join(dir_path, file_name)
                     relative_path = os.path.relpath(full_path, self.dir)
                     if self.force_posix_path_sep:
@@ -384,7 +383,7 @@ class DirInfo:
                             "crc" in self.loaded_dicts[relative_path] and
                             self.loaded_dicts[relative_path]["size"] == size and
                             self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
-                            # preserve old crc (don't want it to silently change to the corrupted one)
+                            # attributes match, preserve old crc
                             self.file_dicts[relative_path]["crc"] = self.loaded_dicts[relative_path]["crc"]
                         else:
                             self.file_dicts[relative_path]["crc"] = self.crc(full_path)
