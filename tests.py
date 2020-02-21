@@ -97,7 +97,7 @@ def rewriteLog(fName):
             for row in data:
                 writer.writerow(row)
 
-def dirInfo(path):
+def dirInfo(path, skip_time = True):
     # just used for assert message on failure to help with debugging
     file_dicts = {}
     for dir_path, subdir_list, file_list in os.walk(path):
@@ -111,11 +111,10 @@ def dirInfo(path):
             full_path = os.path.join(dir_path, fName)
             relativePath = os.path.relpath(full_path, path).replace(os.path.sep, "\\")
             size = os.path.getsize(full_path)
-            if ".backupy" in dir_path:
+            if skip_time:
                 mtime = 0
             else:
-                mtime = 0
-                # mtime = os.path.getmtime(full_path)
+                mtime = os.path.getmtime(full_path)
             file_dicts[relativePath] = {"size": size, "mtime": mtime, "crc": crc(full_path)}
     return file_dicts
 
@@ -156,13 +155,25 @@ def dirStats(path):
             total_crc %= (0xFFFFFFFF + 1)
     return {"total_crc": total_crc, "file_count": file_count, "dir_count": dir_count, "total_file_size": total_file_size, "total_folder_size": total_folder_size}
 
+def getTestTime(test_zip):
+    shutil.rmtree("test_dir", ignore_errors=True)
+    shutil.unpack_archive(test_zip, "test_dir")
+    with zipfile.ZipFile(test_zip, "r") as z:
+        for f in z.infolist():
+            file_name = os.path.join("test_dir", f.filename)
+            date_time = time.mktime(f.date_time + (0, 0, -1))
+            os.utime(file_name, (date_time, date_time))
+    writeJson(test_zip + ".json", dirInfo("test_dir", False))
+
 def setupTestDir(test_name, test_zip):
     shutil.rmtree(test_name, ignore_errors=True)
     shutil.unpack_archive(test_zip, test_name)
+    test_time = readJson(test_zip + ".json")
     with zipfile.ZipFile(test_zip, "r") as z:
         for f in z.infolist():
             file_name = os.path.join(test_name, f.filename)
-            date_time = time.mktime(f.date_time + (0, 0, -1))
+            relativePath = f.filename.replace("/", "\\")
+            date_time = test_time[relativePath]["mtime"]
             os.utime(file_name, (date_time, date_time))
 
 def cleanupTestDir(test_name):

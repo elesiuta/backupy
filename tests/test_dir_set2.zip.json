@@ -1,0 +1,232 @@
+{
+ "dir A\\empty dir only A": {
+  "size": 0,
+  "mtime": 0,
+  "crc": 0,
+  "dir": true
+ },
+ "dir A\\same empty dir": {
+  "size": 0,
+  "mtime": 0,
+  "crc": 0,
+  "dir": true
+ },
+ "dir A\\copied A - copy.txt": {
+  "size": 353,
+  "mtime": 1582141538.0,
+  "crc": 3307925744
+ },
+ "dir A\\copied A.txt": {
+  "size": 353,
+  "mtime": 1582141538.0,
+  "crc": 3307925744
+ },
+ "dir A\\copied both - 1.txt": {
+  "size": 325,
+  "mtime": 1582141634.0,
+  "crc": 249491835
+ },
+ "dir A\\copied both - copy.txt": {
+  "size": 325,
+  "mtime": 1582141634.0,
+  "crc": 249491835
+ },
+ "dir A\\copied both.txt": {
+  "size": 325,
+  "mtime": 1582141634.0,
+  "crc": 249491835
+ },
+ "dir A\\corrupted file A.txt": {
+  "size": 2,
+  "mtime": 1563365844.0,
+  "crc": 4063104189
+ },
+ "dir A\\corrupted file B.txt": {
+  "size": 2,
+  "mtime": 1563365844.0,
+  "crc": 458074504
+ },
+ "dir A\\file modified newer on A.txt": {
+  "size": 640,
+  "mtime": 1575245024.0,
+  "crc": 4087299154
+ },
+ "dir A\\file modified newer on B.txt": {
+  "size": 100,
+  "mtime": 1563366148.0,
+  "crc": 1459518598
+ },
+ "dir A\\file only A.txt": {
+  "size": 2,
+  "mtime": 1563365988.0,
+  "crc": 458074504
+ },
+ "dir A\\moved and copied A - 1.txt": {
+  "size": 362,
+  "mtime": 1582141424.0,
+  "crc": 2621798193
+ },
+ "dir A\\moved and copied A - 2.txt": {
+  "size": 362,
+  "mtime": 1582141424.0,
+  "crc": 2621798193
+ },
+ "dir A\\new corrupted file.txt": {
+  "size": 11,
+  "mtime": 1582137344.0,
+  "crc": 1597877419
+ },
+ "dir A\\new file A.txt": {
+  "size": 11,
+  "mtime": 1575245254.0,
+  "crc": 3100828052
+ },
+ "dir A\\renamed file A.txt": {
+  "size": 14,
+  "mtime": 1563365688.0,
+  "crc": 2097105078
+ },
+ "dir A\\same file copied.txt": {
+  "size": 2,
+  "mtime": 1563365844.0,
+  "crc": 458074504
+ },
+ "dir A\\same file.txt": {
+  "size": 2,
+  "mtime": 1563365844.0,
+  "crc": 458074504
+ },
+ "dir A\\.backupy\\database.json": {
+  "size": 1262,
+  "mtime": 1582139274.0,
+  "crc": 2715264291
+ },
+ "dir A\\same nested dir\\same empty dir": {
+  "size": 0,
+  "mtime": 0,
+  "crc": 0,
+  "dir": true
+ },
+ "dir A\\subdir\\renamed dir A\\file1.txt": {
+  "size": 11,
+  "mtime": 1563365760.0,
+  "crc": 222957957
+ },
+ "dir A\\subdir\\renamed dir A\\file2.txt": {
+  "size": 2,
+  "mtime": 1563365766.0,
+  "crc": 841265288
+ },
+ "dir A\\subdir\\renamed dir A\\file3.txt": {
+  "size": 45,
+  "mtime": 1563365786.0,
+  "crc": 125021452
+ },
+ "dir B\\same empty dir": {
+  "size": 0,
+  "mtime": 0,
+  "crc": 0,
+  "dir": true
+ },
+ "dir B\\copied A.txt": {
+  "size": 353,
+  "mtime": 1582141538.0,
+  "crc": 3307925744
+ },
+ "dir B\\copied both - 2.txt": {
+  "size": 325,
+  "mtime": 1582141634.0,
+  "crc": 249491835
+ },
+ "dir B\\copied both - copy.txt": {
+  "size": 325,
+  "mtime": 1582141634.0,
+  "crc": 249491835
+ },
+ "dir B\\copied both.txt": {
+  "size": 325,
+  "mtime": 1582141634.0,
+  "crc": 249491835
+ },
+ "dir B\\corrupted file A.txt": {
+  "size": 2,
+  "mtime": 1563365844.0,
+  "crc": 458074504
+ },
+ "dir B\\corrupted file B.txt": {
+  "size": 2,
+  "mtime": 1563365844.0,
+  "crc": 4063104189
+ },
+ "dir B\\file modified newer on A.txt": {
+  "size": 319,
+  "mtime": 1563366218.0,
+  "crc": 1624980325
+ },
+ "dir B\\file modified newer on B.txt": {
+  "size": 202,
+  "mtime": 1575245288.0,
+  "crc": 4256320678
+ },
+ "dir B\\file only B.txt": {
+  "size": 9,
+  "mtime": 1563366016.0,
+  "crc": 69258562
+ },
+ "dir B\\moved and copied A.txt": {
+  "size": 362,
+  "mtime": 1582141424.0,
+  "crc": 2621798193
+ },
+ "dir B\\new corrupted file.txt": {
+  "size": 11,
+  "mtime": 1582137344.0,
+  "crc": 1470702120
+ },
+ "dir B\\new file B.txt": {
+  "size": 70,
+  "mtime": 1575245388.0,
+  "crc": 2716265695
+ },
+ "dir B\\renamed file B.txt": {
+  "size": 14,
+  "mtime": 1563365688.0,
+  "crc": 2097105078
+ },
+ "dir B\\same file corrupted.txt": {
+  "size": 2,
+  "mtime": 1563365844.0,
+  "crc": 4063104189
+ },
+ "dir B\\same file.txt": {
+  "size": 2,
+  "mtime": 1563365844.0,
+  "crc": 458074504
+ },
+ "dir B\\.backupy\\database.json": {
+  "size": 1249,
+  "mtime": 1582139350.0,
+  "crc": 4261732806
+ },
+ "dir B\\same nested dir\\same empty dir": {
+  "size": 0,
+  "mtime": 0,
+  "crc": 0,
+  "dir": true
+ },
+ "dir B\\subdir\\renamed dir A\\file1.txt": {
+  "size": 11,
+  "mtime": 1563365760.0,
+  "crc": 222957957
+ },
+ "dir B\\subdir\\renamed dir A\\file2.txt": {
+  "size": 2,
+  "mtime": 1563365766.0,
+  "crc": 841265288
+ },
+ "dir B\\subdir\\renamed dir A\\file3.txt": {
+  "size": 45,
+  "mtime": 1563365786.0,
+  "crc": 125021452
+ }
+}

@@ -281,7 +281,7 @@ class DirInfo:
         elif exact_only:
             return False
         diff = abs(int(t1) - int(t2))
-        if diff <= 2 or diff in [3600, 3601, 3602]:
+        if diff <= 2: # or diff in [3600, 3601, 3602]:
             return True
         else:
             return False
@@ -358,7 +358,7 @@ class DirInfo:
                     # check and set database dictionaries
                     if relative_path in self.loaded_dicts:
                         if (self.loaded_dicts[relative_path]["size"] == size and
-                            self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, True)):
+                            self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, False)):
                             # unchanged file (probably)
                             self.file_dicts[relative_path] = self.loaded_dicts[relative_path]
                         else:
