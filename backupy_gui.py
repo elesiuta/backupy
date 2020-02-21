@@ -68,6 +68,7 @@ def simplePrompt(msg: str) -> str:
        progress_regex = r"^progress: (?P<current>\d+)/(?P<total>\d+)$",
        progress_expr = "current / total * 100",
        hide_progress_msg = True,
+       default_size=(620, 530),
        menu = [{
                 'name': 'File',
                 'items': [{
@@ -175,6 +176,10 @@ def main_gui():
             backup_manager.backup()
             print("")
     else:
+        # store profile if new
+        if (args["save"] or args["load"]) and args["source"] not in list_profiles:
+            list_profiles.append(args["source"])
+            backupy.writeJson("profiles.json", {"profiles": list_profiles}, False)
         # check config and execute
         if args["source"] != None and (args["dest"] != None or args["load"]):
             backup_manager = backupy.BackupManager(args, gui=True)
@@ -185,10 +190,6 @@ def main_gui():
                             "\t1) Select at least one profile\n"
                             "\t2) Specify source and destination directories\n"
                             "\t3) Specify source directory and load configuration\n", "FAIL"))
-        # store profile if new
-        if (args["save"] or args["load"]) and args["source"] not in list_profiles:
-            list_profiles.append(args["source"])
-            backupy.writeJson("profiles.json", {"profiles": list_profiles}, False)
 
 
 if __name__ == "__main__":
