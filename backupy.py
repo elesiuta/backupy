@@ -382,9 +382,10 @@ class DirInfo:
             scan_status.endProgress()
             # check for missing (or moved) files
             for relative_path in self.loaded_dicts:
-                if not self.pathMatch(relative_path, self.ignored_toplevel_folders):
-                    if relative_path not in self.file_dicts:
-                        self.missing_files[relative_path] = self.loaded_dicts[relative_path]
+                if "dir" not in self.loaded_dicts[relative_path]:
+                    if not self.pathMatch(relative_path, self.ignored_toplevel_folders):
+                        if relative_path not in self.file_dicts:
+                            self.missing_files[relative_path] = self.loaded_dicts[relative_path]
 
     def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filter_list: typing.Union[list, None] = None, filter_false_list: typing.Union[list, None] = None) -> tuple:
         # init variables
@@ -737,7 +738,7 @@ class BackupManager:
             archive_path = os.path.join(root_path, self.config.archive_dir, self.backup_time)
             self.moveFile(root_path, archive_path, file_path, file_path)
 
-    def handleChangedFiles(self, source: str, dest: str, source_dict: dict, dest_dict:dict, changed: list) -> None:
+    def handleChangedFiles(self, source: str, dest: str, source_dict: dict, dest_dict: dict, changed: list) -> None:
         self.colourPrint(getString("Handling %s file changes per selection mode") %(len(changed)), "OKBLUE")
         copy_status = StatusBar("Copying", len(changed), self.config.stdout_status_bar, gui=self.gui)
         for fp in changed:
