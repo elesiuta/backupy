@@ -368,25 +368,24 @@ class DirInfo:
                     else:
                         # new file
                         self.file_dicts[relative_path] = {"size": size, "mtime": mtime}
+                    # calculate CRC for all files (simpler code and potential warning sign disk issues)
                     if self.compare_mode == "crc":
-                        # calculate CRC for all files (simpler code and potential warning sign disk issues)
                         self.file_dicts[relative_path]["crc"] = self.crc(full_path)
-                        if (relative_path in self.loaded_dicts and
-                            "crc" in self.loaded_dicts[relative_path] and
-                            self.loaded_dicts[relative_path]["crc"] != self.file_dicts[relative_path]["crc"] and
-                            self.loaded_dicts[relative_path]["size"] == size and
-                            self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
-                            # corrupted file (probably, changed crc, unchanged size and mtime)
-                            self.crc_errors_detected[relative_path] = self.loaded_dicts[relative_path]
-                    elif self.compare_mode == "attr+" and "crc" not in self.file_dicts[relative_path]:
-                        # save time by only calculating crc for new and changed files (by attributes) so we can check for corruption later (and possibly preexisting)
+                    # check for CRC discrepancies (and calculate in ATTR+ mode if it is new)
+                    if self.compare_mode in ["crc", "attr+"]:
                         if (relative_path in self.loaded_dicts and
                             "crc" in self.loaded_dicts[relative_path] and
                             self.loaded_dicts[relative_path]["size"] == size and
                             self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
-                            # preserve old crc (don't want it to silently change to the corrupted one)
-                            self.file_dicts[relative_path]["crc"] = self.loaded_dicts[relative_path]["crc"]
-                        else:
+                            # files should match, now check CRC (or preserve it if in ATTR+ mode)
+                            if "crc" not in self.file_dicts[relative_path]:
+                                # preserve old crc (don't want it to silently change to the corrupted one)
+                                self.file_dicts[relative_path]["crc"] = self.loaded_dicts[relative_path]["crc"]
+                            elif self.loaded_dicts[relative_path]["crc"] != self.file_dicts[relative_path]["crc"]:
+                                # corrupted file (probably, changed crc, unchanged size and mtime)
+                                self.crc_errors_detected[relative_path] = self.loaded_dicts[relative_path]
+                        elif self.compare_mode == "attr+":
+                            # save time by only calculating crc for new and changed files (by attributes) so we can check for corruption later (and possibly preexisting)
                             self.file_dicts[relative_path]["crc"] = self.crc(full_path)
             scan_status.endProgress()
             # check for missing (or moved) files
