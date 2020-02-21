@@ -61,6 +61,11 @@
   "mtime": 0,
   "crc": 458074504
  },
+ "file only B.txt": {
+  "size": 9,
+  "mtime": 0,
+  "crc": 69258562
+ },
  "moved and copied A - 1.txt": {
   "size": 362,
   "mtime": 0,
@@ -81,6 +86,11 @@
   "mtime": 0,
   "crc": 3100828052
  },
+ "new file B.txt": {
+  "size": 70,
+  "mtime": 0,
+  "crc": 2716265695
+ },
  "renamed file A.txt": {
   "size": 14,
   "mtime": 0,
@@ -91,20 +101,25 @@
   "mtime": 0,
   "crc": 458074504
  },
+ "same file corrupted.txt": {
+  "size": 2,
+  "mtime": 0,
+  "crc": 4063104189
+ },
  "same file.txt": {
   "size": 2,
   "mtime": 0,
   "crc": 458074504
  },
  ".backupy\\database.json": {
-  "size": 2200,
+  "size": 2473,
   "mtime": 0,
-  "crc": 3763183150
+  "crc": 992547620
  },
  ".backupy\\Logs\\log-000000-0000.csv": {
-  "size": 8138,
+  "size": 9465,
   "mtime": 0,
-  "crc": 2820520700
+  "crc": 1292533145
  },
  "same nested dir\\same empty dir": {
   "size": 0,

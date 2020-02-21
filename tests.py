@@ -484,5 +484,19 @@ class TestBackupy(unittest.TestCase):
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
+    def test_sync_source_attrplus_set2(self):
+        test_name = "sync-source-attrplus-set2"
+        config = {"main_mode": "sync", "select_mode": "source", "compare_mode": "attr+", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_sync_source_crc_set2(self):
+        test_name = "sync-source-crc-set2"
+        config = {"main_mode": "sync", "select_mode": "source", "compare_mode": "crc", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
 if __name__ == '__main__':
     unittest.main()
