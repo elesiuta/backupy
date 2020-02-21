@@ -293,13 +293,14 @@ class DirInfo:
         else:
             relpath, _abspath = path, os.path.join(self.dir, path)
         for p in path_list:
-            # p = os.path.normpath(p)
-            # if os.path.isabs(p):
-            #     if os.path.commonpath([p, abspath]) == p:
-            #         return True
-            # else:
-            if os.path.commonpath([p, relpath]) == p:
-                return True
+            p = os.path.normcase(p)
+            if os.path.isabs(p):
+                raise Exception("Default .backupy dirs have been changed to absolute paths in the config, they should be relative paths.")
+                # if os.path.normcase(os.path.commonpath([p, abspath])) == p:
+                #     return True
+            else:
+                if os.path.normcase(os.path.commonpath([p, relpath])) == p:
+                    return True
         return False
 
     def fileMatch(self, f1: str, f2: str, secondInfo: 'DirInfo', compare_mode: str, move_check: bool = False) -> bool:
