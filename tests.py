@@ -104,7 +104,10 @@ def dirInfo(path, skip_time = True):
         subdir_list.sort()
         for subdir in subdir_list:
             full_path = os.path.join(dir_path, subdir)
-            if len(os.listdir(full_path)) == 0:
+            if not skip_time:
+                relativePath = os.path.relpath(full_path, path).replace(os.path.sep, "\\") + "\\"
+                file_dicts[relativePath] = {"size": os.path.getsize(full_path), "mtime": os.path.getmtime(full_path), "crc": 0, "dir": True}
+            elif len(os.listdir(full_path)) == 0:
                 relativePath = os.path.relpath(full_path, path).replace(os.path.sep, "\\")
                 file_dicts[relativePath] = {"size": 0, "mtime": 0, "crc": 0, "dir": True}
         for fName in sorted(file_list):

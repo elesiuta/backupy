@@ -1,13 +1,37 @@
 {
- "dir A\\empty dir only A": {
-  "size": 0,
-  "mtime": 0,
+ "dir A\\": {
+  "size": 4096,
+  "mtime": 1571161586.0,
   "crc": 0,
   "dir": true
  },
- "dir A\\same empty dir": {
+ "dir B\\": {
+  "size": 4096,
+  "mtime": 1571161658.0,
+  "crc": 0,
+  "dir": true
+ },
+ "dir A\\empty dir only A\\": {
   "size": 0,
-  "mtime": 0,
+  "mtime": 1563369238.0,
+  "crc": 0,
+  "dir": true
+ },
+ "dir A\\same empty dir\\": {
+  "size": 0,
+  "mtime": 1571161572.0,
+  "crc": 0,
+  "dir": true
+ },
+ "dir A\\same nested dir\\": {
+  "size": 0,
+  "mtime": 1571161596.0,
+  "crc": 0,
+  "dir": true
+ },
+ "dir A\\subdir\\": {
+  "size": 0,
+  "mtime": 1563369326.0,
   "crc": 0,
   "dir": true
  },
@@ -36,9 +60,15 @@
   "mtime": 1563369444.0,
   "crc": 458074504
  },
- "dir A\\same nested dir\\same empty dir": {
+ "dir A\\same nested dir\\same empty dir\\": {
   "size": 0,
-  "mtime": 0,
+  "mtime": 1571161590.0,
+  "crc": 0,
+  "dir": true
+ },
+ "dir A\\subdir\\renamed dir A\\": {
+  "size": 0,
+  "mtime": 1563369352.0,
   "crc": 0,
   "dir": true
  },
@@ -57,15 +87,27 @@
   "mtime": 1563369386.0,
   "crc": 125021452
  },
- "dir B\\empty dir only B": {
+ "dir B\\empty dir only B\\": {
   "size": 0,
-  "mtime": 0,
+  "mtime": 1563369252.0,
   "crc": 0,
   "dir": true
  },
- "dir B\\same empty dir": {
+ "dir B\\renamed dir B\\": {
   "size": 0,
-  "mtime": 0,
+  "mtime": 1563369394.0,
+  "crc": 0,
+  "dir": true
+ },
+ "dir B\\same empty dir\\": {
+  "size": 0,
+  "mtime": 1571161572.0,
+  "crc": 0,
+  "dir": true
+ },
+ "dir B\\same nested dir\\": {
+  "size": 0,
+  "mtime": 1571161658.0,
   "crc": 0,
   "dir": true
  },
@@ -109,9 +151,9 @@
   "mtime": 1563369386.0,
   "crc": 125021452
  },
- "dir B\\same nested dir\\same empty dir": {
+ "dir B\\same nested dir\\same empty dir\\": {
   "size": 0,
-  "mtime": 0,
+  "mtime": 1571161590.0,
   "crc": 0,
   "dir": true
  }
