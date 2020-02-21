@@ -357,7 +357,7 @@ class DirInfo:
                     # check and set database dictionaries
                     if relative_path in self.loaded_dicts:
                         if (self.loaded_dicts[relative_path]["size"] == size and
-                            self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, True)):
+                            self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, False)):
                             # unchanged file (probably)
                             self.file_dicts[relative_path] = self.loaded_dicts[relative_path]
                         else:
