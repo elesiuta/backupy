@@ -23,10 +23,6 @@ File:,Source,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563365786.0}
 ,DB,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
 ,Dest,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563365786.0}"
 ,DB,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
-File:,Source,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': 0, 'dir': True}"
-,DB,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': 0, 'dir': True}"
-,Dest,empty dir only A,Missing
-,DB,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': 0, 'dir': True}"
 File:,Source,file only A.txt,"{'size': 2, 'mtime': 1563365988.0}"
 ,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
 ,Dest,file only A.txt,Missing

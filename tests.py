@@ -168,7 +168,7 @@ def setupTestDir(test_name, test_zip):
 def cleanupTestDir(test_name):
     shutil.rmtree(test_name)
 
-def runTest(test_name, config, set=0, rewrite_log=True, rewrite_sep=True, compare=True, setup=True, cleanup=True, write_info=False):
+def runTest(test_name, config, set=0, rewrite_log=True, rewrite_sep=True, compare=True, setup=True, cleanup=True, write_solution=False):
     # init dirs
     if setup:
         print("####### TEST: " + test_name + " #######")
@@ -216,8 +216,12 @@ def runTest(test_name, config, set=0, rewrite_log=True, rewrite_sep=True, compar
     else:
         rewriteLineEndings(os.path.join(dir_A_path, db_dir, "database.json"))
         rewriteLineEndings(os.path.join(dir_B_path, db_dir, "database.json"))
-    # save solution info (for creating new tests)
-    if write_info:
+    # save solution info for updating or creating new tests, CAREFULLY INSPECT THE CHANGES AFTERWARDS
+    if write_solution:
+        shutil.rmtree(dir_A_sol_path, ignore_errors=True)
+        shutil.rmtree(dir_B_sol_path, ignore_errors=True)
+        shutil.move(dir_A_path, dir_A_sol_path)
+        shutil.move(dir_B_path, dir_B_sol_path)
         writeJson(os.path.join(sol_path, "dir_A_stats.json"), dirStats(dir_A_sol_path))
         writeJson(os.path.join(sol_path, "dir_B_stats.json"), dirStats(dir_B_sol_path))
         writeJson(os.path.join(sol_path, "dir_A_info.json"), dirInfo(dir_A_sol_path))
@@ -426,7 +430,7 @@ class TestBackupy(unittest.TestCase):
     def test_sync_twice_nochanges(self):
         test_name = "sync-twice-nochanges-set1"
         config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
-        runTest(test_name, config, rewrite_log=True, set=1, compare=False, setup=True, cleanup=False, write_info=False)
+        runTest(test_name, config, rewrite_log=True, set=1, compare=False, setup=True, cleanup=False, write_solution=False)
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1, setup=False)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
