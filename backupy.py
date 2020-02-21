@@ -358,10 +358,9 @@ class DirInfo:
                     # check and set database dictionaries
                     if relative_path in self.loaded_dicts:
                         if (self.loaded_dicts[relative_path]["size"] == size and
-                            self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
+                            self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, True)):
                             # unchanged file (probably)
                             self.file_dicts[relative_path] = self.loaded_dicts[relative_path]
-                            self.file_dicts[relative_path]["mtime"] = mtime
                         else:
                             # changed file
                             self.file_dicts[relative_path] = {"size": size, "mtime": mtime}
@@ -381,7 +380,14 @@ class DirInfo:
                             self.crc_errors_detected[relative_path] = self.loaded_dicts[relative_path]
                     elif self.compare_mode == "attr+" and "crc" not in self.file_dicts[relative_path]:
                         # save time by only calculating crc for new and changed files (by attributes) so we can check for corruption later (and possibly preexisting)
-                        self.file_dicts[relative_path]["crc"] = self.crc(full_path)
+                        if (relative_path in self.loaded_dicts and
+                            "crc" in self.loaded_dicts[relative_path] and
+                            self.loaded_dicts[relative_path]["size"] == size and
+                            self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
+                            # preserve old crc (don't want it to silently change to the corrupted one)
+                            self.file_dicts[relative_path]["crc"] = self.loaded_dicts[relative_path]["crc"]
+                        else:
+                            self.file_dicts[relative_path]["crc"] = self.crc(full_path)
             scan_status.endProgress()
             # check for missing (or moved) files
             for relative_path in (set(self.loaded_dicts) - set(self.file_dicts)):
