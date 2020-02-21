@@ -114,12 +114,12 @@
  ".backupy\\database.json": {
   "size": 2473,
   "mtime": 0,
-  "crc": 992547620
+  "crc": 2971724065
  },
  ".backupy\\Logs\\log-000000-0000.csv": {
-  "size": 9222,
+  "size": 6933,
   "mtime": 0,
-  "crc": 2002080920
+  "crc": 1681025223
  },
  "same nested dir\\same empty dir": {
   "size": 0,

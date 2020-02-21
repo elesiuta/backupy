@@ -1,47 +1,33 @@
 ### DATABASE CONFLICTS ###
-File:,Dest,corrupted file A.txt,"{'size': 2, 'mtime': 1563365844.0}"
-,DB,corrupted file A.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 458074504}"
 File:,Dest,corrupted file B,Missing
 ,DB,corrupted file B,"{'size': 2, 'mtime': 1563369444.0, 'crc': 458074504}"
-File:,Dest,file modified newer on A.txt,"{'size': 319, 'mtime': 1563366218.0}"
-,DB,file modified newer on A.txt,"{'size': 319, 'mtime': 1563369818.0}"
 File:,Dest,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0}"
 ,DB,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
 File:,Dest,file only A.txt,Missing
 ,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
-File:,Dest,file only B.txt,"{'size': 9, 'mtime': 1563366016.0}"
-,DB,file only B.txt,"{'size': 9, 'mtime': 1563369616.0}"
-File:,Dest,same file.txt,"{'size': 2, 'mtime': 1563365844.0}"
-,DB,same file.txt,"{'size': 2, 'mtime': 1563369444.0}"
-File:,Dest,subdir\renamed dir A\file1.txt,"{'size': 11, 'mtime': 1563365760.0}"
-,DB,subdir\renamed dir A\file1.txt,"{'size': 11, 'mtime': 1563369360.0}"
-File:,Dest,subdir\renamed dir A\file2.txt,"{'size': 2, 'mtime': 1563365766.0}"
-,DB,subdir\renamed dir A\file2.txt,"{'size': 2, 'mtime': 1563369366.0}"
-File:,Dest,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563365786.0}"
-,DB,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
 ### SOURCE ONLY ###
 File:,,copied A - copy.txt,"{'size': 353, 'mtime': 1582141538.0}"
 File:,,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': 0, 'dir': True}"
-File:,,file only A.txt,"{'size': 2, 'mtime': 1563365988.0}"
+File:,,file only A.txt,"{'size': 2, 'mtime': 1563369588.0, 'crc': 42}"
 File:,,moved and copied A - 1.txt,"{'size': 362, 'mtime': 1582141424.0}"
 File:,,new file A.txt,"{'size': 11, 'mtime': 1575245254.0}"
 ### DESTINATION ONLY ###
-File:,,file only B.txt,"{'size': 9, 'mtime': 1563366016.0}"
+File:,,file only B.txt,"{'size': 9, 'mtime': 1563369616.0}"
 File:,,new file B.txt,"{'size': 70, 'mtime': 1575245388.0}"
 ### CHANGED FILES ###
 File:,Source,file modified newer on A.txt,"{'size': 640, 'mtime': 1575245024.0}"
-,Dest,file modified newer on A.txt,"{'size': 319, 'mtime': 1563366218.0}"
-File:,Source,file modified newer on B.txt,"{'size': 100, 'mtime': 1563366148.0}"
+,Dest,file modified newer on A.txt,"{'size': 319, 'mtime': 1563369818.0}"
+File:,Source,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
 ,Dest,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0}"
 ### MOVED FILES ###
 Source:,,copied both - 1.txt,"{'size': 325, 'mtime': 1582141634.0}"
 Dest:,,copied both - 2.txt,"{'size': 325, 'mtime': 1582141634.0}"
 Source:,,moved and copied A - 2.txt,"{'size': 362, 'mtime': 1582141424.0}"
 Dest:,,moved and copied A.txt,"{'size': 362, 'mtime': 1582141424.0}"
-Source:,,renamed file A.txt,"{'size': 14, 'mtime': 1563365688.0}"
-Dest:,,renamed file B.txt,"{'size': 14, 'mtime': 1563365688.0}"
-Source:,,same file copied.txt,"{'size': 2, 'mtime': 1563365844.0}"
-Dest:,,same file corrupted.txt,"{'size': 2, 'mtime': 1563365844.0}"
+Source:,,renamed file A.txt,"{'size': 14, 'mtime': 1563369288.0}"
+Dest:,,renamed file B.txt,"{'size': 14, 'mtime': 1563369288.0}"
+Source:,,same file copied.txt,"{'size': 2, 'mtime': 1563369444.0}"
+Dest:,,same file corrupted.txt,"{'size': 2, 'mtime': 1563369444.0}"
 ### START MIRROR ###
 copyFile(),\mirror-source-set2\dir A,\mirror-source-set2\dir B,copied A - copy.txt,copied A - copy.txt
 copyFile(),\mirror-source-set2\dir A,\mirror-source-set2\dir B,empty dir only A,empty dir only A

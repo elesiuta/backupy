@@ -17,7 +17,7 @@
  },
  "file only A.txt": {
   "size": 2,
-  "mtime": 1563365988.0
+  "mtime": 1563369588.0
  },
  "new file A.txt": {
   "size": 11,
@@ -25,11 +25,11 @@
  },
  "renamed file A.txt": {
   "size": 14,
-  "mtime": 1563365688.0
+  "mtime": 1563369288.0
  },
  "same file.txt": {
   "size": 2,
-  "mtime": 1563365844.0
+  "mtime": 1563369444.0
  },
  "same nested dir\\same empty dir": {
   "size": 0,
@@ -39,19 +39,19 @@
  },
  "subdir\\renamed dir A\\file1.txt": {
   "size": 11,
-  "mtime": 1563365760.0
+  "mtime": 1563369360.0
  },
  "subdir\\renamed dir A\\file2.txt": {
   "size": 2,
-  "mtime": 1563365766.0
+  "mtime": 1563369366.0
  },
  "subdir\\renamed dir A\\file3.txt": {
   "size": 45,
-  "mtime": 1563365786.0
+  "mtime": 1563369386.0
  },
  "file only B.txt": {
   "size": 9,
-  "mtime": 1563366016.0
+  "mtime": 1563369616.0
  },
  "new file B.txt": {
   "size": 70,
