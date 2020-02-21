@@ -374,7 +374,8 @@ class DirInfo:
                         if (relative_path in self.loaded_dicts and
                             "crc" in self.loaded_dicts[relative_path] and
                             self.loaded_dicts[relative_path]["crc"] != self.file_dicts[relative_path]["crc"] and
-                            relative_path not in self.loaded_diffs):
+                            self.loaded_dicts[relative_path]["size"] == size and
+                            self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, False)):
                             # corrupted file (probably, changed crc, unchanged size and mtime)
                             self.crc_errors_detected[relative_path] = self.loaded_dicts[relative_path]
                     elif self.compare_mode == "attr+" and "crc" not in self.file_dicts[relative_path]:
