@@ -275,13 +275,13 @@ class DirInfo:
             self.file_dicts[relative_path]["crc"] = self.crc(full_path)
         return self.file_dicts[relative_path]["crc"]
 
-    def timeMatch(self, t1: float, t2: float, exact_only: bool = False) -> bool:
+    def timeMatch(self, t1: float, t2: float, exact_only: bool = False, tz_diffs: list = [], fs_tol: int = 2) -> bool:
         if t1 == t2:
             return True
         elif exact_only:
             return False
         diff = abs(int(t1) - int(t2))
-        if diff <= 2: # or diff in [3600, 3601, 3602]:
+        if diff <= fs_tol or diff in tz_diffs:
             return True
         else:
             return False
@@ -358,7 +358,7 @@ class DirInfo:
                     # check and set database dictionaries
                     if relative_path in self.loaded_dicts:
                         if (self.loaded_dicts[relative_path]["size"] == size and
-                            self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, False)):
+                            self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, True)):
                             # unchanged file (probably)
                             self.file_dicts[relative_path] = self.loaded_dicts[relative_path]
                         else:
@@ -375,7 +375,7 @@ class DirInfo:
                             "crc" in self.loaded_dicts[relative_path] and
                             self.loaded_dicts[relative_path]["crc"] != self.file_dicts[relative_path]["crc"] and
                             self.loaded_dicts[relative_path]["size"] == size and
-                            self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, False)):
+                            self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
                             # corrupted file (probably, changed crc, unchanged size and mtime)
                             self.crc_errors_detected[relative_path] = self.loaded_dicts[relative_path]
                     elif self.compare_mode == "attr+" and "crc" not in self.file_dicts[relative_path]:
