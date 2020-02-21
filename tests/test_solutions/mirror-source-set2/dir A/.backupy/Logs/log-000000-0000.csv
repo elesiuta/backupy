@@ -1,3 +1,24 @@
+### DATABASE CONFLICTS ###
+File:,Dest,corrupted file A.txt,"{'size': 2, 'mtime': 1563365844.0}"
+,DB,corrupted file A.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 458074504}"
+File:,Dest,corrupted file B,Missing
+,DB,corrupted file B,"{'size': 2, 'mtime': 1563369444.0, 'crc': 458074504}"
+File:,Dest,file modified newer on A.txt,"{'size': 319, 'mtime': 1563366218.0}"
+,DB,file modified newer on A.txt,"{'size': 319, 'mtime': 1563369818.0}"
+File:,Dest,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0}"
+,DB,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
+File:,Dest,file only A.txt,Missing
+,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
+File:,Dest,file only B.txt,"{'size': 9, 'mtime': 1563366016.0}"
+,DB,file only B.txt,"{'size': 9, 'mtime': 1563369616.0}"
+File:,Dest,same file.txt,"{'size': 2, 'mtime': 1563365844.0}"
+,DB,same file.txt,"{'size': 2, 'mtime': 1563369444.0}"
+File:,Dest,subdir\renamed dir A\file1.txt,"{'size': 11, 'mtime': 1563365760.0}"
+,DB,subdir\renamed dir A\file1.txt,"{'size': 11, 'mtime': 1563369360.0}"
+File:,Dest,subdir\renamed dir A\file2.txt,"{'size': 2, 'mtime': 1563365766.0}"
+,DB,subdir\renamed dir A\file2.txt,"{'size': 2, 'mtime': 1563369366.0}"
+File:,Dest,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563365786.0}"
+,DB,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
 ### SOURCE ONLY ###
 File:,,copied A - copy.txt,"{'size': 353, 'mtime': 1582141538.0}"
 File:,,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': 0, 'dir': True}"
@@ -8,8 +29,6 @@ File:,,new file A.txt,"{'size': 11, 'mtime': 1575245254.0}"
 File:,,file only B.txt,"{'size': 9, 'mtime': 1563366016.0}"
 File:,,new file B.txt,"{'size': 70, 'mtime': 1575245388.0}"
 ### CHANGED FILES ###
-File:,Source,.backupy\database.json,"{'size': 1262, 'mtime': 1582139274.0}"
-,Dest,.backupy\database.json,"{'size': 1249, 'mtime': 1582139350.0}"
 File:,Source,file modified newer on A.txt,"{'size': 640, 'mtime': 1575245024.0}"
 ,Dest,file modified newer on A.txt,"{'size': 319, 'mtime': 1563366218.0}"
 File:,Source,file modified newer on B.txt,"{'size': 100, 'mtime': 1563366148.0}"
@@ -35,8 +54,6 @@ moveFile(),\mirror-source-set2\dir B,\mirror-source-set2\dir B,copied both - 2.t
 moveFile(),\mirror-source-set2\dir B,\mirror-source-set2\dir B,moved and copied A.txt,moved and copied A - 2.txt
 moveFile(),\mirror-source-set2\dir B,\mirror-source-set2\dir B,renamed file B.txt,renamed file A.txt
 moveFile(),\mirror-source-set2\dir B,\mirror-source-set2\dir B,same file corrupted.txt,same file copied.txt
-moveFile(),\mirror-source-set2\dir B,\mirror-source-set2\dir B\.backupy\Archive\000000-0000,.backupy\database.json,.backupy\database.json
-copyFile(),\mirror-source-set2\dir A,\mirror-source-set2\dir B,.backupy\database.json,.backupy\database.json
 moveFile(),\mirror-source-set2\dir B,\mirror-source-set2\dir B\.backupy\Archive\000000-0000,file modified newer on A.txt,file modified newer on A.txt
 copyFile(),\mirror-source-set2\dir A,\mirror-source-set2\dir B,file modified newer on A.txt,file modified newer on A.txt
 moveFile(),\mirror-source-set2\dir B,\mirror-source-set2\dir B\.backupy\Archive\000000-0000,file modified newer on B.txt,file modified newer on B.txt

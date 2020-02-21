@@ -1,32 +1,44 @@
 {
- "empty dir only A": {
-  "size": 0,
-  "mtime": 0,
-  "crc": 0,
-  "dir": true
- },
  "same empty dir": {
   "size": 0,
   "mtime": 0,
   "crc": 0,
   "dir": true
  },
- "file modified newer on A.txt": {
-  "size": 319,
-  "mtime": 1563369818.0
+ "copied A.txt": {
+  "size": 353,
+  "mtime": 1582141538.0,
+  "crc": 3307925744
  },
- "file only A.txt": {
+ "copied both - copy.txt": {
+  "size": 325,
+  "mtime": 1582141634.0,
+  "crc": 249491835
+ },
+ "copied both.txt": {
+  "size": 325,
+  "mtime": 1582141634.0,
+  "crc": 249491835
+ },
+ "corrupted file A.txt": {
   "size": 2,
-  "mtime": 1563369588.0,
-  "crc": 42
+  "mtime": 1563365844.0,
+  "crc": 458074504
  },
- "renamed file A.txt": {
-  "size": 14,
-  "mtime": 1563369288.0
+ "corrupted file B.txt": {
+  "size": 2,
+  "mtime": 1563365844.0,
+  "crc": 4063104189
+ },
+ "new corrupted file.txt": {
+  "size": 11,
+  "mtime": 1582137344.0,
+  "crc": 1470702120
  },
  "same file.txt": {
   "size": 2,
-  "mtime": 1563369444.0
+  "mtime": 1563365844.0,
+  "crc": 458074504
  },
  "same nested dir\\same empty dir": {
   "size": 0,
@@ -36,36 +48,73 @@
  },
  "subdir\\renamed dir A\\file1.txt": {
   "size": 11,
-  "mtime": 1563369360.0
+  "mtime": 1563365760.0,
+  "crc": 222957957
  },
  "subdir\\renamed dir A\\file2.txt": {
   "size": 2,
-  "mtime": 1563369366.0
+  "mtime": 1563365766.0,
+  "crc": 841265288
  },
  "subdir\\renamed dir A\\file3.txt": {
   "size": 45,
-  "mtime": 1563369386.0
+  "mtime": 1563365786.0,
+  "crc": 125021452
  },
- "file only B.txt": {
-  "size": 9,
-  "mtime": 1563369616.0
+ "copied A - copy.txt": {
+  "size": 353,
+  "mtime": 1582141538.0,
+  "crc": 3307925744
  },
- ".backupy\\000000-0000\\file modified newer on B.txt": {
-  "size": 35,
-  "mtime": 1563369692.0
+ "empty dir only A": {
+  "size": 0,
+  "mtime": 0,
+  "crc": 0,
+  "dir": true
+ },
+ "file only A.txt": {
+  "size": 2,
+  "mtime": 1563365988.0,
+  "crc": 458074504
+ },
+ "moved and copied A - 1.txt": {
+  "size": 362,
+  "mtime": 1582141424.0,
+  "crc": 2621798193
+ },
+ "new file A.txt": {
+  "size": 11,
+  "mtime": 1575245254.0,
+  "crc": 3100828052
+ },
+ "same file copied.txt": {
+  "size": 2,
+  "mtime": 1563365844.0,
+  "crc": 458074504
+ },
+ "copied both - 1.txt": {
+  "size": 325,
+  "mtime": 1582141634.0,
+  "crc": 249491835
+ },
+ "moved and copied A - 2.txt": {
+  "size": 362,
+  "mtime": 1582141424.0,
+  "crc": 2621798193
+ },
+ "renamed file A.txt": {
+  "size": 14,
+  "mtime": 1563365688.0,
+  "crc": 2097105078
+ },
+ "file modified newer on A.txt": {
+  "size": 640,
+  "mtime": 1575245024.0,
+  "crc": 4087299154
  },
  "file modified newer on B.txt": {
   "size": 100,
-  "mtime": 1563369748.0
- },
- "corrupted file A.txt": {
-  "size": 2,
-  "mtime": 1563369444.0,
-  "crc": 458074504
- },
- "corrupted file B": {
-  "size": 2,
-  "mtime": 1563369444.0,
-  "crc": 458074504
+  "mtime": 1563366148.0,
+  "crc": 1459518598
  }
 }

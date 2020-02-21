@@ -97,9 +97,9 @@
   "crc": 458074504
  },
  ".backupy\\database.json": {
-  "size": 1262,
+  "size": 2200,
   "mtime": 0,
-  "crc": 2715264291
+  "crc": 1128158839
  },
  ".backupy\\Archive\\000000-0000\\file modified newer on A.txt": {
   "size": 319,
@@ -110,16 +110,6 @@
   "size": 202,
   "mtime": 0,
   "crc": 4256320678
- },
- ".backupy\\Archive\\000000-0000\\.backupy\\database.json": {
-  "size": 1249,
-  "mtime": 0,
-  "crc": 4261732806
- },
- ".backupy\\Config\\database.json": {
-  "size": 2300,
-  "mtime": 0,
-  "crc": 3503129100
  },
  ".backupy\\Trash\\000000-0000\\file only B.txt": {
   "size": 9,

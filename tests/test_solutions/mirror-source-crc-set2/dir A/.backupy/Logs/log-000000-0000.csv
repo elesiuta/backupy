@@ -1,8 +1,29 @@
+### DATABASE CONFLICTS ###
+File:,Dest,corrupted file A.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 458074504}"
+,DB,corrupted file A.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 458074504}"
+File:,Dest,corrupted file B,Missing
+,DB,corrupted file B,"{'size': 2, 'mtime': 1563369444.0, 'crc': 458074504}"
+File:,Dest,file modified newer on A.txt,"{'size': 319, 'mtime': 1563366218.0, 'crc': 1624980325}"
+,DB,file modified newer on A.txt,"{'size': 319, 'mtime': 1563369818.0}"
+File:,Dest,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0, 'crc': 4256320678}"
+,DB,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
+File:,Dest,file only A.txt,Missing
+,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
+File:,Dest,file only B.txt,"{'size': 9, 'mtime': 1563366016.0, 'crc': 69258562}"
+,DB,file only B.txt,"{'size': 9, 'mtime': 1563369616.0}"
+File:,Dest,same file.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 458074504}"
+,DB,same file.txt,"{'size': 2, 'mtime': 1563369444.0}"
+File:,Dest,subdir\renamed dir A\file1.txt,"{'size': 11, 'mtime': 1563365760.0, 'crc': 222957957}"
+,DB,subdir\renamed dir A\file1.txt,"{'size': 11, 'mtime': 1563369360.0}"
+File:,Dest,subdir\renamed dir A\file2.txt,"{'size': 2, 'mtime': 1563365766.0, 'crc': 841265288}"
+,DB,subdir\renamed dir A\file2.txt,"{'size': 2, 'mtime': 1563369366.0}"
+File:,Dest,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563365786.0, 'crc': 125021452}"
+,DB,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
 ### CRC ERRORS DETECTED ###
 File:,Source,corrupted file A.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 4063104189}"
-,DB,corrupted file A.txt,Missing
+,DB,corrupted file A.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 458074504}"
 ,Dest,corrupted file A.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 458074504}"
-,DB,corrupted file A.txt,Missing
+,DB,corrupted file A.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 458074504}"
 File:,Source,corrupted file B.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 458074504}"
 ,DB,corrupted file B.txt,Missing
 ,Dest,corrupted file B.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 4063104189}"
@@ -31,8 +52,6 @@ File:,,file only B.txt,"{'size': 9, 'mtime': 1563366016.0, 'crc': 69258562}"
 File:,,new file B.txt,"{'size': 70, 'mtime': 1575245388.0, 'crc': 2716265695}"
 File:,,same file corrupted.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 4063104189}"
 ### CHANGED FILES ###
-File:,Source,.backupy\database.json,"{'size': 1262, 'mtime': 1582139274.0, 'crc': 2715264291}"
-,Dest,.backupy\database.json,"{'size': 1249, 'mtime': 1582139350.0, 'crc': 4261732806}"
 File:,Source,corrupted file A.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 4063104189}"
 ,Dest,corrupted file A.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 458074504}"
 File:,Source,corrupted file B.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 458074504}"
@@ -63,8 +82,6 @@ moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B\.backupy\
 moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B,copied both - 2.txt,copied both - 1.txt
 moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B,moved and copied A.txt,moved and copied A - 2.txt
 moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B,renamed file B.txt,renamed file A.txt
-moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B\.backupy\Archive\000000-0000,.backupy\database.json,.backupy\database.json
-copyFile(),\mirror-source-crc-set2\dir A,\mirror-source-crc-set2\dir B,.backupy\database.json,.backupy\database.json
 moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B\.backupy\Archive\000000-0000,corrupted file A.txt,corrupted file A.txt
 copyFile(),\mirror-source-crc-set2\dir A,\mirror-source-crc-set2\dir B,corrupted file A.txt,corrupted file A.txt
 moveFile(),\mirror-source-crc-set2\dir B,\mirror-source-crc-set2\dir B\.backupy\Archive\000000-0000,corrupted file B.txt,corrupted file B.txt

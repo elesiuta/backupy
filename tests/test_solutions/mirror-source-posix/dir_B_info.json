@@ -36,6 +36,11 @@
   "mtime": 0,
   "crc": 458074504
  },
+ ".backupy\\database.json": {
+  "size": 887,
+  "mtime": 0,
+  "crc": 3249643170
+ },
  ".backupy\\Archive\\000000-0000\\file modified newer on A.txt": {
   "size": 158,
   "mtime": 0,
@@ -45,11 +50,6 @@
   "size": 100,
   "mtime": 0,
   "crc": 1459518598
- },
- ".backupy\\Config\\database.json": {
-  "size": 887,
-  "mtime": 0,
-  "crc": 3249643170
  },
  ".backupy\\Trash\\000000-0000\\empty dir only B": {
   "size": 0,
