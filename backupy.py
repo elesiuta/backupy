@@ -381,11 +381,10 @@ class DirInfo:
                         self.file_dicts[relative_path]["crc"] = self.crc(full_path)
             scan_status.endProgress()
             # check for missing (or moved) files
-            for relative_path in self.loaded_dicts:
+            for relative_path in (set(self.loaded_dicts) - set(self.file_dicts)):
                 if "dir" not in self.loaded_dicts[relative_path]:
                     if not self.pathMatch(relative_path, self.ignored_toplevel_folders):
-                        if relative_path not in self.file_dicts:
-                            self.missing_files[relative_path] = self.loaded_dicts[relative_path]
+                        self.missing_files[relative_path] = self.loaded_dicts[relative_path]
 
     def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filter_list: typing.Union[list, None] = None, filter_false_list: typing.Union[list, None] = None) -> tuple:
         # init variables
@@ -786,7 +785,7 @@ class BackupManager:
         self.colourPrint(getString("Scanning files on destination:\n%s") %(self.config.dest), "OKBLUE")
         self.dest.scanDir(self.config.stdout_status_bar)
         # compare directories (should be relatively fast, all the read operations are done during scan)
-        self.colourPrint(getString("Comparing directories..."), "OKGREEN")
+        self.colourPrint(getString("Comparing directories..."), "OKBLUE")
         source_only, dest_only, changed, moved = self.source.dirCompare(self.dest,
                                                                         self.config.nomoves,
                                                                         self.config.filter_list,
@@ -845,25 +844,25 @@ class BackupManager:
         else:
             archive_msg = getString("archive")
         if self.config.main_mode == "sync":
-            dest_msg = getString("(copy to source)")
+            dest_msg = getString("(will be copied to source)")
         elif self.config.main_mode == "backup":
-            dest_msg = getString("(left as is)")
+            dest_msg = getString("(will be left as is)")
         elif self.config.main_mode == "mirror":
-            dest_msg = getString("(to be %sd)" %(archive_msg))
+            dest_msg = getString("(will be %sd)" %(archive_msg))
         if self.config.select_mode == "source":
-            change_msg = getString("(%s dest and copy from source)" %(archive_msg))
+            change_msg = getString("(%s dest and copy source -> dest)" %(archive_msg))
         elif self.config.select_mode == "dest":
-            change_msg = getString("(%s source and copy from dest)" %(archive_msg))
+            change_msg = getString("(%s source and copy dest -> source)" %(archive_msg))
         elif self.config.select_mode == "new":
             change_msg = getString("(%s older and copy newer)" %(archive_msg))
         elif self.config.select_mode == "no":
-            change_msg = getString("(left as is)")
+            change_msg = getString("(will be left as is)")
         if self.config.norun:
             simulation_msg = getString(" dry run")
         else:
             simulation_msg = ""
         # print differences
-        print(self.colourString(getString("Source Only (copy to dest): %s") %(len(source_only)), "HEADER"))
+        print(self.colourString(getString("Source Only (will be copied to dest): %s") %(len(source_only)), "HEADER"))
         self.log.append([getString("### SOURCE ONLY ###")])
         self.printFiles(source_only, source_dict)
         print(self.colourString(getString("Destination Only %s: %s") %(dest_msg, len(dest_only)), "HEADER"))
@@ -873,7 +872,7 @@ class BackupManager:
         self.log.append([getString("### CHANGED FILES ###")])
         self.printChangedFiles(changed, source_dict, dest_dict)
         if not self.config.nomoves:
-            print(self.colourString(getString("Moved Files (move on dest to match source): %s") %(len(moved)), "HEADER"))
+            print(self.colourString(getString("Moved Files (will move files on dest to match source): %s") %(len(moved)), "HEADER"))
             self.log.append([getString("### MOVED FILES ###")])
             self.printMovedFiles(moved, source_dict, dest_dict)
         # exit if directories already match
@@ -894,7 +893,7 @@ class BackupManager:
                 return self.abortRun()
         # backup operations
         self.log.append([getString("### START ") + self.config.main_mode.upper() + simulation_msg.upper() + " ###"])
-        print(self.colourString(getString("Starting ") + self.config.main_mode, "OKGREEN"))
+        print(self.colourString(getString("Starting ") + self.config.main_mode, "HEADER"))
         if self.config.main_mode == "mirror":
             self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
             self.handleDeletedFiles(self.config.dest, dest_only)
