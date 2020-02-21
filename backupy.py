@@ -359,7 +359,7 @@ class DirInfo:
                         if (self.loaded_dicts[relative_path]["size"] == size and
                             self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, True)):
                             # unchanged file (probably)
-                            self.file_dicts[relative_path] = self.loaded_dicts[relative_path]
+                            self.file_dicts[relative_path] = self.loaded_dicts[relative_path].copy()
                         else:
                             # changed file
                             self.file_dicts[relative_path] = {"size": size, "mtime": mtime}

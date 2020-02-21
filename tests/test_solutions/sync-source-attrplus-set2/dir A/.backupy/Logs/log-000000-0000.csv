@@ -10,7 +10,7 @@ File:,Source,file only A.txt,"{'size': 2, 'mtime': 1563369588.0, 'crc': 42}"
 File:,Source,file only B.txt,Missing
 ,DB,file only B.txt,"{'size': 9, 'mtime': 1563369616.0}"
 ,Dest,file only B.txt,"{'size': 9, 'mtime': 1563369616.0, 'crc': 69258562}"
-,DB,file only B.txt,"{'size': 9, 'mtime': 1563369616.0, 'crc': 69258562}"
+,DB,file only B.txt,"{'size': 9, 'mtime': 1563369616.0}"
 ### CRC ERRORS DETECTED ###
 File:,Source,corrupted file B.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 458074504}"
 ,Dest,corrupted file B.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 4063104189}"
