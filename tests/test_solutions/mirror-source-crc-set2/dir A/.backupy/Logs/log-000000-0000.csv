@@ -28,10 +28,6 @@ File:,Source,corrupted file B.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 458
 ,DB,corrupted file B.txt,Missing
 ,Dest,corrupted file B.txt,"{'size': 2, 'mtime': 1563365844.0, 'crc': 4063104189}"
 ,DB,corrupted file B.txt,Missing
-File:,Source,file only A.txt,"{'size': 2, 'mtime': 1563365988.0, 'crc': 458074504}"
-,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0, 'crc': 42}"
-,Dest,file only A.txt,Missing
-,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
 File:,Source,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': 1597877419}"
 ,DB,new corrupted file.txt,Missing
 ,Dest,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': 1470702120}"
