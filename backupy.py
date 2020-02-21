@@ -339,6 +339,7 @@ class DirInfo:
                 for subdir in subdir_list:
                     full_path = os.path.join(dir_path, subdir)
                     if len(os.listdir(full_path)) == 0:
+                        # track empty directories with a dummy entry, non-empty directories should not have entries
                         relative_path = os.path.relpath(full_path, self.dir)
                         if self.force_posix_path_sep:
                             relative_path = relative_path.replace(os.path.sep, "/")
@@ -417,15 +418,16 @@ class DirInfo:
         moved = []
         if not no_moves:
             for f1 in reversed(self_only):
-                for f2 in reversed(second_only):
-                    if "dir" not in self.file_dicts[f1] and "dir" not in secondInfo.file_dicts[f2]:
-                        if self.fileMatch(f1, f2, secondInfo, compare_mode, True):
-                            moved.append({"source": f1, "dest": f2})
-                            self_only.remove(f1)
-                            second_only.remove(f2)
-                            _ = secondInfo.missing_files.pop(f1, 1)
-                            _ = self.missing_files.pop(f2, 1)
-                            break
+                if "dir" not in self.file_dicts[f1]:
+                    for f2 in reversed(second_only):
+                        if "dir" not in secondInfo.file_dicts[f2]:
+                            if self.fileMatch(f1, f2, secondInfo, compare_mode, True):
+                                moved.append({"source": f1, "dest": f2})
+                                self_only.remove(f1)
+                                second_only.remove(f2)
+                                _ = secondInfo.missing_files.pop(f1, 1)
+                                _ = self.missing_files.pop(f2, 1)
+                                break
             moved.reverse()
         return self_only, second_only, changed, moved
 
@@ -735,7 +737,7 @@ class BackupManager:
             archive_path = os.path.join(root_path, self.config.archive_dir, self.backup_time)
             self.moveFile(root_path, archive_path, file_path, file_path)
 
-    def handleChanges(self, source: str, dest: str, source_dict: dict, dest_dict:dict, changed: list) -> None:
+    def handleChangedFiles(self, source: str, dest: str, source_dict: dict, dest_dict:dict, changed: list) -> None:
         self.colourPrint(getString("Handling %s file changes per selection mode") %(len(changed)), "OKBLUE")
         copy_status = StatusBar("Copying", len(changed), self.config.stdout_status_bar, gui=self.gui)
         for fp in changed:
@@ -896,16 +898,16 @@ class BackupManager:
             self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
             self.handleDeletedFiles(self.config.dest, dest_only)
             self.handleMovedFiles(moved)
-            self.handleChanges(self.config.source, self.config.dest, source_dict, dest_dict, changed)
+            self.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         elif self.config.main_mode == "backup":
             self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
             self.handleMovedFiles(moved)
-            self.handleChanges(self.config.source, self.config.dest, source_dict, dest_dict, changed)
+            self.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         elif self.config.main_mode == "sync":
             self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
             self.copyFiles(self.config.dest, self.config.source, dest_only, dest_only)
             self.handleMovedFiles(moved)
-            self.handleChanges(self.config.source, self.config.dest, source_dict, dest_dict, changed)
+            self.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         self.log.append([getString("### COMPLETED ###")])
         self.writeLog(db=True)
         print(self.colourString(getString("Completed!"), "OKGREEN"))
