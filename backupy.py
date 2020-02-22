@@ -99,7 +99,7 @@ class StatusBar:
             self.msg_len = self.char_display - len(progress_str) - len(self.title_str)
             msg = " " * self.msg_len
             print(self.title_str + progress_str + msg, end="\r")
-        elif self.gui and total > 0:
+        elif self.gui and self.total > 0:
             self.progress = 0
             print("progress: %s/%s" %(self.progress, self.total))
 
@@ -125,7 +125,7 @@ class StatusBar:
                 msg = msg[:splice] + "..." + msg[-splice:]
             msg = msg + " " * int(self.msg_len - self.getStringMaxWidth(msg))
             print(self.title_str + progress_str + msg, end="\r")
-        elif self.gui:
+        elif self.gui and self.total > 0:
             self.progress += 1
             print("progress: %s/%s" %(self.progress, self.total))
 
@@ -325,9 +325,8 @@ class DirInfo:
         return False
 
     def scanDir(self, stdout_status_bar: bool) -> None:
-        if os.path.isdir(self.dir):
-            # init variables
-            self.file_dicts = {}
+        # init
+        if os.path.isdir(self.dir) and self.file_dicts == {}:
             total = sum(len(f) for r, d, f in os.walk(self.dir))
             scan_status = StatusBar("Scanning", total, stdout_status_bar, gui=self.gui)
             for dir_path, subdir_list, file_list in os.walk(self.dir):
@@ -368,7 +367,7 @@ class DirInfo:
                         # new file
                         self.file_dicts[relative_path] = {"size": size, "mtime": mtime}
                     if self.compare_mode == "crc":
-                        # calculate CRC for all files (simpler code and potential warning sign disk issues)
+                        # calculate CRC for all files (simpler code and potential warning sign for disk issues)
                         self.file_dicts[relative_path]["crc"] = self.crc(full_path)
                         if (relative_path in self.loaded_dicts and
                             "crc" in self.loaded_dicts[relative_path] and
