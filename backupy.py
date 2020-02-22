@@ -492,6 +492,8 @@ class BackupManager:
             self.backup_time = self.config.backup_time_override
         self.log.append([getString("Time:"), self.backup_time,
                          getString("Version:"), getVersion(),
+                         getString("Source DB CRC:"), "0",
+                         getString("Dest DB CRC:"), "0",
                          getString("Config:"), str(vars(self.config))])
 
     ######################################
@@ -515,6 +517,11 @@ class BackupManager:
             sys.exit()
 
     def writeLog(self, db_name: str) -> None:
+        if self.config.save_json:
+            self.source.saveJson(db_name)
+            self.dest.saveJson(db_name)
+            self.log[1][6] = self.prettyCrc(self.source.crc(os.path.join(self.source.dir, self.source.config_dir, db_name)))
+            self.log[1][8] = self.prettyCrc(self.dest.crc(os.path.join(self.dest.dir, self.dest.config_dir, db_name)))
         if self.config.csv:
             if self.config.root_alias_log or self.config.force_posix_path_sep:
                 for i in range(2, len(self.log)):
@@ -526,9 +533,6 @@ class BackupManager:
                             if self.config.force_posix_path_sep:
                                 self.log[i][j] = self.log[i][j].replace(os.path.sep, "/")
             writeCsv(os.path.join(self.config.source, self.config.log_dir, "log-" + self.backup_time + ".csv"), self.log)
-        if self.config.save_json:
-            self.source.saveJson(db_name)
-            self.dest.saveJson(db_name)
 
     def abortRun(self) -> int:
         self.log.append([getString("### ABORTED ###")])
