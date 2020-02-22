@@ -27,7 +27,7 @@ import unicodedata
 import zlib
 
 def getVersion() -> str:
-    return "1.3.2"
+    return "1.3.3"
 
 
 #########################
@@ -159,9 +159,9 @@ class ConfigObject:
         self.compare_mode = "attr"
         self.filter_list = None
         self.filter_false_list = None
-        self.nomoves = False
         self.noarchive = False
         self.nolog = False
+        self.nomoves = False
         self.noprompt = False
         self.norun = False
         self.save = False
@@ -229,8 +229,8 @@ class DirInfo:
     def getCrcErrorsDetected(self) -> dict:
         return self.crc_errors_detected
 
-    def saveJson(self) -> None:
-        writeJson(os.path.join(self.dir, self.config_dir, "database.json"), self.file_dicts)
+    def saveJson(self, db_name: str = "database.json") -> None:
+        writeJson(os.path.join(self.dir, self.config_dir, db_name), self.file_dicts)
 
     def loadJson(self) -> None:
         self.loaded_dicts = readJson(os.path.join(self.dir, self.config_dir, "database.json"))
@@ -515,7 +515,7 @@ class BackupManager:
             print(self.colourString(getString("A config file matching the specified source was not found (case sensitive)"), "FAIL"))
             sys.exit()
 
-    def writeLog(self, db: bool = False) -> None:
+    def writeLog(self, db_name: str) -> None:
         if self.config.csv:
             if self.config.root_alias_log or self.config.force_posix_path_sep:
                 for i in range(2, len(self.log)):
@@ -527,13 +527,13 @@ class BackupManager:
                             if self.config.force_posix_path_sep:
                                 self.log[i][j] = self.log[i][j].replace(os.path.sep, "/")
             writeCsv(os.path.join(self.config.source, self.config.log_dir, "log-" + self.backup_time + ".csv"), self.log)
-        if self.config.save_json and db:
-            self.source.saveJson()
-            self.dest.saveJson()
+        if self.config.save_json:
+            self.source.saveJson(db_name)
+            self.dest.saveJson(db_name)
 
     def abortRun(self) -> int:
         self.log.append([getString("### ABORTED ###")])
-        self.writeLog()
+        self.writeLog("database.aborted.json")
         print(self.colourString(getString("Run aborted"), "WARNING"))
         return 1
 
@@ -887,11 +887,11 @@ class BackupManager:
         if len(source_only) == 0 and len(dest_only) == 0 and len(changed) == 0 and len(moved) == 0:
             print(self.colourString(getString("Directories already match, completed!"), "OKGREEN"))
             self.log.append([getString("### NO CHANGES FOUND ###")])
-            self.writeLog(db=True)
+            self.writeLog("database.json")
             return 0
         # wait for go ahead
         if not self.config.noprompt:
-            self.writeLog()
+            self.writeLog("database.tmp.json")
             if self.gui:
                 go = self.gui_simplePrompt(getString("Scan complete, continue with %s%s?") %(self.config.main_mode, simulation_msg))
             else:
@@ -917,7 +917,7 @@ class BackupManager:
             self.handleMovedFiles(moved)
             self.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         self.log.append([getString("### COMPLETED ###")])
-        self.writeLog(db=True)
+        self.writeLog("database.json")
         print(self.colourString(getString("Completed!"), "OKGREEN"))
         return 0
 
