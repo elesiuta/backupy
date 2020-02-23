@@ -101,6 +101,11 @@
   "mtime": 0,
   "crc": 2745363718
  },
+ ".backupy\\database.tmp.json": {
+  "size": 1556,
+  "mtime": 0,
+  "crc": 3149235069
+ },
  ".backupy\\Archive\\000000-0000\\file modified newer on A.txt": {
   "size": 319,
   "mtime": 0,

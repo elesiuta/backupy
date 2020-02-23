@@ -51,6 +51,11 @@
   "mtime": 0,
   "crc": 2319721016
  },
+ ".backupy\\Config\\database.tmp.json": {
+  "size": 877,
+  "mtime": 0,
+  "crc": 1076058753
+ },
  "renamed dir B\\file1.txt": {
   "size": 11,
   "mtime": 0,

@@ -101,6 +101,11 @@
   "mtime": 0,
   "crc": 148020056
  },
+ ".backupy\\database.tmp.json": {
+  "size": 1924,
+  "mtime": 0,
+  "crc": 713275369
+ },
  ".backupy\\Archive\\000000-0000\\corrupted file A.txt": {
   "size": 2,
   "mtime": 0,

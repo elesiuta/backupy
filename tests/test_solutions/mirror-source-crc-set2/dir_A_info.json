@@ -101,6 +101,11 @@
   "mtime": 0,
   "crc": 2609610276
  },
+ ".backupy\\database.tmp.json": {
+  "size": 2211,
+  "mtime": 0,
+  "crc": 2609610276
+ },
  ".backupy\\Logs\\log-000000-0000.csv": {
   "size": 7019,
   "mtime": 0,
