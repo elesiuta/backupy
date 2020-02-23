@@ -884,8 +884,8 @@ class BackupManager:
             self.writeLog("database.json")
             return 0
         # wait for go ahead
+        self.writeLog("database.tmp.json")
         if not self.config.noprompt:
-            self.writeLog("database.tmp.json")
             if self.gui:
                 go = self.gui_simplePrompt(getString("Scan complete, continue with %s%s?") %(self.config.main_mode, simulation_msg))
             else:
