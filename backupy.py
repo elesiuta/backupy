@@ -514,8 +514,8 @@ class BackupManager:
         if self.config.save_json:
             self.source.saveJson(db_name)
             self.dest.saveJson(db_name)
-            self.log[1][6] = self.source.calcCrc(os.path.join(self.source.dir, self.source.config_dir, db_name))
-            self.log[1][8] = self.dest.calcCrc(os.path.join(self.dest.dir, self.dest.config_dir, db_name))
+            self.log[1][5] = self.source.calcCrc(os.path.join(self.source.dir, self.source.config_dir, db_name))
+            self.log[1][7] = self.dest.calcCrc(os.path.join(self.dest.dir, self.dest.config_dir, db_name))
         if self.config.csv:
             if self.config.root_alias_log or self.config.force_posix_path_sep:
                 for i in range(2, len(self.log)):
