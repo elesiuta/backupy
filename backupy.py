@@ -269,7 +269,7 @@ class DirInfo:
                 prev = zlib.crc32(line, prev)
         return "%X" %(prev & 0xFFFFFFFF)
 
-    def getCrc(self, relative_path: str, recalc: bool = False) -> int:
+    def getCrc(self, relative_path: str, recalc: bool = False) -> str:
         if recalc or "crc" not in self.file_dicts[relative_path]:
             full_path = os.path.join(self.dir, relative_path)
             self.file_dicts[relative_path]["crc"] = self.calcCrc(full_path)
@@ -342,7 +342,7 @@ class DirInfo:
                         relative_path = os.path.relpath(full_path, self.dir)
                         if self.force_posix_path_sep:
                             relative_path = relative_path.replace(os.path.sep, "/")
-                        self.file_dicts[relative_path] = {"size": 0, "mtime": 0, "crc": 0, "dir": True}
+                        self.file_dicts[relative_path] = {"size": 0, "mtime": 0, "crc": "0", "dir": True}
                 # scan files
                 for file_name in file_list:
                     full_path = os.path.join(dir_path, file_name)
