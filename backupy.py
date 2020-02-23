@@ -269,12 +269,6 @@ class DirInfo:
                 prev = zlib.crc32(line, prev)
         return "%X" %(prev & 0xFFFFFFFF)
 
-    def getCrc(self, relative_path: str, recalc: bool = False) -> str:
-        if recalc or "crc" not in self.file_dicts[relative_path]:
-            full_path = os.path.join(self.dir, relative_path)
-            self.file_dicts[relative_path]["crc"] = self.calcCrc(full_path)
-        return self.file_dicts[relative_path]["crc"]
-
     def timeMatch(self, t1: float, t2: float, exact_only: bool = False, tz_diffs: list = [], fs_tol: int = 2) -> bool:
         if t1 == t2:
             return True
@@ -307,7 +301,7 @@ class DirInfo:
         if self.file_dicts[f1]["size"] == secondInfo.file_dicts[f2]["size"]:
             if self.timeMatch(self.file_dicts[f1]["mtime"], secondInfo.file_dicts[f2]["mtime"], False, [3600, 3601, 3602]):
                 # these are the 'unchanged files (probably)' from both sides, crc should be up to date from the scan if using CRC mode
-                if compare_mode == "crc" and self.getCrc(f1) != secondInfo.getCrc(f2):
+                if compare_mode == "crc" and self.file_dicts[f1]["crc"] != secondInfo.file_dicts[f2]["crc"]:
                     # size and date match, but crc does not, probably corrupted
                     if f1 not in self.crc_errors_detected and f2 not in secondInfo.crc_errors_detected:
                         # log error since it wasn't already detected during scan, that implies neither file has a past record
@@ -315,7 +309,7 @@ class DirInfo:
                         secondInfo.crc_errors_detected[f2] = None
                     return False
                 # detect mismatched crc values across both sides (usually if corruption happened before crc database was created)
-                if compare_mode == "attr+" and self.getCrc(f1) != secondInfo.getCrc(f2):
+                if compare_mode == "attr+" and self.file_dicts[f1]["crc"] != secondInfo.file_dicts[f2]["crc"]:
                     if move_check:
                         # it may be corrupted or coincidence, just won't flag these files as matching
                         return False
