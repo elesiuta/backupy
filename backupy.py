@@ -172,10 +172,7 @@ class ConfigObject:
         self.log_dir = ".backupy/Logs"
         self.trash_dir = ".backupy/Trash"
         self.cleanup_empty_dirs = True
-        self.csv = True
         self.root_alias_log = True
-        self.load_json = True
-        self.save_json = True
         self.stdout_status_bar = True
         self.verbose = True
         self.force_posix_path_sep = False
@@ -183,6 +180,9 @@ class ConfigObject:
         self.quit_on_db_conflict = False
         # config for testing and debugging
         self.backup_time_override = False
+        self.load_db_json = True
+        self.save_db_json = True
+        self.save_log_csv = True
         # load config
         for key in config:
             self.__setattr__(key, config[key])
@@ -193,7 +193,7 @@ class ConfigObject:
         self.trash_dir = os.path.normpath(self.trash_dir)
         # disable logging of files and changes
         if self.nolog:
-            self.csv, self.save_json = False, False
+            self.save_log_csv, self.save_db_json = False, False
 
 
 ########################################
@@ -516,12 +516,12 @@ class BackupManager:
             sys.exit()
 
     def writeLog(self, db_name: str) -> None:
-        if self.config.save_json:
+        if self.config.save_db_json:
             self.source.saveJson(db_name)
             self.dest.saveJson(db_name)
             self.log[1][5] = self.source.calcCrc(os.path.join(self.source.dir, self.source.config_dir, db_name))
             self.log[1][7] = self.dest.calcCrc(os.path.join(self.dest.dir, self.dest.config_dir, db_name))
-        if self.config.csv:
+        if self.config.save_log_csv:
             if self.config.root_alias_log or self.config.force_posix_path_sep:
                 for i in range(2, len(self.log)):
                     for j in range(len(self.log[i])):
@@ -781,7 +781,7 @@ class BackupManager:
                             [self.config.archive_dir, self.config.log_dir, self.config.trash_dir],
                             self.gui, self.config.force_posix_path_sep)
         database_load_success = False
-        if self.config.load_json:
+        if self.config.load_db_json:
             self.source.loadJson()
             self.dest.loadJson()
             if self.source.loaded_dicts != {} or self.dest.loaded_dicts != {}:
