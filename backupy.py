@@ -263,16 +263,16 @@ class DirInfo:
         else:
             raise Exception("Update Dict Error")
 
-    def crc(self, file_path: str, prev: int = 0) -> int:
+    def calcCrc(self, file_path: str, prev: int = 0) -> str:
         with open(file_path, "rb") as f:
             for line in f:
                 prev = zlib.crc32(line, prev)
-        return prev
+        return "%X" %(prev & 0xFFFFFFFF)
 
     def getCrc(self, relative_path: str, recalc: bool = False) -> int:
         if recalc or "crc" not in self.file_dicts[relative_path]:
             full_path = os.path.join(self.dir, relative_path)
-            self.file_dicts[relative_path]["crc"] = self.crc(full_path)
+            self.file_dicts[relative_path]["crc"] = self.calcCrc(full_path)
         return self.file_dicts[relative_path]["crc"]
 
     def timeMatch(self, t1: float, t2: float, exact_only: bool = False, tz_diffs: list = [], fs_tol: int = 2) -> bool:
@@ -368,7 +368,7 @@ class DirInfo:
                         self.file_dicts[relative_path] = {"size": size, "mtime": mtime}
                     if self.compare_mode == "crc":
                         # calculate CRC for all files (simpler code and potential warning sign for disk issues)
-                        self.file_dicts[relative_path]["crc"] = self.crc(full_path)
+                        self.file_dicts[relative_path]["crc"] = self.calcCrc(full_path)
                         if (relative_path in self.loaded_dicts and
                             "crc" in self.loaded_dicts[relative_path] and
                             self.loaded_dicts[relative_path]["crc"] != self.file_dicts[relative_path]["crc"] and
@@ -385,7 +385,7 @@ class DirInfo:
                             # attributes match, preserve old crc
                             self.file_dicts[relative_path]["crc"] = self.loaded_dicts[relative_path]["crc"]
                         else:
-                            self.file_dicts[relative_path]["crc"] = self.crc(full_path)
+                            self.file_dicts[relative_path]["crc"] = self.calcCrc(full_path)
             scan_status.endProgress()
             # check for missing (or moved) files
             for relative_path in (set(self.loaded_dicts) - set(self.file_dicts)):
@@ -520,8 +520,8 @@ class BackupManager:
         if self.config.save_json:
             self.source.saveJson(db_name)
             self.dest.saveJson(db_name)
-            self.log[1][6] = self.prettyCrc(self.source.crc(os.path.join(self.source.dir, self.source.config_dir, db_name)))
-            self.log[1][8] = self.prettyCrc(self.dest.crc(os.path.join(self.dest.dir, self.dest.config_dir, db_name)))
+            self.log[1][6] = self.source.calcCrc(os.path.join(self.source.dir, self.source.config_dir, db_name))
+            self.log[1][8] = self.dest.calcCrc(os.path.join(self.dest.dir, self.dest.config_dir, db_name))
         if self.config.csv:
             if self.config.root_alias_log or self.config.force_posix_path_sep:
                 for i in range(2, len(self.log)):
@@ -562,9 +562,6 @@ class BackupManager:
             "UNDERLINE" : '\033[4m'
         }
         return colours[colour] + string + colours["ENDC"]
-
-    def prettyCrc(self, prev: int) -> str:
-        return "%X" %(prev & 0xFFFFFFFF)
 
     def prettySize(self, size: float) -> str:
         if size > 10**9:
@@ -607,7 +604,7 @@ class BackupManager:
                 s = s + self.colourString(getString(" Size: "), "OKBLUE") + self.prettySize(d[f]["size"])
                 s = s + self.colourString(getString(" Modified: "), "OKBLUE") + time.ctime(d[f]["mtime"])
                 if "crc" in d[f]:
-                    s = s + self.colourString(getString(" Hash: "), "OKBLUE") + self.prettyCrc(d[f]["crc"])
+                    s = s + self.colourString(getString(" Hash: "), "OKBLUE") + d[f]["crc"]
             else:
                 s = s + self.colourString(getString(" Missing"), "OKBLUE")
         print(s)
