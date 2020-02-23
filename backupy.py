@@ -179,6 +179,7 @@ class ConfigObject:
         self.stdout_status_bar = True
         self.verbose = True
         self.force_posix_path_sep = False
+        self.set_blank_crc_on_copy = False
         self.quit_on_db_conflict = False
         # config for testing and debugging
         self.backup_time_override = False
@@ -235,11 +236,15 @@ class DirInfo:
     def loadJson(self) -> None:
         self.loaded_dicts = readJson(os.path.join(self.dir, self.config_dir, "database.json"))
 
-    def updateDictOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
+    def updateDictOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo', blank_crc: bool) -> None:
         if self.dir == source_root and secondInfo.dir == dest_root:
-            secondInfo.file_dicts[dest_file] = self.file_dicts[source_file]
+            secondInfo.file_dicts[dest_file] = self.file_dicts[source_file].copy()
+            if blank_crc:
+                _ = secondInfo.file_dicts[dest_file].pop("crc", 1)
         elif self.dir == dest_root and secondInfo.dir == source_root:
-            self.file_dicts[dest_file] = secondInfo.file_dicts[source_file]
+            self.file_dicts[dest_file] = secondInfo.file_dicts[source_file].copy()
+            if blank_crc:
+                _ = self.file_dicts[dest_file].pop("crc", 1)
         else:
             raise Exception("Update Dict Error")
 
@@ -654,7 +659,7 @@ class BackupManager:
     def copyFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
             self.log.append(["copyFile()", source_root, dest_root, source_file, dest_file])
-            self.source.updateDictOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
+            self.source.updateDictOnCopy(source_root, dest_root, source_file, dest_file, self.dest, self.config.set_blank_crc_on_copy)
             if not self.config.norun:
                 source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
