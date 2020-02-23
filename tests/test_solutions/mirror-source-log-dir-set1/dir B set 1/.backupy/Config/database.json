@@ -2,7 +2,7 @@
  "same empty dir": {
   "size": 0,
   "mtime": 0,
-  "crc": 0,
+  "crc": "0",
   "dir": true
  },
  "same file.txt": {
@@ -12,7 +12,7 @@
  "same nested dir\\same empty dir": {
   "size": 0,
   "mtime": 0,
-  "crc": 0,
+  "crc": "0",
   "dir": true
  },
  "subdir\\renamed dir A\\file1.txt": {
@@ -34,7 +34,7 @@
  "empty dir only A": {
   "size": 0,
   "mtime": 0,
-  "crc": 0,
+  "crc": "0",
   "dir": true
  },
  "file only A.txt": {
@@ -50,8 +50,8 @@
   "mtime": 1563369288.0
  },
  ".backupy\\database.json": {
-  "size": 1066,
-  "mtime": 1575244362.0
+  "size": 1072,
+  "mtime": 1582431402.0
  },
  "file modified newer on A.txt": {
   "size": 640,

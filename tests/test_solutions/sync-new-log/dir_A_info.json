@@ -48,14 +48,14 @@
   "crc": 458074504
  },
  ".backupy\\database.json": {
-  "size": 1048,
+  "size": 1056,
   "mtime": 0,
-  "crc": 3201615900
+  "crc": 2218608000
  },
  ".backupy\\log-000000-0000.csv": {
-  "size": 2523,
+  "size": 2527,
   "mtime": 0,
-  "crc": 1578712169
+  "crc": 1062137819
  },
  ".backupy\\000000-0000\\file modified newer on B.txt": {
   "size": 35,

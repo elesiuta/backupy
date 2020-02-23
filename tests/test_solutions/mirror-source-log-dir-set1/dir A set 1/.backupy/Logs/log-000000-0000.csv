@@ -1,6 +1,6 @@
 ### SOURCE ONLY ###
 File:,,.backupy\000000-0000\file modified newer on B.txt,"{'size': 35, 'mtime': 1563369692.0}"
-File:,,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': 0, 'dir': True}"
+File:,,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': '0', 'dir': True}"
 File:,,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
 File:,,new file A.txt,"{'size': 11, 'mtime': 1575245254.0}"
 ### DESTINATION ONLY ###
@@ -8,8 +8,8 @@ File:,,.backupy\000000-0000\file modified newer on A.txt,"{'size': 158, 'mtime':
 File:,,file only B.txt,"{'size': 9, 'mtime': 1563369616.0}"
 File:,,new file B.txt,"{'size': 70, 'mtime': 1575245388.0}"
 ### CHANGED FILES ###
-File:,Source,.backupy\database.json,"{'size': 1066, 'mtime': 1575244362.0}"
-,Dest,.backupy\database.json,"{'size': 1067, 'mtime': 1575244362.0}"
+File:,Source,.backupy\database.json,"{'size': 1072, 'mtime': 1582431402.0}"
+,Dest,.backupy\database.json,"{'size': 1073, 'mtime': 1582431414.0}"
 File:,Source,file modified newer on A.txt,"{'size': 640, 'mtime': 1575245024.0}"
 ,Dest,file modified newer on A.txt,"{'size': 319, 'mtime': 1563369818.0}"
 File:,Source,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"

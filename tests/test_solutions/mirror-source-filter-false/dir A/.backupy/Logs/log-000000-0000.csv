@@ -1,8 +1,8 @@
 ### SOURCE ONLY ###
-File:,,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': 0, 'dir': True}"
+File:,,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': '0', 'dir': True}"
 File:,,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
 ### DESTINATION ONLY ###
-File:,,empty dir only B,"{'size': 0, 'mtime': 0, 'crc': 0, 'dir': True}"
+File:,,empty dir only B,"{'size': 0, 'mtime': 0, 'crc': '0', 'dir': True}"
 File:,,file only B.txt,"{'size': 9, 'mtime': 1563369616.0}"
 ### CHANGED FILES ###
 ### MOVED FILES ###

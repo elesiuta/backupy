@@ -2,7 +2,7 @@
  "same empty dir": {
   "size": 0,
   "mtime": 0,
-  "crc": 0,
+  "crc": "0",
   "dir": true
  },
  "file modified newer on B.txt": {
@@ -20,7 +20,7 @@
  "same nested dir\\same empty dir": {
   "size": 0,
   "mtime": 0,
-  "crc": 0,
+  "crc": "0",
   "dir": true
  },
  "file only A.txt": {
@@ -30,7 +30,7 @@
  "empty dir only A": {
   "size": 0,
   "mtime": 0,
-  "crc": 0,
+  "crc": "0",
   "dir": true
  },
  "renamed file A.txt": {

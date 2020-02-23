@@ -78,9 +78,9 @@
   "dir": true
  },
  "dir A set 1\\.backupy\\database.json": {
-  "size": 1066,
-  "mtime": 1575244362.0,
-  "crc": 290011966
+  "size": 1072,
+  "mtime": 1582431402.0,
+  "crc": 64620271
  },
  "dir A set 1\\.backupy\\000000-0000\\file modified newer on B.txt": {
   "size": 35,
@@ -175,9 +175,9 @@
   "dir": true
  },
  "dir B set 1\\.backupy\\database.json": {
-  "size": 1067,
-  "mtime": 1575244362.0,
-  "crc": 379011431
+  "size": 1073,
+  "mtime": 1582431414.0,
+  "crc": 3431456323
  },
  "dir B set 1\\.backupy\\000000-0000\\file modified newer on A.txt": {
   "size": 158,
