@@ -1,4 +1,9 @@
 # BackuPy
+## Quick Start
+```
+pip install backupy
+backupy -h
+```
 ## Installation
 - Install the latest version from PyPI
 ```
@@ -129,7 +134,7 @@ optional arguments:
   - force_posix_path_sep
     - always use a forward slash in paths, useful for keeping the same database on a drive shared between multiple operating systems, default = False
   - set_blank_crc_on_copy
-    - normally database entries are copied along with files, this removes the CRC from the copied entry forcing it to calculate and check the CRC on the next run to ensure a successful copy (with ATTR+, CRC mode would calculate it regardless), default = False
+    - normally database entries are copied along with files, this removes the CRC from the copied entry forcing BackuPy to calculate and check the CRC on the next run (with ATTR+) to ensure the copy was successful (CRC mode would calculate and check it regardless, but takes much longer since it would also recheck every file), default = False
   - quit_on_db_conflict
     - causes the run to automatically abort if there is any unexpected file modifications, sync conflicts, or file corruption detected, recommended if running with noprompt, default = False
 ## Building From Source
