@@ -1,8 +1,8 @@
 # BackuPy
 ## Installation
-- Install from PyPI
+- Install the latest version from PyPI
 ```
-pip install backupy
+pip install backupy --upgrade
 ```
 - Or install the python package from the GitHub release page
 - Or run the python file directly, all you need is backupy.py
@@ -19,11 +19,11 @@ pip install backupy
 - Save and load your configuration
 - Perform a dry run to test your configuration
 - Works on both new and existing backup directories
-- Filter files with regular expressions
+- Filter file paths with regular expressions
 ## Under the Hood
 - Easy to use in scripts (see backupy_batch.py for an example)
 - Clear and easy to verify code, the only functions that touch your files are: copyFile(), moveFile(), and  removeFile()
-- OS independent and console version uses only the Python standard library
+- OS independent and console version only uses the Python standard library
 - GUI available through Gooey and PySimpleGUI
 ## Usage Description
 - Source and destination directories can be any accessible directory
@@ -110,17 +110,28 @@ optional arguments:
 ```
 ## Extra Configuration Options
 - Some options can only be set from the config file
-  - archive_dir # can be any subdirectory, default=".backupy/Archive"
-  - config_dir # can't be changed under normal operation, default=".backupy"
-  - log_dir # can be any subdirectory, default=".backupy/Logs"
-  - trash_dir # can be any subdirectory, default=".backupy/Trash"
-  - cleanup_empty_dirs # delete directories when they become empty, default=True 
-  - root_alias_log # replace source and dest paths with "<source>" and "<dest>" in logs, default=True
-  - stdout_status_bar # show progress status bar, default=True
-  - verbose # print more updates to stdout, default=True
-  - force_posix_path_sep # always use a forward slash in paths, useful for keeping the same database on a drive shared between multiple operating systems, default=False
-  - set_blank_crc_on_copy # normally database entries are copied along with files, this removes the CRC from the copied entry forcing it to calculate and check the CRC on the next run to ensure a successful copy (with ATTR+, CRC mode would calculate it regardless), default=False
-  - quit_on_db_conflict # causes the run to automatically abort if there is any unexpected file modifications, sync conflicts, or file corruption detected, recommended if running with noprompt, default=False
+  - archive_dir
+    - can be any subdirectory, default = ".backupy/Archive"
+  - config_dir
+    - can't be changed under normal operation, default = ".backupy"
+  - log_dir
+    - can be any subdirectory, default = ".backupy/Logs"
+  - trash_dir
+    - can be any subdirectory, default = ".backupy/Trash"
+  - cleanup_empty_dirs
+    - delete directories when they become empty, default = True 
+  - root_alias_log
+    - replace source and dest paths with "\<source\>" and "\<dest\>" in logs, default = True
+  - stdout_status_bar
+    - show progress status bar, default = True
+  - verbose
+    - print more updates to stdout, default = True
+  - force_posix_path_sep
+    - always use a forward slash in paths, useful for keeping the same database on a drive shared between multiple operating systems, default = False
+  - set_blank_crc_on_copy
+    - normally database entries are copied along with files, this removes the CRC from the copied entry forcing it to calculate and check the CRC on the next run to ensure a successful copy (with ATTR+, CRC mode would calculate it regardless), default = False
+  - quit_on_db_conflict
+    - causes the run to automatically abort if there is any unexpected file modifications, sync conflicts, or file corruption detected, recommended if running with noprompt, default = False
 ## Building From Source
 - Run tests with
 ```
