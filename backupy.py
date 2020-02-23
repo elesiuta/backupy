@@ -201,13 +201,13 @@ class ConfigObject:
 
 
 class DirInfo:
-    def __init__(self, directory: str, compare_mode: str,  config_dir: str, ignored_toplevel_folders: list = [], gui: bool = False, force_posix_path_sep: bool = False):
+    def __init__(self, directory_root_path: str, compare_mode: str,  config_dir: str, ignored_toplevel_folders: list = [], gui: bool = False, force_posix_path_sep: bool = False):
         self.file_dicts = {}
         self.loaded_dicts = {}
         self.loaded_diffs = {}
         self.missing_files = {}
         self.crc_errors_detected = {}
-        self.dir = directory
+        self.dir = directory_root_path
         self.compare_mode = compare_mode
         self.config_dir = config_dir
         self.ignored_toplevel_folders = list(set(ignored_toplevel_folders[:] + [config_dir]))
@@ -255,11 +255,11 @@ class DirInfo:
         else:
             raise Exception("Update Dict Error")
 
-    def updateDictOnRemove(self, root: str, relative_path: str, secondInfo: 'DirInfo') -> None:
-        if root == self.dir:
-            _ = self.file_dicts.pop(relative_path)
-        elif root == secondInfo.dir:
-            _ = secondInfo.file_dicts.pop(relative_path)
+    def updateDictOnRemove(self, root_path: str, file_relative_path: str, secondInfo: 'DirInfo') -> None:
+        if root_path == self.dir:
+            _ = self.file_dicts.pop(file_relative_path)
+        elif root_path == secondInfo.dir:
+            _ = secondInfo.file_dicts.pop(file_relative_path)
         else:
             raise Exception("Update Dict Error")
 
@@ -332,7 +332,7 @@ class DirInfo:
                 for subdir in subdir_list:
                     full_path = os.path.join(dir_path, subdir)
                     if len(os.listdir(full_path)) == 0:
-                        # track empty directories with a dummy entry, non-empty directories should not have entries
+                        # track empty directories with a dummy entry, non-empty directories should not have entries, they are handled automatically by having files inside them
                         relative_path = os.path.relpath(full_path, self.dir)
                         if self.force_posix_path_sep:
                             relative_path = relative_path.replace(os.path.sep, "/")
@@ -633,12 +633,12 @@ class BackupManager:
     ### File operation methods (only use these methods to perform operations) ###
     #############################################################################
 
-    def removeFile(self, root: str, relative_path: str) -> None:
+    def removeFile(self, root_path: str, file_relative_path: str) -> None:
         try:
-            self.log.append(["removeFile()", root, relative_path])
-            self.source.updateDictOnRemove(root, relative_path, self.dest)
+            self.log.append(["removeFile()", root_path, file_relative_path])
+            self.source.updateDictOnRemove(root_path, file_relative_path, self.dest)
             if not self.config.norun:
-                path = os.path.join(root, relative_path)
+                path = os.path.join(root_path, file_relative_path)
                 if os.path.isdir(path):
                     os.rmdir(path)
                 else:
@@ -690,10 +690,10 @@ class BackupManager:
     ### Batch file operation methods (do not perform file operations directly) ###
     ##############################################################################
 
-    def removeFiles(self, root: str, files: list) -> None:
-        self.colourPrint(getString("Removing %s unique files from:\n%s") %(len(files), root), "OKBLUE")
-        for f in files:
-            self.removeFile(root, f)
+    def removeFiles(self, root_path: str, file_relative_paths: list) -> None:
+        self.colourPrint(getString("Removing %s unique files from:\n%s") %(len(file_relative_paths), root_path), "OKBLUE")
+        for f in file_relative_paths:
+            self.removeFile(root_path, f)
         self.colourPrint(getString("Removal completed!"), "NONE")
 
     def copyFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str) -> None:
@@ -710,19 +710,19 @@ class BackupManager:
             self.moveFile(source_root, dest_root, source_files[i], dest_files[i])
         self.colourPrint(getString("Archiving completed!"), "NONE")
 
-    def handleDeletedFiles(self, root: str, files: list) -> None:
+    def handleDeletedFiles(self, root_path: str, file_relative_paths: list) -> None:
         if self.config.noarchive:
-            self.removeFiles(root, files)
+            self.removeFiles(root_path, file_relative_paths)
         else:
-            recycle_bin = os.path.join(root, self.config.trash_dir, self.backup_time)
-            self.moveFiles(root, recycle_bin, files, files)
+            recycle_bin = os.path.join(root_path, self.config.trash_dir, self.backup_time)
+            self.moveFiles(root_path, recycle_bin, file_relative_paths, file_relative_paths)
 
-    def handleMovedFiles(self, moved: list, reverse: bool = False) -> None:
+    def handleMovedFiles(self, moved_pairs: list, reverse: bool = False) -> None:
         if not self.config.nomoves:
             # conflicts shouldn't happen since moved is a subset of files from source_only and dest_only
             # depends on source_info.dirCompare(dest_info) otherwise source and dest keys will be reversed
-            self.colourPrint(getString("Moving %s files on destination to match source") %(len(moved)), "OKBLUE")
-            for f in moved:
+            self.colourPrint(getString("Moving %s files on destination to match source") %(len(moved_pairs)), "OKBLUE")
+            for f in moved_pairs:
                 if reverse:
                     dest = self.config.source
                     oldLoc = f["source"]
@@ -734,29 +734,29 @@ class BackupManager:
                 self.moveFile(dest, dest, oldLoc, newLoc)
             self.colourPrint(getString("Moving completed!"), "NONE")
 
-    def archiveFile(self, root_path: str, file_path: str) -> None:
+    def archiveFile(self, root_path: str, file_relative_path: str) -> None:
         if not self.config.noarchive:
             archive_path = os.path.join(root_path, self.config.archive_dir, self.backup_time)
-            self.moveFile(root_path, archive_path, file_path, file_path)
+            self.moveFile(root_path, archive_path, file_relative_path, file_relative_path)
 
-    def handleChangedFiles(self, source: str, dest: str, source_dict: dict, dest_dict: dict, changed: list) -> None:
+    def handleChangedFiles(self, source_root: str, dest_root: str, source_dict: dict, dest_dict: dict, changed: list) -> None:
         self.colourPrint(getString("Handling %s file changes per selection mode") %(len(changed)), "OKBLUE")
         copy_status = StatusBar("Copying", len(changed), self.config.stdout_status_bar, gui=self.gui)
-        for fp in changed:
-            copy_status.update(fp)
+        for frp in changed:
+            copy_status.update(frp)
             if self.config.select_mode == "source":
-                self.archiveFile(dest, fp)
-                self.copyFile(source, dest, fp, fp)
+                self.archiveFile(dest_root, frp)
+                self.copyFile(source_root, dest_root, frp, frp)
             elif self.config.select_mode == "dest":
-                self.archiveFile(source, fp)
-                self.copyFile(dest, source, fp, fp)
+                self.archiveFile(source_root, frp)
+                self.copyFile(dest_root, source_root, frp, frp)
             elif self.config.select_mode == "new":
-                if source_dict[fp]["mtime"] > dest_dict[fp]["mtime"]:
-                    self.archiveFile(dest, fp)
-                    self.copyFile(source, dest, fp, fp)
+                if source_dict[frp]["mtime"] > dest_dict[frp]["mtime"]:
+                    self.archiveFile(dest_root, frp)
+                    self.copyFile(source_root, dest_root, frp, frp)
                 else:
-                    self.archiveFile(source, fp)
-                    self.copyFile(dest, source, fp, fp)
+                    self.archiveFile(source_root, frp)
+                    self.copyFile(dest_root, source_root, frp, frp)
             else:
                 break
         copy_status.endProgress()
