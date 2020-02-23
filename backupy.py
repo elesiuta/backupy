@@ -178,11 +178,6 @@ class ConfigObject:
         self.force_posix_path_sep = False
         self.set_blank_crc_on_copy = False
         self.quit_on_db_conflict = False
-        # config for testing and debugging
-        self.backup_time_override = False
-        self.load_db_json = True
-        self.save_db_json = True
-        self.save_log_csv = True
         # load config
         for key in config:
             self.__setattr__(key, config[key])
@@ -191,9 +186,6 @@ class ConfigObject:
         self.config_dir = os.path.normpath(self.config_dir)
         self.log_dir = os.path.normpath(self.log_dir)
         self.trash_dir = os.path.normpath(self.trash_dir)
-        # disable logging of files and changes
-        if self.nolog:
-            self.save_log_csv, self.save_db_json = False, False
 
 
 ########################################
@@ -486,9 +478,10 @@ class BackupManager:
         if self.gui:
             self.config.stdout_status_bar = False
         # debugging/testing
+        if "backup_time_override" in args and args["backup_time_override"]:
+            self.backup_time = args["backup_time_override"]
+        # log settings
         self.log.append([getString("### SETTINGS ###")])
-        if self.config.backup_time_override:
-            self.backup_time = self.config.backup_time_override
         self.log.append([getString("Time:"), self.backup_time,
                          getString("Version:"), getVersion(),
                          getString("Source DB CRC:"), "0",
@@ -516,12 +509,13 @@ class BackupManager:
             sys.exit()
 
     def writeLog(self, db_name: str) -> None:
-        if self.config.save_db_json:
+        if not self.config.nolog:
+            # <source|dest>/.backupy/database.json
             self.source.saveJson(db_name)
             self.dest.saveJson(db_name)
             self.log[1][5] = self.source.calcCrc(os.path.join(self.source.dir, self.source.config_dir, db_name))
             self.log[1][7] = self.dest.calcCrc(os.path.join(self.dest.dir, self.dest.config_dir, db_name))
-        if self.config.save_log_csv:
+            # <source>/.backupy/Logs/log-yymmdd-HHMM.csv
             if self.config.root_alias_log or self.config.force_posix_path_sep:
                 for i in range(2, len(self.log)):
                     for j in range(len(self.log[i])):
@@ -781,11 +775,10 @@ class BackupManager:
                             [self.config.archive_dir, self.config.log_dir, self.config.trash_dir],
                             self.gui, self.config.force_posix_path_sep)
         database_load_success = False
-        if self.config.load_db_json:
-            self.source.loadJson()
-            self.dest.loadJson()
-            if self.source.loaded_dicts != {} or self.dest.loaded_dicts != {}:
-                database_load_success = True
+        self.source.loadJson()
+        self.dest.loadJson()
+        if self.source.loaded_dicts != {} or self.dest.loaded_dicts != {}:
+            database_load_success = True
         # scan directories (also calculates CRC if enabled)
         self.colourPrint(getString("Scanning files on source:\n%s") %(self.config.source), "OKBLUE")
         self.source.scanDir(self.config.stdout_status_bar)
@@ -922,7 +915,7 @@ class BackupManager:
 
 
 def main():
-    parser = argparse.ArgumentParser(description=getString("BackuPy: A simple backup program in python with an emphasis on transparent behaviour"),
+    parser = argparse.ArgumentParser(description=getString("BackuPy: A simple backup program in python with an emphasis on data integrity and transparent behaviour"),
                                      formatter_class=lambda prog: ArgparseCustomFormatter(prog, max_help_position=15),
                                      usage="%(prog)s [options] -- <source> <dest>\n"
                                            "       %(prog)s <source> <dest> [options]\n"

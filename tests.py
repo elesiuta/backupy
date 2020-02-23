@@ -490,7 +490,7 @@ class TestBackupy(unittest.TestCase):
 
     def test_mirror_source_posix(self):
         test_name = "mirror-source-posix"
-        config = {"main_mode": "mirror", "select_mode": "source", "force_posix_path_sep": True, "nomoves": False, "noprompt": True, "nolog": False, "save_log_csv": True, "root_alias_log": True, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
+        config = {"main_mode": "mirror", "select_mode": "source", "force_posix_path_sep": True, "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": True, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, rewrite_sep=False, set=0)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
