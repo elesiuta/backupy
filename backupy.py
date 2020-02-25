@@ -925,7 +925,7 @@ def main():
                                      formatter_class=lambda prog: ArgparseCustomFormatter(prog, max_help_position=15),
                                      usage="%(prog)s [options] -- <source> <dest>\n"
                                            "       %(prog)s <source> <dest> [options]\n"
-                                           "       %(prog)s <source> --load [--norun]\n"
+                                           "       %(prog)s <source> --load [-c mode] [--norun]\n"
                                            "       %(prog)s -h | --help")
     parser.add_argument("source", action="store", type=str,
                         help=getString("Path of source"))
@@ -933,8 +933,7 @@ def main():
                         help=getString("Path of destination"))
     parser.add_argument("-m", type=str.lower, dest="main_mode", default="mirror", metavar="mode", choices=["mirror", "backup", "sync"],
                         help=getString("F!\n"
-                             "Main mode:\n"
-                             "How to handle files that exist only on one side?\n"
+                             "Main mode: for files that exist only on one side\n"
                              "  MIRROR (default)\n"
                              "    [source-only -> destination, delete destination-only]\n"
                              "  BACKUP\n"
@@ -943,8 +942,7 @@ def main():
                              "    [source-only -> destination, destination-only -> source]"))
     parser.add_argument("-s", type=str.lower, dest="select_mode", default="source", metavar="mode", choices=["source", "dest", "new", "no"],
                         help=getString("F!\n"
-                             "Selection mode:\n"
-                             "How to handle files that exist on both sides but differ?\n"
+                             "Selection mode: for files that exist on both sides but differ\n"
                              "  SOURCE (default)\n"
                              "    [copy source to destination]\n"
                              "  DEST\n"
@@ -955,12 +953,11 @@ def main():
                              "    [do nothing]"))
     parser.add_argument("-c", type=str.lower, dest="compare_mode", default=None, metavar="mode", choices=["attr", "attr+", "crc"],
                         help=getString("F!\n"
-                             "Compare mode:\n"
-                             "How to detect files that exist on both sides but differ?\n"
+                             "Compare mode: for detecting which files differ\n"
                              "  ATTR (default)\n"
                              "    [compare file attributes: mod-time and size]\n"
                              "  ATTR+\n"
-                             "    [compare file attributes and only store new CRC data]\n"
+                             "    [compare file attributes and record CRC for changed files]\n"
                              "  CRC\n"
                              "    [compare file attributes and CRC for every file]"))
     parser.add_argument("-f", action="store", type=str, nargs="+", default=None, dest="filter_list", metavar="regex",
@@ -974,7 +971,7 @@ def main():
                              "  <source|dest>/.backupy/Trash/yymmdd-HHMM/"))
     parser.add_argument("--nolog", action="store_true",
                         help=getString("F!\n"
-                             "Disable writing to:\n"
+                             "Disable writing log and file databases to:\n"
                              "  <source>/.backupy/Logs/log-yymmdd-HHMM.csv\n"
                              "  <source|dest>/.backupy/database.json"))
     parser.add_argument("--nomoves", action="store_true",
@@ -987,6 +984,9 @@ def main():
                         help=getString("Save configuration to <source>/.backupy/config.json"))
     parser.add_argument("--load", action="store_true",
                         help=getString("Load configuration from <source>/.backupy/config.json"))
+    parser.add_argument("--force_posix_path_sep", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--set_blank_crc_on_copy", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--quit_on_db_conflict", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     backup_manager = BackupManager(args)
     backup_manager.backup()

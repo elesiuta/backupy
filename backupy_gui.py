@@ -132,7 +132,7 @@ def main_gui():
     group3_compare.add_argument("--compare_mode_radio_attr", metavar="Attribute", action= "store_true",
                                 help="[compare file attributes: mod-time and size]")
     group3_compare.add_argument("--compare_mode_radio_attr+", metavar="Attribute+", action= "store_true",
-                                help="[compare file attributes and only store new CRC data]")
+                                help="[compare file attributes and record CRC for changed files]")
     group3_compare.add_argument("--compare_mode_radio_crc", metavar="CRC", action= "store_true",
                                 help="[compare file attributes and CRC for every file]")
     group3.add_argument("--noarchive", action="store_true", metavar="No archiving", gooey_options={"full_width":True},
@@ -140,7 +140,7 @@ def main_gui():
                              "  <source|dest>/.backupy/Archives/yymmdd-HHMM/\n"
                              "  <source|dest>/.backupy/Trash/yymmdd-HHMM/")
     group3.add_argument("--nolog", action="store_true", metavar="No logs", gooey_options={"full_width":True},
-                        help=" Disable writing to:\n"
+                        help=" Disable writing log and file databases to:\n"
                              "  <source>/.backupy/Logs/log-yymmdd-HHMM.csv\n"
                              "  <source|dest>/.backupy/database.json")
     group3.add_argument("--nomoves", action="store_true", metavar="No moves", gooey_options={"full_width":True},

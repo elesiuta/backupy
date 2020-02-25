@@ -57,7 +57,7 @@ backupy "path/to/your/source directory/" "path/to/destination/" --norun
 ```
 usage: backupy [options] -- <source> <dest>
        backupy <source> <dest> [options]
-       backupy <source> --load [--norun]
+       backupy <source> --load [-c mode] [--norun]
        backupy -h | --help
 
 BackuPy: A simple backup program in python with an emphasis on data integrity
@@ -69,16 +69,14 @@ positional arguments:
 
 optional arguments:
   -h, --help   show this help message and exit
-  -m mode      Main mode:
-               How to handle files that exist only on one side?
+  -m mode      Main mode: for files that exist only on one side
                  MIRROR (default)
                    [source-only -> destination, delete destination-only]
                  BACKUP
                    [source-only -> destination, keep destination-only]
                  SYNC
                    [source-only -> destination, destination-only -> source]
-  -s mode      Selection mode:
-               How to handle files that exist on both sides but differ?
+  -s mode      Selection mode: for files that exist on both sides but differ
                  SOURCE (default)
                    [copy source to destination]
                  DEST
@@ -87,12 +85,11 @@ optional arguments:
                    [copy newer to opposite side]
                  NO
                    [do nothing]
-  -c mode      Compare mode:
-               How to detect files that exist on both sides but differ?
+  -c mode      Compare mode: for detecting which files differ
                  ATTR (default)
                    [compare file attributes: mod-time and size]
                  ATTR+
-                   [compare file attributes and only store new CRC data]
+                   [compare file attributes and record CRC for changed files]
                  CRC
                    [compare file attributes and CRC for every file]
   -f regex [regex ...]
@@ -104,7 +101,7 @@ optional arguments:
   --noarchive  Disable archiving files before overwriting/deleting to:
                  <source|dest>/.backupy/Archives/yymmdd-HHMM/
                  <source|dest>/.backupy/Trash/yymmdd-HHMM/
-  --nolog      Disable writing to:
+  --nolog      Disable writing log and file databases to:
                  <source>/.backupy/Logs/log-yymmdd-HHMM.csv
                  <source|dest>/.backupy/database.json
   --nomoves    Do not detect when files are moved or renamed
