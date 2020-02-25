@@ -784,8 +784,11 @@ class BackupManager:
         # scan directories (also calculates CRC if enabled)
         self.colourPrint(getString("Scanning files on source:\n%s") %(self.config.source), "OKBLUE")
         self.source.scanDir(self.config.stdout_status_bar)
-        self.colourPrint(getString("Scanning files on destination:\n%s") %(self.config.dest), "OKBLUE")
-        self.dest.scanDir(self.config.stdout_status_bar)
+        if self.config.source != self.config.dest:
+            self.colourPrint(getString("Scanning files on destination:\n%s") %(self.config.dest), "OKBLUE")
+            self.dest.scanDir(self.config.stdout_status_bar)
+        else:
+            self.dest = self.source
         # compare directories (should be relatively fast, all the read operations are done during scan)
         self.colourPrint(getString("Comparing directories..."), "OKBLUE")
         source_only, dest_only, changed, moved = self.source.dirCompare(self.dest,
