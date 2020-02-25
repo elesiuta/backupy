@@ -180,7 +180,8 @@ class ConfigObject:
         self.quit_on_db_conflict = False
         # load config
         for key in config:
-            self.__setattr__(key, config[key])
+            if config[key] is not None:
+                self.__setattr__(key, config[key])
         # normalize paths (these should be relative, not absolute!)
         self.archive_dir = os.path.normpath(self.archive_dir)
         self.config_dir = os.path.normpath(self.config_dir)
@@ -451,14 +452,14 @@ class BackupManager:
         if type(args) != dict:
             args = vars(args)
         self.config = ConfigObject(args)
-        # copy norun value to survive load
-        norun = self.config.norun
         # load config (be careful if using a non-default config_dir!)
         if self.config.load:
             self.loadJson()
-        # set norun = True iff flag was set, no other args survive a load
-        if norun:
-            self.config.norun = norun
+        # set args that can overwrite loaded config
+        if "norun" in args and args["norun"] == True:
+            self.config.norun = True
+        if "compare_mode" in args and args["compare_mode"] is not None:
+            self.config.compare_mode = args["compare_mode"]
         # check source & dest
         if not os.path.isdir(self.config.source):
             print(self.colourString(getString("Invalid source directory: ") + self.config.source, "FAIL"))
@@ -952,7 +953,7 @@ def main():
                              "    [copy newer to opposite side]\n"
                              "  NO\n"
                              "    [do nothing]"))
-    parser.add_argument("-c", type=str.lower, dest="compare_mode", default="attr", metavar="mode", choices=["attr", "attr+", "crc"],
+    parser.add_argument("-c", type=str.lower, dest="compare_mode", default=None, metavar="mode", choices=["attr", "attr+", "crc"],
                         help=getString("F!\n"
                              "Compare mode:\n"
                              "How to detect files that exist on both sides but differ?\n"
@@ -989,7 +990,6 @@ def main():
     args = parser.parse_args()
     backup_manager = BackupManager(args)
     backup_manager.backup()
-
 
 if __name__ == "__main__":
     sys.exit(main())
