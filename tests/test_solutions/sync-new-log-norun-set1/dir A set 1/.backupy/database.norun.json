@@ -12,12 +12,16 @@
   "dir": true
  },
  "file modified newer on A.txt": {
-  "size": 319,
-  "mtime": 1563369818.0
+  "size": 640,
+  "mtime": 1575245024.0
  },
  "file only A.txt": {
   "size": 2,
   "mtime": 1563369588.0
+ },
+ "new file A.txt": {
+  "size": 11,
+  "mtime": 1575245254.0
  },
  "renamed file A.txt": {
   "size": 14,
@@ -49,12 +53,12 @@
   "size": 9,
   "mtime": 1563369616.0
  },
- ".backupy\\000000-0000\\file modified newer on B.txt": {
-  "size": 35,
-  "mtime": 1563369692.0
+ "new file B.txt": {
+  "size": 70,
+  "mtime": 1575245388.0
  },
  "file modified newer on B.txt": {
-  "size": 100,
-  "mtime": 1563369748.0
+  "size": 202,
+  "mtime": 1575245288.0
  }
 }

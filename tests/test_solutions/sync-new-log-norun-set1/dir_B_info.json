@@ -36,11 +36,16 @@
   "crc": 458074504
  },
  ".backupy\\database.json": {
+  "size": 1073,
+  "mtime": 0,
+  "crc": 3431456323
+ },
+ ".backupy\\database.norun.json": {
   "size": 1102,
   "mtime": 0,
   "crc": 216210449
  },
- ".backupy\\database.tmp.json": {
+ ".backupy\\database.tmp.norun.json": {
   "size": 880,
   "mtime": 0,
   "crc": 3757833525
