@@ -164,6 +164,7 @@ class ConfigObject:
         self.nomoves = False
         self.noprompt = False
         self.norun = False
+        self.scan_only = False
         self.save = False
         self.load = False
         # default config (additional)
@@ -458,8 +459,13 @@ class BackupManager:
         # set args that can overwrite loaded config
         if "norun" in args and args["norun"] == True:
             self.config.norun = True
+        if "scan_only" in args and args["scan_only"] == True:
+            self.config.scan_only = True
         if "compare_mode" in args and args["compare_mode"] is not None:
             self.config.compare_mode = args["compare_mode"]
+        # scan only mode
+        if self.config.scan_only and (self.config.dest is None or not os.path.isdir(self.config.dest)):
+            self.config.dest = self.config.source
         # check source & dest
         if not os.path.isdir(self.config.source):
             print(self.colourString(getString("Invalid source directory: ") + self.config.source, "FAIL"))
@@ -791,11 +797,12 @@ class BackupManager:
         else:
             self.dest = self.source
         # compare directories (should be relatively fast, all the read operations are done during scan)
-        self.colourPrint(getString("Comparing directories..."), "OKBLUE")
-        source_only, dest_only, changed, moved = self.source.dirCompare(self.dest,
-                                                                        self.config.nomoves,
-                                                                        self.config.filter_list,
-                                                                        self.config.filter_false_list)
+        if not self.config.scan_only:
+            self.colourPrint(getString("Comparing directories..."), "OKBLUE")
+            source_only, dest_only, changed, moved = self.source.dirCompare(self.dest,
+                                                                            self.config.nomoves,
+                                                                            self.config.filter_list,
+                                                                            self.config.filter_false_list)
         # get databases
         source_dict = self.source.getDirDict()
         source_diffs = self.source.getLoadedDiffs()
@@ -844,6 +851,12 @@ class BackupManager:
                 self.printChangedFiles(sorted(list(source_crc_errors)), source_crc_errors, dest_crc_errors)
         if self.config.quit_on_db_conflict and abort_run:
             return self.abortRun()
+        # end scan
+        if self.config.scan_only:
+            self.log.append([getString("### SCAN COMPLETED ###")])
+            self.writeLog("database.json")
+            print(self.colourString(getString("Completed!"), "OKGREEN"))
+            return 0
         # prepare diff messages
         if self.config.noarchive:
             archive_msg = getString("delete")
@@ -925,12 +938,12 @@ def main():
                                      formatter_class=lambda prog: ArgparseCustomFormatter(prog, max_help_position=15),
                                      usage="%(prog)s [options] -- <source> <dest>\n"
                                            "       %(prog)s <source> <dest> [options]\n"
-                                           "       %(prog)s <source> --load [-c mode] [--norun]\n"
+                                           "       %(prog)s <source> --load [-c mode] [--norun] [--scan]\n"
                                            "       %(prog)s -h | --help")
     parser.add_argument("source", action="store", type=str,
-                        help=getString("Path of source"))
+                        help=getString("Path to source"))
     parser.add_argument("dest", action="store", type=str, nargs="?", default=None,
-                        help=getString("Path of destination"))
+                        help=getString("Path to destination"))
     parser.add_argument("-m", type=str.lower, dest="main_mode", default="mirror", metavar="mode", choices=["mirror", "backup", "sync"],
                         help=getString("F!\n"
                              "Main mode: for files that exist only on one side\n"
@@ -960,10 +973,10 @@ def main():
                              "    [compare file attributes and record CRC for changed files]\n"
                              "  CRC\n"
                              "    [compare file attributes and CRC for every file]"))
-    parser.add_argument("-f", action="store", type=str, nargs="+", default=None, dest="filter_list", metavar="regex",
+    parser.add_argument("--fi", action="store", type=str, nargs="+", default=None, dest="filter_list", metavar="regex",
                         help=getString("Filter: Only include files matching the regular expression(s) (include all by default)"))
-    parser.add_argument("-ff", action="store", type=str, nargs="+", default=None, dest="filter_false_list", metavar="regex",
-                        help=getString("Filter False: Exclude files matching the regular expression(s) (exclude has priority over include)"))
+    parser.add_argument("--fe", action="store", type=str, nargs="+", default=None, dest="filter_false_list", metavar="regex",
+                        help=getString("Filter: Exclude files matching the regular expression(s) (exclude has priority over include)"))
     parser.add_argument("--noarchive", action="store_true",
                         help=getString("F!\n"
                              "Disable archiving files before overwriting/deleting to:\n"
@@ -980,6 +993,8 @@ def main():
                         help=getString("Complete run without prompting for confirmation"))
     parser.add_argument("--norun", action="store_true",
                         help=getString("Perform a dry run according to your configuration"))
+    parser.add_argument("--scan", action="store_true", dest="scan_only",
+                        help=getString("Only scan files to check and update their database entries"))
     parser.add_argument("--save", action="store_true",
                         help=getString("Save configuration to <source>/.backupy/config.json"))
     parser.add_argument("--load", action="store_true",
