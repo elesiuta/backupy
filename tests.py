@@ -410,16 +410,16 @@ class TestBackupy(unittest.TestCase):
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
-    def test_sync_new_log_norun_set1(self):
-        test_name = "sync-new-log-norun-set1"
-        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "norun": True, "backup_time_override": "000000-0000"}
+    def test_sync_new_log_dry_run_set1(self):
+        test_name = "sync-new-log-dry_run-set1"
+        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "dry_run": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
-    def test_sync_new_nolog_norun_set1(self):
-        test_name = "sync-new-nolog-norun-set1"
-        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": True, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "norun": True, "backup_time_override": "000000-0000"}
+    def test_sync_new_nolog_dry_run_set1(self):
+        test_name = "sync-new-nolog-dry_run-set1"
+        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": True, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "dry_run": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=False, rewrite_sep=False, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))

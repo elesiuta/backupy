@@ -1,4 +1,10 @@
 {
+ "empty dir only A": {
+  "size": 0,
+  "mtime": 0,
+  "crc": 0,
+  "dir": true
+ },
  "same empty dir": {
   "size": 0,
   "mtime": 0,
@@ -6,26 +12,26 @@
   "dir": true
  },
  "file modified newer on A.txt": {
-  "size": 319,
+  "size": 640,
   "mtime": 0,
-  "crc": 1624980325
+  "crc": 4087299154
  },
  "file modified newer on B.txt": {
-  "size": 202,
+  "size": 100,
   "mtime": 0,
-  "crc": 4256320678
+  "crc": 1459518598
  },
- "file only B.txt": {
-  "size": 9,
+ "file only A.txt": {
+  "size": 2,
   "mtime": 0,
-  "crc": 69258562
+  "crc": 458074504
  },
- "new file B.txt": {
-  "size": 70,
+ "new file A.txt": {
+  "size": 11,
   "mtime": 0,
-  "crc": 2716265695
+  "crc": 3100828052
  },
- "renamed file B.txt": {
+ "renamed file A.txt": {
   "size": 14,
   "mtime": 0,
   "crc": 2097105078
@@ -35,25 +41,30 @@
   "mtime": 0,
   "crc": 458074504
  },
- ".backupy\\database.json": {
-  "size": 1073,
-  "mtime": 0,
-  "crc": 3431456323
- },
- ".backupy\\database.norun.json": {
+ ".backupy\\database.dryrun.json": {
   "size": 1102,
   "mtime": 0,
-  "crc": 216210449
+  "crc": 2108704210
  },
- ".backupy\\database.tmp.norun.json": {
-  "size": 880,
+ ".backupy\\database.json": {
+  "size": 1072,
   "mtime": 0,
-  "crc": 3757833525
+  "crc": 64620271
  },
- ".backupy\\000000-0000\\file modified newer on A.txt": {
-  "size": 158,
+ ".backupy\\database.tmp.dryrun.json": {
+  "size": 968,
   "mtime": 0,
-  "crc": 399752217
+  "crc": 1357609670
+ },
+ ".backupy\\log-000000-0000.csv": {
+  "size": 2730,
+  "mtime": 0,
+  "crc": 32411405
+ },
+ ".backupy\\000000-0000\\file modified newer on B.txt": {
+  "size": 35,
+  "mtime": 0,
+  "crc": 847206596
  },
  "same nested dir\\same empty dir": {
   "size": 0,

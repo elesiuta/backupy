@@ -519,7 +519,7 @@ class BackupManager:
         if not self.config.nolog:
             # <source|dest>/.backupy/database.json
             if self.config.dry_run:
-                db_name = db_name[:-4] + "dry_run.json"
+                db_name = db_name[:-4] + "dryrun.json"
             self.source.saveJson(db_name)
             self.dest.saveJson(db_name)
             self.log[1][5] = self.source.calcCrc(os.path.join(self.source.dir, self.source.config_dir, db_name))

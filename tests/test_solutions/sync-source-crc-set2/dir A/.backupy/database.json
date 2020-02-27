@@ -119,17 +119,14 @@
  },
  "file only B.txt": {
   "size": 9,
-  "mtime": 1563369616.0,
-  "crc": "420CD42"
+  "mtime": 1563369616.0
  },
  "new file B.txt": {
   "size": 70,
-  "mtime": 1575245388.0,
-  "crc": "A1E6ECDF"
+  "mtime": 1575245388.0
  },
  "same file corrupted.txt": {
   "size": 2,
-  "mtime": 1563369444.0,
-  "crc": "F22E0CBD"
+  "mtime": 1563369444.0
  }
 }
