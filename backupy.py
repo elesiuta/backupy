@@ -158,7 +158,7 @@ class ConfigObject:
         self.select_mode = "source"
         self.compare_mode = "attr"
         self.filter_list = None
-        self.filter_false_list = None
+        self.filter_exclude_list = None
         self.noarchive = False
         self.nolog = False
         self.nomoves = False
@@ -396,7 +396,7 @@ class DirInfo:
                     if not self.pathMatch(relative_path, self.ignored_toplevel_folders):
                         self.missing_files[relative_path] = self.loaded_dicts[relative_path]
 
-    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filter_list: typing.Union[list, None] = None, filter_false_list: typing.Union[list, None] = None) -> tuple:
+    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filter_list: typing.Union[list, None] = None, filter_exclude_list: typing.Union[list, None] = None) -> tuple:
         # init variables
         file_list = set(self.file_dicts)
         second_list = set(secondInfo.getDirDict())
@@ -413,14 +413,14 @@ class DirInfo:
                     raise Exception("Filter Processing Error")
             file_list = set(filter(lambda x: any([True if r.search(x) else False for r in filter_list]), file_list))
             second_list = set(filter(lambda x: any([True if r.search(x) else False for r in filter_list]), second_list))
-        if type(filter_false_list) == list:
-            for i in range(len(filter_false_list)):
-                if type(filter_false_list[i]) == str:
-                    filter_false_list[i] = re.compile(filter_false_list[i])
+        if type(filter_exclude_list) == list:
+            for i in range(len(filter_exclude_list)):
+                if type(filter_exclude_list[i]) == str:
+                    filter_exclude_list[i] = re.compile(filter_exclude_list[i])
                 else:
                     raise Exception("Filter False Processing Error")
-            file_list = set(filter(lambda x: all([False if r.search(x) else True for r in filter_false_list]), file_list))
-            second_list = set(filter(lambda x: all([False if r.search(x) else True for r in filter_false_list]), second_list))
+            file_list = set(filter(lambda x: all([False if r.search(x) else True for r in filter_exclude_list]), file_list))
+            second_list = set(filter(lambda x: all([False if r.search(x) else True for r in filter_exclude_list]), second_list))
         # compare
         changed = sorted(list(filter(lambda f: not self.fileMatch(f, f, secondInfo, compare_mode), file_list & second_list)))
         self_only = sorted(list(file_list - second_list))
@@ -814,7 +814,7 @@ class BackupManager:
             source_only, dest_only, changed, moved = self.source.dirCompare(self.dest,
                                                                             self.config.nomoves,
                                                                             self.config.filter_list,
-                                                                            self.config.filter_false_list)
+                                                                            self.config.filter_exclude_list)
         # get databases
         source_dict = self.source.getDirDict()
         source_diffs = self.source.getLoadedDiffs()
@@ -987,7 +987,7 @@ def main():
                              "    [compare file attributes and CRC for every file]"))
     parser.add_argument("--fi", action="store", type=str, nargs="+", default=None, dest="filter_list", metavar="regex",
                         help=getString("Filter: Only include files matching the regular expression(s) (include all by default)"))
-    parser.add_argument("--fe", action="store", type=str, nargs="+", default=None, dest="filter_false_list", metavar="regex",
+    parser.add_argument("--fe", action="store", type=str, nargs="+", default=None, dest="filter_exclude_list", metavar="regex",
                         help=getString("Filter: Exclude files matching the regular expression(s) (exclude has priority over include)"))
     parser.add_argument("--noarchive", action="store_true",
                         help=getString("F!\n"
