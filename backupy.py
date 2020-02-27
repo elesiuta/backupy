@@ -164,6 +164,7 @@ class ConfigObject:
         self.nomoves = False
         self.noprompt = False
         self.quit_on_db_conflict = False
+        self.verify_copy = False
         self.dry_run = False
         self.force_posix_path_sep = False
         self.scan_only = False
@@ -176,7 +177,6 @@ class ConfigObject:
         self.trash_dir = ".backupy/Trash"
         self.cleanup_empty_dirs = True
         self.root_alias_log = True
-        self.set_blank_crc_on_copy = True
         self.stdout_status_bar = True
         self.verbose = True
         # load config
@@ -230,15 +230,19 @@ class DirInfo:
     def loadJson(self) -> None:
         self.loaded_dicts = readJson(os.path.join(self.dir, self.config_dir, "database.json"))
 
-    def updateDictOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo', blank_crc: bool) -> None:
+    def verifyCrcOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
+        if self.dir == source_root and secondInfo.dir == dest_root:
+            if secondInfo.getCrc(dest_file, recalc = True) != self.getCrc(source_file):
+                raise Exception("CRC Verification Failed")
+        elif self.dir == dest_root and secondInfo.dir == source_root:
+            if self.getCrc(dest_file, recalc = True) != secondInfo.getCrc(source_file):
+                raise Exception("CRC Verification Failed")
+
+    def updateDictOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
         if self.dir == source_root and secondInfo.dir == dest_root:
             secondInfo.file_dicts[dest_file] = self.file_dicts[source_file].copy()
-            if blank_crc:
-                _ = secondInfo.file_dicts[dest_file].pop("crc", 1)
         elif self.dir == dest_root and secondInfo.dir == source_root:
             self.file_dicts[dest_file] = secondInfo.file_dicts[source_file].copy()
-            if blank_crc:
-                _ = self.file_dicts[dest_file].pop("crc", 1)
         else:
             raise Exception("Update Dict Error")
 
@@ -261,6 +265,12 @@ class DirInfo:
             _ = secondInfo.file_dicts.pop(file_relative_path)
         else:
             raise Exception("Update Dict Error")
+
+    def getCrc(self, relative_path: str, recalc: bool = False) -> str:
+        if recalc or "crc" not in self.file_dicts[relative_path]:
+            full_path = os.path.join(self.dir, relative_path)
+            self.file_dicts[relative_path]["crc"] = self.calcCrc(full_path)
+        return self.file_dicts[relative_path]["crc"]
 
     def calcCrc(self, file_path: str, prev: int = 0) -> str:
         with open(file_path, "rb") as f:
@@ -662,7 +672,7 @@ class BackupManager:
     def copyFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
             self.log.append(["copyFile()", source_root, dest_root, source_file, dest_file])
-            self.source.updateDictOnCopy(source_root, dest_root, source_file, dest_file, self.dest, self.config.set_blank_crc_on_copy)
+            self.source.updateDictOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
             if not self.config.dry_run:
                 source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
@@ -672,6 +682,8 @@ class BackupManager:
                     if not os.path.isdir(os.path.dirname(dest)):
                         os.makedirs(os.path.dirname(dest))
                     shutil.copy2(source, dest)
+            if self.config.verify_copy:
+                self.source.verifyCrcOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
         except Exception as e:
             self.log.append(["COPY ERROR", str(e), str(locals())])
             print(e)
@@ -997,6 +1009,8 @@ def main():
                              "  -> unexpected changes on destination (backup and mirror)\n"
                              "  -> sync conflict (file modified on both sides since last sync)\n"
                              "  -> file corruption (ATTR+ or CRC compare modes)"))
+    parser.add_argument("-v", "--verify", dest="verify_copy", action="store_true",
+                        help=getString("Verify CRC on file copy"))
     parser.add_argument("-d", "--scan", dest="scan_only", action="store_true",
                         help=getString("Only scan files to check and update their database entries"))
     parser.add_argument("-p", "--posix", action="store_true", dest="--force_posix_path_sep",
