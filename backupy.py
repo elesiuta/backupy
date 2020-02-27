@@ -163,7 +163,9 @@ class ConfigObject:
         self.nolog = False
         self.nomoves = False
         self.noprompt = False
-        self.norun = False
+        self.quit_on_db_conflict = False
+        self.dry_run = False
+        self.force_posix_path_sep = False
         self.scan_only = False
         self.save = False
         self.load = False
@@ -174,11 +176,9 @@ class ConfigObject:
         self.trash_dir = ".backupy/Trash"
         self.cleanup_empty_dirs = True
         self.root_alias_log = True
+        self.set_blank_crc_on_copy = True
         self.stdout_status_bar = True
         self.verbose = True
-        self.force_posix_path_sep = False
-        self.set_blank_crc_on_copy = False
-        self.quit_on_db_conflict = False
         # load config
         for key in config:
             if config[key] is not None:
@@ -457,8 +457,8 @@ class BackupManager:
         if self.config.load:
             self.loadJson()
         # set args that can overwrite loaded config
-        if "norun" in args and args["norun"] == True:
-            self.config.norun = True
+        if "dry_run" in args and args["dry_run"] == True:
+            self.config.dry_run = True
         if "scan_only" in args and args["scan_only"] == True:
             self.config.scan_only = True
         if "compare_mode" in args and args["compare_mode"] is not None:
@@ -518,8 +518,8 @@ class BackupManager:
     def writeLog(self, db_name: str) -> None:
         if not self.config.nolog:
             # <source|dest>/.backupy/database.json
-            if self.config.norun:
-                db_name = db_name[:-4] + "norun.json"
+            if self.config.dry_run:
+                db_name = db_name[:-4] + "dry_run.json"
             self.source.saveJson(db_name)
             self.dest.saveJson(db_name)
             self.log[1][5] = self.source.calcCrc(os.path.join(self.source.dir, self.source.config_dir, db_name))
@@ -645,7 +645,7 @@ class BackupManager:
         try:
             self.log.append(["removeFile()", root_path, file_relative_path])
             self.source.updateDictOnRemove(root_path, file_relative_path, self.dest)
-            if not self.config.norun:
+            if not self.config.dry_run:
                 path = os.path.join(root_path, file_relative_path)
                 if os.path.isdir(path):
                     os.rmdir(path)
@@ -663,7 +663,7 @@ class BackupManager:
         try:
             self.log.append(["copyFile()", source_root, dest_root, source_file, dest_file])
             self.source.updateDictOnCopy(source_root, dest_root, source_file, dest_file, self.dest, self.config.set_blank_crc_on_copy)
-            if not self.config.norun:
+            if not self.config.dry_run:
                 source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
                 if os.path.isdir(source):
@@ -680,7 +680,7 @@ class BackupManager:
         try:
             self.log.append(["moveFile()", source_root, dest_root, source_file, dest_file])
             self.source.updateDictOnMove(source_root, dest_root, source_file, dest_file, self.dest)
-            if not self.config.norun:
+            if not self.config.dry_run:
                 source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
                 if not os.path.isdir(os.path.dirname(dest)):
@@ -774,7 +774,7 @@ class BackupManager:
     ######################################
 
     def backup(self):
-        if self.config.norun:
+        if self.config.dry_run:
             print(self.colourString(getString("Dry Run"), "HEADER"))
         # init dir scanning and load previous scan data if available
         self.source = DirInfo(self.config.source, self.config.compare_mode, self.config.config_dir,
@@ -876,7 +876,7 @@ class BackupManager:
             change_msg = getString("(%s older and copy newer)" %(archive_msg))
         elif self.config.select_mode == "no":
             change_msg = getString("(will be left as is)")
-        if self.config.norun:
+        if self.config.dry_run:
             simulation_msg = getString(" dry run")
         else:
             simulation_msg = ""
@@ -938,7 +938,7 @@ def main():
                                      formatter_class=lambda prog: ArgparseCustomFormatter(prog, max_help_position=15),
                                      usage="%(prog)s [options] -- <source> <dest>\n"
                                            "       %(prog)s <source> <dest> [options]\n"
-                                           "       %(prog)s <source> --load [-c mode] [--norun] [--scan]\n"
+                                           "       %(prog)s <source> --load [-c mode] [--dry-run] [--scan]\n"
                                            "       %(prog)s -h | --help")
     parser.add_argument("source", action="store", type=str,
                         help=getString("Path to source"))
@@ -991,17 +991,22 @@ def main():
                         help=getString("Do not detect when files are moved or renamed"))
     parser.add_argument("--noprompt", action="store_true",
                         help=getString("Complete run without prompting for confirmation"))
-    parser.add_argument("--norun", action="store_true",
-                        help=getString("Perform a dry run according to your configuration"))
-    parser.add_argument("--scan", action="store_true", dest="scan_only",
+    parser.add_argument("-q", "--qconflicts", action="store_true", dest="--quit_on_db_conflict",
+                        help=getString("F!\n"
+                             "Quit if database conflicts are detected (always notified)\n"
+                             "  -> unexpected changes on destination (backup and mirror)\n"
+                             "  -> sync conflict (file modified on both sides since last sync)\n"
+                             "  -> file corruption (ATTR+ or CRC compare modes)"))
+    parser.add_argument("-d", "--scan", dest="scan_only", action="store_true",
                         help=getString("Only scan files to check and update their database entries"))
-    parser.add_argument("--save", action="store_true",
+    parser.add_argument("-p", "--posix", action="store_true", dest="--force_posix_path_sep",
+                        help=getString("Force posix style paths on non-posix operating systems"))
+    parser.add_argument("-n", "--dry-run", dest="dry_run", action="store_true",
+                        help=getString("Perform a dry run with no changes made to your files"))
+    parser.add_argument("-k", "--save", dest="save", action="store_true",
                         help=getString("Save configuration to <source>/.backupy/config.json"))
-    parser.add_argument("--load", action="store_true",
+    parser.add_argument("-l", "--load", dest="load", action="store_true",
                         help=getString("Load configuration from <source>/.backupy/config.json"))
-    parser.add_argument("--force_posix_path_sep", action="store_true", help=argparse.SUPPRESS)
-    parser.add_argument("--set_blank_crc_on_copy", action="store_true", help=argparse.SUPPRESS)
-    parser.add_argument("--quit_on_db_conflict", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     backup_manager = BackupManager(args)
     backup_manager.backup()
