@@ -244,7 +244,7 @@ class DirInfo:
         elif self.dir == dest_root and secondInfo.dir == source_root:
             self.file_dicts[dest_file] = secondInfo.file_dicts[source_file].copy()
         else:
-            raise Exception("Update Dict Error")
+            raise Exception("Update Database Error")
 
     def updateDictOnMove(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
         if source_root == dest_root == self.dir:
@@ -256,7 +256,7 @@ class DirInfo:
         elif source_root == secondInfo.dir and dest_root != self.dir:
             _ = secondInfo.file_dicts.pop(source_file)
         else:
-            raise Exception("Update Dict Error")
+            raise Exception("Update Database Error")
 
     def updateDictOnRemove(self, root_path: str, file_relative_path: str, secondInfo: 'DirInfo') -> None:
         if root_path == self.dir:
@@ -264,7 +264,7 @@ class DirInfo:
         elif root_path == secondInfo.dir:
             _ = secondInfo.file_dicts.pop(file_relative_path)
         else:
-            raise Exception("Update Dict Error")
+            raise Exception("Update Database Error")
 
     def getCrc(self, relative_path: str, recalc: bool = False) -> str:
         if recalc or "crc" not in self.file_dicts[relative_path]:
@@ -410,7 +410,7 @@ class DirInfo:
                 if type(filter_include_list[i]) == str:
                     filter_include_list[i] = re.compile(filter_include_list[i])
                 else:
-                    raise Exception("Filter Processing Error")
+                    raise Exception("Filter Include Processing Error")
             file_list = set(filter(lambda x: any([True if r.search(x) else False for r in filter_include_list]), file_list))
             second_list = set(filter(lambda x: any([True if r.search(x) else False for r in filter_include_list]), second_list))
         if type(filter_exclude_list) == list:
@@ -418,7 +418,7 @@ class DirInfo:
                 if type(filter_exclude_list[i]) == str:
                     filter_exclude_list[i] = re.compile(filter_exclude_list[i])
                 else:
-                    raise Exception("Filter False Processing Error")
+                    raise Exception("Filter Exclude Processing Error")
             file_list = set(filter(lambda x: all([False if r.search(x) else True for r in filter_exclude_list]), file_list))
             second_list = set(filter(lambda x: all([False if r.search(x) else True for r in filter_exclude_list]), second_list))
         # compare
