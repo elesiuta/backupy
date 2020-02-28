@@ -229,11 +229,23 @@ def runTest(test_name, config, set=0, rewrite_log=True, rewrite_sep=True, compar
         rewriteDb(os.path.join(dir_B_path, db_dir, "database.json"))
         rewriteDb(os.path.join(dir_A_path, db_dir, "database.tmp.json"))
         rewriteDb(os.path.join(dir_B_path, db_dir, "database.tmp.json"))
+        rewriteDb(os.path.join(dir_A_path, db_dir, "database.dryrun.json"))
+        rewriteDb(os.path.join(dir_B_path, db_dir, "database.dryrun.json"))
+        rewriteDb(os.path.join(dir_A_path, db_dir, "database.tmp.dryrun.json"))
+        rewriteDb(os.path.join(dir_B_path, db_dir, "database.tmp.dryrun.json"))
+        rewriteDb(os.path.join(dir_A_path, db_dir, "database.aborted.json"))
+        rewriteDb(os.path.join(dir_B_path, db_dir, "database.aborted.json"))
     else:
         rewriteLineEndings(os.path.join(dir_A_path, db_dir, "database.json"))
         rewriteLineEndings(os.path.join(dir_B_path, db_dir, "database.json"))
         rewriteLineEndings(os.path.join(dir_A_path, db_dir, "database.tmp.json"))
         rewriteLineEndings(os.path.join(dir_B_path, db_dir, "database.tmp.json"))
+        rewriteLineEndings(os.path.join(dir_A_path, db_dir, "database.dryrun.json"))
+        rewriteLineEndings(os.path.join(dir_B_path, db_dir, "database.dryrun.json"))
+        rewriteLineEndings(os.path.join(dir_A_path, db_dir, "database.tmp.dryrun.json"))
+        rewriteLineEndings(os.path.join(dir_B_path, db_dir, "database.tmp.dryrun.json"))
+        rewriteLineEndings(os.path.join(dir_A_path, db_dir, "database.aborted.json"))
+        rewriteLineEndings(os.path.join(dir_B_path, db_dir, "database.aborted.json"))
     # save solution info for updating or creating new tests, CAREFULLY INSPECT THE CHANGES AFTERWARDS
     if write_solution:
         shutil.rmtree(dir_A_sol_path, ignore_errors=True)
