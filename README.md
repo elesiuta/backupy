@@ -46,29 +46,32 @@ pip install backupy --upgrade
   - Attribute mode: compare file attributes (size and last modified time)
   - Attribute+ mode: compare file attributes and calculate CRCs only for new and changed files for future verification
   - CRC mode: compare file attributes and CRC for every file, and checks previously stored CRCs to detect corruption
-- Test your settings first with the 'norun' flag
+- Test your settings first with the 'dry-run' flag
 ## Example Usage
 - Just type backupy followed by your source and destination directories, and any combination of options
-- If you're unsure how something works, include "--norun" to see what would happen without actually doing anything
+- If you're unsure how something works, include "--dry-run" to see what would happen without actually doing anything
 ```
-backupy "path/to/your/source directory/" "path/to/destination/" --norun
+backupy "path/to/your/source directory/" "path/to/destination/" --dry-run
 ```
 ## Command Line Interface
 ```
 usage: backupy [options] -- <source> <dest>
        backupy <source> <dest> [options]
-       backupy <source> --load [-c mode] [--norun]
+       backupy <source> --load [-c mode] [--dbscan] [--dry-run]
        backupy -h | --help
 
 BackuPy: A simple backup program in python with an emphasis on data integrity
 and transparent behaviour
 
 positional arguments:
-  source       Path of source
-  dest         Path of destination
+  source       Path to source
+  dest         Path to destination
 
 optional arguments:
   -h, --help   show this help message and exit
+
+file mode options:
+
   -m mode      Main mode: for files that exist only on one side
                  MIRROR (default)
                    [source-only -> destination, delete destination-only]
@@ -92,23 +95,43 @@ optional arguments:
                    [compare file attributes and record CRC for changed files]
                  CRC
                    [compare file attributes and CRC for every file]
-  -f regex [regex ...]
+
+misc file options:
+
+  --fi regex [regex ...]
                Filter: Only include files matching the regular expression(s)
                (include all by default)
-  -ff regex [regex ...]
-               Filter False: Exclude files matching the regular expression(s)
+  --fe regex [regex ...]
+               Filter: Exclude files matching the regular expression(s)
                (exclude has priority over include)
   --noarchive  Disable archiving files before overwriting/deleting to:
-                 <source|dest>/.backupy/Archives/yymmdd-HHMM/
-                 <source|dest>/.backupy/Trash/yymmdd-HHMM/
-  --nolog      Disable writing log and file databases to:
-                 <source>/.backupy/Logs/log-yymmdd-HHMM.csv
-                 <source|dest>/.backupy/database.json
+                  <source|dest>/.backupy/Archives/yymmdd-HHMM/
+                  <source|dest>/.backupy/Trash/yymmdd-HHMM/
   --nomoves    Do not detect when files are moved or renamed
+
+execution options:
+
   --noprompt   Complete run without prompting for confirmation
-  --norun      Perform a dry run according to your configuration
-  --save       Save configuration to <source>/.backupy/config.json
-  --load       Load configuration from <source>/.backupy/config.json
+  -d, --dbscan
+               Only scan files to check and update their database entries
+  -n, --dry-run
+               Perform a dry run with no changes made to your files
+  -q, --qconflicts
+               Quit if database conflicts are detected (always notified)
+                 -> unexpected changes on destination (backup and mirror)
+                 -> sync conflict (file modified on both sides since last sync)
+                 -> file corruption (ATTR+ or CRC compare modes)
+  -v, --verify
+               Verify CRC of copied files
+
+configuration options:
+
+  --nolog      Disable writing log and file databases to:
+                  <source>/.backupy/Logs/log-yymmdd-HHMM.csv
+                  <source|dest>/.backupy/database.json
+  -p, --posix  Force posix style paths on non-posix operating systems
+  -k, --save   Save configuration to <source>/.backupy/config.json
+  -l, --load   Load configuration from <source>/.backupy/config.json
 ```
 ## Extra Configuration Options
 - Some options can only be set from the config file
@@ -127,13 +150,7 @@ optional arguments:
   - stdout_status_bar
     - show progress status bar, default = True
   - verbose
-    - print more updates to stdout, default = True
-  - force_posix_path_sep
-    - always use a forward slash in paths, useful for keeping the same database on a drive shared between multiple operating systems, default = False
-  - set_blank_crc_on_copy
-    - normally database entries are copied along with files, this removes the CRC from the copied entry forcing BackuPy to calculate and check the CRC on the next run (with ATTR+) to ensure the copy was successful (CRC mode would calculate and check it regardless, but takes much longer since it would also recheck every file), default = False
-  - quit_on_db_conflict
-    - causes the run to automatically abort if there is any unexpected file modifications, sync conflicts, or file corruption detected, recommended if running with noprompt, default = False
+    - print program status updates to stdout, default = True
 ## Building From Source
 - Run tests with
 ```

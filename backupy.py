@@ -163,11 +163,11 @@ class ConfigObject:
         self.nolog = False
         self.nomoves = False
         self.noprompt = False
-        self.quit_on_db_conflict = False
-        self.verify_copy = False
         self.dry_run = False
         self.force_posix_path_sep = False
+        self.quit_on_db_conflict = False
         self.scan_only = False
+        self.verify_copy = False
         self.save = False
         self.load = False
         # default config (additional)
@@ -950,13 +950,17 @@ def main():
                                      formatter_class=lambda prog: ArgparseCustomFormatter(prog, max_help_position=15),
                                      usage="%(prog)s [options] -- <source> <dest>\n"
                                            "       %(prog)s <source> <dest> [options]\n"
-                                           "       %(prog)s <source> --load [-c mode] [--dry-run] [--scan]\n"
+                                           "       %(prog)s <source> --load [-c mode] [--dbscan] [--dry-run]\n"
                                            "       %(prog)s -h | --help")
     parser.add_argument("source", action="store", type=str,
                         help=getString("Path to source"))
     parser.add_argument("dest", action="store", type=str, nargs="?", default=None,
                         help=getString("Path to destination"))
-    parser.add_argument("-m", type=str.lower, dest="main_mode", default="mirror", metavar="mode", choices=["mirror", "backup", "sync"],
+    group1 = parser.add_argument_group("file mode options", "")
+    group2 = parser.add_argument_group("misc file options", "")
+    group3 = parser.add_argument_group("execution options", "")
+    group4 = parser.add_argument_group("configuration options", "")
+    group1.add_argument("-m", type=str.lower, dest="main_mode", default="mirror", metavar="mode", choices=["mirror", "backup", "sync"],
                         help=getString("F!\n"
                              "Main mode: for files that exist only on one side\n"
                              "  MIRROR (default)\n"
@@ -965,7 +969,7 @@ def main():
                              "    [source-only -> destination, keep destination-only]\n"
                              "  SYNC\n"
                              "    [source-only -> destination, destination-only -> source]"))
-    parser.add_argument("-s", type=str.lower, dest="select_mode", default="source", metavar="mode", choices=["source", "dest", "new", "no"],
+    group1.add_argument("-s", type=str.lower, dest="select_mode", default="source", metavar="mode", choices=["source", "dest", "new", "no"],
                         help=getString("F!\n"
                              "Selection mode: for files that exist on both sides but differ\n"
                              "  SOURCE (default)\n"
@@ -976,7 +980,7 @@ def main():
                              "    [copy newer to opposite side]\n"
                              "  NO\n"
                              "    [do nothing]"))
-    parser.add_argument("-c", type=str.lower, dest="compare_mode", default=None, metavar="mode", choices=["attr", "attr+", "crc"],
+    group1.add_argument("-c", type=str.lower, dest="compare_mode", default=None, metavar="mode", choices=["attr", "attr+", "crc"],
                         help=getString("F!\n"
                              "Compare mode: for detecting which files differ\n"
                              "  ATTR (default)\n"
@@ -985,41 +989,42 @@ def main():
                              "    [compare file attributes and record CRC for changed files]\n"
                              "  CRC\n"
                              "    [compare file attributes and CRC for every file]"))
-    parser.add_argument("--fi", action="store", type=str, nargs="+", default=None, dest="filter_list", metavar="regex",
+
+    group2.add_argument("--fi", action="store", type=str, nargs="+", default=None, dest="filter_list", metavar="regex",
                         help=getString("Filter: Only include files matching the regular expression(s) (include all by default)"))
-    parser.add_argument("--fe", action="store", type=str, nargs="+", default=None, dest="filter_exclude_list", metavar="regex",
+    group2.add_argument("--fe", action="store", type=str, nargs="+", default=None, dest="filter_exclude_list", metavar="regex",
                         help=getString("Filter: Exclude files matching the regular expression(s) (exclude has priority over include)"))
-    parser.add_argument("--noarchive", action="store_true",
+    group2.add_argument("--noarchive", action="store_true",
                         help=getString("F!\n"
                              "Disable archiving files before overwriting/deleting to:\n"
-                             "  <source|dest>/.backupy/Archives/yymmdd-HHMM/\n"
-                             "  <source|dest>/.backupy/Trash/yymmdd-HHMM/"))
-    parser.add_argument("--nolog", action="store_true",
-                        help=getString("F!\n"
-                             "Disable writing log and file databases to:\n"
-                             "  <source>/.backupy/Logs/log-yymmdd-HHMM.csv\n"
-                             "  <source|dest>/.backupy/database.json"))
-    parser.add_argument("--nomoves", action="store_true",
+                             "   <source|dest>/.backupy/Archives/yymmdd-HHMM/\n"
+                             "   <source|dest>/.backupy/Trash/yymmdd-HHMM/"))
+    group2.add_argument("--nomoves", action="store_true",
                         help=getString("Do not detect when files are moved or renamed"))
-    parser.add_argument("--noprompt", action="store_true",
+    group3.add_argument("--noprompt", action="store_true",
                         help=getString("Complete run without prompting for confirmation"))
-    parser.add_argument("-q", "--qconflicts", action="store_true", dest="--quit_on_db_conflict",
+    group3.add_argument("-d", "--dbscan", dest="scan_only", action="store_true",
+                        help=getString("Only scan files to check and update their database entries"))
+    group3.add_argument("-n", "--dry-run", dest="dry_run", action="store_true",
+                        help=getString("Perform a dry run with no changes made to your files"))
+    group3.add_argument("-q", "--qconflicts", action="store_true", dest="--quit_on_db_conflict",
                         help=getString("F!\n"
                              "Quit if database conflicts are detected (always notified)\n"
                              "  -> unexpected changes on destination (backup and mirror)\n"
                              "  -> sync conflict (file modified on both sides since last sync)\n"
                              "  -> file corruption (ATTR+ or CRC compare modes)"))
-    parser.add_argument("-v", "--verify", dest="verify_copy", action="store_true",
-                        help=getString("Verify CRC on file copy"))
-    parser.add_argument("-d", "--scan", dest="scan_only", action="store_true",
-                        help=getString("Only scan files to check and update their database entries"))
-    parser.add_argument("-p", "--posix", action="store_true", dest="--force_posix_path_sep",
+    group3.add_argument("-v", "--verify", dest="verify_copy", action="store_true",
+                        help=getString("Verify CRC of copied files"))
+    group4.add_argument("--nolog", action="store_true",
+                        help=getString("F!\n"
+                             "Disable writing log and file databases to:\n"
+                             "   <source>/.backupy/Logs/log-yymmdd-HHMM.csv\n"
+                             "   <source|dest>/.backupy/database.json"))
+    group4.add_argument("-p", "--posix", action="store_true", dest="--force_posix_path_sep",
                         help=getString("Force posix style paths on non-posix operating systems"))
-    parser.add_argument("-n", "--dry-run", dest="dry_run", action="store_true",
-                        help=getString("Perform a dry run with no changes made to your files"))
-    parser.add_argument("-k", "--save", dest="save", action="store_true",
+    group4.add_argument("-k", "--save", dest="save", action="store_true",
                         help=getString("Save configuration to <source>/.backupy/config.json"))
-    parser.add_argument("-l", "--load", dest="load", action="store_true",
+    group4.add_argument("-l", "--load", dest="load", action="store_true",
                         help=getString("Load configuration from <source>/.backupy/config.json"))
     args = parser.parse_args()
     backup_manager = BackupManager(args)
