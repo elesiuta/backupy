@@ -23,14 +23,14 @@ File:,Source,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
 Source:,,renamed file A.txt,"{'size': 14, 'mtime': 1563369288.0}"
 Dest:,,renamed file B.txt,"{'size': 14, 'mtime': 1563369288.0}"
 ### START SYNC DRY RUN ###
-Copy:,\sync-new-log-dry_run-set1\dir A set 1,\sync-new-log-dry_run-set1\dir B set 1,empty dir only A,empty dir only A
-Copy:,\sync-new-log-dry_run-set1\dir A set 1,\sync-new-log-dry_run-set1\dir B set 1,file only A.txt,file only A.txt
-Copy:,\sync-new-log-dry_run-set1\dir A set 1,\sync-new-log-dry_run-set1\dir B set 1,new file A.txt,new file A.txt
-Copy:,\sync-new-log-dry_run-set1\dir B set 1,\sync-new-log-dry_run-set1\dir A set 1,file only B.txt,file only B.txt
-Copy:,\sync-new-log-dry_run-set1\dir B set 1,\sync-new-log-dry_run-set1\dir A set 1,new file B.txt,new file B.txt
-Move:,\sync-new-log-dry_run-set1\dir B set 1,\sync-new-log-dry_run-set1\dir B set 1,renamed file B.txt,renamed file A.txt
-Move:,\sync-new-log-dry_run-set1\dir B set 1,\sync-new-log-dry_run-set1\dir B set 1\.backupy\000000-0000,file modified newer on A.txt,file modified newer on A.txt
-Copy:,\sync-new-log-dry_run-set1\dir A set 1,\sync-new-log-dry_run-set1\dir B set 1,file modified newer on A.txt,file modified newer on A.txt
-Move:,\sync-new-log-dry_run-set1\dir A set 1,\sync-new-log-dry_run-set1\dir A set 1\.backupy\000000-0000,file modified newer on B.txt,file modified newer on B.txt
-Copy:,\sync-new-log-dry_run-set1\dir B set 1,\sync-new-log-dry_run-set1\dir A set 1,file modified newer on B.txt,file modified newer on B.txt
+Copy:,\sync-new-log-dry_run-set1\dir A set 1,empty dir only A,\sync-new-log-dry_run-set1\dir B set 1,empty dir only A
+Copy:,\sync-new-log-dry_run-set1\dir A set 1,file only A.txt,\sync-new-log-dry_run-set1\dir B set 1,file only A.txt
+Copy:,\sync-new-log-dry_run-set1\dir A set 1,new file A.txt,\sync-new-log-dry_run-set1\dir B set 1,new file A.txt
+Copy:,\sync-new-log-dry_run-set1\dir B set 1,file only B.txt,\sync-new-log-dry_run-set1\dir A set 1,file only B.txt
+Copy:,\sync-new-log-dry_run-set1\dir B set 1,new file B.txt,\sync-new-log-dry_run-set1\dir A set 1,new file B.txt
+Move:,\sync-new-log-dry_run-set1\dir B set 1,renamed file B.txt,\sync-new-log-dry_run-set1\dir B set 1,renamed file A.txt
+Move:,\sync-new-log-dry_run-set1\dir B set 1,file modified newer on A.txt,\sync-new-log-dry_run-set1\dir B set 1\.backupy\000000-0000,file modified newer on A.txt
+Copy:,\sync-new-log-dry_run-set1\dir A set 1,file modified newer on A.txt,\sync-new-log-dry_run-set1\dir B set 1,file modified newer on A.txt
+Move:,\sync-new-log-dry_run-set1\dir A set 1,file modified newer on B.txt,\sync-new-log-dry_run-set1\dir A set 1\.backupy\000000-0000,file modified newer on B.txt
+Copy:,\sync-new-log-dry_run-set1\dir B set 1,file modified newer on B.txt,\sync-new-log-dry_run-set1\dir A set 1,file modified newer on B.txt
 ### COMPLETED ###

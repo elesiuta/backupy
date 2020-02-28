@@ -19,16 +19,16 @@ Dest:,,renamed dir B\file2.txt,"{'size': 2, 'mtime': 1563369366.0}"
 Source:,,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
 Dest:,,renamed dir B\file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
 ### START SYNC ###
-Copy:,\sync-new-log\dir A,\sync-new-log\dir B,empty dir only A,empty dir only A
-Copy:,\sync-new-log\dir A,\sync-new-log\dir B,file only A.txt,file only A.txt
-Copy:,\sync-new-log\dir B,\sync-new-log\dir A,empty dir only B,empty dir only B
-Copy:,\sync-new-log\dir B,\sync-new-log\dir A,file only B.txt,file only B.txt
-Move:,\sync-new-log\dir B,\sync-new-log\dir B,renamed file B.txt,renamed file A.txt
-Move:,\sync-new-log\dir B,\sync-new-log\dir B,renamed dir B\file1.txt,subdir\renamed dir A\file1.txt
-Move:,\sync-new-log\dir B,\sync-new-log\dir B,renamed dir B\file2.txt,subdir\renamed dir A\file2.txt
-Move:,\sync-new-log\dir B,\sync-new-log\dir B,renamed dir B\file3.txt,subdir\renamed dir A\file3.txt
-Move:,\sync-new-log\dir B,\sync-new-log\dir B\.backupy\000000-0000,file modified newer on A.txt,file modified newer on A.txt
-Copy:,\sync-new-log\dir A,\sync-new-log\dir B,file modified newer on A.txt,file modified newer on A.txt
-Move:,\sync-new-log\dir A,\sync-new-log\dir A\.backupy\000000-0000,file modified newer on B.txt,file modified newer on B.txt
-Copy:,\sync-new-log\dir B,\sync-new-log\dir A,file modified newer on B.txt,file modified newer on B.txt
+Copy:,\sync-new-log\dir A,empty dir only A,\sync-new-log\dir B,empty dir only A
+Copy:,\sync-new-log\dir A,file only A.txt,\sync-new-log\dir B,file only A.txt
+Copy:,\sync-new-log\dir B,empty dir only B,\sync-new-log\dir A,empty dir only B
+Copy:,\sync-new-log\dir B,file only B.txt,\sync-new-log\dir A,file only B.txt
+Move:,\sync-new-log\dir B,renamed file B.txt,\sync-new-log\dir B,renamed file A.txt
+Move:,\sync-new-log\dir B,renamed dir B\file1.txt,\sync-new-log\dir B,subdir\renamed dir A\file1.txt
+Move:,\sync-new-log\dir B,renamed dir B\file2.txt,\sync-new-log\dir B,subdir\renamed dir A\file2.txt
+Move:,\sync-new-log\dir B,renamed dir B\file3.txt,\sync-new-log\dir B,subdir\renamed dir A\file3.txt
+Move:,\sync-new-log\dir B,file modified newer on A.txt,\sync-new-log\dir B\.backupy\000000-0000,file modified newer on A.txt
+Copy:,\sync-new-log\dir A,file modified newer on A.txt,\sync-new-log\dir B,file modified newer on A.txt
+Move:,\sync-new-log\dir A,file modified newer on B.txt,\sync-new-log\dir A\.backupy\000000-0000,file modified newer on B.txt
+Copy:,\sync-new-log\dir B,file modified newer on B.txt,\sync-new-log\dir A,file modified newer on B.txt
 ### COMPLETED ###

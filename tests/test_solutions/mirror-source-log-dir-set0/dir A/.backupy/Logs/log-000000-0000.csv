@@ -19,16 +19,16 @@ Dest:,,renamed dir B\file2.txt,"{'size': 2, 'mtime': 1563369366.0}"
 Source:,,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
 Dest:,,renamed dir B\file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
 ### START MIRROR ###
-Copy:,\mirror-source-log-dir-set0\dir A,\mirror-source-log-dir-set0\dir B,empty dir only A,empty dir only A
-Copy:,\mirror-source-log-dir-set0\dir A,\mirror-source-log-dir-set0\dir B,file only A.txt,file only A.txt
-Move:,\mirror-source-log-dir-set0\dir B,\mirror-source-log-dir-set0\dir B\.backupy\Trash\000000-0000,empty dir only B,empty dir only B
-Move:,\mirror-source-log-dir-set0\dir B,\mirror-source-log-dir-set0\dir B\.backupy\Trash\000000-0000,file only B.txt,file only B.txt
-Move:,\mirror-source-log-dir-set0\dir B,\mirror-source-log-dir-set0\dir B,renamed file B.txt,renamed file A.txt
-Move:,\mirror-source-log-dir-set0\dir B,\mirror-source-log-dir-set0\dir B,renamed dir B\file1.txt,subdir\renamed dir A\file1.txt
-Move:,\mirror-source-log-dir-set0\dir B,\mirror-source-log-dir-set0\dir B,renamed dir B\file2.txt,subdir\renamed dir A\file2.txt
-Move:,\mirror-source-log-dir-set0\dir B,\mirror-source-log-dir-set0\dir B,renamed dir B\file3.txt,subdir\renamed dir A\file3.txt
-Move:,\mirror-source-log-dir-set0\dir B,\mirror-source-log-dir-set0\dir B\.backupy\Archive\000000-0000,file modified newer on A.txt,file modified newer on A.txt
-Copy:,\mirror-source-log-dir-set0\dir A,\mirror-source-log-dir-set0\dir B,file modified newer on A.txt,file modified newer on A.txt
-Move:,\mirror-source-log-dir-set0\dir B,\mirror-source-log-dir-set0\dir B\.backupy\Archive\000000-0000,file modified newer on B.txt,file modified newer on B.txt
-Copy:,\mirror-source-log-dir-set0\dir A,\mirror-source-log-dir-set0\dir B,file modified newer on B.txt,file modified newer on B.txt
+Copy:,\mirror-source-log-dir-set0\dir A,empty dir only A,\mirror-source-log-dir-set0\dir B,empty dir only A
+Copy:,\mirror-source-log-dir-set0\dir A,file only A.txt,\mirror-source-log-dir-set0\dir B,file only A.txt
+Move:,\mirror-source-log-dir-set0\dir B,empty dir only B,\mirror-source-log-dir-set0\dir B\.backupy\Trash\000000-0000,empty dir only B
+Move:,\mirror-source-log-dir-set0\dir B,file only B.txt,\mirror-source-log-dir-set0\dir B\.backupy\Trash\000000-0000,file only B.txt
+Move:,\mirror-source-log-dir-set0\dir B,renamed file B.txt,\mirror-source-log-dir-set0\dir B,renamed file A.txt
+Move:,\mirror-source-log-dir-set0\dir B,renamed dir B\file1.txt,\mirror-source-log-dir-set0\dir B,subdir\renamed dir A\file1.txt
+Move:,\mirror-source-log-dir-set0\dir B,renamed dir B\file2.txt,\mirror-source-log-dir-set0\dir B,subdir\renamed dir A\file2.txt
+Move:,\mirror-source-log-dir-set0\dir B,renamed dir B\file3.txt,\mirror-source-log-dir-set0\dir B,subdir\renamed dir A\file3.txt
+Move:,\mirror-source-log-dir-set0\dir B,file modified newer on A.txt,\mirror-source-log-dir-set0\dir B\.backupy\Archive\000000-0000,file modified newer on A.txt
+Copy:,\mirror-source-log-dir-set0\dir A,file modified newer on A.txt,\mirror-source-log-dir-set0\dir B,file modified newer on A.txt
+Move:,\mirror-source-log-dir-set0\dir B,file modified newer on B.txt,\mirror-source-log-dir-set0\dir B\.backupy\Archive\000000-0000,file modified newer on B.txt
+Copy:,\mirror-source-log-dir-set0\dir A,file modified newer on B.txt,\mirror-source-log-dir-set0\dir B,file modified newer on B.txt
 ### COMPLETED ###

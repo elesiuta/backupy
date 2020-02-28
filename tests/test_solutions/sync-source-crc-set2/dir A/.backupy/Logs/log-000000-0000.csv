@@ -70,26 +70,26 @@ Dest:,,moved and copied A.txt,"{'size': 362, 'mtime': 1582141424.0, 'crc': '9C45
 Source:,,renamed file A.txt,"{'size': 14, 'mtime': 1563369288.0, 'crc': '7CFF48B6'}"
 Dest:,,renamed file B.txt,"{'size': 14, 'mtime': 1563369288.0, 'crc': '7CFF48B6'}"
 ### START SYNC ###
-Copy:,\sync-source-crc-set2\dir A,\sync-source-crc-set2\dir B,copied A - copy.txt,copied A - copy.txt
-Copy:,\sync-source-crc-set2\dir A,\sync-source-crc-set2\dir B,empty dir only A,empty dir only A
-Copy:,\sync-source-crc-set2\dir A,\sync-source-crc-set2\dir B,file only A.txt,file only A.txt
-Copy:,\sync-source-crc-set2\dir A,\sync-source-crc-set2\dir B,moved and copied A - 1.txt,moved and copied A - 1.txt
-Copy:,\sync-source-crc-set2\dir A,\sync-source-crc-set2\dir B,new file A.txt,new file A.txt
-Copy:,\sync-source-crc-set2\dir A,\sync-source-crc-set2\dir B,same file copied.txt,same file copied.txt
-Copy:,\sync-source-crc-set2\dir B,\sync-source-crc-set2\dir A,file only B.txt,file only B.txt
-Copy:,\sync-source-crc-set2\dir B,\sync-source-crc-set2\dir A,new file B.txt,new file B.txt
-Copy:,\sync-source-crc-set2\dir B,\sync-source-crc-set2\dir A,same file corrupted.txt,same file corrupted.txt
-Move:,\sync-source-crc-set2\dir B,\sync-source-crc-set2\dir B,copied both - 2.txt,copied both - 1.txt
-Move:,\sync-source-crc-set2\dir B,\sync-source-crc-set2\dir B,moved and copied A.txt,moved and copied A - 2.txt
-Move:,\sync-source-crc-set2\dir B,\sync-source-crc-set2\dir B,renamed file B.txt,renamed file A.txt
-Move:,\sync-source-crc-set2\dir B,\sync-source-crc-set2\dir B\.backupy\Archive\000000-0000,corrupted file A.txt,corrupted file A.txt
-Copy:,\sync-source-crc-set2\dir A,\sync-source-crc-set2\dir B,corrupted file A.txt,corrupted file A.txt
-Move:,\sync-source-crc-set2\dir B,\sync-source-crc-set2\dir B\.backupy\Archive\000000-0000,corrupted file B.txt,corrupted file B.txt
-Copy:,\sync-source-crc-set2\dir A,\sync-source-crc-set2\dir B,corrupted file B.txt,corrupted file B.txt
-Move:,\sync-source-crc-set2\dir B,\sync-source-crc-set2\dir B\.backupy\Archive\000000-0000,file modified newer on A.txt,file modified newer on A.txt
-Copy:,\sync-source-crc-set2\dir A,\sync-source-crc-set2\dir B,file modified newer on A.txt,file modified newer on A.txt
-Move:,\sync-source-crc-set2\dir B,\sync-source-crc-set2\dir B\.backupy\Archive\000000-0000,file modified newer on B.txt,file modified newer on B.txt
-Copy:,\sync-source-crc-set2\dir A,\sync-source-crc-set2\dir B,file modified newer on B.txt,file modified newer on B.txt
-Move:,\sync-source-crc-set2\dir B,\sync-source-crc-set2\dir B\.backupy\Archive\000000-0000,new corrupted file.txt,new corrupted file.txt
-Copy:,\sync-source-crc-set2\dir A,\sync-source-crc-set2\dir B,new corrupted file.txt,new corrupted file.txt
+Copy:,\sync-source-crc-set2\dir A,copied A - copy.txt,\sync-source-crc-set2\dir B,copied A - copy.txt
+Copy:,\sync-source-crc-set2\dir A,empty dir only A,\sync-source-crc-set2\dir B,empty dir only A
+Copy:,\sync-source-crc-set2\dir A,file only A.txt,\sync-source-crc-set2\dir B,file only A.txt
+Copy:,\sync-source-crc-set2\dir A,moved and copied A - 1.txt,\sync-source-crc-set2\dir B,moved and copied A - 1.txt
+Copy:,\sync-source-crc-set2\dir A,new file A.txt,\sync-source-crc-set2\dir B,new file A.txt
+Copy:,\sync-source-crc-set2\dir A,same file copied.txt,\sync-source-crc-set2\dir B,same file copied.txt
+Copy:,\sync-source-crc-set2\dir B,file only B.txt,\sync-source-crc-set2\dir A,file only B.txt
+Copy:,\sync-source-crc-set2\dir B,new file B.txt,\sync-source-crc-set2\dir A,new file B.txt
+Copy:,\sync-source-crc-set2\dir B,same file corrupted.txt,\sync-source-crc-set2\dir A,same file corrupted.txt
+Move:,\sync-source-crc-set2\dir B,copied both - 2.txt,\sync-source-crc-set2\dir B,copied both - 1.txt
+Move:,\sync-source-crc-set2\dir B,moved and copied A.txt,\sync-source-crc-set2\dir B,moved and copied A - 2.txt
+Move:,\sync-source-crc-set2\dir B,renamed file B.txt,\sync-source-crc-set2\dir B,renamed file A.txt
+Move:,\sync-source-crc-set2\dir B,corrupted file A.txt,\sync-source-crc-set2\dir B\.backupy\Archive\000000-0000,corrupted file A.txt
+Copy:,\sync-source-crc-set2\dir A,corrupted file A.txt,\sync-source-crc-set2\dir B,corrupted file A.txt
+Move:,\sync-source-crc-set2\dir B,corrupted file B.txt,\sync-source-crc-set2\dir B\.backupy\Archive\000000-0000,corrupted file B.txt
+Copy:,\sync-source-crc-set2\dir A,corrupted file B.txt,\sync-source-crc-set2\dir B,corrupted file B.txt
+Move:,\sync-source-crc-set2\dir B,file modified newer on A.txt,\sync-source-crc-set2\dir B\.backupy\Archive\000000-0000,file modified newer on A.txt
+Copy:,\sync-source-crc-set2\dir A,file modified newer on A.txt,\sync-source-crc-set2\dir B,file modified newer on A.txt
+Move:,\sync-source-crc-set2\dir B,file modified newer on B.txt,\sync-source-crc-set2\dir B\.backupy\Archive\000000-0000,file modified newer on B.txt
+Copy:,\sync-source-crc-set2\dir A,file modified newer on B.txt,\sync-source-crc-set2\dir B,file modified newer on B.txt
+Move:,\sync-source-crc-set2\dir B,new corrupted file.txt,\sync-source-crc-set2\dir B\.backupy\Archive\000000-0000,new corrupted file.txt
+Copy:,\sync-source-crc-set2\dir A,new corrupted file.txt,\sync-source-crc-set2\dir B,new corrupted file.txt
 ### COMPLETED ###

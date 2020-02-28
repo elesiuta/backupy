@@ -29,19 +29,19 @@ Dest:,,renamed file B.txt,"{'size': 14, 'mtime': 1563369288.0}"
 Source:,,same file copied.txt,"{'size': 2, 'mtime': 1563369444.0}"
 Dest:,,same file corrupted.txt,"{'size': 2, 'mtime': 1563369444.0}"
 ### START MIRROR ###
-Copy:,<source>,<dest>,copied A - copy.txt,copied A - copy.txt
-Copy:,<source>,<dest>,empty dir only A,empty dir only A
-Copy:,<source>,<dest>,file only A.txt,file only A.txt
-Copy:,<source>,<dest>,moved and copied A - 1.txt,moved and copied A - 1.txt
-Copy:,<source>,<dest>,new file A.txt,new file A.txt
-Move:,<dest>,<dest>\.backupy\Trash\000000-0000,file only B.txt,file only B.txt
-Move:,<dest>,<dest>\.backupy\Trash\000000-0000,new file B.txt,new file B.txt
-Move:,<dest>,<dest>,copied both - 2.txt,copied both - 1.txt
-Move:,<dest>,<dest>,moved and copied A.txt,moved and copied A - 2.txt
-Move:,<dest>,<dest>,renamed file B.txt,renamed file A.txt
-Move:,<dest>,<dest>,same file corrupted.txt,same file copied.txt
-Move:,<dest>,<dest>\.backupy\Archive\000000-0000,file modified newer on A.txt,file modified newer on A.txt
-Copy:,<source>,<dest>,file modified newer on A.txt,file modified newer on A.txt
-Move:,<dest>,<dest>\.backupy\Archive\000000-0000,file modified newer on B.txt,file modified newer on B.txt
-Copy:,<source>,<dest>,file modified newer on B.txt,file modified newer on B.txt
+Copy:,<source>,copied A - copy.txt,<dest>,copied A - copy.txt
+Copy:,<source>,empty dir only A,<dest>,empty dir only A
+Copy:,<source>,file only A.txt,<dest>,file only A.txt
+Copy:,<source>,moved and copied A - 1.txt,<dest>,moved and copied A - 1.txt
+Copy:,<source>,new file A.txt,<dest>,new file A.txt
+Move:,<dest>,file only B.txt,<dest>\.backupy\Trash\000000-0000,file only B.txt
+Move:,<dest>,new file B.txt,<dest>\.backupy\Trash\000000-0000,new file B.txt
+Move:,<dest>,copied both - 2.txt,<dest>,copied both - 1.txt
+Move:,<dest>,moved and copied A.txt,<dest>,moved and copied A - 2.txt
+Move:,<dest>,renamed file B.txt,<dest>,renamed file A.txt
+Move:,<dest>,same file corrupted.txt,<dest>,same file copied.txt
+Move:,<dest>,file modified newer on A.txt,<dest>\.backupy\Archive\000000-0000,file modified newer on A.txt
+Copy:,<source>,file modified newer on A.txt,<dest>,file modified newer on A.txt
+Move:,<dest>,file modified newer on B.txt,<dest>\.backupy\Archive\000000-0000,file modified newer on B.txt
+Copy:,<source>,file modified newer on B.txt,<dest>,file modified newer on B.txt
 ### COMPLETED ###

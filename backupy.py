@@ -671,7 +671,7 @@ class BackupManager:
 
     def copyFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
-            self.log.append(["Copy:", source_root, dest_root, source_file, dest_file])
+            self.log.append(["Copy:", source_root, source_file, dest_root, dest_file])
             self.source.updateDictOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
             if not self.config.dry_run:
                 source = os.path.join(source_root, source_file)
@@ -685,12 +685,12 @@ class BackupManager:
                     if self.config.verify_copy:
                         self.source.verifyCrcOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
         except Exception as e:
-            self.log.append(["COPY ERROR", source_root, dest_root, source_file, dest_file, str(e)])
+            self.log.append(["COPY ERROR", source_root, source_file, dest_root, dest_file, str(e)])
             print(e)
 
     def moveFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
-            self.log.append(["Move:", source_root, dest_root, source_file, dest_file])
+            self.log.append(["Move:", source_root, source_file, dest_root, dest_file])
             self.source.updateDictOnMove(source_root, dest_root, source_file, dest_file, self.dest)
             if not self.config.dry_run:
                 source = os.path.join(source_root, source_file)
@@ -703,7 +703,7 @@ class BackupManager:
                     if len(os.listdir(head)) == 0:
                         os.removedirs(head)
         except Exception as e:
-            self.log.append(["MOVE ERROR", source_root, dest_root, source_file, dest_file, str(e)])
+            self.log.append(["MOVE ERROR", source_root, source_file, dest_root, dest_file, str(e)])
             print(e)
 
     ##############################################################################
