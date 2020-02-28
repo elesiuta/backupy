@@ -216,7 +216,7 @@ def runTest(test_name, config, set=0, rewrite_log=True, rewrite_sep=True, compar
         if "log_dir" in config:
             log_dir = config["log_dir"]
         else:
-            log_dir = ".backupy"
+            log_dir = ".backupy/Logs"
         rewriteLog(os.path.join(dir_A_path, log_dir, "log-000000-0000.csv"))
         if rewrite_sep:
             rewriteSep(os.path.join(dir_A_path, log_dir, "log-000000-0000.csv"))
@@ -513,6 +513,69 @@ class TestBackupy(unittest.TestCase):
         test_name = "sync-source-crc-set2"
         config = {"main_mode": "sync", "select_mode": "source", "compare_mode": "crc", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_mirror_source_verifycopy_set2(self):
+        test_name = "mirror-source-verifycopy-set2"
+        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "attr", "verify_copy": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_mirror_source_verifycopyplus_set2(self):
+        test_name = "mirror-source-verifycopyplus-set2"
+        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "attr+", "verify_copy": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_mirror_source_verifycopycrc_set2(self):
+        test_name = "mirror-source-verifycopycrc-set2"
+        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "crc", "verify_copy": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_mirror_source_scanonly_set2(self):
+        test_name = "mirror-source-scanonly-set2"
+        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "attr+", "scan_only": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_mirror_source_scanonlycrc_set2(self):
+        test_name = "mirror-source-scanonlycrc-set2"
+        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "crc", "scan_only": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_mirror_source_qconflicts_set2(self):
+        test_name = "mirror-source-qconflicts-set2"
+        config = {"main_mode": "mirror", "select_mode": "source", "quit_on_db_conflict": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_mirror_source_qconflictscrc_set2(self):
+        test_name = "mirror-source-qconflictscrc-set2"
+        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "crc", "quit_on_db_conflict": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_mirror_source_qconflicts_set1(self):
+        test_name = "mirror-source-qconflicts-set1"
+        config = {"main_mode": "mirror", "select_mode": "source", "quit_on_db_conflict": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_mirror_source_qconflicts_set0(self):
+        test_name = "mirror-source-qconflicts-set0"
+        config = {"main_mode": "mirror", "select_mode": "source", "quit_on_db_conflict": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=0)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 

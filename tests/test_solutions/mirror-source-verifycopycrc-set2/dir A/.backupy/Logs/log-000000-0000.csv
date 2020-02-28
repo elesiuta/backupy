@@ -1,0 +1,85 @@
+### DATABASE CONFLICTS ###
+File:,Dest,corrupted file B,Missing
+,DB,corrupted file B,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
+File:,Dest,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0, 'crc': 'FDB24CA6'}"
+,DB,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
+File:,Dest,file only A.txt,Missing
+,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
+### CRC ERRORS DETECTED ###
+File:,Source,corrupted file A.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 'F22E0CBD'}"
+,DB,corrupted file A.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
+,Dest,corrupted file A.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
+,DB,corrupted file A.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
+File:,Source,corrupted file B.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
+,DB,corrupted file B.txt,Missing
+,Dest,corrupted file B.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 'F22E0CBD'}"
+,DB,corrupted file B.txt,Missing
+File:,Source,file only A.txt,"{'size': 2, 'mtime': 1563369588.0, 'crc': '1B4DA988'}"
+,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0, 'crc': '2A'}"
+,Dest,file only A.txt,Missing
+,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
+File:,Source,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': '5F3DACAB'}"
+,DB,new corrupted file.txt,Missing
+,Dest,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': '57A92228'}"
+,DB,new corrupted file.txt,Missing
+File:,Source,same file copied.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
+,DB,same file copied.txt,Missing
+,Dest,same file copied.txt,Missing
+,DB,same file copied.txt,Missing
+File:,Source,same file corrupted.txt,Missing
+,DB,same file corrupted.txt,Missing
+,Dest,same file corrupted.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 'F22E0CBD'}"
+,DB,same file corrupted.txt,Missing
+### SOURCE ONLY ###
+File:,,copied A - copy.txt,"{'size': 353, 'mtime': 1582141538.0, 'crc': 'C52AF0F0'}"
+File:,,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': '0', 'dir': True}"
+File:,,file only A.txt,"{'size': 2, 'mtime': 1563369588.0, 'crc': '1B4DA988'}"
+File:,,moved and copied A - 1.txt,"{'size': 362, 'mtime': 1582141424.0, 'crc': '9C457731'}"
+File:,,new file A.txt,"{'size': 11, 'mtime': 1575245254.0, 'crc': 'B8D2E194'}"
+File:,,same file copied.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
+### DESTINATION ONLY ###
+File:,,file only B.txt,"{'size': 9, 'mtime': 1563369616.0, 'crc': '420CD42'}"
+File:,,new file B.txt,"{'size': 70, 'mtime': 1575245388.0, 'crc': 'A1E6ECDF'}"
+File:,,same file corrupted.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 'F22E0CBD'}"
+### CHANGED FILES ###
+File:,Source,corrupted file A.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 'F22E0CBD'}"
+,Dest,corrupted file A.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
+File:,Source,corrupted file B.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
+,Dest,corrupted file B.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 'F22E0CBD'}"
+File:,Source,file modified newer on A.txt,"{'size': 640, 'mtime': 1575245024.0, 'crc': 'F39F3C52'}"
+,Dest,file modified newer on A.txt,"{'size': 319, 'mtime': 1563369818.0, 'crc': '60DB3B65'}"
+File:,Source,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0, 'crc': '56FE7C86'}"
+,Dest,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0, 'crc': 'FDB24CA6'}"
+File:,Source,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': '5F3DACAB'}"
+,Dest,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': '57A92228'}"
+### MOVED FILES ###
+Source:,,copied both - 1.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
+Dest:,,copied both - 2.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
+Source:,,moved and copied A - 2.txt,"{'size': 362, 'mtime': 1582141424.0, 'crc': '9C457731'}"
+Dest:,,moved and copied A.txt,"{'size': 362, 'mtime': 1582141424.0, 'crc': '9C457731'}"
+Source:,,renamed file A.txt,"{'size': 14, 'mtime': 1563369288.0, 'crc': '7CFF48B6'}"
+Dest:,,renamed file B.txt,"{'size': 14, 'mtime': 1563369288.0, 'crc': '7CFF48B6'}"
+### START MIRROR ###
+copyFile(),<source>,<dest>,copied A - copy.txt,copied A - copy.txt
+copyFile(),<source>,<dest>,empty dir only A,empty dir only A
+copyFile(),<source>,<dest>,file only A.txt,file only A.txt
+copyFile(),<source>,<dest>,moved and copied A - 1.txt,moved and copied A - 1.txt
+copyFile(),<source>,<dest>,new file A.txt,new file A.txt
+copyFile(),<source>,<dest>,same file copied.txt,same file copied.txt
+moveFile(),<dest>,<dest>\.backupy\Trash\000000-0000,file only B.txt,file only B.txt
+moveFile(),<dest>,<dest>\.backupy\Trash\000000-0000,new file B.txt,new file B.txt
+moveFile(),<dest>,<dest>\.backupy\Trash\000000-0000,same file corrupted.txt,same file corrupted.txt
+moveFile(),<dest>,<dest>,copied both - 2.txt,copied both - 1.txt
+moveFile(),<dest>,<dest>,moved and copied A.txt,moved and copied A - 2.txt
+moveFile(),<dest>,<dest>,renamed file B.txt,renamed file A.txt
+moveFile(),<dest>,<dest>\.backupy\Archive\000000-0000,corrupted file A.txt,corrupted file A.txt
+copyFile(),<source>,<dest>,corrupted file A.txt,corrupted file A.txt
+moveFile(),<dest>,<dest>\.backupy\Archive\000000-0000,corrupted file B.txt,corrupted file B.txt
+copyFile(),<source>,<dest>,corrupted file B.txt,corrupted file B.txt
+moveFile(),<dest>,<dest>\.backupy\Archive\000000-0000,file modified newer on A.txt,file modified newer on A.txt
+copyFile(),<source>,<dest>,file modified newer on A.txt,file modified newer on A.txt
+moveFile(),<dest>,<dest>\.backupy\Archive\000000-0000,file modified newer on B.txt,file modified newer on B.txt
+copyFile(),<source>,<dest>,file modified newer on B.txt,file modified newer on B.txt
+moveFile(),<dest>,<dest>\.backupy\Archive\000000-0000,new corrupted file.txt,new corrupted file.txt
+copyFile(),<source>,<dest>,new corrupted file.txt,new corrupted file.txt
+### COMPLETED ###

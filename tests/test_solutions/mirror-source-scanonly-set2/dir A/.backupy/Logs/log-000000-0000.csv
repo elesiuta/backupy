@@ -1,0 +1,10 @@
+### DATABASE CONFLICTS ###
+File:,Dest,corrupted file B,Missing
+,DB,corrupted file B,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
+File:,Dest,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0, 'crc': 'FDB24CA6'}"
+,DB,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
+File:,Dest,file only A.txt,Missing
+,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
+File:,Dest,renamed file A.txt,Missing
+,DB,renamed file A.txt,"{'size': 14, 'mtime': 1563369288.0}"
+### SCAN COMPLETED ###
