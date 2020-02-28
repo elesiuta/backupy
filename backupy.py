@@ -682,8 +682,8 @@ class BackupManager:
                     if not os.path.isdir(os.path.dirname(dest)):
                         os.makedirs(os.path.dirname(dest))
                     shutil.copy2(source, dest)
-            if self.config.verify_copy:
-                self.source.verifyCrcOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
+                if self.config.verify_copy:
+                    self.source.verifyCrcOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
         except Exception as e:
             self.log.append(["COPY ERROR", str(e), str(locals())])
             print(e)
