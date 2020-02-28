@@ -1,6 +1,6 @@
 # BackuPy
 ## Installation
-- Install the latest version from PyPI (supports all operating systems and has no dependencies)
+- Install the latest version from PyPI (supports all operating systems with Python and has no other dependencies)
 ```
 pip install backupy --upgrade
 ```
@@ -20,7 +20,7 @@ pip install backupy --upgrade
 ## Under the Hood
 - Easy to use in scripts (see backupy_batch.py for an example)
 - Clear and easy to verify code, the only functions that touch your files are: copyFile(), moveFile(), and  removeFile()
-- Very simple design and only uses the Python standard library (console version) for fewer points of failure
+- Very simple design and only uses the Python standard library for fewer points of failure
 ## Usage Description
 - Source and destination directories can be any accessible directory (mounted drives, cloud storage, syncthing folders, etc)
 - Destination can be empty or contain files from a previous backup, matching files on both sides will be skipped
@@ -91,10 +91,10 @@ misc file options:
 
   --fi regex [regex ...]
                Filter: Only include files matching the regular expression(s)
-               (include all by default, searches file path)
+               (include all by default, searches file paths)
   --fe regex [regex ...]
                Filter: Exclude files matching the regular expression(s)
-               (exclude has priority over include, searches file path)
+               (exclude has priority over include, searches file paths)
   --noarchive  Disable archiving files before overwriting/deleting to:
                   <source|dest>/.backupy/Archives/yymmdd-HHMM/
                   <source|dest>/.backupy/Trash/yymmdd-HHMM/
@@ -125,7 +125,7 @@ configuration options:
   -l, --load   Load configuration from <source>/.backupy/config.json
 ```
 ## Extra Configuration Options
-- Some options can only be set from the config file
+- Some options can only be set from the config.json file
   - archive_dir
     - can be any subdirectory, default = ".backupy/Archive"
   - config_dir
