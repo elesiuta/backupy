@@ -666,7 +666,7 @@ class BackupManager:
                     if len(os.listdir(head)) == 0:
                         os.removedirs(head)
         except Exception as e:
-            self.log.append(["REMOVE ERROR", str(e), str(locals())])
+            self.log.append(["REMOVE ERROR", root_path, file_relative_path, str(e)])
             print(e)
 
     def copyFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
@@ -682,10 +682,10 @@ class BackupManager:
                     if not os.path.isdir(os.path.dirname(dest)):
                         os.makedirs(os.path.dirname(dest))
                     shutil.copy2(source, dest)
-                if self.config.verify_copy:
-                    self.source.verifyCrcOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
+                    if self.config.verify_copy:
+                        self.source.verifyCrcOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
         except Exception as e:
-            self.log.append(["COPY ERROR", str(e), str(locals())])
+            self.log.append(["COPY ERROR", source_root, dest_root, source_file, dest_file, str(e)])
             print(e)
 
     def moveFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
@@ -703,7 +703,7 @@ class BackupManager:
                     if len(os.listdir(head)) == 0:
                         os.removedirs(head)
         except Exception as e:
-            self.log.append(["MOVE ERROR", str(e), str(locals())])
+            self.log.append(["MOVE ERROR", source_root, dest_root, source_file, dest_file, str(e)])
             print(e)
 
     ##############################################################################
