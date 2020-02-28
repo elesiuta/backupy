@@ -1,8 +1,12 @@
 ### DATABASE CONFLICTS ###
-File:,Source,corrupted file B,Missing
-,DB,corrupted file B,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
-,Dest,corrupted file B,Missing
-,DB,corrupted file B,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
+File:,Source,db only B.missing,Missing
+,DB,db only B.missing,Missing
+,Dest,db only B.missing,Missing
+,DB,db only B.missing,"{'size': 2, 'mtime': 2, 'crc': '41'}"
+File:,Source,db only a.missing,Missing
+,DB,db only a.missing,"{'size': 0, 'mtime': 0, 'crc': 'B00'}"
+,Dest,db only a.missing,Missing
+,DB,db only a.missing,Missing
 File:,Source,file only A.txt,"{'size': 2, 'mtime': 1563369588.0, 'crc': '1B4DA988'}"
 ,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0, 'crc': '2A'}"
 ,Dest,file only A.txt,Missing
@@ -17,9 +21,9 @@ File:,Source,corrupted file A.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 'F2
 ,Dest,corrupted file A.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
 ,DB,corrupted file A.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
 File:,Source,corrupted file B.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
-,DB,corrupted file B.txt,Missing
+,DB,corrupted file B.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
 ,Dest,corrupted file B.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 'F22E0CBD'}"
-,DB,corrupted file B.txt,Missing
+,DB,corrupted file B.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
 File:,Source,file only A.txt,"{'size': 2, 'mtime': 1563369588.0, 'crc': '1B4DA988'}"
 ,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0, 'crc': '2A'}"
 ,Dest,file only A.txt,Missing

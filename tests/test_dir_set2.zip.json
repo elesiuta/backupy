@@ -127,9 +127,9 @@
   "crc": 458074504
  },
  "dir A\\.backupy\\database.json": {
-  "size": 1272,
-  "mtime": 1582431668.0,
-  "crc": 1045227610
+  "size": 1350,
+  "mtime": 1582905052.0,
+  "crc": 1685896087
  },
  "dir A\\same nested dir\\same empty dir\\": {
   "size": 0,
@@ -258,9 +258,9 @@
   "crc": 458074504
  },
  "dir B\\.backupy\\database.json": {
-  "size": 1257,
-  "mtime": 1582431440.0,
-  "crc": 2682990147
+  "size": 1335,
+  "mtime": 1582905242.0,
+  "crc": 1129814332
  },
  "dir B\\same nested dir\\same empty dir\\": {
   "size": 0,

@@ -63,9 +63,14 @@
   "mtime": 1563369444.0,
   "crc": "1B4DA988"
  },
- "corrupted file B": {
+ "corrupted file B.txt": {
   "size": 2,
   "mtime": 1563369444.0,
   "crc": "1B4DA988"
+ },
+ "db only a.missing": {
+  "size": 0,
+  "mtime": 0,
+  "crc": "B00"
  }
 }

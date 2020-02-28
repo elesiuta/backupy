@@ -97,19 +97,19 @@
   "crc": 458074504
  },
  ".backupy\\database.json": {
-  "size": 1814,
+  "size": 1836,
   "mtime": 0,
-  "crc": 2961020640
+  "crc": 2857297648
  },
  ".backupy\\database.tmp.json": {
-  "size": 1814,
+  "size": 1836,
   "mtime": 0,
-  "crc": 2961020640
+  "crc": 2857297648
  },
  ".backupy\\Logs\\log-000000-0000.csv": {
-  "size": 3590,
+  "size": 3575,
   "mtime": 0,
-  "crc": 1679645627
+  "crc": 3370178470
  },
  "same nested dir\\same empty dir": {
   "size": 0,

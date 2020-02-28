@@ -81,14 +81,14 @@
   "crc": 458074504
  },
  ".backupy\\database.aborted.json": {
-  "size": 1556,
+  "size": 1578,
   "mtime": 0,
-  "crc": 3149235069
+  "crc": 3068369056
  },
  ".backupy\\database.json": {
-  "size": 1257,
+  "size": 1335,
   "mtime": 0,
-  "crc": 2682990147
+  "crc": 1129814332
  },
  "same nested dir\\same empty dir": {
   "size": 0,

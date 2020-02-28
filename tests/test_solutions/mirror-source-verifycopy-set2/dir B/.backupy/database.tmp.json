@@ -28,7 +28,8 @@
  },
  "corrupted file B.txt": {
   "size": 2,
-  "mtime": 1563369444.0
+  "mtime": 1563369444.0,
+  "crc": "1B4DA988"
  },
  "file modified newer on A.txt": {
   "size": 319,

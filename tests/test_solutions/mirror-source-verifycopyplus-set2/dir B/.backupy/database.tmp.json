@@ -33,7 +33,7 @@
  "corrupted file B.txt": {
   "size": 2,
   "mtime": 1563369444.0,
-  "crc": "F22E0CBD"
+  "crc": "1B4DA988"
  },
  "file modified newer on A.txt": {
   "size": 319,
