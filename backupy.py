@@ -157,7 +157,7 @@ class ConfigObject:
         self.main_mode = "mirror"
         self.select_mode = "source"
         self.compare_mode = "attr"
-        self.filter_list = None
+        self.filter_include_list = None
         self.filter_exclude_list = None
         self.noarchive = False
         self.nolog = False
@@ -396,7 +396,7 @@ class DirInfo:
                     if not self.pathMatch(relative_path, self.ignored_toplevel_folders):
                         self.missing_files[relative_path] = self.loaded_dicts[relative_path]
 
-    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filter_list: typing.Union[list, None] = None, filter_exclude_list: typing.Union[list, None] = None) -> tuple:
+    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filter_include_list: typing.Union[list, None] = None, filter_exclude_list: typing.Union[list, None] = None) -> tuple:
         # init variables
         file_list = set(self.file_dicts)
         second_list = set(secondInfo.getDirDict())
@@ -405,14 +405,14 @@ class DirInfo:
         else:
             raise Exception("Inconsistent compare mode between directories")
         # apply filters
-        if type(filter_list) == list:
-            for i in range(len(filter_list)):
-                if type(filter_list[i]) == str:
-                    filter_list[i] = re.compile(filter_list[i])
+        if type(filter_include_list) == list:
+            for i in range(len(filter_include_list)):
+                if type(filter_include_list[i]) == str:
+                    filter_include_list[i] = re.compile(filter_include_list[i])
                 else:
                     raise Exception("Filter Processing Error")
-            file_list = set(filter(lambda x: any([True if r.search(x) else False for r in filter_list]), file_list))
-            second_list = set(filter(lambda x: any([True if r.search(x) else False for r in filter_list]), second_list))
+            file_list = set(filter(lambda x: any([True if r.search(x) else False for r in filter_include_list]), file_list))
+            second_list = set(filter(lambda x: any([True if r.search(x) else False for r in filter_include_list]), second_list))
         if type(filter_exclude_list) == list:
             for i in range(len(filter_exclude_list)):
                 if type(filter_exclude_list[i]) == str:
@@ -813,7 +813,7 @@ class BackupManager:
             self.colourPrint(getString("Comparing directories..."), "OKBLUE")
             source_only, dest_only, changed, moved = self.source.dirCompare(self.dest,
                                                                             self.config.nomoves,
-                                                                            self.config.filter_list,
+                                                                            self.config.filter_include_list,
                                                                             self.config.filter_exclude_list)
         # get databases
         source_dict = self.source.getDirDict()
@@ -989,7 +989,7 @@ def main():
                              "    [compare file attributes and record CRC for changed files]\n"
                              "  CRC\n"
                              "    [compare file attributes and CRC for every file]"))
-    group2.add_argument("--fi", dest="filter_list", action="store", type=str, nargs="+", default=None, metavar="regex",
+    group2.add_argument("--fi", dest="filter_include_list", action="store", type=str, nargs="+", default=None, metavar="regex",
                         help=getString("Filter: Only include files matching the regular expression(s) (include all by default, searches file paths)"))
     group2.add_argument("--fe", dest="filter_exclude_list", action="store", type=str, nargs="+", default=None, metavar="regex",
                         help=getString("Filter: Exclude files matching the regular expression(s) (exclude has priority over include, searches file paths)"))
