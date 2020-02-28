@@ -1,26 +1,18 @@
 # BackuPy
-## Quick Start
-```
-pip install backupy
-backupy -h
-```
 ## Installation
-- Install the latest version from PyPI
+- Install the latest version from PyPI (supports all operating systems and has no dependencies)
 ```
 pip install backupy --upgrade
 ```
-- Or install the python package from the GitHub release page
-- Or run the python file directly, all you need is backupy.py
-- Or run it with the GUI, in which case you run backupy_gui.py from the same directory as backupy.py
-- Or you can run BackuPy-Setup.exe from the GitHub release page to install it with the GUI for Windows 
+- GUI version is also available by installing BackuPy-Setup.exe from the GitHub release page
+- The GUI can also be run directly from backupy_gui.py and packaged on other platforms
 ## Features
 - Backup, Mirror, and Sync Modes
 - Compare files using attributes or CRCs
 - Detection and alerts of corrupted files
-- JSON formatted database for tracking files (human readable and easy to parse)
+- JSON formatted database for tracking files and csv formatted logs
 - Detection and alerts of unexpected file modifications on destination outside of backups and mirrors, or sync conflicts (a file was modified on both sides since the last sync)
 - Files are always copied to an identically structured archive directory before being deleted or overwritten by default
-- Easy to read logs as csv files
 - Save and load your configuration
 - Perform a dry run to test your configuration
 - Works on both new and existing backup directories
@@ -28,10 +20,9 @@ pip install backupy --upgrade
 ## Under the Hood
 - Easy to use in scripts (see backupy_batch.py for an example)
 - Clear and easy to verify code, the only functions that touch your files are: copyFile(), moveFile(), and  removeFile()
-- OS independent and console version only uses the Python standard library
-- GUI available through Gooey and PySimpleGUI
+- Very simple design and only uses the Python standard library (console version) for fewer points of failure
 ## Usage Description
-- Source and destination directories can be any accessible directory
+- Source and destination directories can be any accessible directory (mounted drives, cloud storage, syncthing folders, etc)
 - Destination can be empty or contain files from a previous backup, matching files on both sides will be skipped
 - Main modes (how to handle new and deleted files)
   - Backup mode: copies files that are only in source to destination
@@ -100,10 +91,10 @@ misc file options:
 
   --fi regex [regex ...]
                Filter: Only include files matching the regular expression(s)
-               (include all by default)
+               (include all by default, searches file path)
   --fe regex [regex ...]
                Filter: Exclude files matching the regular expression(s)
-               (exclude has priority over include)
+               (exclude has priority over include, searches file path)
   --noarchive  Disable archiving files before overwriting/deleting to:
                   <source|dest>/.backupy/Archives/yymmdd-HHMM/
                   <source|dest>/.backupy/Trash/yymmdd-HHMM/

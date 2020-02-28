@@ -991,9 +991,9 @@ def main():
                              "    [compare file attributes and CRC for every file]"))
 
     group2.add_argument("--fi", dest="filter_list", action="store", type=str, nargs="+", default=None, metavar="regex",
-                        help=getString("Filter: Only include files matching the regular expression(s) (include all by default)"))
+                        help=getString("Filter: Only include files matching the regular expression(s) (include all by default, searches file path)"))
     group2.add_argument("--fe", dest="filter_exclude_list", action="store", type=str, nargs="+", default=None, metavar="regex",
-                        help=getString("Filter: Exclude files matching the regular expression(s) (exclude has priority over include)"))
+                        help=getString("Filter: Exclude files matching the regular expression(s) (exclude has priority over include, searches file path)"))
     group2.add_argument("--noarchive", dest="noarchive", action="store_true",
                         help=getString("F!\n"
                              "Disable archiving files before overwriting/deleting to:\n"
