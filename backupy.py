@@ -990,24 +990,24 @@ def main():
                              "  CRC\n"
                              "    [compare file attributes and CRC for every file]"))
 
-    group2.add_argument("--fi", action="store", type=str, nargs="+", default=None, dest="filter_list", metavar="regex",
+    group2.add_argument("--fi", dest="filter_list", action="store", type=str, nargs="+", default=None, metavar="regex",
                         help=getString("Filter: Only include files matching the regular expression(s) (include all by default)"))
-    group2.add_argument("--fe", action="store", type=str, nargs="+", default=None, dest="filter_exclude_list", metavar="regex",
+    group2.add_argument("--fe", dest="filter_exclude_list", action="store", type=str, nargs="+", default=None, metavar="regex",
                         help=getString("Filter: Exclude files matching the regular expression(s) (exclude has priority over include)"))
-    group2.add_argument("--noarchive", action="store_true",
+    group2.add_argument("--noarchive", dest="noarchive", action="store_true",
                         help=getString("F!\n"
                              "Disable archiving files before overwriting/deleting to:\n"
                              "   <source|dest>/.backupy/Archives/yymmdd-HHMM/\n"
                              "   <source|dest>/.backupy/Trash/yymmdd-HHMM/"))
-    group2.add_argument("--nomoves", action="store_true",
+    group2.add_argument("--nomoves", dest="nomoves", action="store_true",
                         help=getString("Do not detect when files are moved or renamed"))
-    group3.add_argument("--noprompt", action="store_true",
+    group3.add_argument("--noprompt", dest="noprompt", action="store_true",
                         help=getString("Complete run without prompting for confirmation"))
     group3.add_argument("-d", "--dbscan", dest="scan_only", action="store_true",
                         help=getString("Only scan files to check and update their database entries"))
     group3.add_argument("-n", "--dry-run", dest="dry_run", action="store_true",
                         help=getString("Perform a dry run with no changes made to your files"))
-    group3.add_argument("-q", "--qconflicts", action="store_true", dest="--quit_on_db_conflict",
+    group3.add_argument("-q", "--qconflicts", dest="quit_on_db_conflict", action="store_true",
                         help=getString("F!\n"
                              "Quit if database conflicts are detected (always notified)\n"
                              "  -> unexpected changes on destination (backup and mirror)\n"
@@ -1015,12 +1015,12 @@ def main():
                              "  -> file corruption (ATTR+ or CRC compare modes)"))
     group3.add_argument("-v", "--verify", dest="verify_copy", action="store_true",
                         help=getString("Verify CRC of copied files"))
-    group4.add_argument("--nolog", action="store_true",
+    group4.add_argument("--nolog", dest="nolog", action="store_true",
                         help=getString("F!\n"
                              "Disable writing log and file databases to:\n"
                              "   <source>/.backupy/Logs/log-yymmdd-HHMM.csv\n"
                              "   <source|dest>/.backupy/database.json"))
-    group4.add_argument("-p", "--posix", action="store_true", dest="--force_posix_path_sep",
+    group4.add_argument("-p", "--posix", dest="force_posix_path_sep", action="store_true",
                         help=getString("Force posix style paths on non-posix operating systems"))
     group4.add_argument("-k", "--save", dest="save", action="store_true",
                         help=getString("Save configuration to <source>/.backupy/config.json"))
