@@ -32,20 +32,20 @@ Dest:,,moved and copied A.txt,"{'size': 362, 'mtime': 1582141424.0, 'crc': '9C45
 Source:,,renamed file A.txt,"{'size': 14, 'mtime': 1563369288.0, 'crc': '7CFF48B6'}"
 Dest:,,renamed file B.txt,"{'size': 14, 'mtime': 1563369288.0, 'crc': '7CFF48B6'}"
 ### START MIRROR ###
-copyFile(),\mirror-source-attrplus-set2\dir A,\mirror-source-attrplus-set2\dir B,copied A - copy.txt,copied A - copy.txt
-copyFile(),\mirror-source-attrplus-set2\dir A,\mirror-source-attrplus-set2\dir B,empty dir only A,empty dir only A
-copyFile(),\mirror-source-attrplus-set2\dir A,\mirror-source-attrplus-set2\dir B,file only A.txt,file only A.txt
-copyFile(),\mirror-source-attrplus-set2\dir A,\mirror-source-attrplus-set2\dir B,moved and copied A - 1.txt,moved and copied A - 1.txt
-copyFile(),\mirror-source-attrplus-set2\dir A,\mirror-source-attrplus-set2\dir B,new file A.txt,new file A.txt
-copyFile(),\mirror-source-attrplus-set2\dir A,\mirror-source-attrplus-set2\dir B,same file copied.txt,same file copied.txt
-moveFile(),\mirror-source-attrplus-set2\dir B,\mirror-source-attrplus-set2\dir B\.backupy\Trash\000000-0000,file only B.txt,file only B.txt
-moveFile(),\mirror-source-attrplus-set2\dir B,\mirror-source-attrplus-set2\dir B\.backupy\Trash\000000-0000,new file B.txt,new file B.txt
-moveFile(),\mirror-source-attrplus-set2\dir B,\mirror-source-attrplus-set2\dir B\.backupy\Trash\000000-0000,same file corrupted.txt,same file corrupted.txt
-moveFile(),\mirror-source-attrplus-set2\dir B,\mirror-source-attrplus-set2\dir B,copied both - 2.txt,copied both - 1.txt
-moveFile(),\mirror-source-attrplus-set2\dir B,\mirror-source-attrplus-set2\dir B,moved and copied A.txt,moved and copied A - 2.txt
-moveFile(),\mirror-source-attrplus-set2\dir B,\mirror-source-attrplus-set2\dir B,renamed file B.txt,renamed file A.txt
-moveFile(),\mirror-source-attrplus-set2\dir B,\mirror-source-attrplus-set2\dir B\.backupy\Archive\000000-0000,file modified newer on A.txt,file modified newer on A.txt
-copyFile(),\mirror-source-attrplus-set2\dir A,\mirror-source-attrplus-set2\dir B,file modified newer on A.txt,file modified newer on A.txt
-moveFile(),\mirror-source-attrplus-set2\dir B,\mirror-source-attrplus-set2\dir B\.backupy\Archive\000000-0000,file modified newer on B.txt,file modified newer on B.txt
-copyFile(),\mirror-source-attrplus-set2\dir A,\mirror-source-attrplus-set2\dir B,file modified newer on B.txt,file modified newer on B.txt
+Copy:,\mirror-source-attrplus-set2\dir A,\mirror-source-attrplus-set2\dir B,copied A - copy.txt,copied A - copy.txt
+Copy:,\mirror-source-attrplus-set2\dir A,\mirror-source-attrplus-set2\dir B,empty dir only A,empty dir only A
+Copy:,\mirror-source-attrplus-set2\dir A,\mirror-source-attrplus-set2\dir B,file only A.txt,file only A.txt
+Copy:,\mirror-source-attrplus-set2\dir A,\mirror-source-attrplus-set2\dir B,moved and copied A - 1.txt,moved and copied A - 1.txt
+Copy:,\mirror-source-attrplus-set2\dir A,\mirror-source-attrplus-set2\dir B,new file A.txt,new file A.txt
+Copy:,\mirror-source-attrplus-set2\dir A,\mirror-source-attrplus-set2\dir B,same file copied.txt,same file copied.txt
+Move:,\mirror-source-attrplus-set2\dir B,\mirror-source-attrplus-set2\dir B\.backupy\Trash\000000-0000,file only B.txt,file only B.txt
+Move:,\mirror-source-attrplus-set2\dir B,\mirror-source-attrplus-set2\dir B\.backupy\Trash\000000-0000,new file B.txt,new file B.txt
+Move:,\mirror-source-attrplus-set2\dir B,\mirror-source-attrplus-set2\dir B\.backupy\Trash\000000-0000,same file corrupted.txt,same file corrupted.txt
+Move:,\mirror-source-attrplus-set2\dir B,\mirror-source-attrplus-set2\dir B,copied both - 2.txt,copied both - 1.txt
+Move:,\mirror-source-attrplus-set2\dir B,\mirror-source-attrplus-set2\dir B,moved and copied A.txt,moved and copied A - 2.txt
+Move:,\mirror-source-attrplus-set2\dir B,\mirror-source-attrplus-set2\dir B,renamed file B.txt,renamed file A.txt
+Move:,\mirror-source-attrplus-set2\dir B,\mirror-source-attrplus-set2\dir B\.backupy\Archive\000000-0000,file modified newer on A.txt,file modified newer on A.txt
+Copy:,\mirror-source-attrplus-set2\dir A,\mirror-source-attrplus-set2\dir B,file modified newer on A.txt,file modified newer on A.txt
+Move:,\mirror-source-attrplus-set2\dir B,\mirror-source-attrplus-set2\dir B\.backupy\Archive\000000-0000,file modified newer on B.txt,file modified newer on B.txt
+Copy:,\mirror-source-attrplus-set2\dir A,\mirror-source-attrplus-set2\dir B,file modified newer on B.txt,file modified newer on B.txt
 ### COMPLETED ###

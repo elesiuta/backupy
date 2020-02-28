@@ -653,7 +653,7 @@ class BackupManager:
 
     def removeFile(self, root_path: str, file_relative_path: str) -> None:
         try:
-            self.log.append(["removeFile()", root_path, file_relative_path])
+            self.log.append(["Remove:", root_path, file_relative_path])
             self.source.updateDictOnRemove(root_path, file_relative_path, self.dest)
             if not self.config.dry_run:
                 path = os.path.join(root_path, file_relative_path)
@@ -671,7 +671,7 @@ class BackupManager:
 
     def copyFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
-            self.log.append(["copyFile()", source_root, dest_root, source_file, dest_file])
+            self.log.append(["Copy:", source_root, dest_root, source_file, dest_file])
             self.source.updateDictOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
             if not self.config.dry_run:
                 source = os.path.join(source_root, source_file)
@@ -690,7 +690,7 @@ class BackupManager:
 
     def moveFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
-            self.log.append(["moveFile()", source_root, dest_root, source_file, dest_file])
+            self.log.append(["Move:", source_root, dest_root, source_file, dest_file])
             self.source.updateDictOnMove(source_root, dest_root, source_file, dest_file, self.dest)
             if not self.config.dry_run:
                 source = os.path.join(source_root, source_file)

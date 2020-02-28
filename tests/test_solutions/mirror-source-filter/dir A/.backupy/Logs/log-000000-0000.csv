@@ -7,8 +7,8 @@ File:,Source,file modified newer on B.txt,"{'size': 35, 'mtime': 1563369692.0}"
 ,Dest,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
 ### MOVED FILES ###
 ### START MIRROR ###
-moveFile(),\mirror-source-filter\dir B,\mirror-source-filter\dir B\.backupy\Archive\000000-0000,file modified newer on A.txt,file modified newer on A.txt
-copyFile(),\mirror-source-filter\dir A,\mirror-source-filter\dir B,file modified newer on A.txt,file modified newer on A.txt
-moveFile(),\mirror-source-filter\dir B,\mirror-source-filter\dir B\.backupy\Archive\000000-0000,file modified newer on B.txt,file modified newer on B.txt
-copyFile(),\mirror-source-filter\dir A,\mirror-source-filter\dir B,file modified newer on B.txt,file modified newer on B.txt
+Move:,\mirror-source-filter\dir B,\mirror-source-filter\dir B\.backupy\Archive\000000-0000,file modified newer on A.txt,file modified newer on A.txt
+Copy:,\mirror-source-filter\dir A,\mirror-source-filter\dir B,file modified newer on A.txt,file modified newer on A.txt
+Move:,\mirror-source-filter\dir B,\mirror-source-filter\dir B\.backupy\Archive\000000-0000,file modified newer on B.txt,file modified newer on B.txt
+Copy:,\mirror-source-filter\dir A,\mirror-source-filter\dir B,file modified newer on B.txt,file modified newer on B.txt
 ### COMPLETED ###

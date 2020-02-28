@@ -15,12 +15,12 @@ Dest:,,renamed dir B\file2.txt,"{'size': 2, 'mtime': 1563369366.0}"
 Source:,,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
 Dest:,,renamed dir B\file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
 ### START MIRROR ###
-copyFile(),\mirror-source-filter-false\dir A,\mirror-source-filter-false\dir B,empty dir only A,empty dir only A
-copyFile(),\mirror-source-filter-false\dir A,\mirror-source-filter-false\dir B,file only A.txt,file only A.txt
-moveFile(),\mirror-source-filter-false\dir B,\mirror-source-filter-false\dir B\.backupy\Trash\000000-0000,empty dir only B,empty dir only B
-moveFile(),\mirror-source-filter-false\dir B,\mirror-source-filter-false\dir B\.backupy\Trash\000000-0000,file only B.txt,file only B.txt
-moveFile(),\mirror-source-filter-false\dir B,\mirror-source-filter-false\dir B,renamed file B.txt,renamed file A.txt
-moveFile(),\mirror-source-filter-false\dir B,\mirror-source-filter-false\dir B,renamed dir B\file1.txt,subdir\renamed dir A\file1.txt
-moveFile(),\mirror-source-filter-false\dir B,\mirror-source-filter-false\dir B,renamed dir B\file2.txt,subdir\renamed dir A\file2.txt
-moveFile(),\mirror-source-filter-false\dir B,\mirror-source-filter-false\dir B,renamed dir B\file3.txt,subdir\renamed dir A\file3.txt
+Copy:,\mirror-source-filter-false\dir A,\mirror-source-filter-false\dir B,empty dir only A,empty dir only A
+Copy:,\mirror-source-filter-false\dir A,\mirror-source-filter-false\dir B,file only A.txt,file only A.txt
+Move:,\mirror-source-filter-false\dir B,\mirror-source-filter-false\dir B\.backupy\Trash\000000-0000,empty dir only B,empty dir only B
+Move:,\mirror-source-filter-false\dir B,\mirror-source-filter-false\dir B\.backupy\Trash\000000-0000,file only B.txt,file only B.txt
+Move:,\mirror-source-filter-false\dir B,\mirror-source-filter-false\dir B,renamed file B.txt,renamed file A.txt
+Move:,\mirror-source-filter-false\dir B,\mirror-source-filter-false\dir B,renamed dir B\file1.txt,subdir\renamed dir A\file1.txt
+Move:,\mirror-source-filter-false\dir B,\mirror-source-filter-false\dir B,renamed dir B\file2.txt,subdir\renamed dir A\file2.txt
+Move:,\mirror-source-filter-false\dir B,\mirror-source-filter-false\dir B,renamed dir B\file3.txt,subdir\renamed dir A\file3.txt
 ### COMPLETED ###
