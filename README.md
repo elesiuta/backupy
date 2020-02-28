@@ -1,11 +1,11 @@
 # BackuPy
 ## Installation
-- Install the latest version from PyPI (supports all operating systems with Python and has no other dependencies)
+- Install the latest release from PyPI (supports all platforms with Python and has no other dependencies)
 ```
 pip install backupy --upgrade
 ```
-- GUI version is also available by installing BackuPy-Setup.exe from the GitHub release page
-- The GUI can also be run directly from backupy_gui.py and packaged on other platforms
+- GUI version is also available by installing BackuPy-Setup.exe from the GitHub releases page
+- The GUI can also be run directly from backupy_gui.py and packaged for other operating systems
 ## Features
 - Backup, Mirror, and Sync Modes
 - Compare files using attributes or CRCs
@@ -22,7 +22,7 @@ pip install backupy --upgrade
 - Clear and easy to verify code, the only functions that touch your files are: copyFile(), moveFile(), and  removeFile()
 - Very simple design and only uses the Python standard library for fewer points of failure
 ## Usage Description
-- Source and destination directories can be any accessible directory (mounted drives, cloud storage, syncthing folders, etc)
+- Source and destination directories can be any accessible directory (mounted drives, cloud storage, Syncthing folders, etc)
 - Destination can be empty or contain files from a previous backup, matching files on both sides will be skipped
 - Main modes (how to handle new and deleted files)
   - Backup mode: copies files that are only in source to destination
