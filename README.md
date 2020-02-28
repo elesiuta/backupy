@@ -39,10 +39,12 @@ pip install backupy --upgrade
   - CRC mode: compare file attributes and CRC for every file, and checks previously stored CRCs to detect corruption
 - Test your settings first with the 'dry-run' flag
 ## Example Usage
-- Just type backupy followed by your source and destination directories, and any combination of options
+- Just type "backupy" followed by your source and destination directories, and any combination of options
 - If you're unsure how something works, include "--dry-run" to see what would happen without actually doing anything
 ```
 backupy "path/to/your/source directory/" "path/to/destination/" --dry-run
+backupy path/to/dir_A path/to/dir_B -m sync --dry-run
+backupy source_dir --load --dry-run
 ```
 ## Command Line Interface
 ```
