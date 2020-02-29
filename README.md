@@ -10,13 +10,10 @@ pip install backupy --upgrade
 - Backup, Mirror, and Sync Modes
 - Compare files using attributes or CRCs
 - Detection and alerts of corrupted files
-- JSON formatted database for tracking files and csv formatted logs
 - Detection and alerts of unexpected file modifications on destination outside of backups and mirrors, or sync conflicts (a file was modified on both sides since the last sync)
-- Files are always copied to an identically structured archive directory before being deleted or overwritten by default
-- Save and load your configuration
-- Perform a dry run to test your configuration
-- Works on both new and existing backup directories
-- Filter file paths with regular expressions
+- JSON formatted database for tracking files and CSV formatted logs
+- Files are always safe by default, being moved to an identically structured archive directory before being deleted or overwritten
+- Filter files with regular expressions
 ## Under the Hood
 - Easy to use in scripts (see backupy_batch.py for an example)
 - Clear and easy to verify code, the only functions that touch your files are: copyFile(), moveFile(), and  removeFile()

@@ -151,6 +151,7 @@ class StatusBar:
 
 class ConfigObject:
     def __init__(self, config: dict):
+        """Used for storing user configuration, meant only for internal use by BackupManager"""
         # default config (from argparse)
         self.source = None
         self.dest = None
@@ -197,6 +198,7 @@ class ConfigObject:
 
 class DirInfo:
     def __init__(self, directory_root_path: str, compare_mode: str,  config_dir: str, ignored_toplevel_folders: list = [], gui: bool = False, force_posix_path_sep: bool = False):
+        """For scanning directories, tracking files and changes, meant only for internal use by BackupManager"""
         self.file_dicts = {}
         self.loaded_dicts = {}
         self.loaded_diffs = {}
@@ -449,6 +451,7 @@ class DirInfo:
 
 class BackupManager:
     def __init__(self, args: typing.Union[argparse.Namespace, dict], gui: bool = False):
+        """Main class, configure with an argparse namespace or dictionary to create a job then run with .backup()"""
         # init logging
         self.log = []
         self.backup_time = datetime.datetime.now().strftime("%y%m%d-%H%M")
@@ -786,6 +789,7 @@ class BackupManager:
     ######################################
 
     def backup(self):
+        """Main method, use this to run your job no matter the configuration"""
         if self.config.dry_run:
             print(self.colourString(getString("Dry Run"), "HEADER"))
         # init dir scanning and load previous scan data if available
@@ -946,6 +950,7 @@ class BackupManager:
 
 
 def main():
+    # create CLI and parse arguments with argparse
     parser = argparse.ArgumentParser(description=getString("BackuPy: A simple backup program in python with an emphasis on data integrity and transparent behaviour"),
                                      formatter_class=lambda prog: ArgparseCustomFormatter(prog, max_help_position=15),
                                      usage="%(prog)s [options] -- <source> <dest>\n"
@@ -1026,6 +1031,7 @@ def main():
     group4.add_argument("-l", "--load", dest="load", action="store_true",
                         help=getString("Load configuration from <source>/.backupy/config.json"))
     args = parser.parse_args()
+    # create and run job
     backup_manager = BackupManager(args)
     backup_manager.backup()
 
