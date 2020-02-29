@@ -6,6 +6,7 @@ import zipfile
 import time
 import csv
 import json
+import typing
 
 import backupy
 
@@ -98,7 +99,7 @@ def rewriteLog(fName):
                 writer.writerow(row)
 
 def dirInfo(path, skip_time = True):
-    # just used for assert message on failure to help with debugging
+    """just used for assert message on failure to help with debugging"""
     file_dicts = {}
     for dir_path, subdir_list, file_list in os.walk(path):
         subdir_list.sort()
@@ -122,7 +123,7 @@ def dirInfo(path, skip_time = True):
     return file_dicts
 
 def dirCompare(info_a, info_b):
-    # just used for assert message on failure to help with debugging
+    """just used for assert message on failure to help with debugging"""
     a_only = []
     b_only = []
     different = []
@@ -140,12 +141,14 @@ def dirCompare(info_a, info_b):
     return a_only, b_only, different
 
 def dirStats(path):
-    # used to check if the test run matches the solution
+    """used to check if the test run matches the solution"""
     total_crc = 0
     file_count = 0
     dir_count = 0
     total_file_size = 0
     total_folder_size = 0
+    # don't follow symbolic links, not planning support for it either since I don't have a use case that requires it to be enabled in here
+    # also I don't know what following links would break without recreating all these test cases with it enabled
     for dir_path, sub_dir_list, file_list in os.walk(path):
         sub_dir_list.sort()
         dir_count += len(sub_dir_list)
@@ -158,7 +161,15 @@ def dirStats(path):
             total_crc %= (0xFFFFFFFF + 1)
     return {"total_crc": total_crc, "file_count": file_count, "dir_count": dir_count, "total_file_size": total_file_size, "total_folder_size": total_folder_size}
 
-def getTestTime(test_zip):
+def writeTestSolInfo(sol_path: str, dir_A_sol_path: str, dir_B_sol_path: str) -> None:
+    """Write test solution info when creating new test cases or updating old ones for changes in log/database structure (pretty stable now)"""
+    writeJson(os.path.join(sol_path, "dir_A_stats.json"), dirStats(dir_A_sol_path))
+    writeJson(os.path.join(sol_path, "dir_B_stats.json"), dirStats(dir_B_sol_path))
+    writeJson(os.path.join(sol_path, "dir_A_info.json"), dirInfo(dir_A_sol_path))
+    writeJson(os.path.join(sol_path, "dir_B_info.json"), dirInfo(dir_B_sol_path))
+
+def writeTestSetInfo(test_zip: str) -> None:
+    """Write test set info when creating a new test set, make sure auto DST is off on your OS, takes path test_zip"""
     shutil.rmtree("test_dir", ignore_errors=True)
     shutil.unpack_archive(test_zip, "test_dir")
     with zipfile.ZipFile(test_zip, "r") as z:
@@ -252,10 +263,7 @@ def runTest(test_name, config, set=0, rewrite_log=True, rewrite_sep=True, compar
         shutil.rmtree(dir_B_sol_path, ignore_errors=True)
         shutil.move(dir_A_path, dir_A_sol_path)
         shutil.move(dir_B_path, dir_B_sol_path)
-        writeJson(os.path.join(sol_path, "dir_A_stats.json"), dirStats(dir_A_sol_path))
-        writeJson(os.path.join(sol_path, "dir_B_stats.json"), dirStats(dir_B_sol_path))
-        writeJson(os.path.join(sol_path, "dir_A_info.json"), dirInfo(dir_A_sol_path))
-        writeJson(os.path.join(sol_path, "dir_B_info.json"), dirInfo(dir_B_sol_path))
+        writeTestSolInfo(sol_path, dir_A_sol_path, dir_B_sol_path)
     # compare current run to solution
     if compare:
         dirA_stats = dirStats(dir_A_path)
