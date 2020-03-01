@@ -92,7 +92,8 @@ def main_gui():
     parser = GooeyParser(description="A simple backup program in python")
     group1 = parser.add_argument_group("Profiles", "")
     group2 = parser.add_argument_group("Directories", "")
-    group3 = parser.add_argument_group("Configuration", "")
+    group3 = parser.add_argument_group("Usage Mode", "")
+    group4 = parser.add_argument_group("Configuration", "")
     for source_dir in list_profiles:
         group1.add_argument("--load_profile_"+source_dir, action="store_true", metavar="Load: "+os.path.basename(source_dir),
                             gooey_options={"full_width":True, "show_label":True},
@@ -135,30 +136,30 @@ def main_gui():
                                 help="[compare file attributes and record CRC for changed files]")
     group3_compare.add_argument("--compare_mode_radio_crc", metavar="CRC", action= "store_true",
                                 help="[compare file attributes and CRC for every file]")
-    group3.add_argument("--dry-run", dest="dry_run", action="store_true", metavar="Dry run", gooey_options={"full_width":True},
+    group4.add_argument("--dry-run", dest="dry_run", action="store_true", metavar="Dry run", gooey_options={"full_width":True},
                         help=" Perform a dry run with no changes made to your files")
-    group3.add_argument("-p", "--posix", dest="--force_posix_path_sep", action="store_true", metavar="Force posix paths", gooey_options={"full_width":True},
+    group4.add_argument("-p", "--posix", dest="--force_posix_path_sep", action="store_true", metavar="Force posix paths", gooey_options={"full_width":True},
                         help=" Force posix style paths on non-posix operating systems")
-    group3.add_argument("--noarchive", action="store_true", metavar="No archiving", gooey_options={"full_width":True},
+    group4.add_argument("--noarchive", action="store_true", metavar="No archiving", gooey_options={"full_width":True},
                         help=" Disable archiving files before overwriting/deleting to:\n"
                              "  <source|dest>/.backupy/Archives/yymmdd-HHMM/\n"
                              "  <source|dest>/.backupy/Trash/yymmdd-HHMM/")
-    group3.add_argument("--nolog", action="store_true", metavar="No logs", gooey_options={"full_width":True},
+    group4.add_argument("--nolog", action="store_true", metavar="No logs", gooey_options={"full_width":True},
                         help=" Disable writing log and file databases to:\n"
                              "  <source>/.backupy/Logs/log-yymmdd-HHMM.csv\n"
                              "  <source|dest>/.backupy/database.json")
-    group3.add_argument("--nomoves", action="store_true", metavar="No moves", gooey_options={"full_width":True},
+    group4.add_argument("--nomoves", action="store_true", metavar="No moves", gooey_options={"full_width":True},
                         help=" Do not detect when files are moved or renamed")
-    group3.add_argument("--noprompt", action="store_true", metavar="No prompt", gooey_options={"full_width":True},
+    group4.add_argument("--noprompt", action="store_true", metavar="No prompt", gooey_options={"full_width":True},
                         help=" Complete run without prompting for confirmation")
-    group3.add_argument("-q", "--qconflicts", dest="--quit_on_db_conflict", action="store_true", metavar="Quit on database conflicts", gooey_options={"full_width":True},
+    group4.add_argument("-q", "--qconflicts", dest="--quit_on_db_conflict", action="store_true", metavar="Quit on database conflicts", gooey_options={"full_width":True},
                         help=" Quit if database conflicts are detected (always notified)\n"
                              "  -> unexpected changes on destination (backup and mirror)\n"
                              "  -> sync conflict (file modified on both sides since last sync)\n"
                              "  -> file corruption (ATTR+ or CRC compare modes)")
-    group3.add_argument("-d", "--dbscan", dest="scan_only", action="store_true", metavar="Scan only", gooey_options={"full_width":True},
+    group4.add_argument("-d", "--dbscan", dest="scan_only", action="store_true", metavar="Scan only", gooey_options={"full_width":True},
                         help=" Only scan files to check and update their database entries")
-    group3.add_argument("-v", "--verify", dest="verify_copy", action="store_true", metavar="Verify copies", gooey_options={"full_width":True},
+    group4.add_argument("-v", "--verify", dest="verify_copy", action="store_true", metavar="Verify copies", gooey_options={"full_width":True},
                         help=" Verify CRC of copied files")
     group2.add_argument("--save", action="store_true", metavar="Save",
                         help=" Save configuration to <source>/.backupy/config.json")
