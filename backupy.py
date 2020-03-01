@@ -27,7 +27,7 @@ import unicodedata
 import zlib
 
 def getVersion() -> str:
-    return "1.5.0"
+    return "1.5.1"
 
 
 #########################
@@ -53,7 +53,7 @@ def writeJson(file_path: str, data: dict, subdir: bool = True, sort_keys: bool =
     if subdir and not os.path.isdir(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
     with open(file_path, "w", encoding="utf-8", errors="surrogateescape") as json_file:
-        json.dump(data, json_file, indent=1, separators=(',', ': '), sort_keys=sort_keys)
+        json.dump(data, json_file, indent=1, separators=(',', ': '), sort_keys=sort_keys, ensure_ascii=False)
 
 ####################
 ### Localisation ###
@@ -334,7 +334,8 @@ class DirInfo:
         if os.path.isdir(self.dir) and self.file_dicts == {}:
             total = sum(len(f) for r, d, f in os.walk(self.dir))
             scan_status = StatusBar("Scanning", total, stdout_status_bar, gui=self.gui)
-            for dir_path, subdir_list, file_list in os.walk(self.dir):
+            # will never enable followlinks, adds too many possible issues and complexity in handling them
+            for dir_path, subdir_list, file_list in os.walk(self.dir, followlinks=False):
                 # ignore folders
                 if self.pathMatch(dir_path, self.ignored_toplevel_folders):
                     subdir_list.clear()
@@ -804,7 +805,7 @@ class BackupManager:
         self.dest.loadJson()
         if self.source.loaded_dicts != {} or self.dest.loaded_dicts != {}:
             database_load_success = True
-        # scan directories (also calculates CRC if enabled)
+        # scan directories (also calculates CRC if enabled) (didn't parallelize scans to prevent excess vibration of adjacent consumer grade disks and keep status bars simple)
         self.colourPrint(getString("Scanning files on source:\n%s") %(self.config.source), "OKBLUE")
         self.source.scanDir(self.config.stdout_status_bar)
         if self.config.source != self.config.dest:
