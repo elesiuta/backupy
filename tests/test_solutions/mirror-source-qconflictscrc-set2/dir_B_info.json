@@ -83,12 +83,12 @@
  ".backupy\\database.aborted.json": {
   "size": 1924,
   "mtime": 0,
-  "crc": 713275369
+  "crc": 3709867155
  },
  ".backupy\\database.json": {
   "size": 1335,
   "mtime": 0,
-  "crc": 1129814332
+  "crc": 783614724
  },
  "same nested dir\\same empty dir": {
   "size": 0,

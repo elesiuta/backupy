@@ -1,88 +1,88 @@
 {
- "same empty dir": {
-  "size": 0,
-  "mtime": 0,
-  "crc": "0",
-  "dir": true
- },
  "copied A.txt": {
-  "size": 353,
-  "mtime": 1582141538.0
+  "mtime": 1582141538.0,
+  "size": 353
  },
  "copied both - 2.txt": {
-  "size": 325,
-  "mtime": 1582141634.0
+  "mtime": 1582141634.0,
+  "size": 325
  },
  "copied both - copy.txt": {
-  "size": 325,
-  "mtime": 1582141634.0
+  "mtime": 1582141634.0,
+  "size": 325
  },
  "copied both.txt": {
-  "size": 325,
-  "mtime": 1582141634.0
+  "mtime": 1582141634.0,
+  "size": 325
  },
  "corrupted file A.txt": {
-  "size": 2,
+  "crc": "1B4DA988",
   "mtime": 1563369444.0,
-  "crc": "1B4DA988"
+  "size": 2
  },
  "corrupted file B.txt": {
-  "size": 2,
+  "crc": "1B4DA988",
   "mtime": 1563369444.0,
-  "crc": "1B4DA988"
+  "size": 2
  },
  "file modified newer on A.txt": {
-  "size": 319,
-  "mtime": 1563369818.0
+  "mtime": 1563369818.0,
+  "size": 319
  },
  "file modified newer on B.txt": {
-  "size": 202,
-  "mtime": 1575245288.0
+  "mtime": 1575245288.0,
+  "size": 202
  },
  "file only B.txt": {
-  "size": 9,
-  "mtime": 1563369616.0
+  "mtime": 1563369616.0,
+  "size": 9
  },
  "moved and copied A.txt": {
-  "size": 362,
-  "mtime": 1582141424.0
+  "mtime": 1582141424.0,
+  "size": 362
  },
  "new corrupted file.txt": {
-  "size": 11,
-  "mtime": 1582137344.0
+  "mtime": 1582137344.0,
+  "size": 11
  },
  "new file B.txt": {
-  "size": 70,
-  "mtime": 1575245388.0
+  "mtime": 1575245388.0,
+  "size": 70
  },
  "renamed file B.txt": {
-  "size": 14,
-  "mtime": 1563369288.0
+  "mtime": 1563369288.0,
+  "size": 14
+ },
+ "same empty dir": {
+  "crc": "0",
+  "dir": true,
+  "mtime": 0,
+  "size": 0
  },
  "same file corrupted.txt": {
-  "size": 2,
-  "mtime": 1563369444.0
+  "mtime": 1563369444.0,
+  "size": 2
  },
  "same file.txt": {
-  "size": 2,
-  "mtime": 1563369444.0
+  "mtime": 1563369444.0,
+  "size": 2
  },
  "same nested dir\\same empty dir": {
-  "size": 0,
-  "mtime": 0,
   "crc": "0",
-  "dir": true
+  "dir": true,
+  "mtime": 0,
+  "size": 0
  },
  "subdir\\renamed dir A\\file1.txt": {
-  "size": 11,
-  "mtime": 1563369360.0
+  "mtime": 1563369360.0,
+  "size": 11
  },
  "subdir\\renamed dir A\\file2.txt": {
-  "size": 2,
-  "mtime": 1563369366.0
+  "mtime": 1563369366.0,
+  "size": 2
  },
  "subdir\\renamed dir A\\file3.txt": {
-  "size": 45,
-  "mtime": 1563369386.0
+  "mtime": 1563369386.0,
+  "size": 45
  }
 }

@@ -1,104 +1,104 @@
 {
- "same empty dir": {
-  "size": 0,
-  "mtime": 0,
-  "crc": "0",
-  "dir": true
- },
  "copied A.txt": {
-  "size": 353,
+  "crc": "C52AF0F0",
   "mtime": 1582141538.0,
-  "crc": "C52AF0F0"
+  "size": 353
  },
  "copied both - 2.txt": {
-  "size": 325,
+  "crc": "EDEF17B",
   "mtime": 1582141634.0,
-  "crc": "EDEF17B"
+  "size": 325
  },
  "copied both - copy.txt": {
-  "size": 325,
+  "crc": "EDEF17B",
   "mtime": 1582141634.0,
-  "crc": "EDEF17B"
+  "size": 325
  },
  "copied both.txt": {
-  "size": 325,
+  "crc": "EDEF17B",
   "mtime": 1582141634.0,
-  "crc": "EDEF17B"
+  "size": 325
  },
  "corrupted file A.txt": {
-  "size": 2,
+  "crc": "1B4DA988",
   "mtime": 1563369444.0,
-  "crc": "1B4DA988"
+  "size": 2
  },
  "corrupted file B.txt": {
-  "size": 2,
+  "crc": "F22E0CBD",
   "mtime": 1563369444.0,
-  "crc": "F22E0CBD"
+  "size": 2
  },
  "file modified newer on A.txt": {
-  "size": 319,
+  "crc": "60DB3B65",
   "mtime": 1563369818.0,
-  "crc": "60DB3B65"
+  "size": 319
  },
  "file modified newer on B.txt": {
-  "size": 202,
+  "crc": "FDB24CA6",
   "mtime": 1575245288.0,
-  "crc": "FDB24CA6"
+  "size": 202
  },
  "file only B.txt": {
-  "size": 9,
+  "crc": "420CD42",
   "mtime": 1563369616.0,
-  "crc": "420CD42"
+  "size": 9
  },
  "moved and copied A.txt": {
-  "size": 362,
+  "crc": "9C457731",
   "mtime": 1582141424.0,
-  "crc": "9C457731"
+  "size": 362
  },
  "new corrupted file.txt": {
-  "size": 11,
+  "crc": "57A92228",
   "mtime": 1582137344.0,
-  "crc": "57A92228"
+  "size": 11
  },
  "new file B.txt": {
-  "size": 70,
+  "crc": "A1E6ECDF",
   "mtime": 1575245388.0,
-  "crc": "A1E6ECDF"
+  "size": 70
  },
  "renamed file B.txt": {
-  "size": 14,
+  "crc": "7CFF48B6",
   "mtime": 1563369288.0,
-  "crc": "7CFF48B6"
+  "size": 14
+ },
+ "same empty dir": {
+  "crc": "0",
+  "dir": true,
+  "mtime": 0,
+  "size": 0
  },
  "same file corrupted.txt": {
-  "size": 2,
+  "crc": "F22E0CBD",
   "mtime": 1563369444.0,
-  "crc": "F22E0CBD"
+  "size": 2
  },
  "same file.txt": {
-  "size": 2,
+  "crc": "1B4DA988",
   "mtime": 1563369444.0,
-  "crc": "1B4DA988"
+  "size": 2
  },
  "same nested dir\\same empty dir": {
-  "size": 0,
-  "mtime": 0,
   "crc": "0",
-  "dir": true
+  "dir": true,
+  "mtime": 0,
+  "size": 0
  },
  "subdir\\renamed dir A\\file1.txt": {
-  "size": 11,
+  "crc": "D4A1185",
   "mtime": 1563369360.0,
-  "crc": "D4A1185"
+  "size": 11
  },
  "subdir\\renamed dir A\\file2.txt": {
-  "size": 2,
+  "crc": "3224B088",
   "mtime": 1563369366.0,
-  "crc": "3224B088"
+  "size": 2
  },
  "subdir\\renamed dir A\\file3.txt": {
-  "size": 45,
+  "crc": "773AD0C",
   "mtime": 1563369386.0,
-  "crc": "773AD0C"
+  "size": 45
  }
 }
