@@ -49,11 +49,11 @@ def readJson(file_path: str) -> dict:
         return data
     return {}
 
-def writeJson(file_path: str, data: dict, subdir: bool = True) -> None:
+def writeJson(file_path: str, data: dict, subdir: bool = True, sort_keys: bool = False) -> None:
     if subdir and not os.path.isdir(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
     with open(file_path, "w", encoding="utf-8", errors="surrogateescape") as json_file:
-        json.dump(data, json_file, indent=1, separators=(',', ': '))
+        json.dump(data, json_file, indent=1, separators=(',', ': '), sort_keys=sort_keys)
 
 ####################
 ### Localisation ###
@@ -227,7 +227,7 @@ class DirInfo:
         return self.crc_errors_detected
 
     def saveJson(self, db_name: str = "database.json") -> None:
-        writeJson(os.path.join(self.dir, self.config_dir, db_name), self.file_dicts)
+        writeJson(os.path.join(self.dir, self.config_dir, db_name), self.file_dicts, sort_keys=True)
 
     def loadJson(self) -> None:
         self.loaded_dicts = readJson(os.path.join(self.dir, self.config_dir, "database.json"))

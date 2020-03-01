@@ -23,11 +23,11 @@ def readJson(file_path: str) -> dict:
         return data
     return {}
 
-def writeJson(file_path: str, data: dict, subdir: bool = True) -> None:
+def writeJson(file_path: str, data: dict, subdir: bool = True, sort_keys: bool = False) -> None:
     if subdir and not os.path.isdir(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
     with open(file_path, "w", encoding="utf-8", errors="surrogateescape", newline="\r\n") as json_file:
-        json.dump(data, json_file, indent=1, separators=(',', ': '))
+        json.dump(data, json_file, indent=1, separators=(',', ': '), sort_keys=sort_keys)
 
 def replaceDictKeySep(d):
     # replace path separators to windows for consistent testing
@@ -49,7 +49,7 @@ def rewriteDb(fName):
     # replace path separators to windows for consistent testing
     if os.path.exists(fName):
         db = readJson(fName)
-        writeJson(fName, replaceDictKeySep(db))
+        writeJson(fName, replaceDictKeySep(db), sort_keys=True)
 
 def rewriteSep(fName):
     # replace path separators to windows for consistent testing
