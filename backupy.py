@@ -39,8 +39,7 @@ def writeCsv(file_path: str, data: list) -> None:
         os.makedirs(os.path.dirname(file_path))
     with open(file_path, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
         writer = csv.writer(f, delimiter=",")
-        for row in data:
-            writer.writerow(row)
+        writer.writerows(data)
 
 def readJson(file_path: str) -> dict:
     if os.path.exists(file_path):
