@@ -169,8 +169,6 @@ class ConfigObject:
         self.quit_on_db_conflict = False
         self.scan_only = False
         self.verify_copy = False
-        self.save = False
-        self.load = False
         # default config (additional)
         self.archive_dir = ".backupy/Archive"
         self.config_dir = ".backupy"
@@ -468,7 +466,7 @@ class BackupManager:
             args = vars(args)
         self.config = ConfigObject(args)
         # load config (be careful if using a non-default config_dir!)
-        if self.config.load:
+        if "load" in args and args["load"] == True:
             self.loadJson()
         # set args that can overwrite loaded config
         if "dry_run" in args and args["dry_run"] == True:
@@ -493,7 +491,7 @@ class BackupManager:
         self.source = None
         self.dest = None
         # save config
-        if self.config.save:
+        if "save" in args and args["save"] == True:
             self.saveJson()
         # gui modifications
         if self.gui:
@@ -514,7 +512,6 @@ class BackupManager:
     ######################################
 
     def saveJson(self) -> None:
-        self.config.save, self.config.load = False, False
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
         print(self.colourString(getString("Config saved"), "OKGREEN"))
         sys.exit()
