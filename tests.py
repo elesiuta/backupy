@@ -550,6 +550,13 @@ class TestBackupy(unittest.TestCase):
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
+    def test_sync_dest_verifycopyplus_set2(self):
+        test_name = "sync-dest-verifycopyplus-set2"
+        config = {"main_mode": "sync", "select_mode": "dest", "compare_mode": "attr+", "verify_copy": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
     def test_mirror_source_verifycopycrc_set2(self):
         test_name = "mirror-source-verifycopycrc-set2"
         config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "crc", "verify_copy": True, "noprompt": True, "backup_time_override": "000000-0000"}
