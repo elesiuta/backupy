@@ -7,16 +7,6 @@ description: |
 confinement: strict
 base: core18
 
-plugs:
-  rw-fuse:
-    interface: fuse-support
-  rw-home:
-    interface: personal-files
-    write:
-    - $HOME
-  rw-media:
-    interface: removable-media
-
 parts:
   backupy:
     plugin: python
@@ -27,6 +17,5 @@ apps:
   backupy:
     command: bin/backupy
     plugs:
-    - rw-fuse
-    - rw-home
-    - rw-media
+    - home
+    - removable-media
