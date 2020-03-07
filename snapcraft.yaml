@@ -1,17 +1,19 @@
 name: backupy
-version: git
 summary: BackuPy
 description: |
   A simple backup program in python with an emphasis on data integrity
   and transparent behaviour.
 confinement: strict
 base: core18
+adopt-info: backupy
 
 parts:
   backupy:
     plugin: python
     python-version: python3
     source: .
+    override-pull: |
+      snapcraftctl set-version "$(git describe --tags | cut -c2-)"
 
 apps:
   backupy:
