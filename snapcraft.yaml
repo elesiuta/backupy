@@ -13,6 +13,7 @@ parts:
     python-version: python3
     source: .
     override-pull: |
+      snapcraftctl pull
       snapcraftctl set-version "$(git describe --tags | cut -c2-)"
 
 apps:
