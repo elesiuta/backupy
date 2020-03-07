@@ -4,14 +4,28 @@ summary: BackuPy
 description: |
   A simple backup program in python with an emphasis on data integrity
   and transparent behaviour.
-confinement: devmode
+confinement: strict
 base: core18
+
+plugs:
+  rw-fuse:
+    interface: fuse-support
+  rw-home:
+    interface: personal-files
+    write:
+    - $HOME
+  rw-media:
+    interface: removable-media
 
 parts:
   backupy:
     plugin: python
     python-version: python3
     source: .
+    plugs:
+    - rw-fuse
+    - rw-home
+    - rw-media
 
 apps:
   backupy:
