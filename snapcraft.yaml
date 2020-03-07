@@ -1,0 +1,18 @@
+name: backupy
+version: git
+summary: BackuPy
+description: |
+  A simple backup program in python with an emphasis on data integrity
+  and transparent behaviour.
+confinement: devmode
+base: core18
+
+parts:
+  backupy:
+    plugin: python
+    python-version: python3
+    source: .
+
+apps:
+  backupy:
+    command: bin/backupy
