@@ -27,7 +27,7 @@ import unicodedata
 import zlib
 
 def getVersion() -> str:
-    return "1.5.1"
+    return "1.5.2"
 
 
 #########################
