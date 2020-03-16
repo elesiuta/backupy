@@ -201,6 +201,7 @@ class DirInfo:
         self.loaded_dicts = {}
         self.loaded_diffs = {}
         self.missing_files = {}
+        self.new_files = {}
         self.crc_errors_detected = {}
         self.dir = directory_root_path
         self.compare_mode = compare_mode
@@ -220,6 +221,9 @@ class DirInfo:
 
     def getMissingFiles(self) -> dict:
         return self.missing_files
+
+    def getNewFiles(self) -> dict:
+        return self.new_files
 
     def getCrcErrorsDetected(self) -> dict:
         return self.crc_errors_detected
@@ -370,6 +374,7 @@ class DirInfo:
                     else:
                         # new file
                         self.file_dicts[relative_path] = {"size": size, "mtime": mtime}
+                        self.new_files[relative_path] = self.file_dicts[relative_path]
                     if self.compare_mode == "crc":
                         # calculate CRC for all files (simpler code and potential warning sign for disk issues)
                         self.file_dicts[relative_path]["crc"] = self.calcCrc(full_path)
@@ -821,11 +826,13 @@ class BackupManager:
         source_dict = self.source.getDirDict()
         source_diffs = self.source.getLoadedDiffs()
         source_missing = self.source.getMissingFiles()
+        source_new = self.source.getNewFiles()
         source_loaded_db = self.source.getLoadedDicts()
         source_crc_errors = self.source.getCrcErrorsDetected()
         dest_dict = self.dest.getDirDict()
         dest_diffs = self.dest.getLoadedDiffs()
         dest_missing = self.dest.getMissingFiles()
+        dest_new = self.dest.getNewFiles()
         dest_loaded_db = self.dest.getLoadedDicts()
         dest_crc_errors = self.dest.getCrcErrorsDetected()
         # print database conflicts, including both collisions from files being modified independently on both sides and unexpected missing files
@@ -837,13 +844,14 @@ class BackupManager:
             if self.config.main_mode == "sync":
                 sync_conflicts = sorted(list(set(source_diffs) & set(dest_diffs)))
                 sync_conflicts += sorted(list(set(source_missing) | set(dest_missing)))
+                # sync_conflicts += sorted(list(set(source_new) | set(dest_new))) # if they match it's no conflict, only need them if they differ, may not already be accounted for
                 if len(sync_conflicts) >= 1:
                     print(self.colourString(getString("WARNING: found files modified in both source and destination since last scan"), "WARNING"))
                     abort_run = True
                 print(self.colourString(getString("Sync Database Conflicts: %s") %(len(sync_conflicts)), "HEADER"))
                 self.printSyncDbConflicts(sync_conflicts, source_dict, dest_dict, source_loaded_db, dest_loaded_db)
             else:
-                dest_conflicts = sorted(list(set(dest_diffs) | set(dest_missing)))
+                dest_conflicts = sorted(list(set(dest_diffs) | set(dest_missing) | set(dest_new)))
                 if len(dest_conflicts) >= 1:
                     print(self.colourString(getString("WARNING: found files modified in the destination since last scan"), "WARNING"))
                     abort_run = True
