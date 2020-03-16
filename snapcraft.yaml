@@ -19,6 +19,9 @@ parts:
 apps:
   backupy:
     command: bin/backupy
+    environment:
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
     plugs:
     - home
     - removable-media
