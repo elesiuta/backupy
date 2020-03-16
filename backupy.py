@@ -114,6 +114,7 @@ class StatusBar:
     def update(self, msg: str) -> None:
         if self.display:
             self.progress += 1
+            msg = msg.encode("utf-8", "surrogateescape").decode("utf-8", "replace")
             if self.total == -1:
                 progress_str = str(self.progress) + ": "
                 self.msg_len = self.char_display - len(progress_str) - len(self.title_str)
@@ -592,7 +593,7 @@ class BackupManager:
     def colourPrint(self, msg: str, colour: str) -> None:
         if self.config.verbose:
             if colour == "NONE":
-                print(msg)
+                print(self.replaceSurrogates(msg))
             else:
                 print(self.colourString(msg, colour))
 
