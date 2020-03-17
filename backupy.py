@@ -884,6 +884,28 @@ class BackupManager:
             self.log.append([getString("### MOVED FILES ###")])
             self.printMovedFiles(moved, source_dict, dest_dict)
 
+    def executeJob(self, source_only: list, dest_only: list, changed: list, moved: list, simulation_msg: str) -> None:
+        # get databases
+        source_dict = self.source.getDirDict()
+        dest_dict = self.dest.getDirDict()
+        # perform the backup/mirror/sync
+        self.log.append([getString("### START ") + self.config.main_mode.upper() + simulation_msg.upper() + " ###"])
+        print(self.colourString(getString("Starting ") + self.config.main_mode, "HEADER"))
+        if self.config.main_mode == "mirror":
+            self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
+            self.handleDeletedFiles(self.config.dest, dest_only)
+            self.handleMovedFiles(moved)
+            self.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
+        elif self.config.main_mode == "backup":
+            self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
+            self.handleMovedFiles(moved)
+            self.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
+        elif self.config.main_mode == "sync":
+            self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
+            self.copyFiles(self.config.dest, self.config.source, dest_only, dest_only)
+            self.handleMovedFiles(moved)
+            self.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
+
     ######################################
     ### Main backup/mirror/sync method ###
     ######################################
@@ -923,9 +945,6 @@ class BackupManager:
                                                                             self.config.nomoves,
                                                                             self.config.filter_include_list,
                                                                             self.config.filter_exclude_list)
-        # get databases
-        source_dict = self.source.getDirDict()
-        dest_dict = self.dest.getDirDict()
         # check for database conflicts or corruption
         detected_database_conflicts_or_corruption = self.databaseAndCorruptionCheck(database_load_success)
         if self.config.quit_on_db_conflict and detected_database_conflicts_or_corruption:
@@ -955,22 +974,7 @@ class BackupManager:
             if len(go) == 0 or go[0].lower() != "y":
                 return self.abortRun()
         # backup operations
-        self.log.append([getString("### START ") + self.config.main_mode.upper() + simulation_msg.upper() + " ###"])
-        print(self.colourString(getString("Starting ") + self.config.main_mode, "HEADER"))
-        if self.config.main_mode == "mirror":
-            self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
-            self.handleDeletedFiles(self.config.dest, dest_only)
-            self.handleMovedFiles(moved)
-            self.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
-        elif self.config.main_mode == "backup":
-            self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
-            self.handleMovedFiles(moved)
-            self.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
-        elif self.config.main_mode == "sync":
-            self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
-            self.copyFiles(self.config.dest, self.config.source, dest_only, dest_only)
-            self.handleMovedFiles(moved)
-            self.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
+        self.executeJob(source_only, dest_only, changed, moved, simulation_msg)
         self.log.append([getString("### COMPLETED ###")])
         self.writeLog("database.json")
         print(self.colourString(getString("Completed!"), "OKGREEN"))
