@@ -27,7 +27,7 @@ import unicodedata
 import zlib
 
 def getVersion() -> str:
-    return "1.5.2"
+    return "1.5.3"
 
 
 #########################
@@ -791,7 +791,7 @@ class BackupManager:
     ### Helper functions used by backup() ###
     #########################################
 
-    def databaseAndCorruptionCheck(self, database_load_success: bool) -> bool:
+    def databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
         # get databases
         source_dict = self.source.getDirDict()
         source_diffs = self.source.getLoadedDiffs()
@@ -809,7 +809,7 @@ class BackupManager:
         # note: this only notifies the user so they can intervene, it does not handle them in any special way, treating them as regular file changes
         # it can also be triggered by time zone or dst changes, lower file system mod time precision, and corruption if using CRCs (handled next)
         abort_run = False
-        if database_load_success:
+        if dest_database_load_success:
             self.log.append([getString("### DATABASE CONFLICTS ###")])
             if self.config.main_mode == "sync":
                 sync_conflicts = sorted(list(set(source_diffs) & set(dest_diffs))) # modified on both sides
@@ -925,11 +925,11 @@ class BackupManager:
         self.dest = DirInfo(self.config.dest, self.config.compare_mode, self.config.config_dir,
                             [self.config.archive_dir, self.config.log_dir, self.config.trash_dir],
                             self.gui, self.config.force_posix_path_sep)
-        database_load_success = False
+        dest_database_load_success = False
         self.source.loadJson()
         self.dest.loadJson()
-        if self.source.loaded_dicts != {} or self.dest.loaded_dicts != {}:
-            database_load_success = True
+        if self.dest.loaded_dicts != {}:
+            dest_database_load_success = True
         # scan directories (also calculates CRC if enabled) (didn't parallelize scans to prevent excess vibration of adjacent consumer grade disks and keep status bars simple)
         self.colourPrint(getString("Scanning files on source:\n%s") %(self.config.source), "OKBLUE")
         self.source.scanDir(self.config.stdout_status_bar)
@@ -946,7 +946,7 @@ class BackupManager:
                                                                             self.config.filter_include_list,
                                                                             self.config.filter_exclude_list)
         # check for database conflicts or corruption
-        detected_database_conflicts_or_corruption = self.databaseAndCorruptionCheck(database_load_success)
+        detected_database_conflicts_or_corruption = self.databaseAndCorruptionCheck(dest_database_load_success)
         if self.config.quit_on_db_conflict and detected_database_conflicts_or_corruption:
             return self.abortRun()
         # end scan
