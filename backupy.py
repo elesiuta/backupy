@@ -842,16 +842,19 @@ class BackupManager:
         if database_load_success:
             self.log.append([getString("### DATABASE CONFLICTS ###")])
             if self.config.main_mode == "sync":
-                sync_conflicts = sorted(list(set(source_diffs) & set(dest_diffs)))
-                sync_conflicts += sorted(list(set(source_missing) | set(dest_missing)))
-                # sync_conflicts += sorted(list(set(source_new) | set(dest_new))) # if they match it's no conflict, only need them if they differ, may not already be accounted for
+                sync_conflicts = sorted(list(set(source_diffs) & set(dest_diffs))) # modified on both sides
+                sync_conflicts += sorted(list(set(source_missing) | set(dest_missing))) # deleted from either or both sides
+                sync_conflicts += sorted(list(set(source_new) & set(dest_new))) # new on both sides
+                # sync_conflicts += sorted(list(filter(lambda f: source_new[f] != dest_new[f], set(source_new) & set(dest_new)))) # new and different on both sides
                 if len(sync_conflicts) >= 1:
                     print(self.colourString(getString("WARNING: found files modified in both source and destination since last scan"), "WARNING"))
                     abort_run = True
                 print(self.colourString(getString("Sync Database Conflicts: %s") %(len(sync_conflicts)), "HEADER"))
                 self.printSyncDbConflicts(sync_conflicts, source_dict, dest_dict, source_loaded_db, dest_loaded_db)
             else:
-                dest_conflicts = sorted(list(set(dest_diffs) | set(dest_missing) | set(dest_new)))
+                dest_conflicts = sorted(list(set(dest_diffs)))
+                dest_conflicts += sorted(list(set(dest_missing)))
+                dest_conflicts += sorted(list(set(dest_new)))
                 if len(dest_conflicts) >= 1:
                     print(self.colourString(getString("WARNING: found files modified in the destination since last scan"), "WARNING"))
                     abort_run = True
