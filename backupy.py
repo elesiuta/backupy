@@ -787,41 +787,11 @@ class BackupManager:
                 break
         copy_status.endProgress()
 
-    ######################################
-    ### Main backup/mirror/sync method ###
-    ######################################
+    #########################################
+    ### Helper functions used by backup() ###
+    #########################################
 
-    def backup(self):
-        """Main method, use this to run your job no matter the configuration"""
-        if self.config.dry_run:
-            print(self.colourString(getString("Dry Run"), "HEADER"))
-        # init dir scanning and load previous scan data if available
-        self.source = DirInfo(self.config.source, self.config.compare_mode, self.config.config_dir,
-                              [self.config.archive_dir, self.config.log_dir, self.config.trash_dir],
-                              self.gui, self.config.force_posix_path_sep)
-        self.dest = DirInfo(self.config.dest, self.config.compare_mode, self.config.config_dir,
-                            [self.config.archive_dir, self.config.log_dir, self.config.trash_dir],
-                            self.gui, self.config.force_posix_path_sep)
-        database_load_success = False
-        self.source.loadJson()
-        self.dest.loadJson()
-        if self.source.loaded_dicts != {} or self.dest.loaded_dicts != {}:
-            database_load_success = True
-        # scan directories (also calculates CRC if enabled) (didn't parallelize scans to prevent excess vibration of adjacent consumer grade disks and keep status bars simple)
-        self.colourPrint(getString("Scanning files on source:\n%s") %(self.config.source), "OKBLUE")
-        self.source.scanDir(self.config.stdout_status_bar)
-        if self.config.source != self.config.dest:
-            self.colourPrint(getString("Scanning files on destination:\n%s") %(self.config.dest), "OKBLUE")
-            self.dest.scanDir(self.config.stdout_status_bar)
-        else:
-            self.dest = self.source
-        # compare directories (should be relatively fast, all the read operations are done during scan)
-        if not self.config.scan_only:
-            self.colourPrint(getString("Comparing directories..."), "OKBLUE")
-            source_only, dest_only, changed, moved = self.source.dirCompare(self.dest,
-                                                                            self.config.nomoves,
-                                                                            self.config.filter_include_list,
-                                                                            self.config.filter_exclude_list)
+    def databaseAndCorruptionCheck(self, database_load_success: bool) -> bool:
         # get databases
         source_dict = self.source.getDirDict()
         source_diffs = self.source.getLoadedDiffs()
@@ -874,14 +844,12 @@ class BackupManager:
                     raise Exception("Inconsistent CRC error detection between source and dest")
                 print(self.colourString(getString("CRC Errors Detected: %s") %(len(source_crc_errors)), "HEADER"))
                 self.printChangedFiles(sorted(list(source_crc_errors)), source_crc_errors, dest_crc_errors)
-        if self.config.quit_on_db_conflict and abort_run:
-            return self.abortRun()
-        # end scan
-        if self.config.scan_only:
-            self.log.append([getString("### SCAN COMPLETED ###")])
-            self.writeLog("database.json")
-            print(self.colourString(getString("Completed!"), "OKGREEN"))
-            return 0
+        return abort_run
+    
+    def printAndLogDiffSummary(self, source_only: list, dest_only: list, changed: list, moved: list) -> None:
+        # get databases
+        source_dict = self.source.getDirDict()
+        dest_dict = self.dest.getDirDict()
         # prepare diff messages
         if self.config.noarchive:
             archive_msg = getString("delete")
@@ -901,10 +869,6 @@ class BackupManager:
             change_msg = getString("(%s older and copy newer)" %(archive_msg))
         elif self.config.select_mode == "no":
             change_msg = getString("(will be left as is)")
-        if self.config.dry_run:
-            simulation_msg = getString(" dry run")
-        else:
-            simulation_msg = ""
         # print differences
         print(self.colourString(getString("Source Only (will be copied to dest): %s") %(len(source_only)), "HEADER"))
         self.log.append([getString("### SOURCE ONLY ###")])
@@ -919,6 +883,61 @@ class BackupManager:
             print(self.colourString(getString("Moved Files (will move files on dest to match source): %s") %(len(moved)), "HEADER"))
             self.log.append([getString("### MOVED FILES ###")])
             self.printMovedFiles(moved, source_dict, dest_dict)
+
+    ######################################
+    ### Main backup/mirror/sync method ###
+    ######################################
+
+    def backup(self):
+        """Main method, use this to run your job no matter the configuration"""
+        # dry run confirmation message
+        if self.config.dry_run:
+            simulation_msg = getString(" dry run")
+            print(self.colourString(getString("Dry Run"), "HEADER"))
+        else:
+            simulation_msg = ""
+        # init dir scanning and load previous scan data if available
+        self.source = DirInfo(self.config.source, self.config.compare_mode, self.config.config_dir,
+                              [self.config.archive_dir, self.config.log_dir, self.config.trash_dir],
+                              self.gui, self.config.force_posix_path_sep)
+        self.dest = DirInfo(self.config.dest, self.config.compare_mode, self.config.config_dir,
+                            [self.config.archive_dir, self.config.log_dir, self.config.trash_dir],
+                            self.gui, self.config.force_posix_path_sep)
+        database_load_success = False
+        self.source.loadJson()
+        self.dest.loadJson()
+        if self.source.loaded_dicts != {} or self.dest.loaded_dicts != {}:
+            database_load_success = True
+        # scan directories (also calculates CRC if enabled) (didn't parallelize scans to prevent excess vibration of adjacent consumer grade disks and keep status bars simple)
+        self.colourPrint(getString("Scanning files on source:\n%s") %(self.config.source), "OKBLUE")
+        self.source.scanDir(self.config.stdout_status_bar)
+        if self.config.source != self.config.dest:
+            self.colourPrint(getString("Scanning files on destination:\n%s") %(self.config.dest), "OKBLUE")
+            self.dest.scanDir(self.config.stdout_status_bar)
+        else:
+            self.dest = self.source
+        # compare directories (should be relatively fast, all the read operations are done during scan)
+        if not self.config.scan_only:
+            self.colourPrint(getString("Comparing directories..."), "OKBLUE")
+            source_only, dest_only, changed, moved = self.source.dirCompare(self.dest,
+                                                                            self.config.nomoves,
+                                                                            self.config.filter_include_list,
+                                                                            self.config.filter_exclude_list)
+        # get databases
+        source_dict = self.source.getDirDict()
+        dest_dict = self.dest.getDirDict()
+        # check for database conflicts or corruption
+        detected_database_conflicts_or_corruption = self.databaseAndCorruptionCheck(database_load_success)
+        if self.config.quit_on_db_conflict and detected_database_conflicts_or_corruption:
+            return self.abortRun()
+        # end scan
+        if self.config.scan_only:
+            self.log.append([getString("### SCAN COMPLETED ###")])
+            self.writeLog("database.json")
+            print(self.colourString(getString("Completed!"), "OKGREEN"))
+            return 0
+        # print differences between source and dest
+        self.printAndLogDiffSummary(source_only, dest_only, changed, moved)
         # exit if directories already match
         if len(source_only) == 0 and len(dest_only) == 0 and len(changed) == 0 and len(moved) == 0:
             print(self.colourString(getString("Directories already match, completed!"), "OKGREEN"))
