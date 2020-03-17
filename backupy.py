@@ -197,12 +197,13 @@ class ConfigObject:
 class DirInfo:
     def __init__(self, directory_root_path: str, compare_mode: str,  config_dir: str, ignored_toplevel_folders: list = [], gui: bool = False, force_posix_path_sep: bool = False):
         """For scanning directories, tracking files and changes, meant only for internal use by BackupManager"""
-        self.file_dicts = {}
-        self.loaded_dicts = {}
-        self.loaded_diffs = {}
-        self.missing_files = {}
-        self.new_files = {}
-        self.crc_errors_detected = {}
+        # File dictionaries, keys are paths relative to directory_root_path, values are dictionaries of file attributes
+        self.dict_current = {}
+        self.dict_prev = {}
+        self.dict_modified = {}
+        self.dict_missing = {}
+        self.dict_new = {}
+        self.dict_crc_errors = {}
         self.dir = directory_root_path
         self.compare_mode = compare_mode
         self.config_dir = config_dir
@@ -211,28 +212,28 @@ class DirInfo:
         self.force_posix_path_sep = force_posix_path_sep
 
     def getDirDict(self) -> dict:
-        return self.file_dicts
+        return self.dict_current
 
     def getLoadedDicts(self) -> dict:
-        return self.loaded_dicts
+        return self.dict_prev
 
     def getLoadedDiffs(self) -> dict:
-        return self.loaded_diffs
+        return self.dict_modified
 
     def getMissingFiles(self) -> dict:
-        return self.missing_files
+        return self.dict_missing
 
     def getNewFiles(self) -> dict:
-        return self.new_files
+        return self.dict_new
 
     def getCrcErrorsDetected(self) -> dict:
-        return self.crc_errors_detected
+        return self.dict_crc_errors
 
     def saveJson(self, db_name: str = "database.json") -> None:
-        writeJson(os.path.join(self.dir, self.config_dir, db_name), self.file_dicts, sort_keys=True)
+        writeJson(os.path.join(self.dir, self.config_dir, db_name), self.dict_current, sort_keys=True)
 
     def loadJson(self) -> None:
-        self.loaded_dicts = readJson(os.path.join(self.dir, self.config_dir, "database.json"))
+        self.dict_prev = readJson(os.path.join(self.dir, self.config_dir, "database.json"))
 
     def verifyCrcOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
         if self.dir == source_root and secondInfo.dir == dest_root:
@@ -244,37 +245,37 @@ class DirInfo:
 
     def updateDictOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
         if self.dir == source_root and secondInfo.dir == dest_root:
-            secondInfo.file_dicts[dest_file] = self.file_dicts[source_file].copy()
+            secondInfo.dict_current[dest_file] = self.dict_current[source_file].copy()
         elif self.dir == dest_root and secondInfo.dir == source_root:
-            self.file_dicts[dest_file] = secondInfo.file_dicts[source_file].copy()
+            self.dict_current[dest_file] = secondInfo.dict_current[source_file].copy()
         else:
             raise Exception("Update Database Error")
 
     def updateDictOnMove(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
         if source_root == dest_root == self.dir:
-            self.file_dicts[dest_file] = self.file_dicts.pop(source_file)
+            self.dict_current[dest_file] = self.dict_current.pop(source_file)
         elif source_root == dest_root == secondInfo.dir:
-            secondInfo.file_dicts[dest_file] = secondInfo.file_dicts.pop(source_file)
+            secondInfo.dict_current[dest_file] = secondInfo.dict_current.pop(source_file)
         elif source_root == self.dir and dest_root != secondInfo.dir:
-            _ = self.file_dicts.pop(source_file)
+            _ = self.dict_current.pop(source_file)
         elif source_root == secondInfo.dir and dest_root != self.dir:
-            _ = secondInfo.file_dicts.pop(source_file)
+            _ = secondInfo.dict_current.pop(source_file)
         else:
             raise Exception("Update Database Error")
 
     def updateDictOnRemove(self, root_path: str, file_relative_path: str, secondInfo: 'DirInfo') -> None:
         if root_path == self.dir:
-            _ = self.file_dicts.pop(file_relative_path)
+            _ = self.dict_current.pop(file_relative_path)
         elif root_path == secondInfo.dir:
-            _ = secondInfo.file_dicts.pop(file_relative_path)
+            _ = secondInfo.dict_current.pop(file_relative_path)
         else:
             raise Exception("Update Database Error")
 
     def getCrc(self, relative_path: str, recalc: bool = False) -> str:
-        if recalc or "crc" not in self.file_dicts[relative_path]:
+        if recalc or "crc" not in self.dict_current[relative_path]:
             full_path = os.path.join(self.dir, relative_path)
-            self.file_dicts[relative_path]["crc"] = self.calcCrc(full_path)
-        return self.file_dicts[relative_path]["crc"]
+            self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
+        return self.dict_current[relative_path]["crc"]
 
     def calcCrc(self, file_path: str, prev: int = 0) -> str:
         with open(file_path, "rb") as f:
@@ -311,29 +312,29 @@ class DirInfo:
         return False
 
     def fileMatch(self, f1: str, f2: str, secondInfo: 'DirInfo', compare_mode: str, move_check: bool = False) -> bool:
-        if self.file_dicts[f1]["size"] == secondInfo.file_dicts[f2]["size"]:
-            if self.timeMatch(self.file_dicts[f1]["mtime"], secondInfo.file_dicts[f2]["mtime"], False, [3600, 3601, 3602]):
+        if self.dict_current[f1]["size"] == secondInfo.dict_current[f2]["size"]:
+            if self.timeMatch(self.dict_current[f1]["mtime"], secondInfo.dict_current[f2]["mtime"], False, [3600, 3601, 3602]):
                 # these are the 'unchanged files (probably)' from both sides, crc should be up to date from the scan if using CRC mode
-                if compare_mode == "crc" and self.file_dicts[f1]["crc"] != secondInfo.file_dicts[f2]["crc"]:
+                if compare_mode == "crc" and self.dict_current[f1]["crc"] != secondInfo.dict_current[f2]["crc"]:
                     # size and date match, but crc does not, probably corrupted
-                    if f1 not in self.crc_errors_detected and f2 not in secondInfo.crc_errors_detected:
+                    if f1 not in self.dict_crc_errors and f2 not in secondInfo.dict_crc_errors:
                         # log error since it wasn't already detected during scan, that implies neither file has a past record
-                        self.crc_errors_detected[f1] = None
-                        secondInfo.crc_errors_detected[f2] = None
+                        self.dict_crc_errors[f1] = None
+                        secondInfo.dict_crc_errors[f2] = None
                     return False
                 # detect mismatched crc values across both sides (usually if corruption happened before crc database was created)
-                if compare_mode == "attr+" and self.file_dicts[f1]["crc"] != secondInfo.file_dicts[f2]["crc"]:
+                if compare_mode == "attr+" and self.dict_current[f1]["crc"] != secondInfo.dict_current[f2]["crc"]:
                     if move_check:
                         # it may be corrupted or coincidence, just won't flag these files as matching
                         return False
-                    self.crc_errors_detected[f1] = self.file_dicts[f1]
-                    secondInfo.crc_errors_detected[f2] = secondInfo.file_dicts[f2]
+                    self.dict_crc_errors[f1] = self.dict_current[f1]
+                    secondInfo.dict_crc_errors[f2] = secondInfo.dict_current[f2]
                 return True
         return False
 
     def scanDir(self, stdout_status_bar: bool) -> None:
         # init
-        if os.path.isdir(self.dir) and self.file_dicts == {}:
+        if os.path.isdir(self.dir) and self.dict_current == {}:
             total = sum(len(f) for r, d, f in os.walk(self.dir))
             scan_status = StatusBar("Scanning", total, stdout_status_bar, gui=self.gui)
             # will never enable followlinks, adds too many possible issues and complexity in handling them
@@ -350,7 +351,7 @@ class DirInfo:
                         relative_path = os.path.relpath(full_path, self.dir)
                         if self.force_posix_path_sep:
                             relative_path = relative_path.replace(os.path.sep, "/")
-                        self.file_dicts[relative_path] = {"size": 0, "mtime": 0, "crc": "0", "dir": True}
+                        self.dict_current[relative_path] = {"size": 0, "mtime": 0, "crc": "0", "dir": True}
                 # scan files
                 for file_name in file_list:
                     full_path = os.path.join(dir_path, file_name)
@@ -362,49 +363,49 @@ class DirInfo:
                     size = os.path.getsize(full_path)
                     mtime = os.path.getmtime(full_path)
                     # check and set database dictionaries
-                    if relative_path in self.loaded_dicts:
-                        if (self.loaded_dicts[relative_path]["size"] == size and
-                            self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, True)):
+                    if relative_path in self.dict_prev:
+                        if (self.dict_prev[relative_path]["size"] == size and
+                            self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, True)):
                             # unchanged file (probably)
-                            self.file_dicts[relative_path] = self.loaded_dicts[relative_path].copy()
+                            self.dict_current[relative_path] = self.dict_prev[relative_path].copy()
                         else:
                             # changed file
-                            self.file_dicts[relative_path] = {"size": size, "mtime": mtime}
-                            self.loaded_diffs[relative_path] = self.loaded_dicts[relative_path]
+                            self.dict_current[relative_path] = {"size": size, "mtime": mtime}
+                            self.dict_modified[relative_path] = self.dict_prev[relative_path]
                     else:
                         # new file
-                        self.file_dicts[relative_path] = {"size": size, "mtime": mtime}
-                        self.new_files[relative_path] = self.file_dicts[relative_path]
+                        self.dict_current[relative_path] = {"size": size, "mtime": mtime}
+                        self.dict_new[relative_path] = self.dict_current[relative_path]
                     if self.compare_mode == "crc":
                         # calculate CRC for all files (simpler code and potential warning sign for disk issues)
-                        self.file_dicts[relative_path]["crc"] = self.calcCrc(full_path)
-                        if (relative_path in self.loaded_dicts and
-                            "crc" in self.loaded_dicts[relative_path] and
-                            self.loaded_dicts[relative_path]["crc"] != self.file_dicts[relative_path]["crc"] and
-                            self.loaded_dicts[relative_path]["size"] == size and
-                            self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
+                        self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
+                        if (relative_path in self.dict_prev and
+                            "crc" in self.dict_prev[relative_path] and
+                            self.dict_prev[relative_path]["crc"] != self.dict_current[relative_path]["crc"] and
+                            self.dict_prev[relative_path]["size"] == size and
+                            self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
                             # corrupted file (probably, changed crc, unchanged size and mtime)
-                            self.crc_errors_detected[relative_path] = self.loaded_dicts[relative_path]
-                    elif self.compare_mode == "attr+" and "crc" not in self.file_dicts[relative_path]:
+                            self.dict_crc_errors[relative_path] = self.dict_prev[relative_path]
+                    elif self.compare_mode == "attr+" and "crc" not in self.dict_current[relative_path]:
                         # save time by only calculating crc for new and changed files (by attributes) so we can check for corruption later (and possibly preexisting)
-                        if (relative_path in self.loaded_dicts and
-                            "crc" in self.loaded_dicts[relative_path] and
-                            self.loaded_dicts[relative_path]["size"] == size and
-                            self.timeMatch(self.loaded_dicts[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
+                        if (relative_path in self.dict_prev and
+                            "crc" in self.dict_prev[relative_path] and
+                            self.dict_prev[relative_path]["size"] == size and
+                            self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
                             # attributes match, preserve old crc
-                            self.file_dicts[relative_path]["crc"] = self.loaded_dicts[relative_path]["crc"]
+                            self.dict_current[relative_path]["crc"] = self.dict_prev[relative_path]["crc"]
                         else:
-                            self.file_dicts[relative_path]["crc"] = self.calcCrc(full_path)
+                            self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
             scan_status.endProgress()
             # check for missing (or moved) files
-            for relative_path in (set(self.loaded_dicts) - set(self.file_dicts)):
-                if "dir" not in self.loaded_dicts[relative_path]:
+            for relative_path in (set(self.dict_prev) - set(self.dict_current)):
+                if "dir" not in self.dict_prev[relative_path]:
                     if not self.pathMatch(relative_path, self.ignored_toplevel_folders):
-                        self.missing_files[relative_path] = self.loaded_dicts[relative_path]
+                        self.dict_missing[relative_path] = self.dict_prev[relative_path]
 
     def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filter_include_list: typing.Union[list, None] = None, filter_exclude_list: typing.Union[list, None] = None) -> tuple:
         # init variables
-        file_list = set(self.file_dicts)
+        file_list = set(self.dict_current)
         second_list = set(secondInfo.getDirDict())
         if self.compare_mode == secondInfo.compare_mode:
             compare_mode = self.compare_mode
@@ -434,15 +435,15 @@ class DirInfo:
         moved = []
         if not no_moves:
             for f1 in reversed(self_only):
-                if "dir" not in self.file_dicts[f1]:
+                if "dir" not in self.dict_current[f1]:
                     for f2 in reversed(second_only):
-                        if "dir" not in secondInfo.file_dicts[f2]:
+                        if "dir" not in secondInfo.dict_current[f2]:
                             if self.fileMatch(f1, f2, secondInfo, compare_mode, True):
                                 moved.append({"source": f1, "dest": f2})
                                 self_only.remove(f1)
                                 second_only.remove(f2)
-                                _ = secondInfo.missing_files.pop(f1, 1)
-                                _ = self.missing_files.pop(f2, 1)
+                                _ = secondInfo.dict_missing.pop(f1, 1)
+                                _ = self.dict_missing.pop(f2, 1)
                                 break
             moved.reverse()
         return self_only, second_only, changed, moved
@@ -966,7 +967,7 @@ class BackupManager:
         dest_database_load_success = False
         self.source.loadJson()
         self.dest.loadJson()
-        if self.dest.loaded_dicts != {}:
+        if self.dest.dict_prev != {}:
             dest_database_load_success = True
         # scan directories (also calculates CRC if enabled) (didn't parallelize scans to prevent excess vibration of adjacent consumer grade disks and keep status bars simple)
         self.colourPrint(getString("Scanning files on source:\n%s") %(self.config.source), "OKBLUE")
