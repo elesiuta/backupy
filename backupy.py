@@ -204,6 +204,7 @@ class DirInfo:
         self.dict_missing = {}
         self.dict_new = {}
         self.dict_crc_errors = {}
+        # Init other variables
         self.dir = directory_root_path
         self.compare_mode = compare_mode
         self.config_dir = config_dir
@@ -797,7 +798,7 @@ class BackupManager:
     ### Helper functions used by backup() ###
     #########################################
 
-    def databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
+    def _databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
         # get databases
         source_dict = self.source.getDirDict()
         source_diffs = self.source.getLoadedDiffs()
@@ -852,7 +853,7 @@ class BackupManager:
                 self.printChangedFiles(sorted(list(source_crc_errors)), source_crc_errors, dest_crc_errors)
         return abort_run
 
-    def printAndLogScanOnlyDiffSummary(self) -> None:
+    def _printAndLogScanOnlyDiffSummary(self) -> None:
         # get databases
         source_dict = self.source.getDirDict()
         source_diffs = self.source.getLoadedDiffs()
@@ -867,25 +868,25 @@ class BackupManager:
         # print differences
         print(self.colourString(getString("Source New Files: %s") %(len(source_new)), "HEADER"))
         self.log.append([getString("### SOURCE NEW FILES ###")])
-        self.printFiles(sorted(source_new), source_dict)
+        self.printFiles(sorted(list(source_new)), source_dict)
         print(self.colourString(getString("Source Missing Files: %s") %(len(source_missing)), "HEADER"))
         self.log.append([getString("### SOURCE MISSING FILES ###")])
-        self.printFiles(sorted(source_missing), source_loaded_db)
+        self.printFiles(sorted(list(source_missing)), source_loaded_db)
         print(self.colourString(getString("Source Changed Files: %s") %(len(source_diffs)), "HEADER"))
         self.log.append([getString("### SOURCE CHANGED FILES ###")])
-        self.printScanChanges(sorted(source_diffs), source_dict, source_loaded_db)
+        self.printScanChanges(sorted(list(source_diffs)), source_dict, source_loaded_db)
         if self.config.source != self.config.dest:
             print(self.colourString(getString("Destination New Files: %s") %(len(dest_new)), "HEADER"))
             self.log.append([getString("### DESTINATION NEW FILES ###")])
-            self.printFiles(sorted(dest_new), dest_dict)
+            self.printFiles(sorted(list(dest_new)), dest_dict)
             print(self.colourString(getString("Destination Missing Files: %s") %(len(dest_missing)), "HEADER"))
             self.log.append([getString("### DESTINATION MISSING FILES ###")])
-            self.printFiles(sorted(dest_missing), dest_loaded_db)
+            self.printFiles(sorted(list(dest_missing)), dest_loaded_db)
             print(self.colourString(getString("Destination Changed Files: %s") %(len(dest_diffs)), "HEADER"))
             self.log.append([getString("### DESTINATION CHANGED FILES ###")])
-            self.printScanChanges(sorted(dest_diffs), dest_dict, dest_loaded_db)
+            self.printScanChanges(sorted(list(dest_diffs)), dest_dict, dest_loaded_db)
 
-    def printAndLogCompareDiffSummary(self, source_only: list, dest_only: list, changed: list, moved: list) -> None:
+    def _printAndLogCompareDiffSummary(self, source_only: list, dest_only: list, changed: list, moved: list) -> None:
         # get databases
         source_dict = self.source.getDirDict()
         dest_dict = self.dest.getDirDict()
@@ -923,7 +924,7 @@ class BackupManager:
             self.log.append([getString("### MOVED FILES ###")])
             self.printMovedFiles(moved, source_dict, dest_dict)
 
-    def performBackup(self, source_only: list, dest_only: list, changed: list, moved: list, simulation_msg: str) -> None:
+    def _performBackup(self, source_only: list, dest_only: list, changed: list, moved: list, simulation_msg: str) -> None:
         # get databases
         source_dict = self.source.getDirDict()
         dest_dict = self.dest.getDirDict()
@@ -985,18 +986,18 @@ class BackupManager:
                                                                             self.config.filter_include_list,
                                                                             self.config.filter_exclude_list)
         # check for database conflicts or corruption
-        detected_database_conflicts_or_corruption = self.databaseAndCorruptionCheck(dest_database_load_success)
+        detected_database_conflicts_or_corruption = self._databaseAndCorruptionCheck(dest_database_load_success)
         if self.config.quit_on_db_conflict and detected_database_conflicts_or_corruption:
             return self.abortRun()
         # print differences between current and previous scans then exit if only scanning
         if self.config.scan_only:
-            self.printAndLogScanOnlyDiffSummary()
+            self._printAndLogScanOnlyDiffSummary()
             self.log.append([getString("### SCAN COMPLETED ###")])
             self.writeLog("database.json")
             print(self.colourString(getString("Completed!"), "OKGREEN"))
             return 0
         # print differences between source and dest
-        self.printAndLogCompareDiffSummary(source_only, dest_only, changed, moved)
+        self._printAndLogCompareDiffSummary(source_only, dest_only, changed, moved)
         # exit if directories already match
         if len(source_only) == 0 and len(dest_only) == 0 and len(changed) == 0 and len(moved) == 0:
             print(self.colourString(getString("Directories already match, completed!"), "OKGREEN"))
@@ -1014,7 +1015,7 @@ class BackupManager:
             if len(go) == 0 or go[0].lower() != "y":
                 return self.abortRun()
         # backup operations
-        self.performBackup(source_only, dest_only, changed, moved, simulation_msg)
+        self._performBackup(source_only, dest_only, changed, moved, simulation_msg)
         self.log.append([getString("### COMPLETED ###")])
         self.writeLog("database.json")
         print(self.colourString(getString("Completed!"), "OKGREEN"))
