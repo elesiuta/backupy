@@ -15,6 +15,22 @@ File:,Source,file only B.txt,Missing
 ,DB,file only B.txt,"{'size': 9, 'mtime': 1563369616.0}"
 ,Dest,file only B.txt,"{'size': 9, 'mtime': 1563369616.0, 'crc': '420CD42'}"
 ,DB,file only B.txt,"{'size': 9, 'mtime': 1563369616.0}"
+File:,Source,copied A.txt,"{'size': 353, 'mtime': 1582141538.0, 'crc': 'C52AF0F0'}"
+,DB,copied A.txt,Missing
+,Dest,copied A.txt,"{'size': 353, 'mtime': 1582141538.0, 'crc': 'C52AF0F0'}"
+,DB,copied A.txt,Missing
+File:,Source,copied both - copy.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
+,DB,copied both - copy.txt,Missing
+,Dest,copied both - copy.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
+,DB,copied both - copy.txt,Missing
+File:,Source,copied both.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
+,DB,copied both.txt,Missing
+,Dest,copied both.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
+,DB,copied both.txt,Missing
+File:,Source,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': '5F3DACAB'}"
+,DB,new corrupted file.txt,Missing
+,Dest,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': '57A92228'}"
+,DB,new corrupted file.txt,Missing
 ### CRC ERRORS DETECTED ###
 File:,Source,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': '5F3DACAB'}"
 ,Dest,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': '57A92228'}"

@@ -1,8 +1,26 @@
 ### DATABASE CONFLICTS ###
-File:,Dest,db only B.missing,Missing
-,DB,db only B.missing,"{'size': 2, 'mtime': 2, 'crc': '41'}"
 File:,Dest,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0}"
 ,DB,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
+File:,Dest,db only B.missing,Missing
+,DB,db only B.missing,"{'size': 2, 'mtime': 2, 'crc': '41'}"
 File:,Dest,file only A.txt,Missing
 ,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
+File:,Dest,copied A.txt,"{'size': 353, 'mtime': 1582141538.0}"
+,DB,copied A.txt,Missing
+File:,Dest,copied both - 2.txt,"{'size': 325, 'mtime': 1582141634.0}"
+,DB,copied both - 2.txt,Missing
+File:,Dest,copied both - copy.txt,"{'size': 325, 'mtime': 1582141634.0}"
+,DB,copied both - copy.txt,Missing
+File:,Dest,copied both.txt,"{'size': 325, 'mtime': 1582141634.0}"
+,DB,copied both.txt,Missing
+File:,Dest,moved and copied A.txt,"{'size': 362, 'mtime': 1582141424.0}"
+,DB,moved and copied A.txt,Missing
+File:,Dest,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0}"
+,DB,new corrupted file.txt,Missing
+File:,Dest,new file B.txt,"{'size': 70, 'mtime': 1575245388.0}"
+,DB,new file B.txt,Missing
+File:,Dest,renamed file B.txt,"{'size': 14, 'mtime': 1563369288.0}"
+,DB,renamed file B.txt,Missing
+File:,Dest,same file corrupted.txt,"{'size': 2, 'mtime': 1563369444.0}"
+,DB,same file corrupted.txt,Missing
 ### ABORTED ###

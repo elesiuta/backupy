@@ -3,6 +3,10 @@ File:,Dest,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0}"
 ,DB,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
 File:,Dest,file only A.txt,Missing
 ,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
+File:,Dest,new file B.txt,"{'size': 70, 'mtime': 1575245388.0}"
+,DB,new file B.txt,Missing
+File:,Dest,renamed file B.txt,"{'size': 14, 'mtime': 1563369288.0}"
+,DB,renamed file B.txt,Missing
 ### SOURCE ONLY ###
 File:,,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': '0', 'dir': True}"
 File:,,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
