@@ -25,4 +25,38 @@ File:,Dest,renamed file B.txt,"{'size': 14, 'mtime': 1563369288.0, 'crc': '7CFF4
 ,DB,renamed file B.txt,Missing
 File:,Dest,same file corrupted.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 'F22E0CBD'}"
 ,DB,same file corrupted.txt,Missing
+### SOURCE NEW FILES ###
+File:,,copied A - copy.txt,"{'size': 353, 'mtime': 1582141538.0, 'crc': 'C52AF0F0'}"
+File:,,copied A.txt,"{'size': 353, 'mtime': 1582141538.0, 'crc': 'C52AF0F0'}"
+File:,,copied both - 1.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
+File:,,copied both - copy.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
+File:,,copied both.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
+File:,,moved and copied A - 1.txt,"{'size': 362, 'mtime': 1582141424.0, 'crc': '9C457731'}"
+File:,,moved and copied A - 2.txt,"{'size': 362, 'mtime': 1582141424.0, 'crc': '9C457731'}"
+File:,,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': '5F3DACAB'}"
+File:,,new file A.txt,"{'size': 11, 'mtime': 1575245254.0, 'crc': 'B8D2E194'}"
+File:,,same file copied.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
+### SOURCE MISSING FILES ###
+File:,,db only a.missing,"{'size': 0, 'mtime': 0, 'crc': 'B00'}"
+File:,,file only B.txt,"{'size': 9, 'mtime': 1563369616.0}"
+### SOURCE CHANGED FILES ###
+File:,New,file modified newer on A.txt,"{'size': 640, 'mtime': 1575245024.0, 'crc': 'F39F3C52'}"
+,Old,file modified newer on A.txt,"{'size': 319, 'mtime': 1563369818.0}"
+### DESTINATION NEW FILES ###
+File:,,copied A.txt,"{'size': 353, 'mtime': 1582141538.0, 'crc': 'C52AF0F0'}"
+File:,,copied both - 2.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
+File:,,copied both - copy.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
+File:,,copied both.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
+File:,,moved and copied A.txt,"{'size': 362, 'mtime': 1582141424.0, 'crc': '9C457731'}"
+File:,,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': '57A92228'}"
+File:,,new file B.txt,"{'size': 70, 'mtime': 1575245388.0, 'crc': 'A1E6ECDF'}"
+File:,,renamed file B.txt,"{'size': 14, 'mtime': 1563369288.0, 'crc': '7CFF48B6'}"
+File:,,same file corrupted.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 'F22E0CBD'}"
+### DESTINATION MISSING FILES ###
+File:,,db only B.missing,"{'size': 2, 'mtime': 2, 'crc': '41'}"
+File:,,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
+File:,,renamed file A.txt,"{'size': 14, 'mtime': 1563369288.0}"
+### DESTINATION CHANGED FILES ###
+File:,New,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0, 'crc': 'FDB24CA6'}"
+,Old,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
 ### SCAN COMPLETED ###

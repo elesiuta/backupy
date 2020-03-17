@@ -866,23 +866,23 @@ class BackupManager:
         # print differences
         print(self.colourString(getString("Source New Files: %s") %(len(source_new)), "HEADER"))
         self.log.append([getString("### SOURCE NEW FILES ###")])
-        self.printFiles(source_new, source_dict)
+        self.printFiles(sorted(source_new), source_dict)
         print(self.colourString(getString("Source Missing Files: %s") %(len(source_missing)), "HEADER"))
-        self.log.append([getString("### SOURCE NEW FILES ###")])
-        self.printFiles(source_missing, source_loaded_db)
+        self.log.append([getString("### SOURCE MISSING FILES ###")])
+        self.printFiles(sorted(source_missing), source_loaded_db)
         print(self.colourString(getString("Source Changed Files: %s") %(len(source_diffs)), "HEADER"))
         self.log.append([getString("### SOURCE CHANGED FILES ###")])
-        self.printScanChanges(source_diffs, source_dict, source_loaded_db)
+        self.printScanChanges(sorted(source_diffs), source_dict, source_loaded_db)
         if self.config.source != self.config.dest:
             print(self.colourString(getString("Destination New Files: %s") %(len(dest_new)), "HEADER"))
             self.log.append([getString("### DESTINATION NEW FILES ###")])
-            self.printFiles(dest_new, dest_dict)
+            self.printFiles(sorted(dest_new), dest_dict)
             print(self.colourString(getString("Destination Missing Files: %s") %(len(dest_missing)), "HEADER"))
-            self.log.append([getString("### DESTINATION NEW FILES ###")])
-            self.printFiles(dest_missing, dest_loaded_db)
+            self.log.append([getString("### DESTINATION MISSING FILES ###")])
+            self.printFiles(sorted(dest_missing), dest_loaded_db)
             print(self.colourString(getString("Destination Changed Files: %s") %(len(dest_diffs)), "HEADER"))
             self.log.append([getString("### DESTINATION CHANGED FILES ###")])
-            self.printScanChanges(dest_diffs, dest_dict, dest_loaded_db)
+            self.printScanChanges(sorted(dest_diffs), dest_dict, dest_loaded_db)
 
     def printAndLogCompareDiffSummary(self, source_only: list, dest_only: list, changed: list, moved: list) -> None:
         # get databases
