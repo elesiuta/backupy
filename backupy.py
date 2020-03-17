@@ -636,6 +636,12 @@ class BackupManager:
             self.printFileInfo("File: ", f, d1, " Source")
             self.printFileInfo("", f, d2, "   Dest")
 
+    def printScanChangedFiles(self, l: list, d1: dict, d2: dict) -> None:
+        for f in l:
+            self.printFileInfo("File: ", f, d1, " Source")
+            self.printFileInfo("", f, d2, "     DB")
+        # update subheader or maybe add as parameter
+
     def printMovedFiles(self, l: list, d1: dict, d2: dict) -> None:
         for f in l:
             self.printFileInfo("Source: ", f["source"], d1, skip_info=True)
@@ -845,8 +851,36 @@ class BackupManager:
                 print(self.colourString(getString("CRC Errors Detected: %s") %(len(source_crc_errors)), "HEADER"))
                 self.printChangedFiles(sorted(list(source_crc_errors)), source_crc_errors, dest_crc_errors)
         return abort_run
-    
-    def printAndLogDiffSummary(self, source_only: list, dest_only: list, changed: list, moved: list) -> None:
+
+    def printAndLogScanOnlyDiffSummary(self) -> None:
+        # get databases
+        source_dict = self.source.getDirDict()
+        source_diffs = self.source.getLoadedDiffs()
+        source_missing = self.source.getMissingFiles()
+        source_new = self.source.getNewFiles()
+        source_loaded_db = self.source.getLoadedDicts()
+        dest_dict = self.dest.getDirDict()
+        dest_diffs = self.dest.getLoadedDiffs()
+        dest_missing = self.dest.getMissingFiles()
+        dest_new = self.dest.getNewFiles()
+        dest_loaded_db = self.dest.getLoadedDicts()
+        # print differences
+        
+        #check source dir available
+        
+        print(self.colourString(getString("Source New Files: %s") %(len(source_new)), "HEADER"))
+        self.log.append([getString("### SOURCE NEW FILES ###")])
+        self.printFiles(source_new, source_dict)
+        print(self.colourString(getString("Source Missing Files: %s") %(len(source_missing)), "HEADER"))
+        self.log.append([getString("### SOURCE NEW FILES ###")])
+        self.printFiles(source_missing, source_loaded_db)
+        print(self.colourString(getString("Source Changed Files: %s") %(len(source_diffs)), "HEADER"))
+        self.log.append([getString("### SOURCE CHANGED FILES ###")])
+        self.printChangedFiles(source_diffs, source_dict, source_loaded_db)
+        
+        # check destination dir available and repeat functions
+
+    def printAndLogCompareDiffSummary(self, source_only: list, dest_only: list, changed: list, moved: list) -> None:
         # get databases
         source_dict = self.source.getDirDict()
         dest_dict = self.dest.getDirDict()
@@ -951,12 +985,13 @@ class BackupManager:
             return self.abortRun()
         # end scan
         if self.config.scan_only:
+            self.printAndLogScanOnlyDiffSummary()
             self.log.append([getString("### SCAN COMPLETED ###")])
             self.writeLog("database.json")
             print(self.colourString(getString("Completed!"), "OKGREEN"))
             return 0
         # print differences between source and dest
-        self.printAndLogDiffSummary(source_only, dest_only, changed, moved)
+        self.printAndLogCompareDiffSummary(source_only, dest_only, changed, moved)
         # exit if directories already match
         if len(source_only) == 0 and len(dest_only) == 0 and len(changed) == 0 and len(moved) == 0:
             print(self.colourString(getString("Directories already match, completed!"), "OKGREEN"))
