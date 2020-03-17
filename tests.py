@@ -311,6 +311,13 @@ class TestBackupy(unittest.TestCase):
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
+    def test_mirror_source_log(self):
+        test_name = "mirror-source-log"
+        config = {"main_mode": "mirror", "select_mode": "source", "nomoves": True, "noprompt": True, "nolog": False, "noarchive": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
     def test_mirror_dest(self):
         test_name = "mirror-dest"
         config = {"main_mode": "mirror", "select_mode": "dest", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
@@ -364,6 +371,13 @@ class TestBackupy(unittest.TestCase):
         test_name = "sync-source"
         config = {"main_mode": "sync", "select_mode": "source", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_sync_source_log(self):
+        test_name = "sync-source-log"
+        config = {"main_mode": "sync", "select_mode": "source", "nomoves": True, "noprompt": True, "nolog": False, "noarchive": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
