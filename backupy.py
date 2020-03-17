@@ -180,7 +180,7 @@ class ConfigObject:
         self.verbose = True
         # load config
         for key in config:
-            if config[key] is not None:
+            if config[key] is not None and hasattr(self, key):
                 self.__setattr__(key, config[key])
         # normalize paths (these should be relative, not absolute!)
         self.archive_dir = os.path.normpath(self.archive_dir)
@@ -985,7 +985,7 @@ class BackupManager:
             return self.abortRun()
         # end scan
         if self.config.scan_only:
-            self.printAndLogScanOnlyDiffSummary()
+            # self.printAndLogScanOnlyDiffSummary()
             self.log.append([getString("### SCAN COMPLETED ###")])
             self.writeLog("database.json")
             print(self.colourString(getString("Completed!"), "OKGREEN"))
