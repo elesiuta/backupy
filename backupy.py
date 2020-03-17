@@ -631,16 +631,15 @@ class BackupManager:
         for f in l:
             self.printFileInfo("File: ", f, d)
 
+    def printScanChanges(self, l: list, d1: dict, d2: dict) -> None:
+        for f in l:
+            self.printFileInfo("File: ", f, d1, "    New")
+            self.printFileInfo("", f, d2, "    Old")
+
     def printChangedFiles(self, l: list, d1: dict, d2: dict) -> None:
         for f in l:
             self.printFileInfo("File: ", f, d1, " Source")
             self.printFileInfo("", f, d2, "   Dest")
-
-    def printScanChangedFiles(self, l: list, d1: dict, d2: dict) -> None:
-        for f in l:
-            self.printFileInfo("File: ", f, d1, " Source")
-            self.printFileInfo("", f, d2, "     DB")
-        # update subheader or maybe add as parameter
 
     def printMovedFiles(self, l: list, d1: dict, d2: dict) -> None:
         for f in l:
@@ -865,9 +864,6 @@ class BackupManager:
         dest_new = self.dest.getNewFiles()
         dest_loaded_db = self.dest.getLoadedDicts()
         # print differences
-        
-        #check source dir available
-        
         print(self.colourString(getString("Source New Files: %s") %(len(source_new)), "HEADER"))
         self.log.append([getString("### SOURCE NEW FILES ###")])
         self.printFiles(source_new, source_dict)
@@ -876,9 +872,17 @@ class BackupManager:
         self.printFiles(source_missing, source_loaded_db)
         print(self.colourString(getString("Source Changed Files: %s") %(len(source_diffs)), "HEADER"))
         self.log.append([getString("### SOURCE CHANGED FILES ###")])
-        self.printChangedFiles(source_diffs, source_dict, source_loaded_db)
-        
-        # check destination dir available and repeat functions
+        self.printScanChanges(source_diffs, source_dict, source_loaded_db)
+        if self.config.source != self.config.dest:
+            print(self.colourString(getString("Destination New Files: %s") %(len(dest_new)), "HEADER"))
+            self.log.append([getString("### DESTINATION NEW FILES ###")])
+            self.printFiles(dest_new, dest_dict)
+            print(self.colourString(getString("Destination Missing Files: %s") %(len(dest_missing)), "HEADER"))
+            self.log.append([getString("### DESTINATION NEW FILES ###")])
+            self.printFiles(dest_missing, dest_loaded_db)
+            print(self.colourString(getString("Destination Changed Files: %s") %(len(dest_diffs)), "HEADER"))
+            self.log.append([getString("### DESTINATION CHANGED FILES ###")])
+            self.printScanChanges(dest_diffs, dest_dict, dest_loaded_db)
 
     def printAndLogCompareDiffSummary(self, source_only: list, dest_only: list, changed: list, moved: list) -> None:
         # get databases
@@ -918,7 +922,7 @@ class BackupManager:
             self.log.append([getString("### MOVED FILES ###")])
             self.printMovedFiles(moved, source_dict, dest_dict)
 
-    def executeJob(self, source_only: list, dest_only: list, changed: list, moved: list, simulation_msg: str) -> None:
+    def performBackup(self, source_only: list, dest_only: list, changed: list, moved: list, simulation_msg: str) -> None:
         # get databases
         source_dict = self.source.getDirDict()
         dest_dict = self.dest.getDirDict()
@@ -983,9 +987,9 @@ class BackupManager:
         detected_database_conflicts_or_corruption = self.databaseAndCorruptionCheck(dest_database_load_success)
         if self.config.quit_on_db_conflict and detected_database_conflicts_or_corruption:
             return self.abortRun()
-        # end scan
+        # print differences between current and previous scans then exit if only scanning
         if self.config.scan_only:
-            # self.printAndLogScanOnlyDiffSummary()
+            self.printAndLogScanOnlyDiffSummary()
             self.log.append([getString("### SCAN COMPLETED ###")])
             self.writeLog("database.json")
             print(self.colourString(getString("Completed!"), "OKGREEN"))
@@ -1009,7 +1013,7 @@ class BackupManager:
             if len(go) == 0 or go[0].lower() != "y":
                 return self.abortRun()
         # backup operations
-        self.executeJob(source_only, dest_only, changed, moved, simulation_msg)
+        self.performBackup(source_only, dest_only, changed, moved, simulation_msg)
         self.log.append([getString("### COMPLETED ###")])
         self.writeLog("database.json")
         print(self.colourString(getString("Completed!"), "OKGREEN"))
