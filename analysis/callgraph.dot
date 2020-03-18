@@ -1,0 +1,278 @@
+digraph G {
+    graph [rankdir=TB, clusterrank="local", concentrate=true, ranksep="1.5", nodesep="0.4"];
+    overlap=scale;
+    splines=true;
+    subgraph cluster_G {
+
+        graph [style="filled,rounded",fillcolor="#80808018", label=""];
+        backupy [label="backupy", style="filled", fillcolor="#ffffffb2", fontcolor="#000000", group="0"];
+        subgraph cluster_backupy {
+
+            graph [style="filled,rounded",fillcolor="#80808018", label="backupy"];
+            backupy__ArgparseCustomFormatter [label="ArgparseCustomFormatter", style="filled", fillcolor="#feccccb2", fontcolor="#000000", group="0"];
+        }
+        subgraph cluster_backupy {
+
+            graph [style="filled,rounded",fillcolor="#80808018", label="backupy"];
+            backupy__BackupManager [label="BackupManager", style="filled", fillcolor="#feccccb2", fontcolor="#000000", group="0"];
+        }
+        subgraph cluster_backupy {
+
+            graph [style="filled,rounded",fillcolor="#80808018", label="backupy"];
+            backupy__ConfigObject [label="ConfigObject", style="filled", fillcolor="#feccccb2", fontcolor="#000000", group="0"];
+        }
+        subgraph cluster_backupy {
+
+            graph [style="filled,rounded",fillcolor="#80808018", label="backupy"];
+            backupy__DirInfo [label="DirInfo", style="filled", fillcolor="#feccccb2", fontcolor="#000000", group="0"];
+        }
+        subgraph cluster_backupy {
+
+            graph [style="filled,rounded",fillcolor="#80808018", label="backupy"];
+            backupy__main [label="main", style="filled", fillcolor="#feccccb2", fontcolor="#000000", group="0"];
+            subgraph cluster_backupy__ArgparseCustomFormatter {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.ArgparseCustomFormatter"];
+                backupy__ArgparseCustomFormatter___split_lines [label="_split_lines", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager____init__ [label="__init__", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager___databaseAndCorruptionCheck [label="_databaseAndCorruptionCheck", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager___performBackup [label="_performBackup", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager___printAndLogCompareDiffSummary [label="_printAndLogCompareDiffSummary", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager___printAndLogScanOnlyDiffSummary [label="_printAndLogScanOnlyDiffSummary", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager__abortRun [label="abortRun", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager__archiveFile [label="archiveFile", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager__backup [label="backup", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager__copyFile [label="copyFile", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager__copyFiles [label="copyFiles", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager__handleChangedFiles [label="handleChangedFiles", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager__handleDeletedFiles [label="handleDeletedFiles", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager__handleMovedFiles [label="handleMovedFiles", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager__loadJson [label="loadJson", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager__moveFile [label="moveFile", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager__moveFiles [label="moveFiles", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager__removeFile [label="removeFile", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager__removeFiles [label="removeFiles", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager__saveJson [label="saveJson", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__BackupManager {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.BackupManager"];
+                backupy__BackupManager__writeLog [label="writeLog", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__ConfigObject {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.ConfigObject"];
+                backupy__ConfigObject____init__ [label="__init__", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__DirInfo {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.DirInfo"];
+                backupy__DirInfo____init__ [label="__init__", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__DirInfo {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.DirInfo"];
+                backupy__DirInfo__calcCrc [label="calcCrc", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__DirInfo {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.DirInfo"];
+                backupy__DirInfo__dirCompare [label="dirCompare", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__DirInfo {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.DirInfo"];
+                backupy__DirInfo__fileMatch [label="fileMatch", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__DirInfo {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.DirInfo"];
+                backupy__DirInfo__getCrc [label="getCrc", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__DirInfo {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.DirInfo"];
+                backupy__DirInfo__getDicts [label="getDicts", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__DirInfo {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.DirInfo"];
+                backupy__DirInfo__loadJson [label="loadJson", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__DirInfo {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.DirInfo"];
+                backupy__DirInfo__pathMatch [label="pathMatch", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__DirInfo {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.DirInfo"];
+                backupy__DirInfo__saveJson [label="saveJson", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__DirInfo {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.DirInfo"];
+                backupy__DirInfo__scanDir [label="scanDir", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__DirInfo {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.DirInfo"];
+                backupy__DirInfo__timeMatch [label="timeMatch", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__DirInfo {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.DirInfo"];
+                backupy__DirInfo__updateDictOnCopy [label="updateDictOnCopy", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__DirInfo {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.DirInfo"];
+                backupy__DirInfo__updateDictOnMove [label="updateDictOnMove", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__DirInfo {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.DirInfo"];
+                backupy__DirInfo__updateDictOnRemove [label="updateDictOnRemove", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__DirInfo {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.DirInfo"];
+                backupy__DirInfo__verifyCrcOnCopy [label="verifyCrcOnCopy", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+        }
+    }
+        backupy -> backupy__main [style="solid", color="#000000"];
+        backupy__ArgparseCustomFormatter___split_lines -> backupy__ArgparseCustomFormatter___split_lines [style="solid", color="#000000"];
+        backupy__DirInfo__verifyCrcOnCopy -> backupy__DirInfo__getCrc [style="solid", color="#000000"];
+        backupy__DirInfo__getCrc -> backupy__DirInfo__calcCrc [style="solid", color="#000000"];
+        backupy__DirInfo__fileMatch -> backupy__DirInfo__timeMatch [style="solid", color="#000000"];
+        backupy__DirInfo__scanDir -> backupy__DirInfo__timeMatch [style="solid", color="#000000"];
+        backupy__DirInfo__scanDir -> backupy__DirInfo__pathMatch [style="solid", color="#000000"];
+        backupy__DirInfo__scanDir -> backupy__DirInfo__calcCrc [style="solid", color="#000000"];
+        backupy__DirInfo__dirCompare -> backupy__DirInfo__fileMatch [style="solid", color="#000000"];
+        backupy__BackupManager____init__ -> backupy__ConfigObject____init__ [style="solid", color="#000000"];
+        backupy__BackupManager____init__ -> backupy__BackupManager__loadJson [style="solid", color="#000000"];
+        backupy__BackupManager____init__ -> backupy__BackupManager__saveJson [style="solid", color="#000000"];
+        backupy__BackupManager____init__ -> backupy__ConfigObject [style="solid", color="#000000"];
+        backupy__BackupManager__saveJson -> backupy__ConfigObject [style="solid", color="#000000"];
+        backupy__BackupManager__loadJson -> backupy__ConfigObject____init__ [style="solid", color="#000000"];
+        backupy__BackupManager__loadJson -> backupy__ConfigObject [style="solid", color="#000000"];
+        backupy__BackupManager__writeLog -> backupy__DirInfo__saveJson [style="solid", color="#000000"];
+        backupy__BackupManager__writeLog -> backupy__DirInfo__calcCrc [style="solid", color="#000000"];
+        backupy__BackupManager__abortRun -> backupy__BackupManager__writeLog [style="solid", color="#000000"];
+        backupy__BackupManager__removeFile -> backupy__DirInfo__updateDictOnRemove [style="solid", color="#000000"];
+        backupy__BackupManager__removeFile -> backupy__DirInfo [style="solid", color="#000000"];
+        backupy__BackupManager__copyFile -> backupy__DirInfo__verifyCrcOnCopy [style="solid", color="#000000"];
+        backupy__BackupManager__copyFile -> backupy__DirInfo__updateDictOnCopy [style="solid", color="#000000"];
+        backupy__BackupManager__copyFile -> backupy__DirInfo [style="solid", color="#000000"];
+        backupy__BackupManager__moveFile -> backupy__DirInfo__updateDictOnMove [style="solid", color="#000000"];
+        backupy__BackupManager__moveFile -> backupy__DirInfo [style="solid", color="#000000"];
+        backupy__BackupManager__removeFiles -> backupy__BackupManager__removeFile [style="solid", color="#000000"];
+        backupy__BackupManager__copyFiles -> backupy__BackupManager__copyFile [style="solid", color="#000000"];
+        backupy__BackupManager__moveFiles -> backupy__BackupManager__moveFile [style="solid", color="#000000"];
+        backupy__BackupManager__handleDeletedFiles -> backupy__BackupManager__removeFiles [style="solid", color="#000000"];
+        backupy__BackupManager__handleDeletedFiles -> backupy__BackupManager__moveFiles [style="solid", color="#000000"];
+        backupy__BackupManager__handleMovedFiles -> backupy__BackupManager__moveFile [style="solid", color="#000000"];
+        backupy__BackupManager__archiveFile -> backupy__BackupManager__moveFile [style="solid", color="#000000"];
+        backupy__BackupManager__handleChangedFiles -> backupy__BackupManager__archiveFile [style="solid", color="#000000"];
+        backupy__BackupManager__handleChangedFiles -> backupy__BackupManager__copyFile [style="solid", color="#000000"];
+        backupy__BackupManager___databaseAndCorruptionCheck -> backupy__DirInfo__getDicts [style="solid", color="#000000"];
+        backupy__BackupManager___printAndLogScanOnlyDiffSummary -> backupy__DirInfo__getDicts [style="solid", color="#000000"];
+        backupy__BackupManager___printAndLogCompareDiffSummary -> backupy__DirInfo__getDicts [style="solid", color="#000000"];
+        backupy__BackupManager___performBackup -> backupy__BackupManager__handleDeletedFiles [style="solid", color="#000000"];
+        backupy__BackupManager___performBackup -> backupy__BackupManager__handleMovedFiles [style="solid", color="#000000"];
+        backupy__BackupManager___performBackup -> backupy__BackupManager__handleChangedFiles [style="solid", color="#000000"];
+        backupy__BackupManager___performBackup -> backupy__DirInfo__getDicts [style="solid", color="#000000"];
+        backupy__BackupManager___performBackup -> backupy__BackupManager__copyFiles [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__BackupManager___printAndLogCompareDiffSummary [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__DirInfo__scanDir [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__BackupManager___performBackup [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__DirInfo__dirCompare [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__BackupManager__writeLog [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__DirInfo [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__DirInfo____init__ [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__BackupManager__abortRun [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__BackupManager___databaseAndCorruptionCheck [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__BackupManager___printAndLogScanOnlyDiffSummary [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__DirInfo__loadJson [style="solid", color="#000000"];
+        backupy__main -> backupy__BackupManager____init__ [style="solid", color="#000000"];
+        backupy__main -> backupy__ArgparseCustomFormatter [style="solid", color="#000000"];
+        backupy__main -> backupy__BackupManager__backup [style="solid", color="#000000"];
+        backupy__main -> backupy__BackupManager [style="solid", color="#000000"];
+    }
