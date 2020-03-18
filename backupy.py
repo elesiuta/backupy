@@ -212,23 +212,9 @@ class DirInfo:
         self.gui = gui
         self.force_posix_path_sep = force_posix_path_sep
 
-    def getDirDict(self) -> dict:
-        return self.dict_current
-
-    def getLoadedDicts(self) -> dict:
-        return self.dict_prev
-
-    def getLoadedDiffs(self) -> dict:
-        return self.dict_modified
-
-    def getMissingFiles(self) -> dict:
-        return self.dict_missing
-
-    def getNewFiles(self) -> dict:
-        return self.dict_new
-
-    def getCrcErrorsDetected(self) -> dict:
-        return self.dict_crc_errors
+    def getDicts(self) -> tuple:
+        """Returns tuple of dictionaries: current, prev, new, modified, missing, crc_errors"""
+        return self.dict_current, self.dict_prev, self.dict_new, self.dict_modified, self.dict_missing, self.dict_crc_errors
 
     def saveJson(self, db_name: str = "database.json") -> None:
         writeJson(os.path.join(self.dir, self.config_dir, db_name), self.dict_current, sort_keys=True)
@@ -407,7 +393,7 @@ class DirInfo:
     def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filter_include_list: typing.Union[list, None] = None, filter_exclude_list: typing.Union[list, None] = None) -> tuple:
         # init variables
         file_list = set(self.dict_current)
-        second_list = set(secondInfo.getDirDict())
+        second_list = set(secondInfo.dict_current)
         if self.compare_mode == secondInfo.compare_mode:
             compare_mode = self.compare_mode
         else:
@@ -800,18 +786,8 @@ class BackupManager:
 
     def _databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
         # get databases
-        source_dict = self.source.getDirDict()
-        source_diffs = self.source.getLoadedDiffs()
-        source_missing = self.source.getMissingFiles()
-        source_new = self.source.getNewFiles()
-        source_loaded_db = self.source.getLoadedDicts()
-        source_crc_errors = self.source.getCrcErrorsDetected()
-        dest_dict = self.dest.getDirDict()
-        dest_diffs = self.dest.getLoadedDiffs()
-        dest_missing = self.dest.getMissingFiles()
-        dest_new = self.dest.getNewFiles()
-        dest_loaded_db = self.dest.getLoadedDicts()
-        dest_crc_errors = self.dest.getCrcErrorsDetected()
+        source_dict, source_loaded_db, source_new, source_diffs, source_missing, source_crc_errors = self.source.getDicts()
+        dest_dict, dest_loaded_db, dest_new, dest_diffs, dest_missing, dest_crc_errors = self.dest.getDicts()
         # print database conflicts, including both collisions from files being modified independently on both sides and unexpected missing files
         # note: this only notifies the user so they can intervene, it does not handle them in any special way, treating them as regular file changes
         # it can also be triggered by time zone or dst changes, lower file system mod time precision, and corruption if using CRCs (handled next)
@@ -855,16 +831,8 @@ class BackupManager:
 
     def _printAndLogScanOnlyDiffSummary(self) -> None:
         # get databases
-        source_dict = self.source.getDirDict()
-        source_diffs = self.source.getLoadedDiffs()
-        source_missing = self.source.getMissingFiles()
-        source_new = self.source.getNewFiles()
-        source_loaded_db = self.source.getLoadedDicts()
-        dest_dict = self.dest.getDirDict()
-        dest_diffs = self.dest.getLoadedDiffs()
-        dest_missing = self.dest.getMissingFiles()
-        dest_new = self.dest.getNewFiles()
-        dest_loaded_db = self.dest.getLoadedDicts()
+        source_dict, source_loaded_db, source_new, source_diffs, source_missing, _ = self.source.getDicts()
+        dest_dict, dest_loaded_db, dest_new, dest_diffs, dest_missing, _ = self.dest.getDicts()
         # print differences
         print(self.colourString(getString("Source New Files: %s") %(len(source_new)), "HEADER"))
         self.log.append([getString("### SOURCE NEW FILES ###")])
@@ -888,8 +856,8 @@ class BackupManager:
 
     def _printAndLogCompareDiffSummary(self, source_only: list, dest_only: list, changed: list, moved: list) -> None:
         # get databases
-        source_dict = self.source.getDirDict()
-        dest_dict = self.dest.getDirDict()
+        source_dict, _, _, _, _, _ = self.source.getDicts()
+        dest_dict, _, _, _, _, _ = self.dest.getDicts()
         # prepare diff messages
         if self.config.noarchive:
             archive_msg = getString("delete")
@@ -926,8 +894,8 @@ class BackupManager:
 
     def _performBackup(self, source_only: list, dest_only: list, changed: list, moved: list, simulation_msg: str) -> None:
         # get databases
-        source_dict = self.source.getDirDict()
-        dest_dict = self.dest.getDirDict()
+        source_dict, _, _, _, _, _ = self.source.getDicts()
+        dest_dict, _, _, _, _, _ = self.dest.getDicts()
         # perform the backup/mirror/sync
         self.log.append([getString("### START ") + self.config.main_mode.upper() + simulation_msg.upper() + " ###"])
         print(self.colourString(getString("Starting ") + self.config.main_mode, "HEADER"))
