@@ -786,8 +786,8 @@ class BackupManager:
 
     def _databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
         # get databases
-        source_dict, source_loaded_db, source_new, source_diffs, source_missing, source_crc_errors = self.source.getDicts()
-        dest_dict, dest_loaded_db, dest_new, dest_diffs, dest_missing, dest_crc_errors = self.dest.getDicts()
+        source_dict, source_prev, source_new, source_modified, source_missing, source_crc_errors = self.source.getDicts()
+        dest_dict, dest_prev, dest_new, dest_modified, dest_missing, dest_crc_errors = self.dest.getDicts()
         # print database conflicts, including both collisions from files being modified independently on both sides and unexpected missing files
         # note: this only notifies the user so they can intervene, it does not handle them in any special way, treating them as regular file changes
         # it can also be triggered by time zone or dst changes, lower file system mod time precision, and corruption if using CRCs (handled next)
@@ -795,7 +795,7 @@ class BackupManager:
         if dest_database_load_success:
             self.log.append([getString("### DATABASE CONFLICTS ###")])
             if self.config.main_mode == "sync":
-                sync_conflicts = sorted(list(set(source_diffs) & set(dest_diffs))) # modified on both sides
+                sync_conflicts = sorted(list(set(source_modified) & set(dest_modified))) # modified on both sides
                 sync_conflicts += sorted(list(set(source_missing) | set(dest_missing))) # deleted from either or both sides
                 sync_conflicts += sorted(list(set(source_new) & set(dest_new))) # new on both sides
                 # sync_conflicts += sorted(list(filter(lambda f: source_new[f] != dest_new[f], set(source_new) & set(dest_new)))) # new and different on both sides
@@ -803,16 +803,16 @@ class BackupManager:
                     print(self.colourString(getString("WARNING: found files modified in both source and destination since last scan"), "WARNING"))
                     abort_run = True
                 print(self.colourString(getString("Sync Database Conflicts: %s") %(len(sync_conflicts)), "HEADER"))
-                self.printSyncDbConflicts(sync_conflicts, source_dict, dest_dict, source_loaded_db, dest_loaded_db)
+                self.printSyncDbConflicts(sync_conflicts, source_dict, dest_dict, source_prev, dest_prev)
             else:
-                dest_conflicts = sorted(list(set(dest_diffs)))
+                dest_conflicts = sorted(list(set(dest_modified)))
                 dest_conflicts += sorted(list(set(dest_missing)))
                 dest_conflicts += sorted(list(set(dest_new)))
                 if len(dest_conflicts) >= 1:
                     print(self.colourString(getString("WARNING: found files modified in the destination since last scan"), "WARNING"))
                     abort_run = True
                 print(self.colourString(getString("Destination Database Conflicts: %s") %(len(dest_conflicts)), "HEADER"))
-                self.printDbConflicts(dest_conflicts, dest_dict, dest_loaded_db)
+                self.printDbConflicts(dest_conflicts, dest_dict, dest_prev)
         # print database conflicts concerning CRCs if available, as well as CRC conflicts between source and dest if attributes otherwise match
         if len(source_crc_errors) > 0 or len(dest_crc_errors) > 0:
             self.log.append([getString("### CRC ERRORS DETECTED ###")])
@@ -821,7 +821,7 @@ class BackupManager:
             if self.config.compare_mode == "crc":
                 crc_errors_detected = sorted(list(set(source_crc_errors) | set(dest_crc_errors)))
                 print(self.colourString(getString("CRC Errors Detected: %s") %(len(crc_errors_detected)), "HEADER"))
-                self.printSyncDbConflicts(crc_errors_detected, source_dict, dest_dict, source_loaded_db, dest_loaded_db)
+                self.printSyncDbConflicts(crc_errors_detected, source_dict, dest_dict, source_prev, dest_prev)
             elif self.config.compare_mode == "attr+":
                 if set(source_crc_errors) != set(dest_crc_errors):
                     raise Exception("Inconsistent CRC error detection between source and dest")
@@ -831,28 +831,28 @@ class BackupManager:
 
     def _printAndLogScanOnlyDiffSummary(self) -> None:
         # get databases
-        source_dict, source_loaded_db, source_new, source_diffs, source_missing, _ = self.source.getDicts()
-        dest_dict, dest_loaded_db, dest_new, dest_diffs, dest_missing, _ = self.dest.getDicts()
+        source_dict, source_prev, source_new, source_modified, source_missing, _ = self.source.getDicts()
+        dest_dict, dest_prev, dest_new, dest_modified, dest_missing, _ = self.dest.getDicts()
         # print differences
         print(self.colourString(getString("Source New Files: %s") %(len(source_new)), "HEADER"))
         self.log.append([getString("### SOURCE NEW FILES ###")])
         self.printFiles(sorted(list(source_new)), source_dict)
         print(self.colourString(getString("Source Missing Files: %s") %(len(source_missing)), "HEADER"))
         self.log.append([getString("### SOURCE MISSING FILES ###")])
-        self.printFiles(sorted(list(source_missing)), source_loaded_db)
-        print(self.colourString(getString("Source Changed Files: %s") %(len(source_diffs)), "HEADER"))
+        self.printFiles(sorted(list(source_missing)), source_prev)
+        print(self.colourString(getString("Source Changed Files: %s") %(len(source_modified)), "HEADER"))
         self.log.append([getString("### SOURCE CHANGED FILES ###")])
-        self.printScanChanges(sorted(list(source_diffs)), source_dict, source_loaded_db)
+        self.printScanChanges(sorted(list(source_modified)), source_dict, source_prev)
         if self.config.source != self.config.dest:
             print(self.colourString(getString("Destination New Files: %s") %(len(dest_new)), "HEADER"))
             self.log.append([getString("### DESTINATION NEW FILES ###")])
             self.printFiles(sorted(list(dest_new)), dest_dict)
             print(self.colourString(getString("Destination Missing Files: %s") %(len(dest_missing)), "HEADER"))
             self.log.append([getString("### DESTINATION MISSING FILES ###")])
-            self.printFiles(sorted(list(dest_missing)), dest_loaded_db)
-            print(self.colourString(getString("Destination Changed Files: %s") %(len(dest_diffs)), "HEADER"))
+            self.printFiles(sorted(list(dest_missing)), dest_prev)
+            print(self.colourString(getString("Destination Changed Files: %s") %(len(dest_modified)), "HEADER"))
             self.log.append([getString("### DESTINATION CHANGED FILES ###")])
-            self.printScanChanges(sorted(list(dest_diffs)), dest_dict, dest_loaded_db)
+            self.printScanChanges(sorted(list(dest_modified)), dest_dict, dest_prev)
 
     def _printAndLogCompareDiffSummary(self, source_only: list, dest_only: list, changed: list, moved: list) -> None:
         # get databases
