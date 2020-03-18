@@ -792,7 +792,7 @@ class BackupManager:
         # note: this only notifies the user so they can intervene, it does not handle them in any special way, treating them as regular file changes
         # it can also be triggered by time zone or dst changes, lower file system mod time precision, and corruption if using CRCs (handled next)
         abort_run = False
-        if dest_database_load_success:
+        if dest_database_load_success and self.config.source != self.config.dest:
             self.log.append([getString("### DATABASE CONFLICTS ###")])
             if self.config.main_mode == "sync":
                 sync_conflicts = sorted(list(set(source_modified) & set(dest_modified))) # modified on both sides
