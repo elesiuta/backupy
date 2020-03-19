@@ -579,6 +579,13 @@ class BackupManager:
         else:
             return "{:<10}".format("%s B" %(size))
 
+    def prettyAttr(self, attr: dict) -> str:
+        string = "{'size': %s, 'mtime': %s" %(attr["size"], attr["mtime"])
+        if "crc" in attr: string += ", 'crc': '%s'" %(attr["crc"])
+        if "dir" in attr: string += ", 'dir': %s" %(attr["dir"])
+        string += "}"
+        return string
+
     ########################
     ### Printing methods ###
     ########################
@@ -593,7 +600,7 @@ class BackupManager:
     def printFileInfo(self, header: str, f: str, d: dict, sub_header: str = "", skip_info: bool = False) -> None:
         header, sub_header = getString(header), getString(sub_header)
         if f in d and d[f] is not None:
-            self.log.append([header.strip(), sub_header.strip(), f] + [str(d[f])])
+            self.log.append([header.strip(), sub_header.strip(), f] + [self.prettyAttr(d[f])])
             missing = False
         else:
             self.log.append([header.strip(), sub_header.strip(), f] + [getString("Missing")])
