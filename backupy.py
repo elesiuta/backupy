@@ -27,7 +27,7 @@ import unicodedata
 import zlib
 
 def getVersion() -> str:
-    return "1.5.4"
+    return "1.5.6"
 
 
 #########################
@@ -391,14 +391,14 @@ class DirInfo:
                         self.dict_missing[relative_path] = self.dict_prev[relative_path]
 
     def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filter_include_list: typing.Union[list, None] = None, filter_exclude_list: typing.Union[list, None] = None) -> tuple:
-        # init variables
+        # init variables, todo: if secondInfo == self, second_list = set(secondInfo.dict_prev), iff compare logic below still works (to check moved for scan_only and reuse code)
         file_list = set(self.dict_current)
         second_list = set(secondInfo.dict_current)
         if self.compare_mode == secondInfo.compare_mode:
             compare_mode = self.compare_mode
         else:
             raise Exception("Inconsistent compare mode between directories")
-        # apply filters
+        # apply filters, todo: compile filters in init and execute during scan
         if type(filter_include_list) == list:
             for i in range(len(filter_include_list)):
                 if type(filter_include_list[i]) == str:
