@@ -11,6 +11,7 @@ ignored_node_strings = [
     "replaceSurrogates",
     "colourString",
     "prettySize",
+    "prettyAttr",
     "colourPrint",
     "printFileInfo",
     "printFiles",
