@@ -27,7 +27,7 @@ import unicodedata
 import zlib
 
 def getVersion() -> str:
-    return "1.5.6"
+    return "1.5.7"
 
 
 #########################
@@ -37,9 +37,14 @@ def getVersion() -> str:
 def writeCsv(file_path: str, data: list) -> None:
     if not os.path.isdir(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
-    with open(file_path, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
-        writer = csv.writer(f, delimiter=",")
-        writer.writerows(data)
+    try:
+        with open(file_path, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
+            writer = csv.writer(f, delimiter=",")
+            writer.writerows(data)
+    except:
+        with open(file_path[:-4]+"-1.csv", "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
+            writer = csv.writer(f, delimiter=",")
+            writer.writerows(data)
 
 def readJson(file_path: str) -> dict:
     if os.path.exists(file_path):
