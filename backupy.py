@@ -617,7 +617,7 @@ class BackupManager:
             if not skip_info:
                 s = s + "\n"
         if not skip_info:
-            s = s + self.colourString(sub_header, "OKBLUE") + " "*(8-len(sub_header))
+            s = s + self.colourString(sub_header, "OKBLUE") + " "*(8-len(sub_header)) # todo: make use of terminal width
             if not missing:
                 s = s + self.colourString(getString(" Size: "), "OKBLUE") + self.prettySize(d[f]["size"])
                 s = s + self.colourString(getString(" Modified: "), "OKBLUE") + time.ctime(d[f]["mtime"])
@@ -912,8 +912,8 @@ class BackupManager:
         self.log.append([getString("### START ") + self.config.main_mode.upper() + simulation_msg.upper() + " ###"])
         print(self.colourString(getString("Starting ") + self.config.main_mode, "HEADER"))
         if self.config.main_mode == "mirror":
-            self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
             self.handleDeletedFiles(self.config.dest, dest_only)
+            self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
             self.handleMovedFiles(moved)
             self.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         elif self.config.main_mode == "backup":
