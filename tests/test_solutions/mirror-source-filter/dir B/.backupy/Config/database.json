@@ -1,10 +1,4 @@
 {
- "empty dir only B": {
-  "crc": "0",
-  "dir": true,
-  "mtime": 0,
-  "size": 0
- },
  "file modified newer on A.txt": {
   "mtime": 1563369818.0,
   "size": 319
@@ -12,41 +6,5 @@
  "file modified newer on B.txt": {
   "mtime": 1563369692.0,
   "size": 35
- },
- "file only B.txt": {
-  "mtime": 1563369616.0,
-  "size": 9
- },
- "renamed dir B\\file1.txt": {
-  "mtime": 1563369360.0,
-  "size": 11
- },
- "renamed dir B\\file2.txt": {
-  "mtime": 1563369366.0,
-  "size": 2
- },
- "renamed dir B\\file3.txt": {
-  "mtime": 1563369386.0,
-  "size": 45
- },
- "renamed file B.txt": {
-  "mtime": 1563369288.0,
-  "size": 14
- },
- "same empty dir": {
-  "crc": "0",
-  "dir": true,
-  "mtime": 0,
-  "size": 0
- },
- "same file.txt": {
-  "mtime": 1563369444.0,
-  "size": 2
- },
- "same nested dir\\same empty dir": {
-  "crc": "0",
-  "dir": true,
-  "mtime": 0,
-  "size": 0
  }
 }

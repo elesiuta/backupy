@@ -5,14 +5,6 @@
   "mtime": 0,
   "size": 0
  },
- "file modified newer on A.txt": {
-  "mtime": 1563369766.0,
-  "size": 158
- },
- "file modified newer on B.txt": {
-  "mtime": 1563369748.0,
-  "size": 100
- },
  "file only B.txt": {
   "mtime": 1563369616.0,
   "size": 9
