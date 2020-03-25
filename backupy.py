@@ -200,7 +200,9 @@ class ConfigObject:
 
 
 class DirInfo:
-    def __init__(self, directory_root_path: str, compare_mode: str,  config_dir: str, ignored_toplevel_folders: list = [], gui: bool = False, force_posix_path_sep: bool = False):
+    def __init__(self, directory_root_path: str, compare_mode: str,  config_dir: str,
+                 ignored_toplevel_folders: list = [], gui: bool = False, force_posix_path_sep: bool = False,
+                 filter_include_list: typing.Union[list, None] = None, filter_exclude_list: typing.Union[list, None] = None):
         """For scanning directories, tracking files and changes, meant only for internal use by BackupManager"""
         # File dictionaries, keys are paths relative to directory_root_path, values are dictionaries of file attributes
         self.dict_current = {}
@@ -209,6 +211,23 @@ class DirInfo:
         self.dict_missing = {}
         self.dict_new = {}
         self.dict_crc_errors = {}
+        # Init filters
+        self.filter_include_list = None
+        if filter_include_list is not None:
+            self.filter_include_list = filter_include_list[:]
+            for i in range(len(self.filter_include_list)):
+                if type(self.filter_include_list[i]) == str:
+                    self.filter_include_list[i] = re.compile(self.filter_include_list[i])
+                else:
+                    raise Exception("Filter Include Processing Error")
+        self.filter_exclude_list = None
+        if filter_exclude_list is not None:
+            self.filter_exclude_list = filter_exclude_list[:]
+            for i in range(len(self.filter_exclude_list)):
+                if type(self.filter_exclude_list[i]) == str:
+                    self.filter_exclude_list[i] = re.compile(self.filter_exclude_list[i])
+                else:
+                    raise Exception("Filter Exclude Processing Error")
         # Init other variables
         self.dir = directory_root_path
         self.compare_mode = compare_mode
@@ -335,6 +354,13 @@ class DirInfo:
                 if self.pathMatch(dir_path, self.ignored_toplevel_folders):
                     subdir_list.clear()
                     continue
+                # apply filters
+                if self.filter_include_list is not None:
+                    subdir_list = filter(lambda x: any([True if r.search(x) else False for r in self.filter_include_list]), subdir_list)
+                    file_list = filter(lambda x: any([True if r.search(x) else False for r in self.filter_include_list]), file_list)
+                if self.filter_exclude_list is not None:
+                    subdir_list = filter(lambda x: all([False if r.search(x) else True for r in self.filter_exclude_list]), subdir_list)
+                    file_list = filter(lambda x: all([False if r.search(x) else True for r in self.filter_exclude_list]), file_list)
                 # scan folders
                 for subdir in subdir_list:
                     full_path = os.path.join(dir_path, subdir)
@@ -395,7 +421,7 @@ class DirInfo:
                     if not self.pathMatch(relative_path, self.ignored_toplevel_folders):
                         self.dict_missing[relative_path] = self.dict_prev[relative_path]
 
-    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False, filter_include_list: typing.Union[list, None] = None, filter_exclude_list: typing.Union[list, None] = None) -> tuple:
+    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False) -> tuple:
         # init variables, todo: if secondInfo == self, second_list = set(secondInfo.dict_prev), iff compare logic below still works (to check moved for scan_only and reuse code)
         file_list = set(self.dict_current)
         second_list = set(secondInfo.dict_current)
@@ -403,23 +429,6 @@ class DirInfo:
             compare_mode = self.compare_mode
         else:
             raise Exception("Inconsistent compare mode between directories")
-        # apply filters, todo: compile filters in init and execute during scan
-        if type(filter_include_list) == list:
-            for i in range(len(filter_include_list)):
-                if type(filter_include_list[i]) == str:
-                    filter_include_list[i] = re.compile(filter_include_list[i])
-                else:
-                    raise Exception("Filter Include Processing Error")
-            file_list = set(filter(lambda x: any([True if r.search(x) else False for r in filter_include_list]), file_list))
-            second_list = set(filter(lambda x: any([True if r.search(x) else False for r in filter_include_list]), second_list))
-        if type(filter_exclude_list) == list:
-            for i in range(len(filter_exclude_list)):
-                if type(filter_exclude_list[i]) == str:
-                    filter_exclude_list[i] = re.compile(filter_exclude_list[i])
-                else:
-                    raise Exception("Filter Exclude Processing Error")
-            file_list = set(filter(lambda x: all([False if r.search(x) else True for r in filter_exclude_list]), file_list))
-            second_list = set(filter(lambda x: all([False if r.search(x) else True for r in filter_exclude_list]), second_list))
         # compare
         changed = sorted(list(filter(lambda f: not self.fileMatch(f, f, secondInfo, compare_mode), file_list & second_list)))
         self_only = sorted(list(file_list - second_list))
@@ -941,10 +950,12 @@ class BackupManager:
         # init dir scanning and load previous scan data if available
         self.source = DirInfo(self.config.source, self.config.compare_mode, self.config.config_dir,
                               [self.config.archive_dir, self.config.log_dir, self.config.trash_dir],
-                              self.gui, self.config.force_posix_path_sep)
+                              self.gui, self.config.force_posix_path_sep,
+                              self.config.filter_include_list, self.config.filter_exclude_list)
         self.dest = DirInfo(self.config.dest, self.config.compare_mode, self.config.config_dir,
                             [self.config.archive_dir, self.config.log_dir, self.config.trash_dir],
-                            self.gui, self.config.force_posix_path_sep)
+                            self.gui, self.config.force_posix_path_sep,
+                            self.config.filter_include_list, self.config.filter_exclude_list)
         dest_database_load_success = False
         self.source.loadJson()
         self.dest.loadJson()
@@ -961,10 +972,7 @@ class BackupManager:
         # compare directories (should be relatively fast, all the read operations are done during scan)
         if not self.config.scan_only:
             self.colourPrint(getString("Comparing directories..."), "OKBLUE")
-            source_only, dest_only, changed, moved = self.source.dirCompare(self.dest,
-                                                                            self.config.nomoves,
-                                                                            self.config.filter_include_list,
-                                                                            self.config.filter_exclude_list)
+            source_only, dest_only, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves)
         # check for database conflicts or corruption
         detected_database_conflicts_or_corruption = self._databaseAndCorruptionCheck(dest_database_load_success)
         if self.config.quit_on_db_conflict and detected_database_conflicts_or_corruption:
