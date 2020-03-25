@@ -193,6 +193,11 @@ digraph G {
             subgraph cluster_backupy__DirInfo {
 
                 graph [style="filled,rounded",fillcolor="#80808018", label="backupy.DirInfo"];
+                backupy__DirInfo__scanFile [label="scanFile", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
+            }
+            subgraph cluster_backupy__DirInfo {
+
+                graph [style="filled,rounded",fillcolor="#80808018", label="backupy.DirInfo"];
                 backupy__DirInfo__timeMatch [label="timeMatch", style="filled", fillcolor="#ff9999b2", fontcolor="#000000", group="0"];
             }
             subgraph cluster_backupy__DirInfo {
@@ -222,9 +227,10 @@ digraph G {
         backupy__DirInfo__verifyCrcOnCopy -> backupy__DirInfo__getCrc [style="solid", color="#000000"];
         backupy__DirInfo__getCrc -> backupy__DirInfo__calcCrc [style="solid", color="#000000"];
         backupy__DirInfo__fileMatch -> backupy__DirInfo__timeMatch [style="solid", color="#000000"];
-        backupy__DirInfo__scanDir -> backupy__DirInfo__timeMatch [style="solid", color="#000000"];
         backupy__DirInfo__scanDir -> backupy__DirInfo__pathMatch [style="solid", color="#000000"];
-        backupy__DirInfo__scanDir -> backupy__DirInfo__calcCrc [style="solid", color="#000000"];
+        backupy__DirInfo__scanDir -> backupy__DirInfo__scanFile [style="solid", color="#000000"];
+        backupy__DirInfo__scanFile -> backupy__DirInfo__calcCrc [style="solid", color="#000000"];
+        backupy__DirInfo__scanFile -> backupy__DirInfo__timeMatch [style="solid", color="#000000"];
         backupy__DirInfo__dirCompare -> backupy__DirInfo__fileMatch [style="solid", color="#000000"];
         backupy__BackupManager____init__ -> backupy__ConfigObject____init__ [style="solid", color="#000000"];
         backupy__BackupManager____init__ -> backupy__BackupManager__loadJson [style="solid", color="#000000"];
@@ -233,16 +239,16 @@ digraph G {
         backupy__BackupManager__saveJson -> backupy__ConfigObject [style="solid", color="#000000"];
         backupy__BackupManager__loadJson -> backupy__ConfigObject____init__ [style="solid", color="#000000"];
         backupy__BackupManager__loadJson -> backupy__ConfigObject [style="solid", color="#000000"];
-        backupy__BackupManager__writeLog -> backupy__DirInfo__saveJson [style="solid", color="#000000"];
         backupy__BackupManager__writeLog -> backupy__DirInfo__calcCrc [style="solid", color="#000000"];
+        backupy__BackupManager__writeLog -> backupy__DirInfo__saveJson [style="solid", color="#000000"];
         backupy__BackupManager__abortRun -> backupy__BackupManager__writeLog [style="solid", color="#000000"];
         backupy__BackupManager__removeFile -> backupy__DirInfo [style="solid", color="#000000"];
         backupy__BackupManager__removeFile -> backupy__DirInfo__updateDictOnRemove [style="solid", color="#000000"];
-        backupy__BackupManager__copyFile -> backupy__DirInfo [style="solid", color="#000000"];
         backupy__BackupManager__copyFile -> backupy__DirInfo__verifyCrcOnCopy [style="solid", color="#000000"];
+        backupy__BackupManager__copyFile -> backupy__DirInfo [style="solid", color="#000000"];
         backupy__BackupManager__copyFile -> backupy__DirInfo__updateDictOnCopy [style="solid", color="#000000"];
-        backupy__BackupManager__moveFile -> backupy__DirInfo__updateDictOnMove [style="solid", color="#000000"];
         backupy__BackupManager__moveFile -> backupy__DirInfo [style="solid", color="#000000"];
+        backupy__BackupManager__moveFile -> backupy__DirInfo__updateDictOnMove [style="solid", color="#000000"];
         backupy__BackupManager__removeFiles -> backupy__BackupManager__removeFile [style="solid", color="#000000"];
         backupy__BackupManager__copyFiles -> backupy__BackupManager__copyFile [style="solid", color="#000000"];
         backupy__BackupManager__moveFiles -> backupy__BackupManager__moveFile [style="solid", color="#000000"];
@@ -255,24 +261,24 @@ digraph G {
         backupy__BackupManager___databaseAndCorruptionCheck -> backupy__DirInfo__getDicts [style="solid", color="#000000"];
         backupy__BackupManager___printAndLogScanOnlyDiffSummary -> backupy__DirInfo__getDicts [style="solid", color="#000000"];
         backupy__BackupManager___printAndLogCompareDiffSummary -> backupy__DirInfo__getDicts [style="solid", color="#000000"];
+        backupy__BackupManager___performBackup -> backupy__DirInfo__getDicts [style="solid", color="#000000"];
+        backupy__BackupManager___performBackup -> backupy__BackupManager__copyFiles [style="solid", color="#000000"];
         backupy__BackupManager___performBackup -> backupy__BackupManager__handleChangedFiles [style="solid", color="#000000"];
         backupy__BackupManager___performBackup -> backupy__BackupManager__handleDeletedFiles [style="solid", color="#000000"];
-        backupy__BackupManager___performBackup -> backupy__DirInfo__getDicts [style="solid", color="#000000"];
         backupy__BackupManager___performBackup -> backupy__BackupManager__handleMovedFiles [style="solid", color="#000000"];
-        backupy__BackupManager___performBackup -> backupy__BackupManager__copyFiles [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__BackupManager___databaseAndCorruptionCheck [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__DirInfo__loadJson [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__BackupManager___printAndLogScanOnlyDiffSummary [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__DirInfo__scanDir [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__BackupManager___printAndLogCompareDiffSummary [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__BackupManager___performBackup [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__DirInfo__dirCompare [style="solid", color="#000000"];
+        backupy__BackupManager__backup -> backupy__BackupManager__writeLog [style="solid", color="#000000"];
         backupy__BackupManager__backup -> backupy__DirInfo [style="solid", color="#000000"];
         backupy__BackupManager__backup -> backupy__DirInfo____init__ [style="solid", color="#000000"];
         backupy__BackupManager__backup -> backupy__BackupManager__abortRun [style="solid", color="#000000"];
-        backupy__BackupManager__backup -> backupy__BackupManager___databaseAndCorruptionCheck [style="solid", color="#000000"];
-        backupy__BackupManager__backup -> backupy__BackupManager___printAndLogScanOnlyDiffSummary [style="solid", color="#000000"];
-        backupy__BackupManager__backup -> backupy__DirInfo__loadJson [style="solid", color="#000000"];
-        backupy__BackupManager__backup -> backupy__DirInfo__scanDir [style="solid", color="#000000"];
-        backupy__BackupManager__backup -> backupy__BackupManager___printAndLogCompareDiffSummary [style="solid", color="#000000"];
-        backupy__BackupManager__backup -> backupy__DirInfo__dirCompare [style="solid", color="#000000"];
-        backupy__BackupManager__backup -> backupy__BackupManager___performBackup [style="solid", color="#000000"];
-        backupy__BackupManager__backup -> backupy__BackupManager__writeLog [style="solid", color="#000000"];
         backupy__main -> backupy__ArgparseCustomFormatter [style="solid", color="#000000"];
-        backupy__main -> backupy__BackupManager__backup [style="solid", color="#000000"];
         backupy__main -> backupy__BackupManager [style="solid", color="#000000"];
         backupy__main -> backupy__BackupManager____init__ [style="solid", color="#000000"];
+        backupy__main -> backupy__BackupManager__backup [style="solid", color="#000000"];
     }
