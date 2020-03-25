@@ -377,49 +377,52 @@ class DirInfo:
                     if self.force_posix_path_sep:
                         relative_path = relative_path.replace(os.path.sep, "/")
                     scan_status.update(relative_path)
-                    # get file attributes
-                    size = os.path.getsize(full_path)
-                    mtime = os.path.getmtime(full_path)
-                    # check and set database dictionaries
-                    if relative_path in self.dict_prev:
-                        if (self.dict_prev[relative_path]["size"] == size and
-                            self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, True)):
-                            # unchanged file (probably)
-                            self.dict_current[relative_path] = self.dict_prev[relative_path].copy()
-                        else:
-                            # changed file
-                            self.dict_current[relative_path] = {"size": size, "mtime": mtime}
-                            self.dict_modified[relative_path] = self.dict_prev[relative_path]
-                    else:
-                        # new file
-                        self.dict_current[relative_path] = {"size": size, "mtime": mtime}
-                        self.dict_new[relative_path] = self.dict_current[relative_path]
-                    if self.compare_mode == "crc":
-                        # calculate CRC for all files (simpler code and potential warning sign for disk issues)
-                        self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
-                        if (relative_path in self.dict_prev and
-                            "crc" in self.dict_prev[relative_path] and
-                            self.dict_prev[relative_path]["crc"] != self.dict_current[relative_path]["crc"] and
-                            self.dict_prev[relative_path]["size"] == size and
-                            self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
-                            # corrupted file (probably, changed crc, unchanged size and mtime)
-                            self.dict_crc_errors[relative_path] = self.dict_prev[relative_path]
-                    elif self.compare_mode == "attr+" and "crc" not in self.dict_current[relative_path]:
-                        # save time by only calculating crc for new and changed files (by attributes) so we can check for corruption later (and possibly preexisting)
-                        if (relative_path in self.dict_prev and
-                            "crc" in self.dict_prev[relative_path] and
-                            self.dict_prev[relative_path]["size"] == size and
-                            self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
-                            # attributes match, preserve old crc
-                            self.dict_current[relative_path]["crc"] = self.dict_prev[relative_path]["crc"]
-                        else:
-                            self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
+                    self.scanFile(full_path, relative_path)
             scan_status.endProgress()
             # check for missing (or moved) files
             for relative_path in (set(self.dict_prev) - set(self.dict_current)):
                 if "dir" not in self.dict_prev[relative_path]:
                     if not self.pathMatch(relative_path, self.ignored_toplevel_folders):
                         self.dict_missing[relative_path] = self.dict_prev[relative_path]
+
+    def scanFile(self, full_path: str, relative_path: str) -> None:
+        # get file attributes
+        size = os.path.getsize(full_path)
+        mtime = os.path.getmtime(full_path)
+        # check and set database dictionaries
+        if relative_path in self.dict_prev:
+            if (self.dict_prev[relative_path]["size"] == size and
+                self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, True)):
+                # unchanged file (probably)
+                self.dict_current[relative_path] = self.dict_prev[relative_path].copy()
+            else:
+                # changed file
+                self.dict_current[relative_path] = {"size": size, "mtime": mtime}
+                self.dict_modified[relative_path] = self.dict_prev[relative_path]
+        else:
+            # new file
+            self.dict_current[relative_path] = {"size": size, "mtime": mtime}
+            self.dict_new[relative_path] = self.dict_current[relative_path]
+        if self.compare_mode == "crc":
+            # calculate CRC for all files (simpler code and potential warning sign for disk issues)
+            self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
+            if (relative_path in self.dict_prev and
+                "crc" in self.dict_prev[relative_path] and
+                self.dict_prev[relative_path]["crc"] != self.dict_current[relative_path]["crc"] and
+                self.dict_prev[relative_path]["size"] == size and
+                self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
+                # corrupted file (probably, changed crc, unchanged size and mtime)
+                self.dict_crc_errors[relative_path] = self.dict_prev[relative_path]
+        elif self.compare_mode == "attr+" and "crc" not in self.dict_current[relative_path]:
+            # save time by only calculating crc for new and changed files (by attributes) so we can check for corruption later (and possibly preexisting)
+            if (relative_path in self.dict_prev and
+                "crc" in self.dict_prev[relative_path] and
+                self.dict_prev[relative_path]["size"] == size and
+                self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
+                # attributes match, preserve old crc
+                self.dict_current[relative_path]["crc"] = self.dict_prev[relative_path]["crc"]
+            else:
+                self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
 
     def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False) -> tuple:
         # init variables, todo: if secondInfo == self, second_list = set(secondInfo.dict_prev), iff compare logic below still works (to check moved for scan_only and reuse code)
