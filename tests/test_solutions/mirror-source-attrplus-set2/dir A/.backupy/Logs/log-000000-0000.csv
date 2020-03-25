@@ -50,15 +50,15 @@ Dest:,,moved and copied A.txt,"{'size': 362, 'mtime': 1582141424.0, 'crc': '9C45
 Source:,,renamed file A.txt,"{'size': 14, 'mtime': 1563369288.0, 'crc': '7CFF48B6'}"
 Dest:,,renamed file B.txt,"{'size': 14, 'mtime': 1563369288.0, 'crc': '7CFF48B6'}"
 ### START MIRROR ###
+Move:,\mirror-source-attrplus-set2\dir B,file only B.txt,\mirror-source-attrplus-set2\dir B\.backupy\Trash\000000-0000,file only B.txt
+Move:,\mirror-source-attrplus-set2\dir B,new file B.txt,\mirror-source-attrplus-set2\dir B\.backupy\Trash\000000-0000,new file B.txt
+Move:,\mirror-source-attrplus-set2\dir B,same file corrupted.txt,\mirror-source-attrplus-set2\dir B\.backupy\Trash\000000-0000,same file corrupted.txt
 Copy:,\mirror-source-attrplus-set2\dir A,copied A - copy.txt,\mirror-source-attrplus-set2\dir B,copied A - copy.txt
 Copy:,\mirror-source-attrplus-set2\dir A,empty dir only A,\mirror-source-attrplus-set2\dir B,empty dir only A
 Copy:,\mirror-source-attrplus-set2\dir A,file only A.txt,\mirror-source-attrplus-set2\dir B,file only A.txt
 Copy:,\mirror-source-attrplus-set2\dir A,moved and copied A - 1.txt,\mirror-source-attrplus-set2\dir B,moved and copied A - 1.txt
 Copy:,\mirror-source-attrplus-set2\dir A,new file A.txt,\mirror-source-attrplus-set2\dir B,new file A.txt
 Copy:,\mirror-source-attrplus-set2\dir A,same file copied.txt,\mirror-source-attrplus-set2\dir B,same file copied.txt
-Move:,\mirror-source-attrplus-set2\dir B,file only B.txt,\mirror-source-attrplus-set2\dir B\.backupy\Trash\000000-0000,file only B.txt
-Move:,\mirror-source-attrplus-set2\dir B,new file B.txt,\mirror-source-attrplus-set2\dir B\.backupy\Trash\000000-0000,new file B.txt
-Move:,\mirror-source-attrplus-set2\dir B,same file corrupted.txt,\mirror-source-attrplus-set2\dir B\.backupy\Trash\000000-0000,same file corrupted.txt
 Move:,\mirror-source-attrplus-set2\dir B,copied both - 2.txt,\mirror-source-attrplus-set2\dir B,copied both - 1.txt
 Move:,\mirror-source-attrplus-set2\dir B,moved and copied A.txt,\mirror-source-attrplus-set2\dir B,moved and copied A - 2.txt
 Move:,\mirror-source-attrplus-set2\dir B,renamed file B.txt,\mirror-source-attrplus-set2\dir B,renamed file A.txt

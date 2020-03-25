@@ -19,10 +19,10 @@ Dest:,,renamed dir B/file2.txt,"{'size': 2, 'mtime': 1563369366.0}"
 Source:,,subdir/renamed dir A/file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
 Dest:,,renamed dir B/file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
 ### START MIRROR ###
-Copy:,<source>,empty dir only A,<dest>,empty dir only A
-Copy:,<source>,file only A.txt,<dest>,file only A.txt
 Move:,<dest>,empty dir only B,<dest>/.backupy/Trash/000000-0000,empty dir only B
 Move:,<dest>,file only B.txt,<dest>/.backupy/Trash/000000-0000,file only B.txt
+Copy:,<source>,empty dir only A,<dest>,empty dir only A
+Copy:,<source>,file only A.txt,<dest>,file only A.txt
 Move:,<dest>,renamed file B.txt,<dest>,renamed file A.txt
 Move:,<dest>,renamed dir B/file1.txt,<dest>,subdir/renamed dir A/file1.txt
 Move:,<dest>,renamed dir B/file2.txt,<dest>,subdir/renamed dir A/file2.txt

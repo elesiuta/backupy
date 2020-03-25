@@ -15,10 +15,10 @@ Dest:,,renamed dir B\file2.txt,"{'size': 2, 'mtime': 1563369366.0}"
 Source:,,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
 Dest:,,renamed dir B\file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
 ### START MIRROR ###
-Copy:,\mirror-source-filter-false\dir A,empty dir only A,\mirror-source-filter-false\dir B,empty dir only A
-Copy:,\mirror-source-filter-false\dir A,file only A.txt,\mirror-source-filter-false\dir B,file only A.txt
 Move:,\mirror-source-filter-false\dir B,empty dir only B,\mirror-source-filter-false\dir B\.backupy\Trash\000000-0000,empty dir only B
 Move:,\mirror-source-filter-false\dir B,file only B.txt,\mirror-source-filter-false\dir B\.backupy\Trash\000000-0000,file only B.txt
+Copy:,\mirror-source-filter-false\dir A,empty dir only A,\mirror-source-filter-false\dir B,empty dir only A
+Copy:,\mirror-source-filter-false\dir A,file only A.txt,\mirror-source-filter-false\dir B,file only A.txt
 Move:,\mirror-source-filter-false\dir B,renamed file B.txt,\mirror-source-filter-false\dir B,renamed file A.txt
 Move:,\mirror-source-filter-false\dir B,renamed dir B\file1.txt,\mirror-source-filter-false\dir B,subdir\renamed dir A\file1.txt
 Move:,\mirror-source-filter-false\dir B,renamed dir B\file2.txt,\mirror-source-filter-false\dir B,subdir\renamed dir A\file2.txt

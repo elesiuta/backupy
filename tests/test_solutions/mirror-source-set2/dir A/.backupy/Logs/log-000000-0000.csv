@@ -47,13 +47,13 @@ Dest:,,renamed file B.txt,"{'size': 14, 'mtime': 1563369288.0}"
 Source:,,same file copied.txt,"{'size': 2, 'mtime': 1563369444.0}"
 Dest:,,same file corrupted.txt,"{'size': 2, 'mtime': 1563369444.0}"
 ### START MIRROR ###
+Move:,\mirror-source-set2\dir B,file only B.txt,\mirror-source-set2\dir B\.backupy\Trash\000000-0000,file only B.txt
+Move:,\mirror-source-set2\dir B,new file B.txt,\mirror-source-set2\dir B\.backupy\Trash\000000-0000,new file B.txt
 Copy:,\mirror-source-set2\dir A,copied A - copy.txt,\mirror-source-set2\dir B,copied A - copy.txt
 Copy:,\mirror-source-set2\dir A,empty dir only A,\mirror-source-set2\dir B,empty dir only A
 Copy:,\mirror-source-set2\dir A,file only A.txt,\mirror-source-set2\dir B,file only A.txt
 Copy:,\mirror-source-set2\dir A,moved and copied A - 1.txt,\mirror-source-set2\dir B,moved and copied A - 1.txt
 Copy:,\mirror-source-set2\dir A,new file A.txt,\mirror-source-set2\dir B,new file A.txt
-Move:,\mirror-source-set2\dir B,file only B.txt,\mirror-source-set2\dir B\.backupy\Trash\000000-0000,file only B.txt
-Move:,\mirror-source-set2\dir B,new file B.txt,\mirror-source-set2\dir B\.backupy\Trash\000000-0000,new file B.txt
 Move:,\mirror-source-set2\dir B,copied both - 2.txt,\mirror-source-set2\dir B,copied both - 1.txt
 Move:,\mirror-source-set2\dir B,moved and copied A.txt,\mirror-source-set2\dir B,moved and copied A - 2.txt
 Move:,\mirror-source-set2\dir B,renamed file B.txt,\mirror-source-set2\dir B,renamed file A.txt

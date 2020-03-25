@@ -18,18 +18,18 @@ File:,Source,file modified newer on A.txt,"{'size': 319, 'mtime': 1563369818.0}"
 File:,Source,file modified newer on B.txt,"{'size': 35, 'mtime': 1563369692.0}"
 ,Dest,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
 ### START MIRROR ###
-Copy:,<source>,empty dir only A,<dest>,empty dir only A
-Copy:,<source>,file only A.txt,<dest>,file only A.txt
-Copy:,<source>,renamed file A.txt,<dest>,renamed file A.txt
-Copy:,<source>,subdir\renamed dir A\file1.txt,<dest>,subdir\renamed dir A\file1.txt
-Copy:,<source>,subdir\renamed dir A\file2.txt,<dest>,subdir\renamed dir A\file2.txt
-Copy:,<source>,subdir\renamed dir A\file3.txt,<dest>,subdir\renamed dir A\file3.txt
 Remove:,<dest>,empty dir only B
 Remove:,<dest>,file only B.txt
 Remove:,<dest>,renamed dir B\file1.txt
 Remove:,<dest>,renamed dir B\file2.txt
 Remove:,<dest>,renamed dir B\file3.txt
 Remove:,<dest>,renamed file B.txt
+Copy:,<source>,empty dir only A,<dest>,empty dir only A
+Copy:,<source>,file only A.txt,<dest>,file only A.txt
+Copy:,<source>,renamed file A.txt,<dest>,renamed file A.txt
+Copy:,<source>,subdir\renamed dir A\file1.txt,<dest>,subdir\renamed dir A\file1.txt
+Copy:,<source>,subdir\renamed dir A\file2.txt,<dest>,subdir\renamed dir A\file2.txt
+Copy:,<source>,subdir\renamed dir A\file3.txt,<dest>,subdir\renamed dir A\file3.txt
 Copy:,<source>,file modified newer on A.txt,<dest>,file modified newer on A.txt
 Copy:,<source>,file modified newer on B.txt,<dest>,file modified newer on B.txt
 ### COMPLETED ###
