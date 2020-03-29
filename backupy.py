@@ -210,21 +210,14 @@ class DirInfo:
         self.dict_crc_errors = {}
         # Init filters
         self.filter_include_list = None
-        if filter_include_list is not None:
-            self.filter_include_list = filter_include_list[:]
-            for i in range(len(self.filter_include_list)):
-                if type(self.filter_include_list[i]) == str:
-                    self.filter_include_list[i] = re.compile(self.filter_include_list[i])
-                else:
-                    raise Exception("Filter Include Processing Error")
         self.filter_exclude_list = None
-        if filter_exclude_list is not None:
-            self.filter_exclude_list = filter_exclude_list[:]
-            for i in range(len(self.filter_exclude_list)):
-                if type(self.filter_exclude_list[i]) == str:
-                    self.filter_exclude_list[i] = re.compile(self.filter_exclude_list[i])
-                else:
-                    raise Exception("Filter Exclude Processing Error")
+        try:
+            if filter_include_list is not None:
+                self.filter_include_list = [re.compile(f) for f in filter_include_list]
+            if filter_exclude_list is not None:
+                self.filter_exclude_list = [re.compile(f) for f in filter_exclude_list]
+        except:
+            raise Exception("Filter Processing Error")
         # Init other variables
         self.dir = directory_root_path
         self.compare_mode = compare_mode
