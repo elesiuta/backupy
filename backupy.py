@@ -37,14 +37,11 @@ def getVersion() -> str:
 def writeCsv(file_path: str, data: list) -> None:
     if not os.path.isdir(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
-    try:
-        with open(file_path, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
-            writer = csv.writer(f, delimiter=",")
-            writer.writerows(data)
-    except:
-        with open(file_path[:-4]+"-1.csv", "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
-            writer = csv.writer(f, delimiter=",")
-            writer.writerows(data)
+    if os.path.isfile(file_path) and not os.access(file_path, os.W_OK):
+        file_path = file_path[:-4] + "-1.csv"
+    with open(file_path, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
+        writer = csv.writer(f, delimiter=",")
+        writer.writerows(data)
 
 def readJson(file_path: str) -> dict:
     if os.path.exists(file_path):
@@ -853,30 +850,19 @@ class BackupManager:
                 self.printChangedFiles(sorted(list(source_crc_errors)), source_crc_errors, dest_crc_errors)
         return abort_run
 
-    def _printAndLogScanOnlyDiffSummary(self) -> None:
+    def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: "DirInfo") -> None:
         # get databases
-        source_dict, source_prev, source_new, source_modified, source_missing, _ = self.source.getDicts()
-        dest_dict, dest_prev, dest_new, dest_modified, dest_missing, _ = self.dest.getDicts()
+        side_dict, side_prev, side_new, side_modified, side_missing, _ = side_info.getDicts()
         # print differences
-        print(self.colourString(getString("Source New Files: %s") %(len(source_new)), "HEADER"))
-        self.log.append([getString("### SOURCE NEW FILES ###")])
-        self.printFiles(sorted(list(source_new)), source_dict)
-        print(self.colourString(getString("Source Missing Files: %s") %(len(source_missing)), "HEADER"))
-        self.log.append([getString("### SOURCE MISSING FILES ###")])
-        self.printFiles(sorted(list(source_missing)), source_prev)
-        print(self.colourString(getString("Source Changed Files: %s") %(len(source_modified)), "HEADER"))
-        self.log.append([getString("### SOURCE CHANGED FILES ###")])
-        self.printScanChanges(sorted(list(source_modified)), source_dict, source_prev)
-        if self.config.source != self.config.dest:
-            print(self.colourString(getString("Destination New Files: %s") %(len(dest_new)), "HEADER"))
-            self.log.append([getString("### DESTINATION NEW FILES ###")])
-            self.printFiles(sorted(list(dest_new)), dest_dict)
-            print(self.colourString(getString("Destination Missing Files: %s") %(len(dest_missing)), "HEADER"))
-            self.log.append([getString("### DESTINATION MISSING FILES ###")])
-            self.printFiles(sorted(list(dest_missing)), dest_prev)
-            print(self.colourString(getString("Destination Changed Files: %s") %(len(dest_modified)), "HEADER"))
-            self.log.append([getString("### DESTINATION CHANGED FILES ###")])
-            self.printScanChanges(sorted(list(dest_modified)), dest_dict, dest_prev)
+        print(self.colourString(getString("%s New Files: %s") %(side_str, len(side_new)), "HEADER"))
+        self.log.append([getString("### %s NEW FILES ###") %(side_str.upper())])
+        self.printFiles(sorted(list(side_new)), side_dict)
+        print(self.colourString(getString("%s Missing Files: %s") %(side_str, len(side_missing)), "HEADER"))
+        self.log.append([getString("### %s MISSING FILES ###") %(side_str.upper())])
+        self.printFiles(sorted(list(side_missing)), side_prev)
+        print(self.colourString(getString("%s Changed Files: %s") %(side_str, len(side_modified)), "HEADER"))
+        self.log.append([getString("### %s CHANGED FILES ###") %(side_str.upper())])
+        self.printScanChanges(sorted(list(side_modified)), side_dict, side_prev)
 
     def _printAndLogCompareDiffSummary(self, source_only: list, dest_only: list, changed: list, moved: list) -> None:
         # get databases
@@ -982,7 +968,9 @@ class BackupManager:
             return self.abortRun()
         # print differences between current and previous scans then exit if only scanning
         if self.config.scan_only:
-            self._printAndLogScanOnlyDiffSummary()
+            self._printAndLogScanOnlyDiffSummary("Source", self.source)
+            if self.config.source != self.config.dest:
+                self._printAndLogScanOnlyDiffSummary("Destination", self.dest)
             self.log.append([getString("### SCAN COMPLETED ###")])
             self.writeLog("database.json")
             print(self.colourString(getString("Completed!"), "OKGREEN"))
