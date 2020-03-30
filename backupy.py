@@ -846,9 +846,9 @@ class BackupManager:
     def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: "DirInfo") -> None:
         # get databases
         side_dict, side_prev, side_new, side_modified, side_missing, _ = side_info.getDicts()
-        moved = [[a, b] for a in sorted(side_new) for b in sorted(side_missing) if side_new[a] == side_missing[b] and "dir" not in side_new[a]]
-        list_new = sorted(list(set(side_new) - set([pair[0] for pair in moved])))
-        list_missing = sorted(list(set(side_missing) - set([pair[1] for pair in moved])))
+        moved = [{"source": a, "dest": b} for a in sorted(side_new) for b in sorted(side_missing) if side_new[a] == side_missing[b] and "dir" not in side_new[a]]
+        list_new = sorted(list(set(side_new) - set([pair["source"] for pair in moved])))
+        list_missing = sorted(list(set(side_missing) - set([pair["dest"] for pair in moved])))
         # print differences
         print(self.colourString(getString("%s New Files: %s") %(side_str, len(list_new)), "HEADER"))
         self.log.append([getString("### %s NEW FILES ###") %(side_str.upper())])
