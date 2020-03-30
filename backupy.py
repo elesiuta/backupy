@@ -415,7 +415,7 @@ class DirInfo:
                 self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
 
     def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False) -> tuple:
-        # init variables, todo: if secondInfo == self, second_list = set(secondInfo.dict_prev), iff compare logic below still works (to check moved for scan_only and reuse code)
+        # init variables
         file_list = set(self.dict_current)
         second_list = set(secondInfo.dict_current)
         if self.compare_mode == secondInfo.compare_mode:
@@ -846,16 +846,22 @@ class BackupManager:
     def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: "DirInfo") -> None:
         # get databases
         side_dict, side_prev, side_new, side_modified, side_missing, _ = side_info.getDicts()
+        moved = [[a, b] for a in sorted(side_new) for b in sorted(side_missing) if side_new[a] == side_missing[b] and "dir" not in side_new[a]]
+        list_new = sorted(list(set(side_new) - set([pair[0] for pair in moved])))
+        list_missing = sorted(list(set(side_missing) - set([pair[1] for pair in moved])))
         # print differences
-        print(self.colourString(getString("%s New Files: %s") %(side_str, len(side_new)), "HEADER"))
+        print(self.colourString(getString("%s New Files: %s") %(side_str, len(list_new)), "HEADER"))
         self.log.append([getString("### %s NEW FILES ###") %(side_str.upper())])
-        self.printFiles(sorted(list(side_new)), side_dict)
-        print(self.colourString(getString("%s Missing Files: %s") %(side_str, len(side_missing)), "HEADER"))
+        self.printFiles(list_new, side_dict)
+        print(self.colourString(getString("%s Missing Files: %s") %(side_str, len(list_missing)), "HEADER"))
         self.log.append([getString("### %s MISSING FILES ###") %(side_str.upper())])
-        self.printFiles(sorted(list(side_missing)), side_prev)
+        self.printFiles(list_missing, side_prev)
         print(self.colourString(getString("%s Changed Files: %s") %(side_str, len(side_modified)), "HEADER"))
         self.log.append([getString("### %s CHANGED FILES ###") %(side_str.upper())])
         self.printScanChanges(sorted(list(side_modified)), side_dict, side_prev)
+        print(self.colourString(getString("%s Moved Files: %s") %(side_str, len(moved)), "HEADER"))
+        self.log.append([getString("### %s MOVED FILES ###") %(side_str.upper())])
+        self.printMovedFiles(moved, side_new, side_missing)
 
     def _printAndLogCompareDiffSummary(self, source_only: list, dest_only: list, changed: list, moved: list) -> None:
         # get databases
@@ -922,7 +928,7 @@ class BackupManager:
     ######################################
 
     def backup(self):
-        """Main method, use this to run your job no matter the configuration"""
+        """Main method, use this to run your job"""
         # dry run confirmation message
         if self.config.dry_run:
             simulation_msg = getString(" dry run")
