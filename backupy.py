@@ -494,8 +494,10 @@ class BackupManager:
         if "save" in args and args["save"] == True:
             self.saveJson()
         # gui modifications
+        self.terminal_width = shutil.get_terminal_size()[0]
         if self.gui:
             self.config.stdout_status_bar = False
+            self.terminal_width = 80
         # debugging/testing
         if "backup_time_override" in args and args["backup_time_override"]:
             self.backup_time = args["backup_time_override"]
@@ -619,12 +621,13 @@ class BackupManager:
             if not skip_info:
                 s = s + "\n"
         if not skip_info:
-            s = s + self.colourString(sub_header, "OKBLUE") + " "*(8-len(sub_header)) # todo: make use of terminal width
+            extra_space = " "*min(4, self.terminal_width-100)
+            s = s + extra_space + self.colourString(sub_header, "OKBLUE") + " "*(8-len(sub_header))
             if not missing:
-                s = s + self.colourString(getString(" Size: "), "OKBLUE") + self.prettySize(d[f]["size"])
-                s = s + self.colourString(getString(" Modified: "), "OKBLUE") + time.ctime(d[f]["mtime"])
+                s = s + extra_space + self.colourString(getString(" Size: "), "OKBLUE") + self.prettySize(d[f]["size"])
+                s = s + extra_space + self.colourString(getString(" Modified: "), "OKBLUE") + time.ctime(d[f]["mtime"])
                 if "crc" in d[f]:
-                    s = s + self.colourString(getString(" Hash: "), "OKBLUE") + d[f]["crc"]
+                    s = s + extra_space + self.colourString(getString(" Hash: "), "OKBLUE") + d[f]["crc"]
             else:
                 s = s + self.colourString(getString(" Missing"), "OKBLUE")
         print(s)
