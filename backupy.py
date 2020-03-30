@@ -633,25 +633,15 @@ class BackupManager:
         for f in l:
             self.printFileInfo("File: ", f, d)
 
-    def printScanChanges(self, l: list, d1: dict, d2: dict) -> None:
+    def printChangedFiles(self, l: list, d1: dict, d2: dict, s1: str = " Source", s2: str = "   Dest") -> None:
         for f in l:
-            self.printFileInfo("File: ", f, d1, "    New")
-            self.printFileInfo("", f, d2, "    Old")
+            self.printFileInfo("File: ", f, d1, s1)
+            self.printFileInfo("", f, d2, s2)
 
-    def printChangedFiles(self, l: list, d1: dict, d2: dict) -> None:
+    def printMovedFiles(self, l: list, d1: dict, d2: dict, h1: str = "Source: ", h2: str = "  Dest: ") -> None:
         for f in l:
-            self.printFileInfo("File: ", f, d1, " Source")
-            self.printFileInfo("", f, d2, "   Dest")
-
-    def printMovedFiles(self, l: list, d1: dict, d2: dict) -> None:
-        for f in l:
-            self.printFileInfo("Source: ", f["source"], d1, skip_info=True)
-            self.printFileInfo("  Dest: ", f["dest"], d2)
-
-    def printDbConflicts(self, l: list, d: dict, ddb: dict) -> None:
-        for f in l:
-            self.printFileInfo("File: ", f, d, "   Dest")
-            self.printFileInfo("", f, ddb, "     DB")
+            self.printFileInfo(h1, f["source"], d1, skip_info=True)
+            self.printFileInfo(h2, f["dest"], d2)
 
     def printSyncDbConflicts(self, l: list, d1: dict, d2: dict, d1db: dict, d2db: dict) -> None:
         for f in l:
@@ -826,7 +816,7 @@ class BackupManager:
                     print(self.colourString(getString("WARNING: found files modified in the destination since last scan"), "WARNING"))
                     abort_run = True
                 print(self.colourString(getString("Destination Database Conflicts: %s") %(len(dest_conflicts)), "HEADER"))
-                self.printDbConflicts(dest_conflicts, dest_dict, dest_prev)
+                self.printChangedFiles(dest_conflicts, dest_dict, dest_prev, "   Dest", "     DB")
         # print database conflicts concerning CRCs if available, as well as CRC conflicts between source and dest if attributes otherwise match
         if len(source_crc_errors) > 0 or len(dest_crc_errors) > 0:
             self.log.append([getString("### CRC ERRORS DETECTED ###")])
@@ -858,10 +848,10 @@ class BackupManager:
         self.printFiles(list_missing, side_prev)
         print(self.colourString(getString("%s Changed Files: %s") %(side_str, len(side_modified)), "HEADER"))
         self.log.append([getString("### %s CHANGED FILES ###") %(side_str.upper())])
-        self.printScanChanges(sorted(list(side_modified)), side_dict, side_prev)
+        self.printChangedFiles(sorted(list(side_modified)), side_dict, side_prev, "    New", "    Old")
         print(self.colourString(getString("%s Moved Files: %s") %(side_str, len(moved)), "HEADER"))
         self.log.append([getString("### %s MOVED FILES ###") %(side_str.upper())])
-        self.printMovedFiles(moved, side_new, side_missing)
+        self.printMovedFiles(moved, side_new, side_missing, "   New: ", "   Old: ")
 
     def _printAndLogCompareDiffSummary(self, source_only: list, dest_only: list, changed: list, moved: list) -> None:
         # get databases
