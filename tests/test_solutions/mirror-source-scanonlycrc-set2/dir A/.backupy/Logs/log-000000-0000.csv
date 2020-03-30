@@ -55,6 +55,7 @@ File:,,file only B.txt,"{'size': 9, 'mtime': 1563369616.0}"
 ### SOURCE CHANGED FILES ###
 File:,New,file modified newer on A.txt,"{'size': 640, 'mtime': 1575245024.0, 'crc': 'F39F3C52'}"
 ,Old,file modified newer on A.txt,"{'size': 319, 'mtime': 1563369818.0}"
+### SOURCE MOVED FILES ###
 ### DESTINATION NEW FILES ###
 File:,,copied A.txt,"{'size': 353, 'mtime': 1582141538.0, 'crc': 'C52AF0F0'}"
 File:,,copied both - 2.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
@@ -72,4 +73,5 @@ File:,,renamed file A.txt,"{'size': 14, 'mtime': 1563369288.0}"
 ### DESTINATION CHANGED FILES ###
 File:,New,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0, 'crc': 'FDB24CA6'}"
 ,Old,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
+### DESTINATION MOVED FILES ###
 ### SCAN COMPLETED ###
