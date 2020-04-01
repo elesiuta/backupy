@@ -445,8 +445,9 @@ class DirInfo:
             compare_func = lambda f1, f2: self.fileMatch(f1, f2, secondInfo, compare_mode, True)
             moved = self.getMovedAndUpdateLists(self_only, second_only, self.dict_current, secondInfo.dict_current, compare_func)
             for pair in moved:
-                _ = secondInfo.dict_missing.pop(pair["source"], 1)
-                _ = self.dict_missing.pop(pair["dest"], 1)
+                if pair["source"] not in self.dict_modified and pair["dest"] not in secondInfo.dict_modified:
+                    _ = secondInfo.dict_missing.pop(pair["source"], 1)
+                    _ = self.dict_missing.pop(pair["dest"], 1)
         return self_only, second_only, changed, moved
 
 
