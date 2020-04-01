@@ -628,15 +628,15 @@ class BackupManager:
             if not skip_info:
                 s = s + "\n"
         if not skip_info:
-            extra_space = " "*min(4, self.terminal_width-100)
-            s = s + extra_space + self.colourString(sub_header, "OKBLUE") + " "*(8-len(sub_header))
+            extra_space = " "*min(4, self.terminal_width//5-16)
+            s = s + extra_space*2 + self.colourString(sub_header, "OKBLUE") + " "*(8-len(sub_header))
             if not missing:
                 s = s + extra_space + self.colourString(getString(" Size: "), "OKBLUE") + self.prettySize(d[f]["size"])
                 s = s + extra_space + self.colourString(getString(" Modified: "), "OKBLUE") + time.ctime(d[f]["mtime"])
                 if "crc" in d[f]:
                     s = s + extra_space + self.colourString(getString(" Hash: "), "OKBLUE") + d[f]["crc"]
             else:
-                s = s + self.colourString(getString(" Missing"), "OKBLUE")
+                s = s + extra_space + self.colourString(getString(" Missing"), "OKBLUE")
         print(s)
 
     def printFiles(self, l: list, d: dict) -> None:
