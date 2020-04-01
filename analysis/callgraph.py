@@ -15,10 +15,8 @@ ignored_node_strings = [
     "colourPrint",
     "printFileInfo",
     "printFiles",
-    "printScanChanges",
     "printChangedFiles",
     "printMovedFiles",
-    "printDbConflicts",
     "printSyncDbConflicts"
 ]
 
