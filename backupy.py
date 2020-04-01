@@ -414,6 +414,20 @@ class DirInfo:
             else:
                 self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
 
+    def getMovedAndUpdateLists(self, a_only: list, b_only: list, a_dict: dict, b_dict: dict, compare_func: typing.Callable) -> tuple:
+        moved = []
+        for f1 in reversed(a_only):
+            if "dir" not in a_dict[f1]:
+                for f2 in reversed(b_only):
+                    if "dir" not in b_dict[f2]:
+                        if compare_func(f1, f2):
+                            moved.append({"source": f1, "dest": f2})
+                            a_only.remove(f1)
+                            b_only.remove(f2)
+                            break
+        moved.reverse()
+        return moved
+
     def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False) -> tuple:
         # init variables
         file_list = set(self.dict_current)
@@ -428,18 +442,11 @@ class DirInfo:
         second_only = sorted(list(second_list - file_list))
         moved = []
         if not no_moves:
-            for f1 in reversed(self_only):
-                if "dir" not in self.dict_current[f1]:
-                    for f2 in reversed(second_only):
-                        if "dir" not in secondInfo.dict_current[f2]:
-                            if self.fileMatch(f1, f2, secondInfo, compare_mode, True):
-                                moved.append({"source": f1, "dest": f2})
-                                self_only.remove(f1)
-                                second_only.remove(f2)
-                                _ = secondInfo.dict_missing.pop(f1, 1)
-                                _ = self.dict_missing.pop(f2, 1)
-                                break
-            moved.reverse()
+            compare_func = lambda f1, f2: self.fileMatch(f1, f2, secondInfo, compare_mode, True)
+            moved = self.getMovedAndUpdateLists(self_only, second_only, self.dict_current, secondInfo.dict_current, compare_func)
+            for pair in moved:
+                _ = secondInfo.dict_missing.pop(pair["source"], 1)
+                _ = self.dict_missing.pop(pair["dest"], 1)
         return self_only, second_only, changed, moved
 
 
@@ -839,9 +846,9 @@ class BackupManager:
     def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: "DirInfo") -> None:
         # get databases
         side_dict, side_prev, side_new, side_modified, side_missing, _ = side_info.getDicts()
-        moved = [{"source": a, "dest": b} for a in sorted(side_new) for b in sorted(side_missing) if side_new[a] == side_missing[b] and "dir" not in side_new[a]]
-        list_new = sorted(list(set(side_new) - set([pair["source"] for pair in moved])))
-        list_missing = sorted(list(set(side_missing) - set([pair["dest"] for pair in moved])))
+        compare_func = lambda f1, f2: side_new[f1] == side_missing[f2]
+        list_new, list_missing = sorted(list(side_new)), sorted(list(side_missing))
+        moved = side_info.getMovedAndUpdateLists(list_new, list_missing, side_new, side_missing, compare_func)
         # print differences
         print(self.colourString(getString("%s New Files: %s") %(side_str, len(list_new)), "HEADER"))
         self.log.append([getString("### %s NEW FILES ###") %(side_str.upper())])
