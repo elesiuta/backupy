@@ -1,0 +1,106 @@
+{
+ "dir A\\": {
+  "size": 4096,
+  "mtime": 1585772782.0,
+  "crc": 0,
+  "dir": true
+ },
+ "dir B\\": {
+  "size": 4096,
+  "mtime": 1585772792.0,
+  "crc": 0,
+  "dir": true
+ },
+ "dir A\\.backupy\\": {
+  "size": 0,
+  "mtime": 1585772152.0,
+  "crc": 0,
+  "dir": true
+ },
+ "dir A\\b-rename-repalce-both.txt": {
+  "size": 1,
+  "mtime": 1585771750.0,
+  "crc": 1908338681
+ },
+ "dir A\\b.txt": {
+  "size": 1,
+  "mtime": 1585771720.0,
+  "crc": 3904355907
+ },
+ "dir A\\d-rename-replace.txt": {
+  "size": 1,
+  "mtime": 1585771866.0,
+  "crc": 2564639436
+ },
+ "dir A\\d.txt": {
+  "size": 1,
+  "mtime": 1585771804.0,
+  "crc": 112844655
+ },
+ "dir A\\e-rename.txt": {
+  "size": 1,
+  "mtime": 1585771930.0,
+  "crc": 4024072794
+ },
+ "dir A\\f-rename-mod.txt": {
+  "size": 2,
+  "mtime": 1585772660.0,
+  "crc": 3601799859
+ },
+ "dir A\\g-rename.txt": {
+  "size": 1,
+  "mtime": 1585772042.0,
+  "crc": 30677878
+ },
+ "dir A\\.backupy\\database.json": {
+  "size": 591,
+  "mtime": 1585772120.0,
+  "crc": 2109535927
+ },
+ "dir B\\.backupy\\": {
+  "size": 0,
+  "mtime": 1585772120.0,
+  "crc": 0,
+  "dir": true
+ },
+ "dir B\\b-rename-repalce-both.txt": {
+  "size": 1,
+  "mtime": 1585771750.0,
+  "crc": 1908338681
+ },
+ "dir B\\b.txt": {
+  "size": 1,
+  "mtime": 1585771720.0,
+  "crc": 3904355907
+ },
+ "dir B\\c.txt": {
+  "size": 1,
+  "mtime": 1585771804.0,
+  "crc": 112844655
+ },
+ "dir B\\d.txt": {
+  "size": 1,
+  "mtime": 1585771866.0,
+  "crc": 2564639436
+ },
+ "dir B\\e-rename-dif.txt": {
+  "size": 1,
+  "mtime": 1585771930.0,
+  "crc": 4024072794
+ },
+ "dir B\\f-rename-mod.txt": {
+  "size": 2,
+  "mtime": 1585772660.0,
+  "crc": 3601799859
+ },
+ "dir B\\g-rename.txt": {
+  "size": 1,
+  "mtime": 1585772042.0,
+  "crc": 30677878
+ },
+ "dir B\\.backupy\\database.json": {
+  "size": 591,
+  "mtime": 1585772120.0,
+  "crc": 2109535927
+ }
+}
