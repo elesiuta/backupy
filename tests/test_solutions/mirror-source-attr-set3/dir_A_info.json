@@ -1,0 +1,52 @@
+{
+ "b-rename-repalce-both.txt": {
+  "size": 1,
+  "mtime": 0,
+  "crc": 1908338681
+ },
+ "b.txt": {
+  "size": 1,
+  "mtime": 0,
+  "crc": 3904355907
+ },
+ "d-rename-replace.txt": {
+  "size": 1,
+  "mtime": 0,
+  "crc": 2564639436
+ },
+ "d.txt": {
+  "size": 1,
+  "mtime": 0,
+  "crc": 112844655
+ },
+ "e-rename.txt": {
+  "size": 1,
+  "mtime": 0,
+  "crc": 4024072794
+ },
+ "f-rename-mod.txt": {
+  "size": 2,
+  "mtime": 0,
+  "crc": 3601799859
+ },
+ "g-rename.txt": {
+  "size": 1,
+  "mtime": 0,
+  "crc": 30677878
+ },
+ ".backupy\\database.json": {
+  "size": 462,
+  "mtime": 0,
+  "crc": 795581820
+ },
+ ".backupy\\database.tmp.json": {
+  "size": 462,
+  "mtime": 0,
+  "crc": 795581820
+ },
+ ".backupy\\Logs\\log-000000-0000.csv": {
+  "size": 1946,
+  "mtime": 0,
+  "crc": 294847717
+ }
+}

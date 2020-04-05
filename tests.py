@@ -620,5 +620,26 @@ class TestBackupy(unittest.TestCase):
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
+    def test_mirror_source_attr_set3(self):
+        test_name = "mirror-source-attr-set3"
+        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "attr", "noprompt": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=3)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_mirror_source_attrp_set3(self):
+        test_name = "mirror-source-attrp-set3"
+        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "attr+", "noprompt": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=3)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_mirror_source_crc_set3(self):
+        test_name = "mirror-source-crc-set3"
+        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "crc", "noprompt": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=3)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
 if __name__ == '__main__':
     unittest.main()

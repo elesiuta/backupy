@@ -1,0 +1,37 @@
+{
+ "b-rename-repalce-both.txt": {
+  "crc": "71BEEFF9",
+  "mtime": 1585771750.0,
+  "size": 1
+ },
+ "b.txt": {
+  "crc": "E8B7BE43",
+  "mtime": 1585771720.0,
+  "size": 1
+ },
+ "c.txt": {
+  "crc": "6B9DF6F",
+  "mtime": 1585771804.0,
+  "size": 1
+ },
+ "d.txt": {
+  "crc": "98DD4ACC",
+  "mtime": 1585771866.0,
+  "size": 1
+ },
+ "e-rename-dif.txt": {
+  "crc": "EFDA7A5A",
+  "mtime": 1585771930.0,
+  "size": 1
+ },
+ "f-rename-mod.txt": {
+  "crc": "D6AF1AB3",
+  "mtime": 1585772660.0,
+  "size": 2
+ },
+ "g-rename.txt": {
+  "crc": "1D41B76",
+  "mtime": 1585772042.0,
+  "size": 1
+ }
+}

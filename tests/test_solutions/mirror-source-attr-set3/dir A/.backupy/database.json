@@ -1,0 +1,30 @@
+{
+ "b-rename-repalce-both.txt": {
+  "mtime": 1585771750.0,
+  "size": 1
+ },
+ "b.txt": {
+  "mtime": 1585771720.0,
+  "size": 1
+ },
+ "d-rename-replace.txt": {
+  "mtime": 1585771866.0,
+  "size": 1
+ },
+ "d.txt": {
+  "mtime": 1585771804.0,
+  "size": 1
+ },
+ "e-rename.txt": {
+  "mtime": 1585771930.0,
+  "size": 1
+ },
+ "f-rename-mod.txt": {
+  "mtime": 1585772660.0,
+  "size": 2
+ },
+ "g-rename.txt": {
+  "mtime": 1585772042.0,
+  "size": 1
+ }
+}

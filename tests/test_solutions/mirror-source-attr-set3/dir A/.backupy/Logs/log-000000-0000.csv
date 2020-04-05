@@ -1,0 +1,40 @@
+### DATABASE CONFLICTS ###
+File:,Dest,b.txt,"{'size': 1, 'mtime': 1585771720.0}"
+,DB,b.txt,"{'size': 1, 'mtime': 1585768148.434265, 'crc': '71BEEFF9'}"
+File:,Dest,c.txt,"{'size': 1, 'mtime': 1585771804.0}"
+,DB,c.txt,"{'size': 1, 'mtime': 1585768203.6508052, 'crc': '6B9DF6F'}"
+File:,Dest,d.txt,"{'size': 1, 'mtime': 1585771866.0}"
+,DB,d.txt,"{'size': 1, 'mtime': 1585768265.7299042, 'crc': '98DD4ACC'}"
+File:,Dest,a.txt,Missing
+,DB,a.txt,"{'size': 1, 'mtime': 1585768118.2617576, 'crc': 'E8B7BE43'}"
+File:,Dest,e.txt,Missing
+,DB,e.txt,"{'size': 1, 'mtime': 1585768329.491076, 'crc': 'EFDA7A5A'}"
+File:,Dest,f.txt,Missing
+,DB,f.txt,"{'size': 1, 'mtime': 1585768384.94124, 'crc': '76D32BE0'}"
+File:,Dest,g.txt,Missing
+,DB,g.txt,"{'size': 1, 'mtime': 1585768441.696106, 'crc': '1D41B76'}"
+File:,Dest,b-rename-repalce-both.txt,"{'size': 1, 'mtime': 1585771750.0}"
+,DB,b-rename-repalce-both.txt,Missing
+File:,Dest,e-rename-dif.txt,"{'size': 1, 'mtime': 1585771930.0}"
+,DB,e-rename-dif.txt,Missing
+File:,Dest,f-rename-mod.txt,"{'size': 2, 'mtime': 1585772660.0}"
+,DB,f-rename-mod.txt,Missing
+File:,Dest,g-rename.txt,"{'size': 1, 'mtime': 1585772042.0}"
+,DB,g-rename.txt,Missing
+### SOURCE ONLY ###
+File:,,d-rename-replace.txt,"{'size': 1, 'mtime': 1585771866.0}"
+### DESTINATION ONLY ###
+File:,,c.txt,"{'size': 1, 'mtime': 1585771804.0}"
+### CHANGED FILES ###
+File:,Source,d.txt,"{'size': 1, 'mtime': 1585771804.0}"
+,Dest,d.txt,"{'size': 1, 'mtime': 1585771866.0}"
+### MOVED FILES ###
+Source:,,e-rename.txt,"{'size': 1, 'mtime': 1585771930.0}"
+Dest:,,e-rename-dif.txt,"{'size': 1, 'mtime': 1585771930.0}"
+### START MIRROR ###
+Move:,<dest>,c.txt,<dest>\.backupy\Trash\000000-0000,c.txt
+Copy:,<source>,d-rename-replace.txt,<dest>,d-rename-replace.txt
+Move:,<dest>,e-rename-dif.txt,<dest>,e-rename.txt
+Move:,<dest>,d.txt,<dest>\.backupy\Archive\000000-0000,d.txt
+Copy:,<source>,d.txt,<dest>,d.txt
+### COMPLETED ###
