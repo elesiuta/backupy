@@ -220,7 +220,7 @@ def runTest(test_name, config, set=0, rewrite_log=True, rewrite_sep=True, compar
     # run backup
     config["source"] = dir_A_path
     config["dest"] = dir_B_path
-    backup_man = backupy.BackupManager(config)
+    backup_man = backupy.backupman.BackupManager(config)
     backup_man.backup()
     # fix separators and line endings again, and remove absolute paths
     if rewrite_log:

@@ -8,7 +8,13 @@ import PySimpleGUI as sg
 from colored import stylize, attr, fg
 from gooey import Gooey, GooeyParser, local_resource_path
 
-import backupy
+from .backupman import BackupManager
+from .utils import (
+    getVersion,
+    readJson,
+    writeJson,
+)
+
 
 class Unbuffered(object):
    def __init__(self, stream):
@@ -76,14 +82,14 @@ def simplePrompt(msg: str) -> str:
                         'menuTitle': 'About',
                         'name': 'BackuPy',
                         'description': 'A simple backup program in python',
-                        'version': backupy.getVersion(),
+                        'version': getVersion(),
                         'website': 'https://github.com/elesiuta/backupy',
                         'license': GPLv3
                     }]
                 }])
 def main_gui():
     # load profiles
-    dict_profiles = backupy.readJson("profiles.json")
+    dict_profiles = readJson("profiles.json")
     if "profiles" in dict_profiles:
         list_profiles = dict_profiles["profiles"]
     else:
@@ -184,17 +190,17 @@ def main_gui():
         for source_dir in loaded_profiles:
             args["source"] = source_dir
             args["load"] = True
-            backup_manager = backupy.BackupManager(args, gui=True)
+            backup_manager = BackupManager(args, gui=True)
             backup_manager.backup()
             print("")
     else:
         # store profile if new
         if (args["save"] or args["load"]) and args["source"] not in list_profiles:
             list_profiles.append(args["source"])
-            backupy.writeJson("profiles.json", {"profiles": list_profiles}, False)
+            writeJson("profiles.json", {"profiles": list_profiles}, False)
         # check config and execute
         if args["source"] != None and (args["dest"] != None or args["load"]):
-            backup_manager = backupy.BackupManager(args, gui=True)
+            backup_manager = BackupManager(args, gui=True)
             backup_manager.backup()
             print("")
         else:
@@ -205,4 +211,5 @@ def main_gui():
 
 
 if __name__ == "__main__":
+    # execute with python -m backupy.gui
     sys.exit(main_gui())

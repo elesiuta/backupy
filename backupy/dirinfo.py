@@ -13,18 +13,16 @@
 
 # https://github.com/elesiuta/backupy
 
-import argparse
-import csv
-import datetime
-import json
 import os
 import re
-import shutil
-import sys
-import time
 import typing
-import unicodedata
 import zlib
+
+from .statusbar import StatusBar
+from .utils import (
+    readJson,
+    writeJson,
+)
 
 
 ########################################

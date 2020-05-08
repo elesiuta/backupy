@@ -14,17 +14,23 @@
 # https://github.com/elesiuta/backupy
 
 import argparse
-import csv
 import datetime
-import json
 import os
-import re
 import shutil
 import sys
 import time
 import typing
-import unicodedata
-import zlib
+
+from .config import ConfigObject
+from .dirinfo import DirInfo
+from .statusbar import StatusBar
+from .utils import (
+    getString,
+    getVersion,
+    readJson,
+    writeCsv,
+    writeJson,
+)
 
 
 ##################
@@ -42,7 +48,7 @@ class BackupManager:
         self.gui = gui
         # gui imports
         if self.gui:
-            from backupy_gui import colourize, simplePrompt
+            from .gui import colourize, simplePrompt
             self.gui_colourize = colourize
             self.gui_simplePrompt = simplePrompt
         # init config

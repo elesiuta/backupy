@@ -11,7 +11,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/elesiuta/backupy",
-    py_modules=['backupy'],
+    packages=['backupy'],
     entry_points={
         'console_scripts': [
             'backupy = backupy:main'

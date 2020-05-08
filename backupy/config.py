@@ -13,24 +13,7 @@
 
 # https://github.com/elesiuta/backupy
 
-import argparse
-import csv
-import datetime
-import json
 import os
-import re
-import shutil
-import sys
-import time
-import typing
-import unicodedata
-import zlib
-
-
-###########################
-### Config helper class ###
-###########################
-
 
 class ConfigObject:
     def __init__(self, config: dict):

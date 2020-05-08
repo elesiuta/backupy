@@ -14,17 +14,10 @@
 # https://github.com/elesiuta/backupy
 
 import argparse
-import csv
-import datetime
-import json
-import os
-import re
-import shutil
 import sys
-import time
-import typing
-import unicodedata
-import zlib
+
+from .backupman import BackupManager
+from .utils import getString
 
 
 class ArgparseCustomFormatter(argparse.HelpFormatter):
@@ -121,4 +114,5 @@ def main():
     backup_manager.backup()
 
 if __name__ == "__main__":
+    # execute with python -m backupy.cli
     sys.exit(main())
