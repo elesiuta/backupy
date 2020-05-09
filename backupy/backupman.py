@@ -253,9 +253,11 @@ class BackupManager(FileManager):
         source_only, dest_only, changed = set(source_only), set(dest_only), set(changed)
         source_moved = set([f["source"] for f in moved])
         dest_moved = set([f["dest"] for f in moved])
-        assert changed <= source_modified | dest_modified | source_new | dest_new | source_crc_errors | dest_crc_errors
+        assert not (source_moved & dest_moved)
+        assert changed <= (source_modified | dest_modified) | (source_new & dest_new) | (source_crc_errors | dest_crc_errors)
         assert source_only <= source_dict
         assert dest_only <= dest_dict
+        # prev dirs and prev files under .backupy cause the next two asserts to be <=
         assert source_dict <= (source_prev - (source_missing | dest_moved)) | source_new | source_dirs
         assert dest_dict <= (dest_prev - (dest_missing | source_moved)) | dest_new | dest_dirs
 
@@ -275,8 +277,6 @@ class BackupManager(FileManager):
                 sync_conflicts += sorted(list(set(source_new) & set(dest_new)))  # new on both sides
                 # new and different on both sides
                 # sorted(list(filter(lambda f: source_new[f] != dest_new[f], set(source_new) & set(dest_new))))
-                # should be equivalent to
-                # set(changed) - (set(source_modified) | set(dest_modified))
                 if len(sync_conflicts) >= 1:
                     print(self.colourString(getString("WARNING: found files modified in both source and destination since last scan"), "WARNING"))
                     abort_run = True
