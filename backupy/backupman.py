@@ -170,7 +170,7 @@ class BackupManager(FileManager):
         elif size > 10**6:
             return "{:<10}".format("%s MB" % (round(size/10**6, 2)))
         elif size > 10**3:
-            return "{:<10}".format("%s KB" % (round(size/10**3, 2)))
+            return "{:<10}".format("%s kB" % (round(size/10**3, 2)))
         else:
             return "{:<10}".format("%s B" % (size))
 
