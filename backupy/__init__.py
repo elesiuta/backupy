@@ -3,7 +3,7 @@ from .cli import main
 from .utils import getVersion
 
 
-def createJob(config: dict) -> BackupManager:
+def create_job(config: dict) -> BackupManager:
     """Create a new job for a given configuration, returns a BackupManager object"""
     return BackupManager(config)
 
@@ -15,5 +15,6 @@ def run(config: dict):
 
 
 def start_gui():
+    """Launch the GUI"""
     from .gui import main_gui
     main_gui()
