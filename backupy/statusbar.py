@@ -42,7 +42,7 @@ class StatusBar:
             print(self.title_str + progress_str + msg, end="\r")
         elif self.gui and self.total > 0:
             self.progress = 0
-            print("progress: %s/%s" %(self.progress, self.total))
+            print("progress: %s/%s" % (self.progress, self.total))
 
     def getStringMaxWidth(self, string: str) -> int:
         width = 0
@@ -69,7 +69,7 @@ class StatusBar:
             print(self.title_str + progress_str + msg, end="\r")
         elif self.gui and self.total > 0:
             self.progress += 1
-            print("progress: %s/%s" %(self.progress, self.total))
+            print("progress: %s/%s" % (self.progress, self.total))
 
     def endProgress(self) -> None:
         if self.display:
@@ -82,5 +82,5 @@ class StatusBar:
             print(title_str + " " * (self.char_display - len(title_str)))
         elif self.gui and self.total > 0:
             self.progress = self.total
-            print("progress: %s/%s" %(self.progress, self.total))
+            print("progress: %s/%s" % (self.progress, self.total))
         self.display, self.gui = False, False

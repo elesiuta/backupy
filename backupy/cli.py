@@ -44,7 +44,8 @@ def main():
     group3 = parser.add_argument_group("execution options", "")
     group4 = parser.add_argument_group("configuration options", "")
     group1.add_argument("-m", type=str.lower, dest="main_mode", default="mirror", metavar="mode", choices=["mirror", "backup", "sync"],
-                        help=getString("F!\n"
+                        help=getString(
+                             "F!\n"
                              "Main mode: for files that exist only on one side\n"
                              "  MIRROR (default)\n"
                              "    [source-only -> destination, delete destination-only]\n"
@@ -53,7 +54,8 @@ def main():
                              "  SYNC\n"
                              "    [source-only -> destination, destination-only -> source]"))
     group1.add_argument("-s", type=str.lower, dest="select_mode", default="source", metavar="mode", choices=["source", "dest", "new", "no"],
-                        help=getString("F!\n"
+                        help=getString(
+                             "F!\n"
                              "Selection mode: for files that exist on both sides but differ\n"
                              "  SOURCE (default)\n"
                              "    [copy source to destination]\n"
@@ -64,7 +66,8 @@ def main():
                              "  NO\n"
                              "    [do nothing]"))
     group1.add_argument("-c", type=str.lower, dest="compare_mode", default=None, metavar="mode", choices=["attr", "attr+", "crc"],
-                        help=getString("F!\n"
+                        help=getString(
+                             "F!\n"
                              "Compare mode: for detecting which files differ\n"
                              "  ATTR (default)\n"
                              "    [compare file attributes: mod-time and size]\n"
@@ -77,7 +80,8 @@ def main():
     group2.add_argument("--fe", dest="filter_exclude_list", action="store", type=str, nargs="+", default=None, metavar="regex",
                         help=getString("Filter: Exclude files matching the regular expression(s) (exclude has priority over include, searches file paths)"))
     group2.add_argument("--noarchive", dest="noarchive", action="store_true",
-                        help=getString("F!\n"
+                        help=getString(
+                             "F!\n"
                              "Disable archiving files before overwriting/deleting to:\n"
                              "   <source|dest>/.backupy/Archives/yymmdd-HHMM/\n"
                              "   <source|dest>/.backupy/Trash/yymmdd-HHMM/"))
@@ -90,7 +94,8 @@ def main():
     group3.add_argument("-n", "--dry-run", dest="dry_run", action="store_true",
                         help=getString("Perform a dry run with no changes made to your files"))
     group3.add_argument("-q", "--qconflicts", dest="quit_on_db_conflict", action="store_true",
-                        help=getString("F!\n"
+                        help=getString(
+                             "F!\n"
                              "Quit if database conflicts are detected (always notified)\n"
                              "  -> unexpected changes on destination (backup and mirror)\n"
                              "  -> sync conflict (file modified on both sides since last sync)\n"
@@ -98,7 +103,8 @@ def main():
     group3.add_argument("-v", "--verify", dest="verify_copy", action="store_true",
                         help=getString("Verify CRC of copied files"))
     group4.add_argument("--nolog", dest="nolog", action="store_true",
-                        help=getString("F!\n"
+                        help=getString(
+                             "F!\n"
                              "Disable writing log and file databases to:\n"
                              "   <source>/.backupy/Logs/log-yymmdd-HHMM.csv\n"
                              "   <source|dest>/.backupy/database.json"))
@@ -112,6 +118,7 @@ def main():
     # create and run job
     backup_manager = BackupManager(args)
     backup_manager.run()
+
 
 if __name__ == "__main__":
     # execute with python -m backupy.cli

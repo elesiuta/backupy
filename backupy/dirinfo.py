@@ -25,9 +25,9 @@ from .utils import (
 )
 
 
-########################################
-### Directory scanning and comparing ###
-########################################
+####################################
+# Directory scanning and comparing #
+####################################
 
 
 class DirInfo:
@@ -50,7 +50,7 @@ class DirInfo:
                 self.filter_include_list = [re.compile(f) for f in filter_include_list]
             if filter_exclude_list is not None:
                 self.filter_exclude_list = [re.compile(f) for f in filter_exclude_list]
-        except:
+        except Exception:
             raise Exception("Filter Processing Error")
         # Init other variables
         self.dir = directory_root_path
@@ -72,10 +72,10 @@ class DirInfo:
 
     def verifyCrcOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
         if self.dir == source_root and secondInfo.dir == dest_root:
-            if secondInfo.getCrc(dest_file, recalc = True) != self.getCrc(source_file):
+            if secondInfo.getCrc(dest_file, recalc=True) != self.getCrc(source_file):
                 raise Exception("CRC Verification Failed")
         elif self.dir == dest_root and secondInfo.dir == source_root:
-            if self.getCrc(dest_file, recalc = True) != secondInfo.getCrc(source_file):
+            if self.getCrc(dest_file, recalc=True) != secondInfo.getCrc(source_file):
                 raise Exception("CRC Verification Failed")
 
     def updateDictOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
@@ -116,7 +116,7 @@ class DirInfo:
         with open(file_path, "rb") as f:
             for line in f:
                 prev = zlib.crc32(line, prev)
-        return "%X" %(prev & 0xFFFFFFFF)
+        return "%X" % (prev & 0xFFFFFFFF)
 
     def timeMatch(self, t1: float, t2: float, exact_only: bool = False, tz_diffs: list = [], fs_tol: int = 2) -> bool:
         if t1 == t2:
@@ -215,8 +215,9 @@ class DirInfo:
         mtime = os.path.getmtime(full_path)
         # check and set database dictionaries
         if relative_path in self.dict_prev:
-            if (self.dict_prev[relative_path]["size"] == size and
-                self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, True)):
+            if (
+              self.dict_prev[relative_path]["size"] == size and
+              self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, True)):
                 # unchanged file (probably)
                 self.dict_current[relative_path] = self.dict_prev[relative_path].copy()
             else:
@@ -230,19 +231,21 @@ class DirInfo:
         if self.compare_mode == "crc":
             # calculate CRC for all files (simpler code and potential warning sign for disk issues)
             self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
-            if (relative_path in self.dict_prev and
-                "crc" in self.dict_prev[relative_path] and
-                self.dict_prev[relative_path]["crc"] != self.dict_current[relative_path]["crc"] and
-                self.dict_prev[relative_path]["size"] == size and
-                self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
+            if (
+              relative_path in self.dict_prev and
+              "crc" in self.dict_prev[relative_path] and
+              self.dict_prev[relative_path]["crc"] != self.dict_current[relative_path]["crc"] and
+              self.dict_prev[relative_path]["size"] == size and
+              self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
                 # corrupted file (probably, changed crc, unchanged size and mtime)
                 self.dict_crc_errors[relative_path] = self.dict_prev[relative_path]
         elif self.compare_mode == "attr+" and "crc" not in self.dict_current[relative_path]:
             # save time by only calculating crc for new and changed files (by attributes) so we can check for corruption later (and possibly preexisting)
-            if (relative_path in self.dict_prev and
-                "crc" in self.dict_prev[relative_path] and
-                self.dict_prev[relative_path]["size"] == size and
-                self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
+            if (
+              relative_path in self.dict_prev and
+              "crc" in self.dict_prev[relative_path] and
+              self.dict_prev[relative_path]["size"] == size and
+              self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
                 # attributes match, preserve old crc
                 self.dict_current[relative_path]["crc"] = self.dict_prev[relative_path]["crc"]
             else:

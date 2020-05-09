@@ -33,14 +33,9 @@ from .utils import (
 )
 
 
-##################
-### Main class ###
-##################
-
-
 class BackupManager:
     def __init__(self, args: typing.Union[argparse.Namespace, dict], gui: bool = False):
-        """Main class, configure with an argparse namespace or dictionary to create a job then run with .backup()"""
+        """Main class, configure with an argparse namespace or dictionary to create a job then run with .run()"""
         # init logging
         self.log = []
         self.backup_time = datetime.datetime.now().strftime("%y%m%d-%H%M")
@@ -56,12 +51,12 @@ class BackupManager:
             args = vars(args)
         self.config = ConfigObject(args)
         # load config (be careful if using a non-default config_dir!)
-        if "load" in args and args["load"] == True:
+        if "load" in args and args["load"] is True:
             self.loadJson()
         # set args that can overwrite loaded config
-        if "dry_run" in args and args["dry_run"] == True:
+        if "dry_run" in args and args["dry_run"] is True:
             self.config.dry_run = True
-        if "scan_only" in args and args["scan_only"] == True:
+        if "scan_only" in args and args["scan_only"] is True:
             self.config.scan_only = True
         if "compare_mode" in args and args["compare_mode"] is not None:
             self.config.compare_mode = args["compare_mode"]
@@ -81,7 +76,7 @@ class BackupManager:
         self.source = None
         self.dest = None
         # save config
-        if "save" in args and args["save"] == True:
+        if "save" in args and args["save"] is True:
             self.saveJson()
         # gui modifications
         self.terminal_width = shutil.get_terminal_size()[0]
@@ -99,9 +94,9 @@ class BackupManager:
                          getString("Dest DB CRC:"), "0",
                          getString("Config:"), str(vars(self.config))])
 
-    ######################################
-    ### Saving/loading/logging methods ###
-    ######################################
+    ##################################
+    # Saving/loading/logging methods #
+    ##################################
 
     def saveJson(self) -> None:
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
@@ -145,9 +140,9 @@ class BackupManager:
         print(self.colourString(getString("Run aborted"), "WARNING"))
         return 1
 
-    ###################################
-    ### String manipulation methods ###
-    ###################################
+    ###############################
+    # String manipulation methods #
+    ###############################
 
     def replaceSurrogates(self, string: str) -> str:
         return string.encode("utf-8", "surrogateescape").decode("utf-8", "replace")
@@ -157,37 +152,39 @@ class BackupManager:
         if self.gui:
             return self.gui_colourize(string, colour)
         colours = {
-            "HEADER" : '\033[95m',
-            "OKBLUE" : '\033[94m',
-            "OKGREEN" : '\033[92m',
-            "WARNING" : '\033[93m',
-            "FAIL" : '\033[91m',
-            "ENDC" : '\033[0m',
-            "BOLD" : '\033[1m',
-            "UNDERLINE" : '\033[4m'
+            "HEADER": '\033[95m',
+            "OKBLUE": '\033[94m',
+            "OKGREEN": '\033[92m',
+            "WARNING": '\033[93m',
+            "FAIL": '\033[91m',
+            "ENDC": '\033[0m',
+            "BOLD": '\033[1m',
+            "UNDERLINE": '\033[4m'
         }
         return colours[colour] + string + colours["ENDC"]
 
     def prettySize(self, size: float) -> str:
         if size > 10**9:
-            return "{:<10}".format("%s GB" %(round(size/10**9, 2)))
+            return "{:<10}".format("%s GB" % (round(size/10**9, 2)))
         elif size > 10**6:
-            return "{:<10}".format("%s MB" %(round(size/10**6, 2)))
+            return "{:<10}".format("%s MB" % (round(size/10**6, 2)))
         elif size > 10**3:
-            return "{:<10}".format("%s KB" %(round(size/10**3, 2)))
+            return "{:<10}".format("%s KB" % (round(size/10**3, 2)))
         else:
-            return "{:<10}".format("%s B" %(size))
+            return "{:<10}".format("%s B" % (size))
 
     def prettyAttr(self, attr: dict) -> str:
-        string = "{'size': %s, 'mtime': %s" %(attr["size"], attr["mtime"])
-        if "crc" in attr: string += ", 'crc': '%s'" %(attr["crc"])
-        if "dir" in attr: string += ", 'dir': %s" %(attr["dir"])
+        string = "{'size': %s, 'mtime': %s" % (attr["size"], attr["mtime"])
+        if "crc" in attr:
+            string += ", 'crc': '%s'" % (attr["crc"])
+        if "dir" in attr:
+            string += ", 'dir': %s" % (attr["dir"])
         string += "}"
         return string
 
-    ########################
-    ### Printing methods ###
-    ########################
+    ####################
+    # Printing methods #
+    ####################
 
     def colourPrint(self, msg: str, colour: str) -> None:
         if self.config.verbose:
@@ -243,9 +240,9 @@ class BackupManager:
             self.printFileInfo("", f, d2, "   Dest")
             self.printFileInfo("", f, d2db, "     DB")
 
-    #############################################################################
-    ### File operation methods (only use these methods to perform operations) ###
-    #############################################################################
+    #########################################################################
+    # File operation methods (only use these methods to perform operations) #
+    #########################################################################
 
     def removeFile(self, root_path: str, file_relative_path: str) -> None:
         try:
@@ -302,18 +299,18 @@ class BackupManager:
             self.log.append(["MOVE ERROR", source_root, source_file, dest_root, dest_file, str(e)])
             print(e)
 
-    ##############################################################################
-    ### Batch file operation methods (do not perform file operations directly) ###
-    ##############################################################################
+    ##########################################################################
+    # Batch file operation methods (do not perform file operations directly) #
+    ##########################################################################
 
     def removeFiles(self, root_path: str, file_relative_paths: list) -> None:
-        self.colourPrint(getString("Removing %s unique files from:\n%s") %(len(file_relative_paths), root_path), "OKBLUE")
+        self.colourPrint(getString("Removing %s unique files from:\n%s") % (len(file_relative_paths), root_path), "OKBLUE")
         for f in file_relative_paths:
             self.removeFile(root_path, f)
         self.colourPrint(getString("Removal completed!"), "NONE")
 
     def copyFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str) -> None:
-        self.colourPrint(getString("Copying %s unique files from:\n%s\nto:\n%s") %(len(source_files), source_root, dest_root), "OKBLUE")
+        self.colourPrint(getString("Copying %s unique files from:\n%s\nto:\n%s") % (len(source_files), source_root, dest_root), "OKBLUE")
         copy_status = StatusBar("Copying", len(source_files), self.config.stdout_status_bar, gui=self.gui)
         for i in range(len(source_files)):
             copy_status.update(source_files[i])
@@ -321,7 +318,7 @@ class BackupManager:
         copy_status.endProgress()
 
     def moveFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str) -> None:
-        self.colourPrint(getString("Archiving %s unique files from:\n%s") %(len(source_files), source_root), "OKBLUE")
+        self.colourPrint(getString("Archiving %s unique files from:\n%s") % (len(source_files), source_root), "OKBLUE")
         for i in range(len(source_files)):
             self.moveFile(source_root, dest_root, source_files[i], dest_files[i])
         self.colourPrint(getString("Archiving completed!"), "NONE")
@@ -337,7 +334,7 @@ class BackupManager:
         if not self.config.nomoves:
             # conflicts shouldn't happen since moved is a subset of files from source_only and dest_only
             # depends on source_info.dirCompare(dest_info) otherwise source and dest keys will be reversed
-            self.colourPrint(getString("Moving %s files on destination to match source") %(len(moved_pairs)), "OKBLUE")
+            self.colourPrint(getString("Moving %s files on destination to match source") % (len(moved_pairs)), "OKBLUE")
             for f in moved_pairs:
                 if reverse:
                     dest = self.config.source
@@ -356,7 +353,7 @@ class BackupManager:
             self.moveFile(root_path, archive_path, file_relative_path, file_relative_path)
 
     def handleChangedFiles(self, source_root: str, dest_root: str, source_dict: dict, dest_dict: dict, changed: list) -> None:
-        self.colourPrint(getString("Handling %s file changes per selection mode") %(len(changed)), "OKBLUE")
+        self.colourPrint(getString("Handling %s file changes per selection mode") % (len(changed)), "OKBLUE")
         copy_status = StatusBar("Copying", len(changed), self.config.stdout_status_bar, gui=self.gui)
         for frp in changed:
             copy_status.update(frp)
@@ -377,9 +374,9 @@ class BackupManager:
                 break
         copy_status.endProgress()
 
-    #########################################
-    ### Helper functions used by backup() ###
-    #########################################
+    #####################################
+    # Helper functions used by backup() #
+    #####################################
 
     def _databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
         # get databases
@@ -392,14 +389,15 @@ class BackupManager:
         if dest_database_load_success and self.config.source != self.config.dest:
             self.log.append([getString("### DATABASE CONFLICTS ###")])
             if self.config.main_mode == "sync":
-                sync_conflicts = sorted(list(set(source_modified) & set(dest_modified))) # modified on both sides
-                sync_conflicts += sorted(list(set(source_missing) | set(dest_missing))) # deleted from either or both sides
-                sync_conflicts += sorted(list(set(source_new) & set(dest_new))) # new on both sides
-                # sync_conflicts += sorted(list(filter(lambda f: source_new[f] != dest_new[f], set(source_new) & set(dest_new)))) # new and different on both sides
+                sync_conflicts = sorted(list(set(source_modified) & set(dest_modified)))  # modified on both sides
+                sync_conflicts += sorted(list(set(source_missing) | set(dest_missing)))  # deleted from either or both sides
+                sync_conflicts += sorted(list(set(source_new) & set(dest_new)))  # new on both sides
+                # new and different on both sides
+                # sync_conflicts += sorted(list(filter(lambda f: source_new[f] != dest_new[f], set(source_new) & set(dest_new))))
                 if len(sync_conflicts) >= 1:
                     print(self.colourString(getString("WARNING: found files modified in both source and destination since last scan"), "WARNING"))
                     abort_run = True
-                print(self.colourString(getString("Sync Database Conflicts: %s") %(len(sync_conflicts)), "HEADER"))
+                print(self.colourString(getString("Sync Database Conflicts: %s") % (len(sync_conflicts)), "HEADER"))
                 self.printSyncDbConflicts(sync_conflicts, source_dict, dest_dict, source_prev, dest_prev)
             else:
                 dest_conflicts = sorted(list(set(dest_modified)))
@@ -408,7 +406,7 @@ class BackupManager:
                 if len(dest_conflicts) >= 1:
                     print(self.colourString(getString("WARNING: found files modified in the destination since last scan"), "WARNING"))
                     abort_run = True
-                print(self.colourString(getString("Destination Database Conflicts: %s") %(len(dest_conflicts)), "HEADER"))
+                print(self.colourString(getString("Destination Database Conflicts: %s") % (len(dest_conflicts)), "HEADER"))
                 self.printChangedFiles(dest_conflicts, dest_dict, dest_prev, "   Dest", "     DB")
         # print database conflicts concerning CRCs if available, as well as CRC conflicts between source and dest if attributes otherwise match
         if len(source_crc_errors) > 0 or len(dest_crc_errors) > 0:
@@ -417,12 +415,12 @@ class BackupManager:
             abort_run = True
             if self.config.compare_mode == "crc":
                 crc_errors_detected = sorted(list(set(source_crc_errors) | set(dest_crc_errors)))
-                print(self.colourString(getString("CRC Errors Detected: %s") %(len(crc_errors_detected)), "HEADER"))
+                print(self.colourString(getString("CRC Errors Detected: %s") % (len(crc_errors_detected)), "HEADER"))
                 self.printSyncDbConflicts(crc_errors_detected, source_dict, dest_dict, source_prev, dest_prev)
             elif self.config.compare_mode == "attr+":
                 if set(source_crc_errors) != set(dest_crc_errors):
                     raise Exception("Inconsistent CRC error detection between source and dest")
-                print(self.colourString(getString("CRC Errors Detected: %s") %(len(source_crc_errors)), "HEADER"))
+                print(self.colourString(getString("CRC Errors Detected: %s") % (len(source_crc_errors)), "HEADER"))
                 self.printChangedFiles(sorted(list(source_crc_errors)), source_crc_errors, dest_crc_errors)
         return abort_run
 
@@ -433,17 +431,17 @@ class BackupManager:
         list_new, list_missing = sorted(list(side_new)), sorted(list(side_missing))
         moved = side_info.getMovedAndUpdateLists(list_new, list_missing, side_new, side_missing, compare_func)
         # print differences
-        print(self.colourString(getString("%s New Files: %s") %(side_str, len(list_new)), "HEADER"))
-        self.log.append([getString("### %s NEW FILES ###") %(side_str.upper())])
+        print(self.colourString(getString("%s New Files: %s") % (side_str, len(list_new)), "HEADER"))
+        self.log.append([getString("### %s NEW FILES ###") % (side_str.upper())])
         self.printFiles(list_new, side_dict)
-        print(self.colourString(getString("%s Missing Files: %s") %(side_str, len(list_missing)), "HEADER"))
-        self.log.append([getString("### %s MISSING FILES ###") %(side_str.upper())])
+        print(self.colourString(getString("%s Missing Files: %s") % (side_str, len(list_missing)), "HEADER"))
+        self.log.append([getString("### %s MISSING FILES ###") % (side_str.upper())])
         self.printFiles(list_missing, side_prev)
-        print(self.colourString(getString("%s Changed Files: %s") %(side_str, len(side_modified)), "HEADER"))
-        self.log.append([getString("### %s CHANGED FILES ###") %(side_str.upper())])
+        print(self.colourString(getString("%s Changed Files: %s") % (side_str, len(side_modified)), "HEADER"))
+        self.log.append([getString("### %s CHANGED FILES ###") % (side_str.upper())])
         self.printChangedFiles(sorted(list(side_modified)), side_dict, side_prev, "    New", "    Old")
-        print(self.colourString(getString("%s Moved Files: %s") %(side_str, len(moved)), "HEADER"))
-        self.log.append([getString("### %s MOVED FILES ###") %(side_str.upper())])
+        print(self.colourString(getString("%s Moved Files: %s") % (side_str, len(moved)), "HEADER"))
+        self.log.append([getString("### %s MOVED FILES ###") % (side_str.upper())])
         self.printMovedFiles(moved, side_new, side_missing, "   New: ", "   Old: ")
 
     def _printAndLogCompareDiffSummary(self, source_only: list, dest_only: list, changed: list, moved: list) -> None:
@@ -460,27 +458,27 @@ class BackupManager:
         elif self.config.main_mode == "backup":
             dest_msg = getString("(will be left as is)")
         elif self.config.main_mode == "mirror":
-            dest_msg = getString("(will be %sd)" %(archive_msg))
+            dest_msg = getString("(will be %sd)" % (archive_msg))
         if self.config.select_mode == "source":
-            change_msg = getString("(%s dest and copy source -> dest)" %(archive_msg))
+            change_msg = getString("(%s dest and copy source -> dest)" % (archive_msg))
         elif self.config.select_mode == "dest":
-            change_msg = getString("(%s source and copy dest -> source)" %(archive_msg))
+            change_msg = getString("(%s source and copy dest -> source)" % (archive_msg))
         elif self.config.select_mode == "new":
-            change_msg = getString("(%s older and copy newer)" %(archive_msg))
+            change_msg = getString("(%s older and copy newer)" % (archive_msg))
         elif self.config.select_mode == "no":
             change_msg = getString("(will be left as is)")
         # print differences
-        print(self.colourString(getString("Source Only (will be copied to dest): %s") %(len(source_only)), "HEADER"))
+        print(self.colourString(getString("Source Only (will be copied to dest): %s") % (len(source_only)), "HEADER"))
         self.log.append([getString("### SOURCE ONLY ###")])
         self.printFiles(source_only, source_dict)
-        print(self.colourString(getString("Destination Only %s: %s") %(dest_msg, len(dest_only)), "HEADER"))
+        print(self.colourString(getString("Destination Only %s: %s") % (dest_msg, len(dest_only)), "HEADER"))
         self.log.append([getString("### DESTINATION ONLY ###")])
         self.printFiles(dest_only, dest_dict)
-        print(self.colourString(getString("Changed Files %s: %s") %(change_msg, len(changed)), "HEADER"))
+        print(self.colourString(getString("Changed Files %s: %s") % (change_msg, len(changed)), "HEADER"))
         self.log.append([getString("### CHANGED FILES ###")])
         self.printChangedFiles(changed, source_dict, dest_dict)
         if not self.config.nomoves:
-            print(self.colourString(getString("Moved Files (will move files on dest to match source): %s") %(len(moved)), "HEADER"))
+            print(self.colourString(getString("Moved Files (will move files on dest to match source): %s") % (len(moved)), "HEADER"))
             self.log.append([getString("### MOVED FILES ###")])
             self.printMovedFiles(moved, source_dict, dest_dict)
 
@@ -506,9 +504,9 @@ class BackupManager:
             self.handleMovedFiles(moved)
             self.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
 
-    ######################################
-    ### Main backup/mirror/sync method ###
-    ######################################
+    ##################################
+    # Main backup/mirror/sync method #
+    ##################################
 
     def run(self):
         """Main method, use this to run your job"""
@@ -533,10 +531,10 @@ class BackupManager:
         if self.dest.dict_prev != {}:
             dest_database_load_success = True
         # scan directories (also calculates CRC if enabled) (didn't parallelize scans to prevent excess vibration of adjacent consumer grade disks and keep status bars simple)
-        self.colourPrint(getString("Scanning files on source:\n%s") %(self.config.source), "OKBLUE")
+        self.colourPrint(getString("Scanning files on source:\n%s") % (self.config.source), "OKBLUE")
         self.source.scanDir(self.config.stdout_status_bar)
         if self.config.source != self.config.dest:
-            self.colourPrint(getString("Scanning files on destination:\n%s") %(self.config.dest), "OKBLUE")
+            self.colourPrint(getString("Scanning files on destination:\n%s") % (self.config.dest), "OKBLUE")
             self.dest.scanDir(self.config.stdout_status_bar)
         else:
             self.dest = self.source
@@ -569,9 +567,9 @@ class BackupManager:
         self.writeLog("database.tmp.json")
         if not self.config.noprompt:
             if self.gui:
-                go = self.gui_simplePrompt(getString("Scan complete, continue with %s%s?") %(self.config.main_mode, simulation_msg))
+                go = self.gui_simplePrompt(getString("Scan complete, continue with %s%s?") % (self.config.main_mode, simulation_msg))
             else:
-                print(self.colourString(getString("Scan complete, continue with %s%s (y/N)?") %(self.config.main_mode, simulation_msg), "OKGREEN"))
+                print(self.colourString(getString("Scan complete, continue with %s%s (y/N)?") % (self.config.main_mode, simulation_msg), "OKGREEN"))
                 go = input("> ")
             if len(go) == 0 or go[0].lower() != "y":
                 return self.abortRun()

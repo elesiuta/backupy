@@ -15,6 +15,7 @@
 
 import os
 
+
 class ConfigObject:
     def __init__(self, config: dict):
         """Used for storing user configuration, meant only for internal use by BackupManager"""

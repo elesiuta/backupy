@@ -17,14 +17,17 @@ import csv
 import json
 import os
 
+
 def getVersion() -> str:
     return "1.5.7"
+
 
 def getString(text: str) -> str:
     # import locale
     # logic for localisation goes here, set language with either a global or singleton
     # store strings in a dictionary or use this as an alias for gettext
     return text
+
 
 def writeCsv(file_path: str, data: list) -> None:
     if not os.path.isdir(os.path.dirname(file_path)):
@@ -35,6 +38,7 @@ def writeCsv(file_path: str, data: list) -> None:
         writer = csv.writer(f, delimiter=",")
         writer.writerows(data)
 
+
 def readJson(file_path: str) -> dict:
     if os.path.exists(file_path):
         with open(file_path, "r", encoding="utf-8", errors="surrogateescape") as json_file:
@@ -42,9 +46,9 @@ def readJson(file_path: str) -> dict:
         return data
     return {}
 
+
 def writeJson(file_path: str, data: dict, subdir: bool = True, sort_keys: bool = False) -> None:
     if subdir and not os.path.isdir(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
     with open(file_path, "w", encoding="utf-8", errors="surrogateescape") as json_file:
         json.dump(data, json_file, indent=1, separators=(',', ': '), sort_keys=sort_keys, ensure_ascii=False)
-

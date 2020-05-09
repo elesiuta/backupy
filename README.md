@@ -34,7 +34,7 @@ pip install backupy --upgrade
   - Attribute mode: compare file attributes (size and last modified time)
   - Attribute+ mode: compare file attributes and calculate CRCs only for new and changed files for future verification
   - CRC mode: compare file attributes and CRC for every file, and checks previously stored CRCs to detect corruption
-- Test your settings first with the 'dry-run' flag
+- Test your settings first with the "dry-run" flag
 - You will always be notified of any changes, unexpected modifications, sync conflicts, or file corruption before being prompted to continue by default so you can cancel and manually intervene if needed
 - You can also "restore" files with BackuPy by swapping source and destination
 ## Example Usage
