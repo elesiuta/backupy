@@ -1,6 +1,5 @@
 from .backupman import BackupManager
 from .cli import main
-from .gui import main_gui
 from .utils import getVersion
 
 
@@ -13,3 +12,8 @@ def run(config: dict):
     """Execute backupy for a given configuration"""
     backup_man = BackupManager(config)
     backup_man.run()
+
+
+def start_gui():
+    from .gui import main_gui
+    main_gui()

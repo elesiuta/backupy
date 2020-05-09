@@ -25,11 +25,6 @@ from .utils import (
 )
 
 
-####################################
-# Directory scanning and comparing #
-####################################
-
-
 class DirInfo:
     def __init__(self, directory_root_path: str, compare_mode: str,  config_dir: str,
                  ignored_toplevel_folders: list = [], gui: bool = False, force_posix_path_sep: bool = False,
