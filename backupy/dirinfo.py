@@ -37,6 +37,7 @@ class DirInfo:
         self.dict_missing = {}
         self.dict_new = {}
         self.dict_crc_errors = {}
+        self.dict_dirs = {}
         # Init filters
         self.filter_include_list = None
         self.filter_exclude_list = None
@@ -56,8 +57,8 @@ class DirInfo:
         self.force_posix_path_sep = force_posix_path_sep
 
     def getDicts(self) -> tuple:
-        """Returns tuple of dictionaries: current, prev, new, modified, missing, crc_errors"""
-        return self.dict_current, self.dict_prev, self.dict_new, self.dict_modified, self.dict_missing, self.dict_crc_errors
+        """Returns tuple of dictionaries: current, prev, new, modified, missing, crc_errors, dirs"""
+        return self.dict_current, self.dict_prev, self.dict_new, self.dict_modified, self.dict_missing, self.dict_crc_errors, self.dict_dirs
 
     def saveJson(self, db_name: str = "database.json") -> None:
         writeJson(os.path.join(self.dir, self.config_dir, db_name), self.dict_current, sort_keys=True)
@@ -189,6 +190,7 @@ class DirInfo:
                         if self.force_posix_path_sep:
                             relative_path = relative_path.replace(os.path.sep, "/")
                         self.dict_current[relative_path] = {"size": 0, "mtime": 0, "crc": "0", "dir": True}
+                        self.dict_dirs[relative_path] = {"size": 0, "mtime": 0, "crc": "0", "dir": True}
                 # scan files
                 for file_name in file_list:
                     full_path = os.path.join(dir_path, file_name)
@@ -203,6 +205,8 @@ class DirInfo:
                 if "dir" not in self.dict_prev[relative_path]:
                     if not self.pathMatch(relative_path, self.ignored_toplevel_folders):
                         self.dict_missing[relative_path] = self.dict_prev[relative_path]
+                # else:
+                #     self.dict_dirs[relative_path] = {"size": 0, "mtime": 0, "crc": "0", "dir": False}
 
     def scanFile(self, full_path: str, relative_path: str) -> None:
         # get file attributes

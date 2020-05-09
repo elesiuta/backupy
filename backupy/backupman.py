@@ -244,10 +244,25 @@ class BackupManager(FileManager):
     # Helper functions used by run() #
     ##################################
 
+    def _checkConsistency(self, dest_database_load_success: bool,
+                          source_only: list, dest_only: list, changed: list, moved: list) -> None:
+        d1, d2, d3, d4, d5, d6, d7 = self.source.getDicts()
+        source_dict, source_prev, source_new, source_modified, source_missing, source_crc_errors, source_dirs = set(d1), set(d2), set(d3), set(d4), set(d5), set(d6), set(d7)
+        d1, d2, d3, d4, d5, d6, d7 = self.dest.getDicts()
+        dest_dict, dest_prev, dest_new, dest_modified, dest_missing, dest_crc_errors, dest_dirs = set(d1), set(d2), set(d3), set(d4), set(d5), set(d6), set(d7)
+        source_only, dest_only, changed = set(source_only), set(dest_only), set(changed)
+        source_moved = set([f["source"] for f in moved])
+        dest_moved = set([f["dest"] for f in moved])
+        assert changed <= source_modified | dest_modified | source_new | dest_new | source_crc_errors | dest_crc_errors
+        assert source_only <= source_dict
+        assert dest_only <= dest_dict
+        assert source_dict <= (source_prev - (source_missing | dest_moved)) | source_new | source_dirs
+        assert dest_dict <= (dest_prev - (dest_missing | source_moved)) | dest_new | dest_dirs
+
     def _databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
         # get databases
-        source_dict, source_prev, source_new, source_modified, source_missing, source_crc_errors = self.source.getDicts()
-        dest_dict, dest_prev, dest_new, dest_modified, dest_missing, dest_crc_errors = self.dest.getDicts()
+        source_dict, source_prev, source_new, source_modified, source_missing, source_crc_errors, _ = self.source.getDicts()
+        dest_dict, dest_prev, dest_new, dest_modified, dest_missing, dest_crc_errors, _ = self.dest.getDicts()
         # print database conflicts, including both collisions from files being modified independently on both sides and unexpected missing files
         # note: this only notifies the user so they can intervene, it does not handle them in any special way, treating them as regular file changes
         # it can also be triggered by time zone or dst changes, lower file system mod time precision, and corruption if using CRCs (handled next)
@@ -294,7 +309,7 @@ class BackupManager(FileManager):
 
     def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: "DirInfo") -> None:
         # get databases
-        side_dict, side_prev, side_new, side_modified, side_missing, _ = side_info.getDicts()
+        side_dict, side_prev, side_new, side_modified, side_missing, _, _ = side_info.getDicts()
         compare_func = lambda f1, f2: side_new[f1] == side_missing[f2]
         list_new, list_missing = sorted(list(side_new)), sorted(list(side_missing))
         moved = side_info.getMovedAndUpdateLists(list_new, list_missing, side_new, side_missing, compare_func)
@@ -314,8 +329,8 @@ class BackupManager(FileManager):
 
     def _printAndLogCompareDiffSummary(self, source_only: list, dest_only: list, changed: list, moved: list) -> None:
         # get databases
-        source_dict, _, _, _, _, _ = self.source.getDicts()
-        dest_dict, _, _, _, _, _ = self.dest.getDicts()
+        source_dict, _, _, _, _, _, _ = self.source.getDicts()
+        dest_dict, _, _, _, _, _, _ = self.dest.getDicts()
         # prepare diff messages
         if self.config.noarchive:
             archive_msg = getString("delete")
@@ -352,8 +367,8 @@ class BackupManager(FileManager):
 
     def _performBackup(self, source_only: list, dest_only: list, changed: list, moved: list, simulation_msg: str) -> None:
         # get databases
-        source_dict, _, _, _, _, _ = self.source.getDicts()
-        dest_dict, _, _, _, _, _ = self.dest.getDicts()
+        source_dict, _, _, _, _, _, _ = self.source.getDicts()
+        dest_dict, _, _, _, _, _, _ = self.dest.getDicts()
         # perform the backup/mirror/sync
         self.log.append([getString("### START ") + self.config.main_mode.upper() + simulation_msg.upper() + " ###"])
         print(self.colourString(getString("Starting ") + self.config.main_mode, "HEADER"))
@@ -425,6 +440,14 @@ class BackupManager(FileManager):
             return 0
         # print differences between source and dest
         self._printAndLogCompareDiffSummary(source_only, dest_only, changed, moved)
+        # check for consistency between comparison and database dicts
+        try:
+            self._checkConsistency(dest_database_load_success, source_only, dest_only, changed, moved)
+        except Exception as e:
+            self.log.append(["BACKUPY ERROR", str(e)])
+            print(e)
+            print(self.colourString(getString("Error: Inconsistent directory comparison and database checks"), "FAIL"))
+            return self.abortRun()
         # exit if directories already match
         if len(source_only) == 0 and len(dest_only) == 0 and len(changed) == 0 and len(moved) == 0:
             print(self.colourString(getString("Directories already match, completed!"), "OKGREEN"))
