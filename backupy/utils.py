@@ -34,9 +34,15 @@ def writeCsv(file_path: str, data: list) -> None:
         os.makedirs(os.path.dirname(file_path))
     if os.path.isfile(file_path) and not os.access(file_path, os.W_OK):
         file_path = file_path[:-4] + "-1.csv"
-    with open(file_path, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
-        writer = csv.writer(f, delimiter=",")
-        writer.writerows(data)
+    try:
+        with open(file_path, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
+            writer = csv.writer(f, delimiter=",")
+            writer.writerows(data)
+    except Exception:
+        file_path = file_path[:-4] + "-1.csv"
+        with open(file_path, "w", newline="", encoding="utf-8", errors="backslashreplace") as f:
+            writer = csv.writer(f, delimiter=",")
+            writer.writerows(data)
 
 
 def readJson(file_path: str) -> dict:
