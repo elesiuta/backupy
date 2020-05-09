@@ -2,6 +2,8 @@ from .backupman import BackupManager
 from .cli import main
 from .utils import getVersion
 
+__all__ = ["create_job", "run", "start_gui"]
+
 
 def create_job(config: dict) -> BackupManager:
     """Create a new job for a given configuration, returns a BackupManager object"""

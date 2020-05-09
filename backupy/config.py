@@ -18,7 +18,7 @@ import os
 
 class ConfigObject:
     def __init__(self, config: dict):
-        """Used for storing user configuration, meant only for internal use by BackupManager"""
+        """Used for storing user configuration, use these attribute names as keys in your configuration dictionary"""
         # default config (from argparse)
         self.source = None
         self.dest = None
