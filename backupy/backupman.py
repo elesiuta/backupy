@@ -374,9 +374,9 @@ class BackupManager:
                 break
         copy_status.endProgress()
 
-    #####################################
-    # Helper functions used by backup() #
-    #####################################
+    ##################################
+    # Helper functions used by run() #
+    ##################################
 
     def _databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
         # get databases
@@ -393,7 +393,9 @@ class BackupManager:
                 sync_conflicts += sorted(list(set(source_missing) | set(dest_missing)))  # deleted from either or both sides
                 sync_conflicts += sorted(list(set(source_new) & set(dest_new)))  # new on both sides
                 # new and different on both sides
-                # sync_conflicts += sorted(list(filter(lambda f: source_new[f] != dest_new[f], set(source_new) & set(dest_new))))
+                # sorted(list(filter(lambda f: source_new[f] != dest_new[f], set(source_new) & set(dest_new))))
+                # should be equivalent to
+                # set(changed) - (set(source_modified) | set(dest_modified))
                 if len(sync_conflicts) >= 1:
                     print(self.colourString(getString("WARNING: found files modified in both source and destination since last scan"), "WARNING"))
                     abort_run = True
