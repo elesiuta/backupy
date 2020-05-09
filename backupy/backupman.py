@@ -173,14 +173,15 @@ class BackupManager(FileManager):
         else:
             return "{:<10}".format("%s B" % (size))
 
-    def prettyAttr(self, attr: dict) -> str:
-        string = "{'size': %s, 'mtime': %s" % (attr["size"], attr["mtime"])
+    def prettyAttr(self, attr: dict) -> list:
+        attr_list = []
+        attr_list.append(self.prettySize(attr["size"]).strip())
+        attr_list.append(time.ctime(attr["mtime"]))
         if "crc" in attr:
-            string += ", 'crc': '%s'" % (attr["crc"])
+            attr_list.append(attr["crc"])
         if "dir" in attr:
-            string += ", 'dir': %s" % (attr["dir"])
-        string += "}"
-        return string
+            attr_list.append("dir: %s" % (attr["dir"]))
+        return attr_list
 
     ####################
     # Printing methods #
@@ -196,7 +197,7 @@ class BackupManager(FileManager):
     def printFileInfo(self, header: str, f: str, d: dict, sub_header: str = "", skip_info: bool = False) -> None:
         header, sub_header = getString(header), getString(sub_header)
         if f in d and d[f] is not None:
-            self.log.append([header.strip(), sub_header.strip(), f] + [self.prettyAttr(d[f])])
+            self.log.append([header.strip(), sub_header.strip(), f] + self.prettyAttr(d[f]))
             missing = False
         else:
             self.log.append([header.strip(), sub_header.strip(), f] + [getString("Missing")])
