@@ -1,36 +1,36 @@
 ### DATABASE CONFLICTS ###
-File:,Dest,b.txt,"{'size': 1, 'mtime': 1585771720.0, 'crc': 'E8B7BE43'}"
-,DB,b.txt,"{'size': 1, 'mtime': 1585768148.434265, 'crc': '71BEEFF9'}"
-File:,Dest,c.txt,"{'size': 1, 'mtime': 1585771804.0, 'crc': '6B9DF6F'}"
-,DB,c.txt,"{'size': 1, 'mtime': 1585768203.6508052, 'crc': '6B9DF6F'}"
-File:,Dest,d.txt,"{'size': 1, 'mtime': 1585771866.0, 'crc': '98DD4ACC'}"
-,DB,d.txt,"{'size': 1, 'mtime': 1585768265.7299042, 'crc': '98DD4ACC'}"
+File:,Dest,b.txt,1 B,Wed Apr  1 20:08:40 2020,E8B7BE43
+,DB,b.txt,1 B,Wed Apr  1 19:09:08 2020,71BEEFF9
+File:,Dest,c.txt,1 B,Wed Apr  1 20:10:04 2020,6B9DF6F
+,DB,c.txt,1 B,Wed Apr  1 19:10:03 2020,6B9DF6F
+File:,Dest,d.txt,1 B,Wed Apr  1 20:11:06 2020,98DD4ACC
+,DB,d.txt,1 B,Wed Apr  1 19:11:05 2020,98DD4ACC
 File:,Dest,a.txt,Missing
-,DB,a.txt,"{'size': 1, 'mtime': 1585768118.2617576, 'crc': 'E8B7BE43'}"
+,DB,a.txt,1 B,Wed Apr  1 19:08:38 2020,E8B7BE43
 File:,Dest,e.txt,Missing
-,DB,e.txt,"{'size': 1, 'mtime': 1585768329.491076, 'crc': 'EFDA7A5A'}"
+,DB,e.txt,1 B,Wed Apr  1 19:12:09 2020,EFDA7A5A
 File:,Dest,f.txt,Missing
-,DB,f.txt,"{'size': 1, 'mtime': 1585768384.94124, 'crc': '76D32BE0'}"
+,DB,f.txt,1 B,Wed Apr  1 19:13:04 2020,76D32BE0
 File:,Dest,g.txt,Missing
-,DB,g.txt,"{'size': 1, 'mtime': 1585768441.696106, 'crc': '1D41B76'}"
-File:,Dest,b-rename-repalce-both.txt,"{'size': 1, 'mtime': 1585771750.0, 'crc': '71BEEFF9'}"
+,DB,g.txt,1 B,Wed Apr  1 19:14:01 2020,1D41B76
+File:,Dest,b-rename-repalce-both.txt,1 B,Wed Apr  1 20:09:10 2020,71BEEFF9
 ,DB,b-rename-repalce-both.txt,Missing
-File:,Dest,e-rename-dif.txt,"{'size': 1, 'mtime': 1585771930.0, 'crc': 'EFDA7A5A'}"
+File:,Dest,e-rename-dif.txt,1 B,Wed Apr  1 20:12:10 2020,EFDA7A5A
 ,DB,e-rename-dif.txt,Missing
-File:,Dest,f-rename-mod.txt,"{'size': 2, 'mtime': 1585772660.0, 'crc': 'D6AF1AB3'}"
+File:,Dest,f-rename-mod.txt,2 B,Wed Apr  1 20:24:20 2020,D6AF1AB3
 ,DB,f-rename-mod.txt,Missing
-File:,Dest,g-rename.txt,"{'size': 1, 'mtime': 1585772042.0, 'crc': '1D41B76'}"
+File:,Dest,g-rename.txt,1 B,Wed Apr  1 20:14:02 2020,1D41B76
 ,DB,g-rename.txt,Missing
 ### SOURCE ONLY ###
-File:,,d-rename-replace.txt,"{'size': 1, 'mtime': 1585771866.0, 'crc': '98DD4ACC'}"
+File:,,d-rename-replace.txt,1 B,Wed Apr  1 20:11:06 2020,98DD4ACC
 ### DESTINATION ONLY ###
-File:,,c.txt,"{'size': 1, 'mtime': 1585771804.0, 'crc': '6B9DF6F'}"
+File:,,c.txt,1 B,Wed Apr  1 20:10:04 2020,6B9DF6F
 ### CHANGED FILES ###
-File:,Source,d.txt,"{'size': 1, 'mtime': 1585771804.0, 'crc': '6B9DF6F'}"
-,Dest,d.txt,"{'size': 1, 'mtime': 1585771866.0, 'crc': '98DD4ACC'}"
+File:,Source,d.txt,1 B,Wed Apr  1 20:10:04 2020,6B9DF6F
+,Dest,d.txt,1 B,Wed Apr  1 20:11:06 2020,98DD4ACC
 ### MOVED FILES ###
-Source:,,e-rename.txt,"{'size': 1, 'mtime': 1585771930.0, 'crc': 'EFDA7A5A'}"
-Dest:,,e-rename-dif.txt,"{'size': 1, 'mtime': 1585771930.0, 'crc': 'EFDA7A5A'}"
+Source:,,e-rename.txt,1 B,Wed Apr  1 20:12:10 2020,EFDA7A5A
+Dest:,,e-rename-dif.txt,1 B,Wed Apr  1 20:12:10 2020,EFDA7A5A
 ### START MIRROR ###
 Move:,<dest>,c.txt,<dest>\.backupy\Trash\000000-0000,c.txt
 Copy:,<source>,d-rename-replace.txt,<dest>,d-rename-replace.txt

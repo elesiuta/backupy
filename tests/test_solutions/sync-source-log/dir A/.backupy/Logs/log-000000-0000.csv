@@ -1,22 +1,22 @@
 ### SOURCE ONLY ###
-File:,,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': '0', 'dir': True}"
-File:,,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
-File:,,renamed file A.txt,"{'size': 14, 'mtime': 1563369288.0}"
-File:,,subdir\renamed dir A\file1.txt,"{'size': 11, 'mtime': 1563369360.0}"
-File:,,subdir\renamed dir A\file2.txt,"{'size': 2, 'mtime': 1563369366.0}"
-File:,,subdir\renamed dir A\file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
+File:,,empty dir only A,0 B,Thu Jan  1 00:00:00 1970,0,dir: True
+File:,,file only A.txt,2 B,Wed Jul 17 13:19:48 2019
+File:,,renamed file A.txt,14 B,Wed Jul 17 13:14:48 2019
+File:,,subdir\renamed dir A\file1.txt,11 B,Wed Jul 17 13:16:00 2019
+File:,,subdir\renamed dir A\file2.txt,2 B,Wed Jul 17 13:16:06 2019
+File:,,subdir\renamed dir A\file3.txt,45 B,Wed Jul 17 13:16:26 2019
 ### DESTINATION ONLY ###
-File:,,empty dir only B,"{'size': 0, 'mtime': 0, 'crc': '0', 'dir': True}"
-File:,,file only B.txt,"{'size': 9, 'mtime': 1563369616.0}"
-File:,,renamed dir B\file1.txt,"{'size': 11, 'mtime': 1563369360.0}"
-File:,,renamed dir B\file2.txt,"{'size': 2, 'mtime': 1563369366.0}"
-File:,,renamed dir B\file3.txt,"{'size': 45, 'mtime': 1563369386.0}"
-File:,,renamed file B.txt,"{'size': 14, 'mtime': 1563369288.0}"
+File:,,empty dir only B,0 B,Thu Jan  1 00:00:00 1970,0,dir: True
+File:,,file only B.txt,9 B,Wed Jul 17 13:20:16 2019
+File:,,renamed dir B\file1.txt,11 B,Wed Jul 17 13:16:00 2019
+File:,,renamed dir B\file2.txt,2 B,Wed Jul 17 13:16:06 2019
+File:,,renamed dir B\file3.txt,45 B,Wed Jul 17 13:16:26 2019
+File:,,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019
 ### CHANGED FILES ###
-File:,Source,file modified newer on A.txt,"{'size': 319, 'mtime': 1563369818.0}"
-,Dest,file modified newer on A.txt,"{'size': 158, 'mtime': 1563369766.0}"
-File:,Source,file modified newer on B.txt,"{'size': 35, 'mtime': 1563369692.0}"
-,Dest,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
+File:,Source,file modified newer on A.txt,319 B,Wed Jul 17 13:23:38 2019
+,Dest,file modified newer on A.txt,158 B,Wed Jul 17 13:22:46 2019
+File:,Source,file modified newer on B.txt,35 B,Wed Jul 17 13:21:32 2019
+,Dest,file modified newer on B.txt,100 B,Wed Jul 17 13:22:28 2019
 ### START SYNC ###
 Copy:,<source>,empty dir only A,<dest>,empty dir only A
 Copy:,<source>,file only A.txt,<dest>,file only A.txt

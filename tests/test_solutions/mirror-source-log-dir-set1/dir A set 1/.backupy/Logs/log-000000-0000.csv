@@ -1,22 +1,22 @@
 ### SOURCE ONLY ###
-File:,,.backupy\000000-0000\file modified newer on B.txt,"{'size': 35, 'mtime': 1563369692.0}"
-File:,,empty dir only A,"{'size': 0, 'mtime': 0, 'crc': '0', 'dir': True}"
-File:,,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
-File:,,new file A.txt,"{'size': 11, 'mtime': 1575245254.0}"
+File:,,.backupy\000000-0000\file modified newer on B.txt,35 B,Wed Jul 17 13:21:32 2019
+File:,,empty dir only A,0 B,Thu Jan  1 00:00:00 1970,0,dir: True
+File:,,file only A.txt,2 B,Wed Jul 17 13:19:48 2019
+File:,,new file A.txt,11 B,Mon Dec  2 00:07:34 2019
 ### DESTINATION ONLY ###
-File:,,.backupy\000000-0000\file modified newer on A.txt,"{'size': 158, 'mtime': 1563369766.0}"
-File:,,file only B.txt,"{'size': 9, 'mtime': 1563369616.0}"
-File:,,new file B.txt,"{'size': 70, 'mtime': 1575245388.0}"
+File:,,.backupy\000000-0000\file modified newer on A.txt,158 B,Wed Jul 17 13:22:46 2019
+File:,,file only B.txt,9 B,Wed Jul 17 13:20:16 2019
+File:,,new file B.txt,70 B,Mon Dec  2 00:09:48 2019
 ### CHANGED FILES ###
-File:,Source,.backupy\database.json,"{'size': 1072, 'mtime': 1582431402.0}"
-,Dest,.backupy\database.json,"{'size': 1073, 'mtime': 1582431414.0}"
-File:,Source,file modified newer on A.txt,"{'size': 640, 'mtime': 1575245024.0}"
-,Dest,file modified newer on A.txt,"{'size': 319, 'mtime': 1563369818.0}"
-File:,Source,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
-,Dest,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0}"
+File:,Source,.backupy\database.json,1.07 KB,Sun Feb 23 04:16:42 2020
+,Dest,.backupy\database.json,1.07 KB,Sun Feb 23 04:16:54 2020
+File:,Source,file modified newer on A.txt,640 B,Mon Dec  2 00:03:44 2019
+,Dest,file modified newer on A.txt,319 B,Wed Jul 17 13:23:38 2019
+File:,Source,file modified newer on B.txt,100 B,Wed Jul 17 13:22:28 2019
+,Dest,file modified newer on B.txt,202 B,Mon Dec  2 00:08:08 2019
 ### MOVED FILES ###
-Source:,,renamed file A.txt,"{'size': 14, 'mtime': 1563369288.0}"
-Dest:,,renamed file B.txt,"{'size': 14, 'mtime': 1563369288.0}"
+Source:,,renamed file A.txt,14 B,Wed Jul 17 13:14:48 2019
+Dest:,,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019
 ### START MIRROR ###
 Move:,\mirror-source-log-dir-set1\dir B set 1,.backupy\000000-0000\file modified newer on A.txt,\mirror-source-log-dir-set1\dir B set 1\.backupy\Trash\000000-0000,.backupy\000000-0000\file modified newer on A.txt
 Move:,\mirror-source-log-dir-set1\dir B set 1,file only B.txt,\mirror-source-log-dir-set1\dir B set 1\.backupy\Trash\000000-0000,file only B.txt

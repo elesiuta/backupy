@@ -1,64 +1,64 @@
 ### DATABASE CONFLICTS ###
-File:,Dest,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0, 'crc': 'FDB24CA6'}"
-,DB,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
+File:,Dest,file modified newer on B.txt,202 B,Mon Dec  2 00:08:08 2019,FDB24CA6
+,DB,file modified newer on B.txt,100 B,Wed Jul 17 13:22:28 2019
 File:,Dest,db only B.missing,Missing
-,DB,db only B.missing,"{'size': 2, 'mtime': 2, 'crc': '41'}"
+,DB,db only B.missing,2 B,Thu Jan  1 00:00:02 1970,41
 File:,Dest,file only A.txt,Missing
-,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
+,DB,file only A.txt,2 B,Wed Jul 17 13:19:48 2019
 File:,Dest,renamed file A.txt,Missing
-,DB,renamed file A.txt,"{'size': 14, 'mtime': 1563369288.0}"
-File:,Dest,copied A.txt,"{'size': 353, 'mtime': 1582141538.0, 'crc': 'C52AF0F0'}"
+,DB,renamed file A.txt,14 B,Wed Jul 17 13:14:48 2019
+File:,Dest,copied A.txt,353 B,Wed Feb 19 19:45:38 2020,C52AF0F0
 ,DB,copied A.txt,Missing
-File:,Dest,copied both - 2.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
+File:,Dest,copied both - 2.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
 ,DB,copied both - 2.txt,Missing
-File:,Dest,copied both - copy.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
+File:,Dest,copied both - copy.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
 ,DB,copied both - copy.txt,Missing
-File:,Dest,copied both.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
+File:,Dest,copied both.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
 ,DB,copied both.txt,Missing
-File:,Dest,moved and copied A.txt,"{'size': 362, 'mtime': 1582141424.0, 'crc': '9C457731'}"
+File:,Dest,moved and copied A.txt,362 B,Wed Feb 19 19:43:44 2020,9C457731
 ,DB,moved and copied A.txt,Missing
-File:,Dest,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': '57A92228'}"
+File:,Dest,new corrupted file.txt,11 B,Wed Feb 19 18:35:44 2020,57A92228
 ,DB,new corrupted file.txt,Missing
-File:,Dest,new file B.txt,"{'size': 70, 'mtime': 1575245388.0, 'crc': 'A1E6ECDF'}"
+File:,Dest,new file B.txt,70 B,Mon Dec  2 00:09:48 2019,A1E6ECDF
 ,DB,new file B.txt,Missing
-File:,Dest,renamed file B.txt,"{'size': 14, 'mtime': 1563369288.0, 'crc': '7CFF48B6'}"
+File:,Dest,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019,7CFF48B6
 ,DB,renamed file B.txt,Missing
-File:,Dest,same file corrupted.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 'F22E0CBD'}"
+File:,Dest,same file corrupted.txt,2 B,Wed Jul 17 13:17:24 2019,F22E0CBD
 ,DB,same file corrupted.txt,Missing
 ### SOURCE NEW FILES ###
-File:,,copied A - copy.txt,"{'size': 353, 'mtime': 1582141538.0, 'crc': 'C52AF0F0'}"
-File:,,copied A.txt,"{'size': 353, 'mtime': 1582141538.0, 'crc': 'C52AF0F0'}"
-File:,,copied both - 1.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
-File:,,copied both - copy.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
-File:,,copied both.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
-File:,,moved and copied A - 1.txt,"{'size': 362, 'mtime': 1582141424.0, 'crc': '9C457731'}"
-File:,,moved and copied A - 2.txt,"{'size': 362, 'mtime': 1582141424.0, 'crc': '9C457731'}"
-File:,,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': '5F3DACAB'}"
-File:,,new file A.txt,"{'size': 11, 'mtime': 1575245254.0, 'crc': 'B8D2E194'}"
-File:,,same file copied.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': '1B4DA988'}"
+File:,,copied A - copy.txt,353 B,Wed Feb 19 19:45:38 2020,C52AF0F0
+File:,,copied A.txt,353 B,Wed Feb 19 19:45:38 2020,C52AF0F0
+File:,,copied both - 1.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
+File:,,copied both - copy.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
+File:,,copied both.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
+File:,,moved and copied A - 1.txt,362 B,Wed Feb 19 19:43:44 2020,9C457731
+File:,,moved and copied A - 2.txt,362 B,Wed Feb 19 19:43:44 2020,9C457731
+File:,,new corrupted file.txt,11 B,Wed Feb 19 18:35:44 2020,5F3DACAB
+File:,,new file A.txt,11 B,Mon Dec  2 00:07:34 2019,B8D2E194
+File:,,same file copied.txt,2 B,Wed Jul 17 13:17:24 2019,1B4DA988
 ### SOURCE MISSING FILES ###
-File:,,db only a.missing,"{'size': 0, 'mtime': 0, 'crc': 'B00'}"
-File:,,file only B.txt,"{'size': 9, 'mtime': 1563369616.0}"
+File:,,db only a.missing,0 B,Thu Jan  1 00:00:00 1970,B00
+File:,,file only B.txt,9 B,Wed Jul 17 13:20:16 2019
 ### SOURCE CHANGED FILES ###
-File:,New,file modified newer on A.txt,"{'size': 640, 'mtime': 1575245024.0, 'crc': 'F39F3C52'}"
-,Old,file modified newer on A.txt,"{'size': 319, 'mtime': 1563369818.0}"
+File:,New,file modified newer on A.txt,640 B,Mon Dec  2 00:03:44 2019,F39F3C52
+,Old,file modified newer on A.txt,319 B,Wed Jul 17 13:23:38 2019
 ### SOURCE MOVED FILES ###
 ### DESTINATION NEW FILES ###
-File:,,copied A.txt,"{'size': 353, 'mtime': 1582141538.0, 'crc': 'C52AF0F0'}"
-File:,,copied both - 2.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
-File:,,copied both - copy.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
-File:,,copied both.txt,"{'size': 325, 'mtime': 1582141634.0, 'crc': 'EDEF17B'}"
-File:,,moved and copied A.txt,"{'size': 362, 'mtime': 1582141424.0, 'crc': '9C457731'}"
-File:,,new corrupted file.txt,"{'size': 11, 'mtime': 1582137344.0, 'crc': '57A92228'}"
-File:,,new file B.txt,"{'size': 70, 'mtime': 1575245388.0, 'crc': 'A1E6ECDF'}"
-File:,,renamed file B.txt,"{'size': 14, 'mtime': 1563369288.0, 'crc': '7CFF48B6'}"
-File:,,same file corrupted.txt,"{'size': 2, 'mtime': 1563369444.0, 'crc': 'F22E0CBD'}"
+File:,,copied A.txt,353 B,Wed Feb 19 19:45:38 2020,C52AF0F0
+File:,,copied both - 2.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
+File:,,copied both - copy.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
+File:,,copied both.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
+File:,,moved and copied A.txt,362 B,Wed Feb 19 19:43:44 2020,9C457731
+File:,,new corrupted file.txt,11 B,Wed Feb 19 18:35:44 2020,57A92228
+File:,,new file B.txt,70 B,Mon Dec  2 00:09:48 2019,A1E6ECDF
+File:,,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019,7CFF48B6
+File:,,same file corrupted.txt,2 B,Wed Jul 17 13:17:24 2019,F22E0CBD
 ### DESTINATION MISSING FILES ###
-File:,,db only B.missing,"{'size': 2, 'mtime': 2, 'crc': '41'}"
-File:,,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
-File:,,renamed file A.txt,"{'size': 14, 'mtime': 1563369288.0}"
+File:,,db only B.missing,2 B,Thu Jan  1 00:00:02 1970,41
+File:,,file only A.txt,2 B,Wed Jul 17 13:19:48 2019
+File:,,renamed file A.txt,14 B,Wed Jul 17 13:14:48 2019
 ### DESTINATION CHANGED FILES ###
-File:,New,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0, 'crc': 'FDB24CA6'}"
-,Old,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
+File:,New,file modified newer on B.txt,202 B,Mon Dec  2 00:08:08 2019,FDB24CA6
+,Old,file modified newer on B.txt,100 B,Wed Jul 17 13:22:28 2019
 ### DESTINATION MOVED FILES ###
 ### SCAN COMPLETED ###

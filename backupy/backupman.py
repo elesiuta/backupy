@@ -86,6 +86,7 @@ class BackupManager(FileManager):
         # debugging/testing
         if "backup_time_override" in args and args["backup_time_override"]:
             self.backup_time = args["backup_time_override"]
+            time.ctime = lambda t: time.asctime(time.gmtime(t))
         # log settings
         self.log.append([getString("### SETTINGS ###")])
         self.log.append([getString("Time:"), self.backup_time,

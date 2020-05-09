@@ -1,10 +1,10 @@
 ### DATABASE CONFLICTS ###
-File:,Dest,file modified newer on B.txt,"{'size': 202, 'mtime': 1575245288.0}"
-,DB,file modified newer on B.txt,"{'size': 100, 'mtime': 1563369748.0}"
+File:,Dest,file modified newer on B.txt,202 B,Mon Dec  2 00:08:08 2019
+,DB,file modified newer on B.txt,100 B,Wed Jul 17 13:22:28 2019
 File:,Dest,file only A.txt,Missing
-,DB,file only A.txt,"{'size': 2, 'mtime': 1563369588.0}"
-File:,Dest,new file B.txt,"{'size': 70, 'mtime': 1575245388.0}"
+,DB,file only A.txt,2 B,Wed Jul 17 13:19:48 2019
+File:,Dest,new file B.txt,70 B,Mon Dec  2 00:09:48 2019
 ,DB,new file B.txt,Missing
-File:,Dest,renamed file B.txt,"{'size': 14, 'mtime': 1563369288.0}"
+File:,Dest,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019
 ,DB,renamed file B.txt,Missing
 ### ABORTED ###
