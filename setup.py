@@ -28,5 +28,5 @@ setuptools.setup(
         "Environment :: Console",
         "Development Status :: 5 - Production/Stable",
     ],
-    test_suite = 'tests',
+    test_suite = 'tests.tests',
 )

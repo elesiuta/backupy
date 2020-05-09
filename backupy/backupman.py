@@ -510,7 +510,7 @@ class BackupManager:
     ### Main backup/mirror/sync method ###
     ######################################
 
-    def backup(self):
+    def run(self):
         """Main method, use this to run your job"""
         # dry run confirmation message
         if self.config.dry_run:

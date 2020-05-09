@@ -7,8 +7,13 @@ import time
 import csv
 import json
 import typing
+import sys
 
+path = os.path.abspath(__file__)
+path = os.path.dirname(os.path.dirname(path))
+sys.path.insert(0, path)
 import backupy
+os.chdir(path)
 
 def crc(fileName, prev = 0):
     with open(fileName,"rb") as f:
@@ -221,7 +226,7 @@ def runTest(test_name, config, set=0, rewrite_log=True, rewrite_sep=True, compar
     config["source"] = dir_A_path
     config["dest"] = dir_B_path
     backup_man = backupy.backupman.BackupManager(config)
-    backup_man.backup()
+    backup_man.run()
     # fix separators and line endings again, and remove absolute paths
     if rewrite_log:
         if "log_dir" in config:

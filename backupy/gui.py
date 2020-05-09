@@ -191,7 +191,7 @@ def main_gui():
             args["source"] = source_dir
             args["load"] = True
             backup_manager = BackupManager(args, gui=True)
-            backup_manager.backup()
+            backup_manager.run()
             print("")
     else:
         # store profile if new
@@ -201,7 +201,7 @@ def main_gui():
         # check config and execute
         if args["source"] != None and (args["dest"] != None or args["load"]):
             backup_manager = BackupManager(args, gui=True)
-            backup_manager.backup()
+            backup_manager.run()
             print("")
         else:
             print(colourize("At least one of the following conditions must be satisfied:\n"

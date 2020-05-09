@@ -111,7 +111,7 @@ def main():
     args = parser.parse_args()
     # create and run job
     backup_manager = BackupManager(args)
-    backup_manager.backup()
+    backup_manager.run()
 
 if __name__ == "__main__":
     # execute with python -m backupy.cli
