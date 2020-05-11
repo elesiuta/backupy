@@ -116,6 +116,29 @@ class BackupManager(FileManager, LogManager):
         print(self.colourString(getString("Run aborted"), "WARNING"))
         return 1
 
+    def skipFileTransfers(self, source_only: list, dest_only: list, changed: list) -> bool:
+        self.log.append([getString("### SKIPPED ###")])
+        while True:
+            print(self.colourString(getString("Enter file paths to remove from transfer queue, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
+            p = input("> ")
+            if len(p) == 0 or p == "?":
+                print(self.colourString(getString("Enter file paths to remove from transfer queue, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
+            elif p == "continue":
+                return True
+            elif p == "cancel":
+                return False
+            if p in source_only:
+                source_only.remove(p)
+                self.log.append(["File:", "Source", p])
+            elif p in dest_only:
+                dest_only.remove(p)
+                self.log.append(["File:", "Dest", p])
+            elif p in changed:
+                changed.remove(p)
+                self.log.append(["File:", "Changed", p])
+            else:
+                print(self.colourString(getString("Could not find file in queues: %s") % (p), "WARNING"))
+
     def _checkConsistency(self, dest_database_load_success: bool,
                           source_only: list, dest_only: list, changed: list, moved: list) -> None:
         d1, d2, d3, d4, d5, d6, d7 = self.source.getDicts()
@@ -330,7 +353,10 @@ class BackupManager(FileManager, LogManager):
             else:
                 print(self.colourString(getString("Scan complete, continue with %s%s (y/N)?") % (self.config.main_mode, simulation_msg), "OKGREEN"))
                 go = input("> ")
-            if len(go) == 0 or go[0].lower() != "y":
+            if len(go) == 4 and go.lower() == "skip":
+                if not self.skipFileTransfers(source_only, dest_only, changed):
+                    return self.abortRun()
+            elif len(go) == 0 or go[0].lower() != "y":
                 return self.abortRun()
         # backup operations
         self._performBackup(source_only, dest_only, changed, moved, simulation_msg)
