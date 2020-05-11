@@ -24,18 +24,18 @@ import typing
 from .config import ConfigObject
 from .dirinfo import DirInfo
 from .fileman import FileManager
+from .logman import LogManager
 from .utils import (
     getString,
     getVersion,
     readJson,
-    writeCsv,
     writeJson,
 )
 
 
-class BackupManager(FileManager):
+class BackupManager(FileManager, LogManager):
     def __init__(self, args: typing.Union[argparse.Namespace, dict], gui: bool = False):
-        """Main class, configure with an argparse namespace or dictionary to create a job then run with .run()"""
+        """Main class, configure with an argparse namespace or dictionary to create a job then execute with .run()"""
         # init logging
         self.log = []
         self.backup_time = datetime.datetime.now().strftime("%y%m%d-%H%M")
@@ -52,7 +52,7 @@ class BackupManager(FileManager):
         self.config = ConfigObject(args)
         # load config (be careful if using a non-default config_dir!)
         if "load" in args and args["load"] is True:
-            self.loadJson()
+            self.loadConfig()
         # set args that can overwrite loaded config
         if "dry_run" in args and args["dry_run"] is True:
             self.config.dry_run = True
@@ -77,7 +77,7 @@ class BackupManager(FileManager):
         self.dest = None
         # save config
         if "save" in args and args["save"] is True:
-            self.saveJson()
+            self.saveConfig()
         # gui modifications
         self.terminal_width = shutil.get_terminal_size()[0]
         if self.gui:
@@ -95,16 +95,12 @@ class BackupManager(FileManager):
                          getString("Dest DB CRC:"), "0",
                          getString("Config:"), str(vars(self.config))])
 
-    ##################################
-    # Saving/loading/logging methods #
-    ##################################
-
-    def saveJson(self) -> None:
+    def saveConfig(self) -> None:
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
         print(self.colourString(getString("Config saved"), "OKGREEN"))
         sys.exit()
 
-    def loadJson(self) -> None:
+    def loadConfig(self) -> None:
         current_source = self.config.source
         config_dir = os.path.abspath(os.path.join(self.config.source, self.config.config_dir, "config.json"))
         config = readJson(config_dir)
@@ -114,137 +110,11 @@ class BackupManager(FileManager):
             print(self.colourString(getString("A config file matching the specified source was not found (case sensitive)"), "FAIL"))
             sys.exit()
 
-    def writeLog(self, db_name: str) -> None:
-        if not self.config.nolog:
-            # <source|dest>/.backupy/database.json
-            if self.config.dry_run:
-                db_name = db_name[:-4] + "dryrun.json"
-            self.source.saveJson(db_name)
-            self.dest.saveJson(db_name)
-            self.log[1][5] = self.source.calcCrc(os.path.join(self.source.dir, self.source.config_dir, db_name))
-            self.log[1][7] = self.dest.calcCrc(os.path.join(self.dest.dir, self.dest.config_dir, db_name))
-            # <source>/.backupy/Logs/log-yymmdd-HHMM.csv
-            if self.config.root_alias_log or self.config.force_posix_path_sep:
-                for i in range(2, len(self.log)):
-                    for j in range(len(self.log[i])):
-                        if type(self.log[i][j]) == str:
-                            if self.config.root_alias_log:
-                                self.log[i][j] = self.log[i][j].replace(self.config.source, getString("<source>"))
-                                self.log[i][j] = self.log[i][j].replace(self.config.dest, getString("<dest>"))
-                            if self.config.force_posix_path_sep:
-                                self.log[i][j] = self.log[i][j].replace(os.path.sep, "/")
-            writeCsv(os.path.join(self.config.source, self.config.log_dir, "log-" + self.backup_time + ".csv"), self.log)
-
     def abortRun(self) -> int:
         self.log.append([getString("### ABORTED ###")])
         self.writeLog("database.aborted.json")
         print(self.colourString(getString("Run aborted"), "WARNING"))
         return 1
-
-    ###############################
-    # String manipulation methods #
-    ###############################
-
-    def replaceSurrogates(self, string: str) -> str:
-        return string.encode("utf-8", "surrogateescape").decode("utf-8", "replace")
-
-    def colourString(self, string: str, colour: str) -> str:
-        string = self.replaceSurrogates(string)
-        if self.gui:
-            return self.gui_colourize(string, colour)
-        colours = {
-            "HEADER": '\033[95m',
-            "OKBLUE": '\033[94m',
-            "OKGREEN": '\033[92m',
-            "WARNING": '\033[93m',
-            "FAIL": '\033[91m',
-            "ENDC": '\033[0m',
-            "BOLD": '\033[1m',
-            "UNDERLINE": '\033[4m'
-        }
-        return colours[colour] + string + colours["ENDC"]
-
-    def prettySize(self, size: float) -> str:
-        if size > 10**9:
-            return "{:<10}".format("%s GB" % (round(size/10**9, 2)))
-        elif size > 10**6:
-            return "{:<10}".format("%s MB" % (round(size/10**6, 2)))
-        elif size > 10**3:
-            return "{:<10}".format("%s kB" % (round(size/10**3, 2)))
-        else:
-            return "{:<10}".format("%s B" % (size))
-
-    def prettyAttr(self, attr: dict) -> list:
-        attr_list = []
-        attr_list.append(self.prettySize(attr["size"]).strip())
-        attr_list.append(time.ctime(attr["mtime"]))
-        if "crc" in attr:
-            attr_list.append(attr["crc"])
-        if "dir" in attr:
-            attr_list.append("dir: %s" % (attr["dir"]))
-        return attr_list
-
-    ####################
-    # Printing methods #
-    ####################
-
-    def colourPrint(self, msg: str, colour: str) -> None:
-        if self.config.verbose:
-            if colour == "NONE":
-                print(self.replaceSurrogates(msg))
-            else:
-                print(self.colourString(msg, colour))
-
-    def printFileInfo(self, header: str, f: str, d: dict, sub_header: str = "", skip_info: bool = False) -> None:
-        header, sub_header = getString(header), getString(sub_header)
-        if f in d and d[f] is not None:
-            self.log.append([header.strip(), sub_header.strip(), f] + self.prettyAttr(d[f]))
-            missing = False
-        else:
-            self.log.append([header.strip(), sub_header.strip(), f] + [getString("Missing")])
-            missing = True
-        if header == "":
-            s = ""
-        else:
-            s = self.colourString(header, "OKBLUE") + self.replaceSurrogates(f)
-            if not skip_info:
-                s = s + "\n"
-        if not skip_info:
-            extra_space = " "*min(4, self.terminal_width//5-16)
-            s = s + extra_space*2 + self.colourString(sub_header, "OKBLUE") + " "*(8-len(sub_header))
-            if not missing:
-                s = s + extra_space + self.colourString(getString(" Size: "), "OKBLUE") + self.prettySize(d[f]["size"])
-                s = s + extra_space + self.colourString(getString(" Modified: "), "OKBLUE") + time.ctime(d[f]["mtime"])
-                if "crc" in d[f]:
-                    s = s + extra_space + self.colourString(getString(" Hash: "), "OKBLUE") + d[f]["crc"]
-            else:
-                s = s + extra_space + self.colourString(getString(" Missing"), "OKBLUE")
-        print(s)
-
-    def printFiles(self, l: list, d: dict) -> None:
-        for f in l:
-            self.printFileInfo("File: ", f, d)
-
-    def printChangedFiles(self, l: list, d1: dict, d2: dict, s1: str = " Source", s2: str = "   Dest") -> None:
-        for f in l:
-            self.printFileInfo("File: ", f, d1, s1)
-            self.printFileInfo("", f, d2, s2)
-
-    def printMovedFiles(self, l: list, d1: dict, d2: dict, h1: str = "Source: ", h2: str = "  Dest: ") -> None:
-        for f in l:
-            self.printFileInfo(h1, f["source"], d1, skip_info=True)
-            self.printFileInfo(h2, f["dest"], d2)
-
-    def printSyncDbConflicts(self, l: list, d1: dict, d2: dict, d1db: dict, d2db: dict) -> None:
-        for f in l:
-            self.printFileInfo("File: ", f, d1, " Source")
-            self.printFileInfo("", f, d1db, "     DB")
-            self.printFileInfo("", f, d2, "   Dest")
-            self.printFileInfo("", f, d2db, "     DB")
-
-    ##################################
-    # Helper functions used by run() #
-    ##################################
 
     def _checkConsistency(self, dest_database_load_success: bool,
                           source_only: list, dest_only: list, changed: list, moved: list) -> None:
@@ -388,10 +258,6 @@ class BackupManager(FileManager):
             self.copyFiles(self.config.dest, self.config.source, dest_only, dest_only)
             self.handleMovedFiles(moved)
             self.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
-
-    ##################################
-    # Main backup/mirror/sync method #
-    ##################################
 
     def run(self):
         """Main method, use this to run your job"""

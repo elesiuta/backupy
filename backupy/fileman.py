@@ -22,6 +22,7 @@ from .utils import getString
 
 class FileManager:
     def __init__(self):
+        """Superclass for BackupManager providing file operation methods"""
         raise Exception("ERROR: FileManager should be inheritted by BackupManager, never instantiated directly")
 
     ##########################################################################
