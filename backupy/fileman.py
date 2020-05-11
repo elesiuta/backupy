@@ -16,6 +16,9 @@
 import os
 import shutil
 
+from .config import ConfigObject
+from .dirinfo import DirInfo
+from .logman import LogManager
 from .statusbar import StatusBar
 from .utils import getString
 
@@ -26,6 +29,14 @@ class FileManager:
 
     def __init__(self):
         """Superclass for BackupManager providing file operation methods"""
+        # init attributes for linting
+        self.log = []
+        self.source = DirInfo("", "", "")
+        self.dest = DirInfo("", "", "")
+        self.config = ConfigObject({})
+        self.colourPrint = lambda a, b: a
+        self.gui = False
+        self.backup_time = 0
         raise Exception("ERROR: FileManager should be inheritted by BackupManager, never instantiated directly")
 
     ##########################################################################

@@ -116,7 +116,7 @@ class BackupManager(FileManager, LogManager):
         print(self.colourString(getString("Run aborted"), "WARNING"))
         return 1
 
-    def skipFileTransfers(self, source_only: list, dest_only: list, changed: list) -> bool:
+    def _skipFileTransfers(self, source_only: list, dest_only: list, changed: list) -> bool:
         self.log.append([getString("### SKIPPED ###")])
         while True:
             print(self.colourString(getString("Enter file paths to remove from transfer queue, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
@@ -354,7 +354,7 @@ class BackupManager(FileManager, LogManager):
                 print(self.colourString(getString("Scan complete, continue with %s%s (y/N)?") % (self.config.main_mode, simulation_msg), "OKGREEN"))
                 go = input("> ")
             if len(go) == 4 and go.lower() == "skip":
-                if not self.skipFileTransfers(source_only, dest_only, changed):
+                if not self._skipFileTransfers(source_only, dest_only, changed):
                     return self.abortRun()
             elif len(go) == 0 or go[0].lower() != "y":
                 return self.abortRun()

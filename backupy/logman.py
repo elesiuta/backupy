@@ -16,6 +16,8 @@
 import os
 import time
 
+from .config import ConfigObject
+from .dirinfo import DirInfo
 from .utils import (
     getString,
     writeCsv,
@@ -25,6 +27,15 @@ from .utils import (
 class LogManager:
     def __init__(self):
         """Superclass for BackupManager providing methods for log formatting and pretty printing"""
+        # init attributes for linting
+        self.config = ConfigObject({})
+        self.source = DirInfo("", "", "")
+        self.dest = DirInfo("", "", "")
+        self.log = []
+        self.gui = False
+        self.gui_colourize = lambda a, b: a
+        self.terminal_width = 80
+        self.backup_time = 0
         raise Exception("ERROR: LogManager should be inheritted by BackupManager, never instantiated directly")
 
     def writeLog(self, db_name: str) -> None:
