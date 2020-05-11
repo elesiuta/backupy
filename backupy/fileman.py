@@ -21,6 +21,9 @@ from .utils import getString
 
 
 class FileManager:
+    # expose the copy function as a class attribute for easy monkey-patching
+    copy_function = shutil.copy2
+
     def __init__(self):
         """Superclass for BackupManager providing file operation methods"""
         raise Exception("ERROR: FileManager should be inheritted by BackupManager, never instantiated directly")
@@ -59,7 +62,7 @@ class FileManager:
                 else:
                     if not os.path.isdir(os.path.dirname(dest)):
                         os.makedirs(os.path.dirname(dest))
-                    shutil.copy2(source, dest)
+                    FileManager.copy_function(source, dest)
                     if self.config.verify_copy:
                         self.source.verifyCrcOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
         except Exception as e:
