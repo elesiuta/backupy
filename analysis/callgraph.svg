@@ -68,7 +68,7 @@
 <text text-anchor="middle" x="2096" y="-894.3" font-family="Times,serif" font-size="14.00" fill="#000000">__init__</text>
 </g>
 <!-- backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager____init__ -->
-<g id="edge6" class="edge">
+<g id="edge11" class="edge">
 <title>backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager____init__</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1408.85,-998.59C1539.48,-987.16 1808.65,-960.25 2033,-916 2038.91,-914.83 2045.08,-913.42 2051.15,-911.91"/>
 <polygon fill="transparent" stroke="transparent" points="2052.41,-915.2 2061.21,-909.3 2050.65,-908.42 2052.41,-915.2"/>
@@ -80,7 +80,7 @@
 <text text-anchor="middle" x="481" y="-786.3" font-family="Times,serif" font-size="14.00" fill="#000000">_checkConsistency</text>
 </g>
 <!-- backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager___checkConsistency -->
-<g id="edge9" class="edge">
+<g id="edge3" class="edge">
 <title>backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager___checkConsistency</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1270.81,-992.85C1192.53,-976.54 1050.43,-946.14 930,-916 789.37,-880.81 625.67,-833.65 540.07,-808.51"/>
 <polygon fill="transparent" stroke="transparent" points="540.85,-805.1 530.27,-805.63 538.88,-811.81 540.85,-805.1"/>
@@ -92,7 +92,7 @@
 <text text-anchor="middle" x="747" y="-786.3" font-family="Times,serif" font-size="14.00" fill="#000000">_databaseAndCorruptionCheck</text>
 </g>
 <!-- backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager___databaseAndCorruptionCheck -->
-<g id="edge4" class="edge">
+<g id="edge7" class="edge">
 <title>backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager___databaseAndCorruptionCheck</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1274.7,-992.15C1211.3,-976.78 1104.7,-948.94 1016,-916 932.66,-885.05 839.39,-839 787.49,-812.29"/>
 <polygon fill="transparent" stroke="transparent" points="789.09,-809.17 778.59,-807.69 785.87,-815.39 789.09,-809.17"/>
@@ -104,7 +104,7 @@
 <text text-anchor="middle" x="1050" y="-786.3" font-family="Times,serif" font-size="14.00" fill="#000000">_performBackup</text>
 </g>
 <!-- backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager___performBackup -->
-<g id="edge11" class="edge">
+<g id="edge5" class="edge">
 <title>backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager___performBackup</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1308.49,-988.56C1258.92,-950.67 1136.53,-857.13 1079.78,-813.76"/>
 <polygon fill="transparent" stroke="transparent" points="1081.65,-810.78 1071.58,-807.49 1077.4,-816.35 1081.65,-810.78"/>
@@ -116,7 +116,7 @@
 <text text-anchor="middle" x="193" y="-786.3" font-family="Times,serif" font-size="14.00" fill="#000000">_printAndLogCompareDiffSummary</text>
 </g>
 <!-- backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager___printAndLogCompareDiffSummary -->
-<g id="edge8" class="edge">
+<g id="edge2" class="edge">
 <title>backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager___printAndLogCompareDiffSummary</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1262.06,-994.76C1159.55,-979.1 959.28,-947.66 790,-916 604.09,-881.23 386.99,-834.13 272.72,-808.83"/>
 <polygon fill="transparent" stroke="transparent" points="273.18,-805.35 262.66,-806.6 271.66,-812.18 273.18,-805.35"/>
@@ -128,7 +128,7 @@
 <text text-anchor="middle" x="1330" y="-786.3" font-family="Times,serif" font-size="14.00" fill="#000000">_printAndLogScanOnlyDiffSummary</text>
 </g>
 <!-- backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager___printAndLogScanOnlyDiffSummary -->
-<g id="edge7" class="edge">
+<g id="edge12" class="edge">
 <title>backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager___printAndLogScanOnlyDiffSummary</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1330,-987.85C1330,-950.83 1330,-863.18 1330,-818.39"/>
 <polygon fill="transparent" stroke="transparent" points="1333.5,-818.23 1330,-808.23 1326.5,-818.23 1333.5,-818.23"/>
@@ -140,7 +140,7 @@
 <text text-anchor="middle" x="1619" y="-786.3" font-family="Times,serif" font-size="14.00" fill="#000000">_skipFileTransfers</text>
 </g>
 <!-- backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager___skipFileTransfers -->
-<g id="edge10" class="edge">
+<g id="edge4" class="edge">
 <title>backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager___skipFileTransfers</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1352.2,-988.56C1403.34,-950.69 1529.58,-857.21 1588.19,-813.81"/>
 <polygon fill="transparent" stroke="transparent" points="1590.37,-816.55 1596.33,-807.79 1586.21,-810.93 1590.37,-816.55"/>
@@ -152,7 +152,7 @@
 <text text-anchor="middle" x="1783" y="-786.3" font-family="Times,serif" font-size="14.00" fill="#000000">abortRun</text>
 </g>
 <!-- backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager__abortRun -->
-<g id="edge5" class="edge">
+<g id="edge10" class="edge">
 <title>backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager__abortRun</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1363.31,-989.26C1445.32,-950.52 1656.67,-850.68 1744.17,-809.34"/>
 <polygon fill="transparent" stroke="transparent" points="1745.69,-812.5 1753.23,-805.06 1742.7,-806.17 1745.69,-812.5"/>
@@ -164,7 +164,7 @@
 <text text-anchor="middle" x="2096" y="-786.3" font-family="Times,serif" font-size="14.00" fill="#000000">loadConfig</text>
 </g>
 <!-- backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager__loadConfig -->
-<g id="edge3" class="edge">
+<g id="edge9" class="edge">
 <title>backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager__loadConfig</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1414.85,-1002.54C1574.84,-996.52 1913.84,-976.78 2012,-916 2031.42,-903.97 2063.47,-850.12 2081.86,-817.15"/>
 <polygon fill="transparent" stroke="transparent" points="2085.11,-818.5 2086.88,-808.05 2078.98,-815.12 2085.11,-818.5"/>
@@ -176,7 +176,7 @@
 <text text-anchor="middle" x="1050" y="-894.3" font-family="Times,serif" font-size="14.00" fill="#000000">run</text>
 </g>
 <!-- backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager__run -->
-<g id="edge12" class="edge">
+<g id="edge6" class="edge">
 <title>backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager__run</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1290.18,-989.93C1234.41,-968.81 1134.1,-930.84 1082.55,-911.32"/>
 <polygon fill="transparent" stroke="transparent" points="1083.5,-907.94 1072.91,-907.67 1081.03,-914.49 1083.5,-907.94"/>
@@ -188,7 +188,7 @@
 <text text-anchor="middle" x="2248" y="-786.3" font-family="Times,serif" font-size="14.00" fill="#000000">saveConfig</text>
 </g>
 <!-- backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager__saveConfig -->
-<g id="edge2" class="edge">
+<g id="edge8" class="edge">
 <title>backupy__backupman__BackupManager&#45;&gt;backupy__backupman__BackupManager__saveConfig</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1415.98,-1003.83C1599.43,-1000.02 2022.64,-983.92 2147,-916 2188.32,-893.44 2219.05,-846.31 2235.2,-816.8"/>
 <polygon fill="transparent" stroke="transparent" points="2238.33,-818.37 2239.92,-807.9 2232.14,-815.09 2238.33,-818.37"/>
@@ -242,7 +242,7 @@
 <polygon fill="#000000" stroke="#000000" points="709.6,-277.72 705.02,-268.17 702.64,-278.49 709.6,-277.72"/>
 </g>
 <!-- backupy__backupman__BackupManager___performBackup&#45;&gt;backupy__dirinfo__DirInfo__getDicts -->
-<g id="edge51" class="edge">
+<g id="edge54" class="edge">
 <title>backupy__backupman__BackupManager___performBackup&#45;&gt;backupy__dirinfo__DirInfo__getDicts</title>
 <path fill="none" stroke="#000000" d="M1039.04,-772.01C988.7,-693.97 779.54,-369.67 719.3,-276.27"/>
 <polygon fill="#000000" stroke="#000000" points="722.15,-274.23 713.79,-267.73 716.27,-278.03 722.15,-274.23"/>
@@ -254,7 +254,7 @@
 <text text-anchor="middle" x="1312" y="-678.3" font-family="Times,serif" font-size="14.00" fill="#000000">copyFiles</text>
 </g>
 <!-- backupy__backupman__BackupManager___performBackup&#45;&gt;backupy__fileman__FileManager__copyFiles -->
-<g id="edge54" class="edge">
+<g id="edge52" class="edge">
 <title>backupy__backupman__BackupManager___performBackup&#45;&gt;backupy__fileman__FileManager__copyFiles</title>
 <path fill="none" stroke="#000000" d="M1087.82,-773.7C1136.01,-754.2 1219.09,-720.59 1269.45,-700.22"/>
 <polygon fill="#000000" stroke="#000000" points="1270.8,-703.44 1278.76,-696.45 1268.18,-696.95 1270.8,-703.44"/>
@@ -266,7 +266,7 @@
 <text text-anchor="middle" x="1502" y="-678.3" font-family="Times,serif" font-size="14.00" fill="#000000">handleChangedFiles</text>
 </g>
 <!-- backupy__backupman__BackupManager___performBackup&#45;&gt;backupy__fileman__FileManager__handleChangedFiles -->
-<g id="edge50" class="edge">
+<g id="edge53" class="edge">
 <title>backupy__backupman__BackupManager___performBackup&#45;&gt;backupy__fileman__FileManager__handleChangedFiles</title>
 <path fill="none" stroke="#000000" d="M1105.42,-776C1187.9,-756.66 1342.85,-720.32 1432.71,-699.25"/>
 <polygon fill="#000000" stroke="#000000" points="1433.59,-702.64 1442.53,-696.95 1432,-695.82 1433.59,-702.64"/>
@@ -278,7 +278,7 @@
 <text text-anchor="middle" x="1960" y="-678.3" font-family="Times,serif" font-size="14.00" fill="#000000">handleDeletedFiles</text>
 </g>
 <!-- backupy__backupman__BackupManager___performBackup&#45;&gt;backupy__fileman__FileManager__handleDeletedFiles -->
-<g id="edge53" class="edge">
+<g id="edge50" class="edge">
 <title>backupy__backupman__BackupManager___performBackup&#45;&gt;backupy__fileman__FileManager__handleDeletedFiles</title>
 <path fill="none" stroke="#000000" d="M1111.58,-777.18C1122.36,-775.3 1133.49,-773.49 1144,-772 1450.13,-728.45 1529.01,-737 1836,-700 1848.26,-698.52 1861.18,-696.86 1873.87,-695.18"/>
 <polygon fill="#000000" stroke="#000000" points="1874.53,-698.62 1883.98,-693.82 1873.6,-691.68 1874.53,-698.62"/>
@@ -290,7 +290,7 @@
 <text text-anchor="middle" x="1733" y="-678.3" font-family="Times,serif" font-size="14.00" fill="#000000">handleMovedFiles</text>
 </g>
 <!-- backupy__backupman__BackupManager___performBackup&#45;&gt;backupy__fileman__FileManager__handleMovedFiles -->
-<g id="edge52" class="edge">
+<g id="edge51" class="edge">
 <title>backupy__backupman__BackupManager___performBackup&#45;&gt;backupy__fileman__FileManager__handleMovedFiles</title>
 <path fill="none" stroke="#000000" d="M1112.65,-777.41C1123.11,-775.55 1133.86,-773.68 1144,-772 1239.8,-756.1 1512.02,-715.63 1650.26,-695.2"/>
 <polygon fill="#000000" stroke="#000000" points="1651,-698.63 1660.38,-693.7 1649.98,-691.7 1651,-698.63"/>
@@ -398,7 +398,7 @@
 <polygon fill="#000000" stroke="#000000" points="1947.82,-264.62 1937.26,-263.7 1944.94,-271 1947.82,-264.62"/>
 </g>
 <!-- backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo____init__ -->
-<g id="edge20" class="edge">
+<g id="edge14" class="edge">
 <title>backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo____init__</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1436.24,-355.48C1559.23,-350.47 1921.06,-331.04 2214,-268 2217.4,-267.27 2220.89,-266.4 2224.38,-265.44"/>
 <polygon fill="transparent" stroke="transparent" points="2225.5,-268.76 2234.11,-262.58 2223.53,-262.05 2225.5,-268.76"/>
@@ -410,13 +410,13 @@
 <text text-anchor="middle" x="1453" y="-30.3" font-family="Times,serif" font-size="14.00" fill="#000000">calcCrc</text>
 </g>
 <!-- backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__calcCrc -->
-<g id="edge19" class="edge">
+<g id="edge30" class="edge">
 <title>backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__calcCrc</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1418.55,-343.16C1443.26,-328.22 1479.32,-301.93 1496,-268 1524.26,-210.51 1517.95,-186.04 1502,-124 1495.98,-100.58 1482.35,-76.72 1470.99,-59.61"/>
 <polygon fill="transparent" stroke="transparent" points="1473.85,-57.58 1465.31,-51.31 1468.08,-61.54 1473.85,-57.58"/>
 </g>
 <!-- backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__dirCompare -->
-<g id="edge25" class="edge">
+<g id="edge18" class="edge">
 <title>backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__dirCompare</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1365.83,-343.79C1327.87,-325.33 1258.7,-291.7 1214.89,-270.39"/>
 <polygon fill="transparent" stroke="transparent" points="1216.2,-267.14 1205.68,-265.92 1213.14,-273.44 1216.2,-267.14"/>
@@ -428,7 +428,7 @@
 <text text-anchor="middle" x="1203" y="-138.3" font-family="Times,serif" font-size="14.00" fill="#000000">fileMatch</text>
 </g>
 <!-- backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__fileMatch -->
-<g id="edge18" class="edge">
+<g id="edge29" class="edge">
 <title>backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__fileMatch</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1367.03,-343.41C1339.64,-328.05 1296.58,-300.87 1268,-268 1264.41,-263.88 1234.16,-204.6 1216.22,-169.18"/>
 <polygon fill="transparent" stroke="transparent" points="1219.16,-167.23 1211.52,-159.89 1212.91,-170.39 1219.16,-167.23"/>
@@ -440,13 +440,13 @@
 <text text-anchor="middle" x="1453" y="-138.3" font-family="Times,serif" font-size="14.00" fill="#000000">getCrc</text>
 </g>
 <!-- backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__getCrc -->
-<g id="edge15" class="edge">
+<g id="edge25" class="edge">
 <title>backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__getCrc</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1417.48,-342.96C1441.07,-327.87 1475.28,-301.48 1490,-268 1504.6,-234.79 1486.41,-194.15 1470.76,-168.42"/>
 <polygon fill="transparent" stroke="transparent" points="1473.51,-166.2 1465.18,-159.65 1467.6,-169.96 1473.51,-166.2"/>
 </g>
 <!-- backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__getDicts -->
-<g id="edge29" class="edge">
+<g id="edge23" class="edge">
 <title>backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__getDicts</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1350.76,-353.27C1248.51,-343.77 979.84,-315.95 760,-268 756.36,-267.2 752.6,-266.3 748.85,-265.32"/>
 <polygon fill="transparent" stroke="transparent" points="749.54,-261.88 738.97,-262.62 747.69,-268.63 749.54,-261.88"/>
@@ -458,13 +458,13 @@
 <text text-anchor="middle" x="1003" y="-138.3" font-family="Times,serif" font-size="14.00" fill="#000000">getMovedAndUpdateLists</text>
 </g>
 <!-- backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__getMovedAndUpdateLists -->
-<g id="edge30" class="edge">
+<g id="edge24" class="edge">
 <title>backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__getMovedAndUpdateLists</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1350.11,-354.79C1288.14,-349.43 1173.2,-331.04 1102,-268 1088.89,-256.39 1095.66,-246.6 1086,-232 1070.03,-207.86 1047.38,-184.06 1029.77,-167.16"/>
 <polygon fill="transparent" stroke="transparent" points="1031.76,-164.22 1022.08,-159.9 1026.95,-169.31 1031.76,-164.22"/>
 </g>
 <!-- backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__loadJson -->
-<g id="edge26" class="edge">
+<g id="edge19" class="edge">
 <title>backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__loadJson</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1351.96,-351.67C1263.79,-339.85 1050.03,-309.19 874,-268 870.42,-267.16 866.74,-266.23 863.04,-265.24"/>
 <polygon fill="transparent" stroke="transparent" points="863.89,-261.85 853.31,-262.54 862.01,-268.59 863.89,-261.85"/>
@@ -476,7 +476,7 @@
 <text text-anchor="middle" x="1937" y="-138.3" font-family="Times,serif" font-size="14.00" fill="#000000">pathMatch</text>
 </g>
 <!-- backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__pathMatch -->
-<g id="edge24" class="edge">
+<g id="edge17" class="edge">
 <title>backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__pathMatch</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1436.91,-357.1C1558.03,-356.35 1892.4,-347.04 1960,-268 1983.61,-240.4 1967.35,-196.62 1952.73,-168.87"/>
 <polygon fill="transparent" stroke="transparent" points="1955.6,-166.83 1947.7,-159.78 1949.48,-170.22 1955.6,-166.83"/>
@@ -488,13 +488,13 @@
 <text text-anchor="middle" x="1580" y="-246.3" font-family="Times,serif" font-size="14.00" fill="#000000">saveJson</text>
 </g>
 <!-- backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__saveJson -->
-<g id="edge27" class="edge">
+<g id="edge20" class="edge">
 <title>backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__saveJson</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1417.83,-342.92C1450.53,-324.39 1508.2,-291.7 1545.22,-270.71"/>
 <polygon fill="transparent" stroke="transparent" points="1547.19,-273.62 1554.16,-265.65 1543.74,-267.53 1547.19,-273.62"/>
 </g>
 <!-- backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__scanDir -->
-<g id="edge21" class="edge">
+<g id="edge15" class="edge">
 <title>backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__scanDir</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1433.13,-350.91C1513.62,-338.34 1700.21,-307.36 1854,-268 1857.18,-267.19 1860.46,-266.29 1863.74,-265.34"/>
 <polygon fill="transparent" stroke="transparent" points="1864.96,-268.63 1873.53,-262.4 1862.95,-261.93 1864.96,-268.63"/>
@@ -518,7 +518,7 @@
 <text text-anchor="middle" x="1272" y="-30.3" font-family="Times,serif" font-size="14.00" fill="#000000">timeMatch</text>
 </g>
 <!-- backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__timeMatch -->
-<g id="edge14" class="edge">
+<g id="edge27" class="edge">
 <title>backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__timeMatch</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1367.06,-343.23C1341.95,-328.36 1305.25,-302.12 1288,-268 1270.16,-232.71 1270.22,-115.92 1271.26,-62.32"/>
 <polygon fill="transparent" stroke="transparent" points="1274.76,-62.27 1271.48,-52.19 1267.76,-62.11 1274.76,-62.27"/>
@@ -530,7 +530,7 @@
 <text text-anchor="middle" x="980" y="-246.3" font-family="Times,serif" font-size="14.00" fill="#000000">updateDictOnCopy</text>
 </g>
 <!-- backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__updateDictOnCopy -->
-<g id="edge17" class="edge">
+<g id="edge28" class="edge">
 <title>backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__updateDictOnCopy</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1357.07,-347.78C1287.34,-329.88 1132.8,-290.22 1044.74,-267.62"/>
 <polygon fill="transparent" stroke="transparent" points="1045.42,-264.18 1034.86,-265.08 1043.68,-270.96 1045.42,-264.18"/>
@@ -542,7 +542,7 @@
 <text text-anchor="middle" x="1746" y="-246.3" font-family="Times,serif" font-size="14.00" fill="#000000">updateDictOnMove</text>
 </g>
 <!-- backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__updateDictOnMove -->
-<g id="edge23" class="edge">
+<g id="edge16" class="edge">
 <title>backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__updateDictOnMove</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1427.17,-346.74C1487.28,-328.69 1612.6,-291.06 1686.97,-268.73"/>
 <polygon fill="transparent" stroke="transparent" points="1688.1,-272.04 1696.67,-265.81 1686.08,-265.34 1688.1,-272.04"/>
@@ -554,7 +554,7 @@
 <text text-anchor="middle" x="2095" y="-246.3" font-family="Times,serif" font-size="14.00" fill="#000000">updateDictOnRemove</text>
 </g>
 <!-- backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__updateDictOnRemove -->
-<g id="edge28" class="edge">
+<g id="edge21" class="edge">
 <title>backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__updateDictOnRemove</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1433.26,-350.92C1543.55,-334.27 1852.49,-287.62 2006.05,-264.43"/>
 <polygon fill="transparent" stroke="transparent" points="2007.02,-267.82 2016.38,-262.87 2005.97,-260.9 2007.02,-267.82"/>
@@ -566,7 +566,7 @@
 <text text-anchor="middle" x="1393" y="-246.3" font-family="Times,serif" font-size="14.00" fill="#000000">verifyCrcOnCopy</text>
 </g>
 <!-- backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__verifyCrcOnCopy -->
-<g id="edge16" class="edge">
+<g id="edge26" class="edge">
 <title>backupy__dirinfo__DirInfo&#45;&gt;backupy__dirinfo__DirInfo__verifyCrcOnCopy</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1393,-339.97C1393,-323.38 1393,-297.88 1393,-278.43"/>
 <polygon fill="transparent" stroke="transparent" points="1396.5,-278.34 1393,-268.34 1389.5,-278.34 1396.5,-278.34"/>
@@ -596,25 +596,25 @@
 <polygon fill="#000000" stroke="#000000" points="1456.5,-62.34 1453,-52.34 1449.5,-62.34 1456.5,-62.34"/>
 </g>
 <!-- backupy__dirinfo__DirInfo__scanDir&#45;&gt;backupy__dirinfo__DirInfo__pathMatch -->
-<g id="edge71" class="edge">
+<g id="edge70" class="edge">
 <title>backupy__dirinfo__DirInfo__scanDir&#45;&gt;backupy__dirinfo__DirInfo__pathMatch</title>
 <path fill="none" stroke="#000000" d="M1911.82,-231.97C1916.57,-215.2 1923.88,-189.34 1929.41,-169.81"/>
 <polygon fill="#000000" stroke="#000000" points="1932.84,-170.56 1932.19,-159.99 1926.1,-168.66 1932.84,-170.56"/>
 </g>
 <!-- backupy__dirinfo__DirInfo__scanDir&#45;&gt;backupy__dirinfo__DirInfo__scanFile -->
-<g id="edge70" class="edge">
+<g id="edge71" class="edge">
 <title>backupy__dirinfo__DirInfo__scanDir&#45;&gt;backupy__dirinfo__DirInfo__scanFile</title>
 <path fill="none" stroke="#000000" d="M1873.57,-237.43C1867.13,-235.44 1860.39,-233.53 1854,-232 1657,-184.93 1601.87,-203.26 1404,-160 1399.34,-158.98 1394.52,-157.82 1389.71,-156.6"/>
 <polygon fill="#000000" stroke="#000000" points="1390.49,-153.18 1379.93,-154.01 1388.7,-159.95 1390.49,-153.18"/>
 </g>
 <!-- backupy__dirinfo__DirInfo__scanFile&#45;&gt;backupy__dirinfo__DirInfo__calcCrc -->
-<g id="edge72" class="edge">
+<g id="edge73" class="edge">
 <title>backupy__dirinfo__DirInfo__scanFile&#45;&gt;backupy__dirinfo__DirInfo__calcCrc</title>
 <path fill="none" stroke="#000000" d="M1359.71,-124.9C1378.23,-107.05 1408.25,-78.12 1429.22,-57.92"/>
 <polygon fill="#000000" stroke="#000000" points="1431.72,-60.36 1436.5,-50.9 1426.87,-55.32 1431.72,-60.36"/>
 </g>
 <!-- backupy__dirinfo__DirInfo__scanFile&#45;&gt;backupy__dirinfo__DirInfo__timeMatch -->
-<g id="edge73" class="edge">
+<g id="edge72" class="edge">
 <title>backupy__dirinfo__DirInfo__scanFile&#45;&gt;backupy__dirinfo__DirInfo__timeMatch</title>
 <path fill="none" stroke="#000000" d="M1331.91,-124.44C1320.41,-107.27 1302.29,-80.21 1288.98,-60.35"/>
 <polygon fill="#000000" stroke="#000000" points="1291.72,-58.16 1283.25,-51.8 1285.91,-62.05 1291.72,-58.16"/>
@@ -626,7 +626,7 @@
 <polygon fill="#000000" stroke="#000000" points="1441.7,-170.07 1443.58,-159.64 1435.61,-166.62 1441.7,-170.07"/>
 </g>
 <!-- backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager____init__ -->
-<g id="edge38" class="edge">
+<g id="edge32" class="edge">
 <title>backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager____init__</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1960.73,-775.25C2020.3,-755.14 2130.69,-717.87 2191.34,-697.4"/>
 <polygon fill="transparent" stroke="transparent" points="2192.64,-700.66 2200.99,-694.14 2190.4,-694.03 2192.64,-700.66"/>
@@ -638,7 +638,7 @@
 <text text-anchor="middle" x="1622" y="-570.3" font-family="Times,serif" font-size="14.00" fill="#000000">archiveFile</text>
 </g>
 <!-- backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__archiveFile -->
-<g id="edge39" class="edge">
+<g id="edge41" class="edge">
 <title>backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__archiveFile</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1870.85,-777.14C1792.18,-757.7 1645.22,-719.27 1630,-700 1608.23,-672.43 1610.75,-629.88 1615.57,-602.23"/>
 <polygon fill="transparent" stroke="transparent" points="1619.07,-602.56 1617.56,-592.08 1612.2,-601.22 1619.07,-602.56"/>
@@ -650,31 +650,31 @@
 <text text-anchor="middle" x="1382" y="-570.3" font-family="Times,serif" font-size="14.00" fill="#000000">copyFile</text>
 </g>
 <!-- backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__copyFile -->
-<g id="edge42" class="edge">
+<g id="edge37" class="edge">
 <title>backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__copyFile</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1870.22,-777.39C1861.5,-775.5 1852.5,-773.62 1844,-772 1743.66,-752.84 1458.78,-775.52 1390,-700 1377.44,-686.21 1378.12,-634.74 1379.94,-602.3"/>
 <polygon fill="transparent" stroke="transparent" points="1383.44,-602.31 1380.58,-592.11 1376.46,-601.87 1383.44,-602.31"/>
 </g>
 <!-- backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__copyFiles -->
-<g id="edge41" class="edge">
+<g id="edge38" class="edge">
 <title>backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__copyFiles</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1870.22,-777.37C1861.5,-775.47 1852.5,-773.61 1844,-772 1638.07,-733.1 1583.28,-742.19 1378,-700 1372.99,-698.97 1367.78,-697.8 1362.59,-696.57"/>
 <polygon fill="transparent" stroke="transparent" points="1363.24,-693.13 1352.69,-694.15 1361.58,-699.93 1363.24,-693.13"/>
 </g>
 <!-- backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__handleChangedFiles -->
-<g id="edge35" class="edge">
+<g id="edge42" class="edge">
 <title>backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__handleChangedFiles</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1872.05,-776.84C1797.27,-757.88 1652.71,-721.22 1568.1,-699.76"/>
 <polygon fill="transparent" stroke="transparent" points="1568.9,-696.35 1558.34,-697.29 1567.18,-703.14 1568.9,-696.35"/>
 </g>
 <!-- backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__handleDeletedFiles -->
-<g id="edge37" class="edge">
+<g id="edge33" class="edge">
 <title>backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__handleDeletedFiles</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1926.43,-771.97C1932.78,-755.12 1942.6,-729.1 1949.98,-709.54"/>
 <polygon fill="transparent" stroke="transparent" points="1953.33,-710.58 1953.59,-699.99 1946.78,-708.11 1953.33,-710.58"/>
 </g>
 <!-- backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__handleMovedFiles -->
-<g id="edge34" class="edge">
+<g id="edge36" class="edge">
 <title>backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__handleMovedFiles</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1892.41,-773.36C1860.1,-755.04 1806.42,-724.62 1770.38,-704.19"/>
 <polygon fill="transparent" stroke="transparent" points="1772.05,-701.11 1761.63,-699.23 1768.6,-707.2 1772.05,-701.11"/>
@@ -686,7 +686,7 @@
 <text text-anchor="middle" x="1737" y="-462.3" font-family="Times,serif" font-size="14.00" fill="#000000">moveFile</text>
 </g>
 <!-- backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__moveFile -->
-<g id="edge36" class="edge">
+<g id="edge40" class="edge">
 <title>backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__moveFile</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1961.99,-775.5C2014.9,-756 2095.78,-716.46 2068,-664 2011.01,-556.4 1867.65,-502.2 1789.61,-479.88"/>
 <polygon fill="transparent" stroke="transparent" points="1790.08,-476.37 1779.5,-477.06 1788.2,-483.12 1790.08,-476.37"/>
@@ -698,7 +698,7 @@
 <text text-anchor="middle" x="1844" y="-570.3" font-family="Times,serif" font-size="14.00" fill="#000000">moveFiles</text>
 </g>
 <!-- backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__moveFiles -->
-<g id="edge33" class="edge">
+<g id="edge35" class="edge">
 <title>backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__moveFiles</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1902.47,-772.51C1886.15,-755.93 1862.77,-728.77 1852,-700 1840.06,-668.1 1839.74,-628.45 1841.28,-602.46"/>
 <polygon fill="transparent" stroke="transparent" points="1844.79,-602.46 1842.03,-592.23 1837.81,-601.95 1844.79,-602.46"/>
@@ -710,7 +710,7 @@
 <text text-anchor="middle" x="2114" y="-462.3" font-family="Times,serif" font-size="14.00" fill="#000000">removeFile</text>
 </g>
 <!-- backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__removeFile -->
-<g id="edge40" class="edge">
+<g id="edge34" class="edge">
 <title>backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__removeFile</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1958.57,-774.92C1995.21,-760.22 2050.44,-734.47 2090,-700 2134.44,-661.27 2149.03,-648.15 2167,-592 2178.49,-556.1 2154.94,-516.27 2135.65,-491.43"/>
 <polygon fill="transparent" stroke="transparent" points="2138.33,-489.19 2129.32,-483.61 2132.89,-493.59 2138.33,-489.19"/>
@@ -722,19 +722,19 @@
 <text text-anchor="middle" x="2092" y="-570.3" font-family="Times,serif" font-size="14.00" fill="#000000">removeFiles</text>
 </g>
 <!-- backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__removeFiles -->
-<g id="edge32" class="edge">
+<g id="edge39" class="edge">
 <title>backupy__fileman__FileManager&#45;&gt;backupy__fileman__FileManager__removeFiles</title>
 <path fill="none" stroke="transparent" stroke-dasharray="5,2" d="M1966.15,-776.38C2003.45,-763.59 2053.89,-739.9 2080,-700 2099.07,-670.85 2099.01,-629.39 2096.27,-602.34"/>
 <polygon fill="transparent" stroke="transparent" points="2099.74,-601.91 2095.08,-592.4 2092.79,-602.74 2099.74,-601.91"/>
 </g>
 <!-- backupy__fileman__FileManager____init__&#45;&gt;backupy__dirinfo__DirInfo -->
-<g id="edge76" class="edge">
+<g id="edge77" class="edge">
 <title>backupy__fileman__FileManager____init__&#45;&gt;backupy__dirinfo__DirInfo</title>
 <path fill="none" stroke="#000000" d="M2236.32,-663.72C2241.11,-620.09 2246.88,-504.92 2184,-448 2129.28,-398.46 1614.95,-369.62 1446.28,-361.43"/>
 <polygon fill="#000000" stroke="#000000" points="1446.31,-357.93 1436.15,-360.95 1445.97,-364.92 1446.31,-357.93"/>
 </g>
 <!-- backupy__fileman__FileManager____init__&#45;&gt;backupy__dirinfo__DirInfo____init__ -->
-<g id="edge77" class="edge">
+<g id="edge76" class="edge">
 <title>backupy__fileman__FileManager____init__&#45;&gt;backupy__dirinfo__DirInfo____init__</title>
 <path fill="none" stroke="#000000" d="M2235.27,-663.88C2240.18,-597.94 2257.88,-360.06 2263.95,-278.59"/>
 <polygon fill="#000000" stroke="#000000" points="2267.47,-278.4 2264.72,-268.17 2260.49,-277.88 2267.47,-278.4"/>
@@ -770,25 +770,25 @@
 <polygon fill="#000000" stroke="#000000" points="1368.42,-601.91 1371.01,-591.64 1362.58,-598.05 1368.42,-601.91"/>
 </g>
 <!-- backupy__fileman__FileManager__handleChangedFiles&#45;&gt;backupy__fileman__FileManager__archiveFile -->
-<g id="edge93" class="edge">
+<g id="edge92" class="edge">
 <title>backupy__fileman__FileManager__handleChangedFiles&#45;&gt;backupy__fileman__FileManager__archiveFile</title>
 <path fill="none" stroke="#000000" d="M1521.01,-664.2C1541.23,-646.34 1573.34,-617.98 1595.92,-598.04"/>
 <polygon fill="#000000" stroke="#000000" points="1598.29,-600.61 1603.47,-591.37 1593.66,-595.37 1598.29,-600.61"/>
 </g>
 <!-- backupy__fileman__FileManager__handleChangedFiles&#45;&gt;backupy__fileman__FileManager__copyFile -->
-<g id="edge92" class="edge">
+<g id="edge93" class="edge">
 <title>backupy__fileman__FileManager__handleChangedFiles&#45;&gt;backupy__fileman__FileManager__copyFile</title>
 <path fill="none" stroke="#000000" d="M1482.99,-664.2C1462.65,-646.24 1430.28,-617.65 1407.69,-597.69"/>
 <polygon fill="#000000" stroke="#000000" points="1409.95,-595.02 1400.14,-591.02 1405.32,-600.27 1409.95,-595.02"/>
 </g>
 <!-- backupy__fileman__FileManager__handleDeletedFiles&#45;&gt;backupy__fileman__FileManager__moveFiles -->
-<g id="edge89" class="edge">
+<g id="edge88" class="edge">
 <title>backupy__fileman__FileManager__handleDeletedFiles&#45;&gt;backupy__fileman__FileManager__moveFiles</title>
 <path fill="none" stroke="#000000" d="M1941.62,-664.2C1922.16,-646.42 1891.31,-618.23 1869.5,-598.3"/>
 <polygon fill="#000000" stroke="#000000" points="1871.66,-595.53 1861.91,-591.37 1866.93,-600.7 1871.66,-595.53"/>
 </g>
 <!-- backupy__fileman__FileManager__handleDeletedFiles&#45;&gt;backupy__fileman__FileManager__removeFiles -->
-<g id="edge88" class="edge">
+<g id="edge89" class="edge">
 <title>backupy__fileman__FileManager__handleDeletedFiles&#45;&gt;backupy__fileman__FileManager__removeFiles</title>
 <path fill="none" stroke="#000000" d="M1980.92,-664.2C2003.25,-646.27 2038.79,-617.73 2063.63,-597.78"/>
 <polygon fill="#000000" stroke="#000000" points="2066.01,-600.36 2071.62,-591.37 2061.63,-594.9 2066.01,-600.36"/>
