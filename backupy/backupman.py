@@ -41,9 +41,8 @@ class BackupManager():
         if "backup_time_override" in args and args["backup_time_override"]:
             self.backup_time = args["backup_time_override"]
             time.ctime = lambda t: time.asctime(time.gmtime(t))
-        # init log and file manager
+        # init log manager
         self.log = LogManager(self.backup_time, gui)
-        self.fileman = FileManager(self.log, self.backup_time, gui)
         # init config
         if type(args) != dict:
             args = vars(args)
@@ -51,9 +50,8 @@ class BackupManager():
         # load config (be careful if using a non-default config_dir!)
         if "load" in args and args["load"] is True:
             self.loadConfig()
-        # update log and file manager to reference the same config (don't create a new ConfigObject after this point)
+        # update log manager to reference the same config (don't create a new ConfigObject after this point)
         self.log.config = self.config
-        self.fileman.config = self.config
         # set args that can overwrite loaded config
         if "dry_run" in args and args["dry_run"] is True:
             self.config.dry_run = True
@@ -263,23 +261,25 @@ class BackupManager():
         # get databases
         source_dict, _, _, _, _, _, _ = self.source.getDicts()
         dest_dict, _, _, _, _, _, _ = self.dest.getDicts()
+        # init file manager
+        fileman = FileManager(self.config, self.source, self.dest, self.log, self.backup_time, self.gui)
         # perform the backup/mirror/sync
         self.log.append([getString("### START ") + self.config.main_mode.upper() + simulation_msg.upper() + " ###"])
         print(self.log.colourString(getString("Starting ") + self.config.main_mode, "HEADER"))
         if self.config.main_mode == "mirror":
-            self.fileman.handleDeletedFiles(self.config.dest, dest_only)
-            self.fileman.copyFiles(self.config.source, self.config.dest, source_only, source_only)
-            self.fileman.handleMovedFiles(moved)
-            self.fileman.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
+            fileman.handleDeletedFiles(self.config.dest, dest_only)
+            fileman.copyFiles(self.config.source, self.config.dest, source_only, source_only)
+            fileman.handleMovedFiles(moved)
+            fileman.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         elif self.config.main_mode == "backup":
-            self.fileman.copyFiles(self.config.source, self.config.dest, source_only, source_only)
-            self.fileman.handleMovedFiles(moved)
-            self.fileman.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
+            fileman.copyFiles(self.config.source, self.config.dest, source_only, source_only)
+            fileman.handleMovedFiles(moved)
+            fileman.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         elif self.config.main_mode == "sync":
-            self.fileman.copyFiles(self.config.source, self.config.dest, source_only, source_only)
-            self.fileman.copyFiles(self.config.dest, self.config.source, dest_only, dest_only)
-            self.fileman.handleMovedFiles(moved)
-            self.fileman.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
+            fileman.copyFiles(self.config.source, self.config.dest, source_only, source_only)
+            fileman.copyFiles(self.config.dest, self.config.source, dest_only, dest_only)
+            fileman.handleMovedFiles(moved)
+            fileman.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
 
     def run(self):
         """Main method, use this to run your job"""
@@ -311,9 +311,8 @@ class BackupManager():
             self.dest.scanDir(self.config.stdout_status_bar)
         else:
             self.dest = self.source
-        # update log and file manager to reference the same source and dest
+        # update log manager to reference the same source and dest
         self.log.source, self.log.dest = self.source, self.dest
-        self.fileman.source, self.fileman.dest = self.source, self.dest
         # compare directories (should be relatively fast, all the read operations are done during scan)
         if not self.config.scan_only:
             self.log.colourPrint(getString("Comparing directories..."), "OKBLUE")
