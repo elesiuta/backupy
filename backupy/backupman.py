@@ -121,7 +121,7 @@ class BackupManager():
                 return True
             elif p == "cancel":
                 return False
-            if p in source_only:
+            elif p in source_only:
                 source_only.remove(p)
                 self.log.append(["File:", "Source", p])
             elif p in dest_only:
