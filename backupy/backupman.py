@@ -112,8 +112,8 @@ class BackupManager():
 
     def _skipFileTransfers(self, source_only: list, dest_only: list, changed: list) -> bool:
         self.log.append([getString("### SKIPPED ###")])
+        print(self.log.colourString(getString("Enter file paths to remove from transfer queue, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
         while True:
-            print(self.log.colourString(getString("Enter file paths to remove from transfer queue, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
             p = input("> ")
             if len(p) == 0 or p == "?":
                 print(self.log.colourString(getString("Enter file paths to remove from transfer queue, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
@@ -143,7 +143,8 @@ class BackupManager():
         source_moved = set([f["source"] for f in moved])
         dest_moved = set([f["dest"] for f in moved])
         assert not (source_moved & dest_moved)
-        assert changed <= (source_modified | dest_modified) | (source_new & dest_new) | (source_crc_errors | dest_crc_errors)
+        # changed - ... below would be any skipped files
+        # assert changed <= (source_modified | dest_modified) | (source_new & dest_new) | (source_crc_errors | dest_crc_errors)
         assert source_only <= source_dict
         assert dest_only <= dest_dict
         assert not source_only & dest_only
