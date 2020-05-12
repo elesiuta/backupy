@@ -38,7 +38,7 @@ class LogManager:
             from .gui import colourize
             self.gui_colourize = colourize
             self.terminal_width = 80
-        # init attributes for linting (replaced byBackupManager to reference the same object)
+        # init attributes for linting (replaced by BackupManager to reference the same object)
         self.config = ConfigObject({})
         self.source = DirInfo("", "", "")
         self.dest = DirInfo("", "", "")
