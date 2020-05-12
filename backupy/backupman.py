@@ -145,6 +145,9 @@ class BackupManager():
         assert changed <= (source_modified | dest_modified) | (source_new & dest_new) | (source_crc_errors | dest_crc_errors)
         assert source_only <= source_dict
         assert dest_only <= dest_dict
+        assert not source_only & dest_only
+        assert not source_only & changed
+        assert not dest_only & changed
         # prev dirs and prev files under .backupy cause the next two asserts to be <=
         assert source_dict <= (source_prev - (source_missing | dest_moved)) | source_new | source_dirs
         assert dest_dict <= (dest_prev - (dest_missing | source_moved)) | dest_new | dest_dirs
