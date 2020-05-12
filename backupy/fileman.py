@@ -27,17 +27,16 @@ class FileManager:
     # expose the copy function as a class attribute for easy monkey-patching
     copy_function = shutil.copy2
 
-    def __init__(self):
-        """Superclass for BackupManager providing file operation methods"""
-        # init attributes for linting
-        self.log = []
+    def __init__(self, log: LogManager, config: ConfigObject, backup_time: int, gui: bool):
+        """Provides file operation methods (used by BackupManager)"""
+        # init variables
+        self.log = log
+        self.config = config
+        self.backup_time = backup_time
+        self.gui = gui
+        # init attributes for linting (replaced by BackupManager during run)
         self.source = DirInfo("", "", "")
         self.dest = DirInfo("", "", "")
-        self.config = ConfigObject({})
-        self.colourPrint = lambda a, b: a
-        self.gui = False
-        self.backup_time = 0
-        raise Exception("ERROR: FileManager should be inheritted by BackupManager, never instantiated directly")
 
     ##########################################################################
     # Basic file operation methods (only these methods touch files directly) #
@@ -103,13 +102,13 @@ class FileManager:
     ##########################################################################
 
     def removeFiles(self, root_path: str, file_relative_paths: list) -> None:
-        self.colourPrint(getString("Removing %s unique files from:\n%s") % (len(file_relative_paths), root_path), "OKBLUE")
+        self.log.colourPrint(getString("Removing %s unique files from:\n%s") % (len(file_relative_paths), root_path), "OKBLUE")
         for f in file_relative_paths:
             self.removeFile(root_path, f)
-        self.colourPrint(getString("Removal completed!"), "NONE")
+        self.log.colourPrint(getString("Removal completed!"), "NONE")
 
     def copyFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str) -> None:
-        self.colourPrint(getString("Copying %s unique files from:\n%s\nto:\n%s") % (len(source_files), source_root, dest_root), "OKBLUE")
+        self.log.colourPrint(getString("Copying %s unique files from:\n%s\nto:\n%s") % (len(source_files), source_root, dest_root), "OKBLUE")
         copy_status = StatusBar("Copying", len(source_files), self.config.stdout_status_bar, gui=self.gui)
         for i in range(len(source_files)):
             copy_status.update(source_files[i])
@@ -117,10 +116,10 @@ class FileManager:
         copy_status.endProgress()
 
     def moveFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str) -> None:
-        self.colourPrint(getString("Archiving %s unique files from:\n%s") % (len(source_files), source_root), "OKBLUE")
+        self.log.colourPrint(getString("Archiving %s unique files from:\n%s") % (len(source_files), source_root), "OKBLUE")
         for i in range(len(source_files)):
             self.moveFile(source_root, dest_root, source_files[i], dest_files[i])
-        self.colourPrint(getString("Archiving completed!"), "NONE")
+        self.log.colourPrint(getString("Archiving completed!"), "NONE")
 
     def handleDeletedFiles(self, root_path: str, file_relative_paths: list) -> None:
         if self.config.noarchive:
@@ -133,7 +132,7 @@ class FileManager:
         if not self.config.nomoves:
             # conflicts shouldn't happen since moved is a subset of files from source_only and dest_only
             # depends on source_info.dirCompare(dest_info) otherwise source and dest keys will be reversed
-            self.colourPrint(getString("Moving %s files on destination to match source") % (len(moved_pairs)), "OKBLUE")
+            self.log.colourPrint(getString("Moving %s files on destination to match source") % (len(moved_pairs)), "OKBLUE")
             for f in moved_pairs:
                 if reverse:
                     dest = self.config.source
@@ -144,7 +143,7 @@ class FileManager:
                     oldLoc = f["dest"]
                     newLoc = f["source"]
                 self.moveFile(dest, dest, oldLoc, newLoc)
-            self.colourPrint(getString("Moving completed!"), "NONE")
+            self.log.colourPrint(getString("Moving completed!"), "NONE")
 
     def archiveFile(self, root_path: str, file_relative_path: str) -> None:
         if not self.config.noarchive:
@@ -152,7 +151,7 @@ class FileManager:
             self.moveFile(root_path, archive_path, file_relative_path, file_relative_path)
 
     def handleChangedFiles(self, source_root: str, dest_root: str, source_dict: dict, dest_dict: dict, changed: list) -> None:
-        self.colourPrint(getString("Handling %s file changes per selection mode") % (len(changed)), "OKBLUE")
+        self.log.colourPrint(getString("Handling %s file changes per selection mode") % (len(changed)), "OKBLUE")
         copy_status = StatusBar("Copying", len(changed), self.config.stdout_status_bar, gui=self.gui)
         for frp in changed:
             copy_status.update(frp)

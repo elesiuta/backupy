@@ -16,7 +16,6 @@
 import argparse
 import datetime
 import os
-import shutil
 import sys
 import time
 import typing
@@ -33,19 +32,15 @@ from .utils import (
 )
 
 
-class BackupManager(FileManager, LogManager):
+class BackupManager():
     def __init__(self, args: typing.Union[argparse.Namespace, dict], gui: bool = False):
         """Main class, configure with an argparse namespace or dictionary to create a job then execute with .run()"""
-        # init logging
-        self.log = []
+        # init time
         self.backup_time = datetime.datetime.now().strftime("%y%m%d-%H%M")
-        # init gui flag
-        self.gui = gui
-        # gui imports
-        if self.gui:
-            from .gui import colourize, simplePrompt
-            self.gui_colourize = colourize
-            self.gui_simplePrompt = simplePrompt
+        # debugging/testing
+        if "backup_time_override" in args and args["backup_time_override"]:
+            self.backup_time = args["backup_time_override"]
+            time.ctime = lambda t: time.asctime(time.gmtime(t))
         # init config
         if type(args) != dict:
             args = vars(args)
@@ -60,33 +55,31 @@ class BackupManager(FileManager, LogManager):
             self.config.scan_only = True
         if "compare_mode" in args and args["compare_mode"] is not None:
             self.config.compare_mode = args["compare_mode"]
+        # init log and file manager (don't create a new ConfigObject after this point)
+        self.log = LogManager(self.config, self.backup_time, gui)
+        self.fileman = FileManager(self.log, self.config, self.backup_time, gui)
         # scan only mode
         if self.config.scan_only and (self.config.dest is None or not os.path.isdir(self.config.dest)):
             self.config.dest = self.config.source
         # check source & dest
         if not os.path.isdir(self.config.source):
-            print(self.colourString(getString("Invalid source directory: ") + self.config.source, "FAIL"))
+            print(self.log.colourString(getString("Invalid source directory: ") + self.config.source, "FAIL"))
             sys.exit()
         if self.config.dest is None:
-            print(self.colourString(getString("Destination directory not provided or config failed to load"), "FAIL"))
+            print(self.log.colourString(getString("Destination directory not provided or config failed to load"), "FAIL"))
             sys.exit()
         self.config.source = os.path.abspath(self.config.source)
         self.config.dest = os.path.abspath(self.config.dest)
-        # init DirInfo vars
-        self.source = None
-        self.dest = None
         # save config
         if "save" in args and args["save"] is True:
             self.saveConfig()
+        # init gui flag
+        self.gui = gui
         # gui modifications
-        self.terminal_width = shutil.get_terminal_size()[0]
         if self.gui:
+            from .gui import simplePrompt
+            self.gui_simplePrompt = simplePrompt
             self.config.stdout_status_bar = False
-            self.terminal_width = 80
-        # debugging/testing
-        if "backup_time_override" in args and args["backup_time_override"]:
-            self.backup_time = args["backup_time_override"]
-            time.ctime = lambda t: time.asctime(time.gmtime(t))
         # log settings
         self.log.append([getString("### SETTINGS ###")])
         self.log.append([getString("Time:"), self.backup_time,
@@ -97,32 +90,32 @@ class BackupManager(FileManager, LogManager):
 
     def saveConfig(self) -> None:
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
-        print(self.colourString(getString("Config saved"), "OKGREEN"))
+        print(self.log.colourString(getString("Config saved"), "OKGREEN"))
         sys.exit()
 
     def loadConfig(self) -> None:
         current_source = self.config.source
         config_dir = os.path.abspath(os.path.join(self.config.source, self.config.config_dir, "config.json"))
         config = readJson(config_dir)
-        print(self.colourString(getString("Loaded config from:") + "\n" + config_dir, "OKGREEN"))
+        print(self.log.colourString(getString("Loaded config from:") + "\n" + config_dir, "OKGREEN"))
         self.config = ConfigObject(config)
         if self.config.source is None or os.path.abspath(current_source) != os.path.abspath(self.config.source):
-            print(self.colourString(getString("A config file matching the specified source was not found (case sensitive)"), "FAIL"))
+            print(self.log.colourString(getString("A config file matching the specified source was not found (case sensitive)"), "FAIL"))
             sys.exit()
 
     def abortRun(self) -> int:
         self.log.append([getString("### ABORTED ###")])
-        self.writeLog("database.aborted.json")
-        print(self.colourString(getString("Run aborted"), "WARNING"))
+        self.log.writeLog("database.aborted.json")
+        print(self.log.colourString(getString("Run aborted"), "WARNING"))
         return 1
 
     def _skipFileTransfers(self, source_only: list, dest_only: list, changed: list) -> bool:
         self.log.append([getString("### SKIPPED ###")])
         while True:
-            print(self.colourString(getString("Enter file paths to remove from transfer queue, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
+            print(self.log.colourString(getString("Enter file paths to remove from transfer queue, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
             p = input("> ")
             if len(p) == 0 or p == "?":
-                print(self.colourString(getString("Enter file paths to remove from transfer queue, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
+                print(self.log.colourString(getString("Enter file paths to remove from transfer queue, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
             elif p == "continue":
                 return True
             elif p == "cancel":
@@ -137,7 +130,7 @@ class BackupManager(FileManager, LogManager):
                 changed.remove(p)
                 self.log.append(["File:", "Changed", p])
             else:
-                print(self.colourString(getString("Could not find file in queues: %s") % (p), "WARNING"))
+                print(self.log.colourString(getString("Could not find file in queues: %s") % (p), "WARNING"))
 
     def _checkConsistency(self, dest_database_load_success: bool,
                           source_only: list, dest_only: list, changed: list, moved: list) -> None:
@@ -173,33 +166,33 @@ class BackupManager(FileManager, LogManager):
                 # new and different on both sides
                 # sorted(list(filter(lambda f: source_new[f] != dest_new[f], set(source_new) & set(dest_new))))
                 if len(sync_conflicts) >= 1:
-                    print(self.colourString(getString("WARNING: found files modified in both source and destination since last scan"), "WARNING"))
+                    print(self.log.colourString(getString("WARNING: found files modified in both source and destination since last scan"), "WARNING"))
                     abort_run = True
-                print(self.colourString(getString("Sync Database Conflicts: %s") % (len(sync_conflicts)), "HEADER"))
-                self.printSyncDbConflicts(sync_conflicts, source_dict, dest_dict, source_prev, dest_prev)
+                print(self.log.colourString(getString("Sync Database Conflicts: %s") % (len(sync_conflicts)), "HEADER"))
+                self.log.printSyncDbConflicts(sync_conflicts, source_dict, dest_dict, source_prev, dest_prev)
             else:
                 dest_conflicts = sorted(list(set(dest_modified)))
                 dest_conflicts += sorted(list(set(dest_missing)))
                 dest_conflicts += sorted(list(set(dest_new)))
                 if len(dest_conflicts) >= 1:
-                    print(self.colourString(getString("WARNING: found files modified in the destination since last scan"), "WARNING"))
+                    print(self.log.colourString(getString("WARNING: found files modified in the destination since last scan"), "WARNING"))
                     abort_run = True
-                print(self.colourString(getString("Destination Database Conflicts: %s") % (len(dest_conflicts)), "HEADER"))
-                self.printChangedFiles(dest_conflicts, dest_dict, dest_prev, "   Dest", "     DB")
+                print(self.log.colourString(getString("Destination Database Conflicts: %s") % (len(dest_conflicts)), "HEADER"))
+                self.log.printChangedFiles(dest_conflicts, dest_dict, dest_prev, "   Dest", "     DB")
         # print database conflicts concerning CRCs if available, as well as CRC conflicts between source and dest if attributes otherwise match
         if len(source_crc_errors) > 0 or len(dest_crc_errors) > 0:
             self.log.append([getString("### CRC ERRORS DETECTED ###")])
-            print(self.colourString(getString("WARNING: found non matching CRC values, possible corruption detected"), "WARNING"))
+            print(self.log.colourString(getString("WARNING: found non matching CRC values, possible corruption detected"), "WARNING"))
             abort_run = True
             if self.config.compare_mode == "crc":
                 crc_errors_detected = sorted(list(set(source_crc_errors) | set(dest_crc_errors)))
-                print(self.colourString(getString("CRC Errors Detected: %s") % (len(crc_errors_detected)), "HEADER"))
-                self.printSyncDbConflicts(crc_errors_detected, source_dict, dest_dict, source_prev, dest_prev)
+                print(self.log.colourString(getString("CRC Errors Detected: %s") % (len(crc_errors_detected)), "HEADER"))
+                self.log.printSyncDbConflicts(crc_errors_detected, source_dict, dest_dict, source_prev, dest_prev)
             elif self.config.compare_mode == "attr+":
                 if set(source_crc_errors) != set(dest_crc_errors):
                     raise Exception("Inconsistent CRC error detection between source and dest")
-                print(self.colourString(getString("CRC Errors Detected: %s") % (len(source_crc_errors)), "HEADER"))
-                self.printChangedFiles(sorted(list(source_crc_errors)), source_crc_errors, dest_crc_errors)
+                print(self.log.colourString(getString("CRC Errors Detected: %s") % (len(source_crc_errors)), "HEADER"))
+                self.log.printChangedFiles(sorted(list(source_crc_errors)), source_crc_errors, dest_crc_errors)
         return abort_run
 
     def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: "DirInfo") -> None:
@@ -209,18 +202,18 @@ class BackupManager(FileManager, LogManager):
         list_new, list_missing = sorted(list(side_new)), sorted(list(side_missing))
         moved = side_info.getMovedAndUpdateLists(list_new, list_missing, side_new, side_missing, compare_func)
         # print differences
-        print(self.colourString(getString("%s New Files: %s") % (side_str, len(list_new)), "HEADER"))
+        print(self.log.colourString(getString("%s New Files: %s") % (side_str, len(list_new)), "HEADER"))
         self.log.append([getString("### %s NEW FILES ###") % (side_str.upper())])
-        self.printFiles(list_new, side_dict)
-        print(self.colourString(getString("%s Missing Files: %s") % (side_str, len(list_missing)), "HEADER"))
+        self.log.printFiles(list_new, side_dict)
+        print(self.log.colourString(getString("%s Missing Files: %s") % (side_str, len(list_missing)), "HEADER"))
         self.log.append([getString("### %s MISSING FILES ###") % (side_str.upper())])
-        self.printFiles(list_missing, side_prev)
-        print(self.colourString(getString("%s Changed Files: %s") % (side_str, len(side_modified)), "HEADER"))
+        self.log.printFiles(list_missing, side_prev)
+        print(self.log.colourString(getString("%s Changed Files: %s") % (side_str, len(side_modified)), "HEADER"))
         self.log.append([getString("### %s CHANGED FILES ###") % (side_str.upper())])
-        self.printChangedFiles(sorted(list(side_modified)), side_dict, side_prev, "    New", "    Old")
-        print(self.colourString(getString("%s Moved Files: %s") % (side_str, len(moved)), "HEADER"))
+        self.log.printChangedFiles(sorted(list(side_modified)), side_dict, side_prev, "    New", "    Old")
+        print(self.log.colourString(getString("%s Moved Files: %s") % (side_str, len(moved)), "HEADER"))
         self.log.append([getString("### %s MOVED FILES ###") % (side_str.upper())])
-        self.printMovedFiles(moved, side_new, side_missing, "   New: ", "   Old: ")
+        self.log.printMovedFiles(moved, side_new, side_missing, "   New: ", "   Old: ")
 
     def _printAndLogCompareDiffSummary(self, source_only: list, dest_only: list, changed: list, moved: list) -> None:
         # get databases
@@ -246,19 +239,19 @@ class BackupManager(FileManager, LogManager):
         elif self.config.select_mode == "no":
             change_msg = getString("(will be left as is)")
         # print differences
-        print(self.colourString(getString("Source Only (will be copied to dest): %s") % (len(source_only)), "HEADER"))
+        print(self.log.colourString(getString("Source Only (will be copied to dest): %s") % (len(source_only)), "HEADER"))
         self.log.append([getString("### SOURCE ONLY ###")])
-        self.printFiles(source_only, source_dict)
-        print(self.colourString(getString("Destination Only %s: %s") % (dest_msg, len(dest_only)), "HEADER"))
+        self.log.printFiles(source_only, source_dict)
+        print(self.log.colourString(getString("Destination Only %s: %s") % (dest_msg, len(dest_only)), "HEADER"))
         self.log.append([getString("### DESTINATION ONLY ###")])
-        self.printFiles(dest_only, dest_dict)
-        print(self.colourString(getString("Changed Files %s: %s") % (change_msg, len(changed)), "HEADER"))
+        self.log.printFiles(dest_only, dest_dict)
+        print(self.log.colourString(getString("Changed Files %s: %s") % (change_msg, len(changed)), "HEADER"))
         self.log.append([getString("### CHANGED FILES ###")])
-        self.printChangedFiles(changed, source_dict, dest_dict)
+        self.log.printChangedFiles(changed, source_dict, dest_dict)
         if not self.config.nomoves:
-            print(self.colourString(getString("Moved Files (will move files on dest to match source): %s") % (len(moved)), "HEADER"))
+            print(self.log.colourString(getString("Moved Files (will move files on dest to match source): %s") % (len(moved)), "HEADER"))
             self.log.append([getString("### MOVED FILES ###")])
-            self.printMovedFiles(moved, source_dict, dest_dict)
+            self.log.printMovedFiles(moved, source_dict, dest_dict)
 
     def _performBackup(self, source_only: list, dest_only: list, changed: list, moved: list, simulation_msg: str) -> None:
         # get databases
@@ -266,31 +259,31 @@ class BackupManager(FileManager, LogManager):
         dest_dict, _, _, _, _, _, _ = self.dest.getDicts()
         # perform the backup/mirror/sync
         self.log.append([getString("### START ") + self.config.main_mode.upper() + simulation_msg.upper() + " ###"])
-        print(self.colourString(getString("Starting ") + self.config.main_mode, "HEADER"))
+        print(self.log.colourString(getString("Starting ") + self.config.main_mode, "HEADER"))
         if self.config.main_mode == "mirror":
-            self.handleDeletedFiles(self.config.dest, dest_only)
-            self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
-            self.handleMovedFiles(moved)
-            self.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
+            self.fileman.handleDeletedFiles(self.config.dest, dest_only)
+            self.fileman.copyFiles(self.config.source, self.config.dest, source_only, source_only)
+            self.fileman.handleMovedFiles(moved)
+            self.fileman.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         elif self.config.main_mode == "backup":
-            self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
-            self.handleMovedFiles(moved)
-            self.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
+            self.fileman.copyFiles(self.config.source, self.config.dest, source_only, source_only)
+            self.fileman.handleMovedFiles(moved)
+            self.fileman.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         elif self.config.main_mode == "sync":
-            self.copyFiles(self.config.source, self.config.dest, source_only, source_only)
-            self.copyFiles(self.config.dest, self.config.source, dest_only, dest_only)
-            self.handleMovedFiles(moved)
-            self.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
+            self.fileman.copyFiles(self.config.source, self.config.dest, source_only, source_only)
+            self.fileman.copyFiles(self.config.dest, self.config.source, dest_only, dest_only)
+            self.fileman.handleMovedFiles(moved)
+            self.fileman.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
 
     def run(self):
         """Main method, use this to run your job"""
         # dry run confirmation message
         if self.config.dry_run:
             simulation_msg = getString(" dry run")
-            print(self.colourString(getString("Dry Run"), "HEADER"))
+            print(self.log.colourString(getString("Dry Run"), "HEADER"))
         else:
             simulation_msg = ""
-        # init dir scanning and load previous scan data if available
+        # init DirInfo and load previous scan data if available
         self.source = DirInfo(self.config.source, self.config.compare_mode, self.config.config_dir,
                               [self.config.archive_dir, self.config.log_dir, self.config.trash_dir],
                               self.gui, self.config.force_posix_path_sep,
@@ -305,16 +298,19 @@ class BackupManager(FileManager, LogManager):
         if self.dest.dict_prev != {}:
             dest_database_load_success = True
         # scan directories (also calculates CRC if enabled) (didn't parallelize scans to prevent excess vibration of adjacent consumer grade disks and keep status bars simple)
-        self.colourPrint(getString("Scanning files on source:\n%s") % (self.config.source), "OKBLUE")
+        self.log.colourPrint(getString("Scanning files on source:\n%s") % (self.config.source), "OKBLUE")
         self.source.scanDir(self.config.stdout_status_bar)
         if self.config.source != self.config.dest:
-            self.colourPrint(getString("Scanning files on destination:\n%s") % (self.config.dest), "OKBLUE")
+            self.log.colourPrint(getString("Scanning files on destination:\n%s") % (self.config.dest), "OKBLUE")
             self.dest.scanDir(self.config.stdout_status_bar)
         else:
             self.dest = self.source
+        # update logman and fileman to reference the same source and dest
+        self.log.source, self.log.dest = self.source, self.dest
+        self.fileman.source, self.fileman.dest = self.source, self.dest
         # compare directories (should be relatively fast, all the read operations are done during scan)
         if not self.config.scan_only:
-            self.colourPrint(getString("Comparing directories..."), "OKBLUE")
+            self.log.colourPrint(getString("Comparing directories..."), "OKBLUE")
             source_only, dest_only, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves)
         # check for database conflicts or corruption
         detected_database_conflicts_or_corruption = self._databaseAndCorruptionCheck(dest_database_load_success)
@@ -326,8 +322,8 @@ class BackupManager(FileManager, LogManager):
             if self.config.source != self.config.dest:
                 self._printAndLogScanOnlyDiffSummary("Destination", self.dest)
             self.log.append([getString("### SCAN COMPLETED ###")])
-            self.writeLog("database.json")
-            print(self.colourString(getString("Completed!"), "OKGREEN"))
+            self.log.writeLog("database.json")
+            print(self.log.colourString(getString("Completed!"), "OKGREEN"))
             return 0
         # print differences between source and dest
         self._printAndLogCompareDiffSummary(source_only, dest_only, changed, moved)
@@ -337,21 +333,21 @@ class BackupManager(FileManager, LogManager):
         except Exception as e:
             self.log.append(["BACKUPY ERROR", str(e)])
             print(e)
-            print(self.colourString(getString("Error: Inconsistent directory comparison and database checks"), "FAIL"))
+            print(self.log.colourString(getString("Error: Inconsistent directory comparison and database checks"), "FAIL"))
             return self.abortRun()
         # exit if directories already match
         if len(source_only) == 0 and len(dest_only) == 0 and len(changed) == 0 and len(moved) == 0:
-            print(self.colourString(getString("Directories already match, completed!"), "OKGREEN"))
+            print(self.log.colourString(getString("Directories already match, completed!"), "OKGREEN"))
             self.log.append([getString("### NO CHANGES FOUND ###")])
-            self.writeLog("database.json")
+            self.log.writeLog("database.json")
             return 0
         # wait for go ahead
-        self.writeLog("database.tmp.json")
+        self.log.writeLog("database.tmp.json")
         if not self.config.noprompt:
             if self.gui:
                 go = self.gui_simplePrompt(getString("Scan complete, continue with %s%s?") % (self.config.main_mode, simulation_msg))
             else:
-                print(self.colourString(getString("Scan complete, continue with %s%s (y/N)?") % (self.config.main_mode, simulation_msg), "OKGREEN"))
+                print(self.log.colourString(getString("Scan complete, continue with %s%s (y/N)?") % (self.config.main_mode, simulation_msg), "OKGREEN"))
                 go = input("> ")
             if len(go) == 4 and go.lower() == "skip":
                 if not self._skipFileTransfers(source_only, dest_only, changed):
@@ -361,6 +357,6 @@ class BackupManager(FileManager, LogManager):
         # backup operations
         self._performBackup(source_only, dest_only, changed, moved, simulation_msg)
         self.log.append([getString("### COMPLETED ###")])
-        self.writeLog("database.json")
-        print(self.colourString(getString("Completed!"), "OKGREEN"))
+        self.log.writeLog("database.json")
+        print(self.log.colourString(getString("Completed!"), "OKGREEN"))
         return 0

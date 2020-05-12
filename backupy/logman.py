@@ -14,6 +14,7 @@
 # https://github.com/elesiuta/backupy
 
 import os
+import shutil
 import time
 
 from .config import ConfigObject
@@ -25,18 +26,25 @@ from .utils import (
 
 
 class LogManager:
-    def __init__(self):
-        """Superclass for BackupManager providing methods for log formatting and pretty printing"""
-        # init attributes for linting
-        self.config = ConfigObject({})
+    def __init__(self, config: ConfigObject, backup_time: int, gui: bool):
+        """Provides methods for log formatting and pretty printing (used by BackupManager)"""
+        # init variables
+        self.log = []
+        self.config = config
+        self.backup_time = backup_time
+        self.gui = gui
+        self.terminal_width = shutil.get_terminal_size()[0]
+        # gui modifications
+        if self.gui:
+            from .gui import colourize
+            self.gui_colourize = colourize
+            self.terminal_width = 80
+        # init attributes for linting (replaced by BackupManager during run)
         self.source = DirInfo("", "", "")
         self.dest = DirInfo("", "", "")
-        self.log = []
-        self.gui = False
-        self.gui_colourize = lambda a, b: a
-        self.terminal_width = 80
-        self.backup_time = 0
-        raise Exception("ERROR: LogManager should be inheritted by BackupManager, never instantiated directly")
+
+    def append(self, object) -> None:
+        self.log.append(object)
 
     def writeLog(self, db_name: str) -> None:
         if not self.config.nolog:
