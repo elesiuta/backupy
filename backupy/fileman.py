@@ -27,14 +27,14 @@ class FileManager:
     # expose the copy function as a class attribute for easy monkey-patching
     copy_function = shutil.copy2
 
-    def __init__(self, log: LogManager, config: ConfigObject, backup_time: int, gui: bool):
+    def __init__(self, log: LogManager, backup_time: int, gui: bool):
         """Provides file operation methods (used by BackupManager)"""
         # init variables
         self.log = log
-        self.config = config
         self.backup_time = backup_time
         self.gui = gui
-        # init attributes for linting (replaced by BackupManager during run)
+        # init attributes for linting (replaced byBackupManager to reference the same object)
+        self.config = ConfigObject({})
         self.source = DirInfo("", "", "")
         self.dest = DirInfo("", "", "")
 
