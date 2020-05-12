@@ -33,7 +33,7 @@ class FileManager:
         self.log = log
         self.backup_time = backup_time
         self.gui = gui
-        # init attributes for linting (replaced byBackupManager to reference the same object)
+        # init attributes for linting (replaced by BackupManager to reference the same object)
         self.config = ConfigObject({})
         self.source = DirInfo("", "", "")
         self.dest = DirInfo("", "", "")
