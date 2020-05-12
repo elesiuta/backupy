@@ -1,35 +1,18 @@
 # quickly generate a call graph of backupy.py
 # depends on pyan3 and graphviz
 
-ignored_node_strings = [
-    "getVersion",
-    "getString",
-    "readJson",
-    "writeJson",
-    "writeCsv",
-    "StatusBar",
-    "replaceSurrogates",
-    "colourString",
-    "prettySize",
-    "prettyAttr",
-    "colourPrint",
-    "printFileInfo",
-    "printFiles",
-    "printChangedFiles",
-    "printMovedFiles",
-    "printSyncDbConflicts"
-]
+ignored_node_strings = []
 
 # generate callgraph using pyan3
 import os
-os.system("pyan3 ../backupy.py --no-defines --uses --colored --nested-groups --dot-rankdir=TB --dot > callgraph.dot")
+os.system("pyan3 ../backupy/backupman.py ../backupy/dirinfo.py ../backupy/fileman.py --no-defines --uses --colored --grouped-alt --dot > callgraph.dot")
 
 # clean up callgraph
 with open("callgraph.dot", "r") as f:
     dot = f.readlines()
 new_dot = [
     'digraph G {\n',
-    '    graph [rankdir=TB, clusterrank="local", concentrate=true, ranksep="1.5", nodesep="0.4"];\n',
+    '    graph [rankdir=TB, clusterrank="local", concentrate=false, ranksep="1", nodesep="0.2"];\n',
     '    overlap=scale;\n'
     '    splines=true;\n',
     '    subgraph cluster_G {\n',
