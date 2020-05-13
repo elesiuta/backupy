@@ -57,7 +57,7 @@ class BackupManager():
             self.config.dry_run = True
         if "scan_only" in args and args["scan_only"] is True:
             self.config.scan_only = True
-        if "compare_mode" in args and args["compare_mode"] is not None:
+        if "compare_mode" in args and args["compare_mode"] is not None and not gui:
             self.config.compare_mode = args["compare_mode"]
         # scan only mode
         if self.config.scan_only and (self.config.dest is None or not os.path.isdir(self.config.dest)):
