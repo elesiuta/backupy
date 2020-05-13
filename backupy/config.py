@@ -54,3 +54,9 @@ class ConfigObject:
         self.config_dir = os.path.normpath(self.config_dir)
         self.log_dir = os.path.normpath(self.log_dir)
         self.trash_dir = os.path.normpath(self.trash_dir)
+
+    def __setattr__(self, name, value):
+        if not hasattr(self, "locked") or not self.locked:
+            super().__setattr__(name, value)
+        else:
+            raise Exception("Error: Config modified during run (should be locked)")

@@ -88,6 +88,8 @@ class BackupManager():
                          getString("Source DB CRC:"), "0",
                          getString("Dest DB CRC:"), "0",
                          getString("Config:"), str(vars(self.config))])
+        # lock config from future changes (makes code safer and easier to verify)
+        self.config.locked = True
 
     def saveConfig(self) -> None:
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
