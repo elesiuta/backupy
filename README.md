@@ -141,10 +141,12 @@ configuration options:
     - replace source and dest paths with "\<source\>" and "\<dest\>" in logs, default = True
   - stdout_status_bar
     - show progress status bar, default = True
+  - sync_propagate_deletions
+    - use the database to propagate deletions during sync, default = False
   - verbose
     - print program status updates to stdout, default = True
   - write_log_dest
-    - write a copy of the log to \<dest\>/\<log_dir\>/log-yymmdd-HHMM-dest.csv
+    - write a copy of the log to \<dest\>/\<log_dir\>/log-yymmdd-HHMM-dest.csv, default = False
 ## Building From Source
 - Run tests with
 ```

@@ -156,6 +156,9 @@ class BackupManager():
         assert source_dict <= (source_prev - (source_missing | dest_moved)) | source_new | source_dirs
         assert dest_dict <= (dest_prev - (dest_missing | source_moved)) | dest_new | dest_dirs
 
+    def _propagateSyncDeletions(self, source_only: list, dest_only: list, changed: list) -> tuple:
+        return source_only, dest_only, changed
+
     def _databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
         # get databases
         source_dict, source_prev, source_new, source_modified, source_missing, source_crc_errors, _ = self.source.getDicts()
@@ -320,6 +323,8 @@ class BackupManager():
         if not self.config.scan_only:
             self.log.colourPrint(getString("Comparing directories..."), "OKBLUE")
             source_only, dest_only, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves)
+            if self.config.main_mode == "sync" and self.config.sync_propagate_deletions:
+                source_only, dest_only, changed = self._propagateSyncDeletions(source_only, dest_only, changed)
         # check for database conflicts or corruption
         detected_database_conflicts_or_corruption = self._databaseAndCorruptionCheck(dest_database_load_success)
         if self.config.quit_on_db_conflict and detected_database_conflicts_or_corruption:

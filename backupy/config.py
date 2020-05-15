@@ -44,6 +44,7 @@ class ConfigObject:
         self.cleanup_empty_dirs = True
         self.root_alias_log = True
         self.stdout_status_bar = True
+        self.sync_propagate_deletions = False
         self.verbose = True
         self.write_log_dest = False
         # load config
