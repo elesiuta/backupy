@@ -66,6 +66,8 @@ class LogManager:
                             if self.config.force_posix_path_sep:
                                 self.log[i][j] = self.log[i][j].replace(os.path.sep, "/")
             writeCsv(os.path.join(self.config.source, self.config.log_dir, "log-" + self.backup_time + ".csv"), self.log)
+            if self.config.write_log_dest:
+                writeCsv(os.path.join(self.config.dest, self.config.log_dir, "log-" + self.backup_time + "-dest.csv"), self.log)
 
     def replaceSurrogates(self, string: str) -> str:
         return string.encode("utf-8", "surrogateescape").decode("utf-8", "replace")

@@ -45,6 +45,7 @@ class ConfigObject:
         self.root_alias_log = True
         self.stdout_status_bar = True
         self.verbose = True
+        self.write_log_dest = False
         # load config
         for key in config:
             if config[key] is not None and hasattr(self, key):

@@ -143,6 +143,8 @@ configuration options:
     - show progress status bar, default = True
   - verbose
     - print program status updates to stdout, default = True
+  - write_log_dest
+    - write a copy of the log to \<source\>/\<log_dir\>/log-yymmdd-HHMM-dest.csv
 ## Building From Source
 - Run tests with
 ```
