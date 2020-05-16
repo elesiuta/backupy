@@ -24,6 +24,7 @@ from .config import ConfigObject
 from .dirinfo import DirInfo
 from .fileman import FileManager
 from .logman import LogManager
+from .transferlists import TransferLists
 from .utils import (
     getString,
     getVersion,
@@ -112,13 +113,14 @@ class BackupManager():
         print(self.log.colourString(getString("Run aborted"), "WARNING"))
         return 1
 
-    def _skipFileTransfers(self, source_only: list, dest_only: list, changed: list) -> bool:
+    def _skipFileTransfers(self, transfer_lists) -> bool:
+        source_only, dest_only, changed, _ = transfer_lists.getLists()
         self.log.append([getString("### SKIPPED ###")])
-        print(self.log.colourString(getString("Enter file paths to remove from transfer queue, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
+        print(self.log.colourString(getString("Enter file paths to remove them from the transfer queues, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
         while True:
             p = input("> ")
             if len(p) == 0 or p == "?":
-                print(self.log.colourString(getString("Enter file paths to remove from transfer queue, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
+                print(self.log.colourString(getString("Enter file paths to remove them from the transfer queues, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
             elif p == "continue":
                 return True
             elif p == "cancel":
@@ -135,15 +137,13 @@ class BackupManager():
             else:
                 print(self.log.colourString(getString("Could not find file in queues: %s") % (p), "WARNING"))
 
-    def _checkConsistency(self, dest_database_load_success: bool,
-                          source_only: list, dest_only: list, changed: list, moved: list) -> None:
-        d1, d2, d3, d4, d5, d6, d7 = self.source.getDicts()
-        source_dict, source_prev, source_new, source_modified, source_missing, source_crc_errors, source_dirs = set(d1), set(d2), set(d3), set(d4), set(d5), set(d6), set(d7)
-        d1, d2, d3, d4, d5, d6, d7 = self.dest.getDicts()
-        dest_dict, dest_prev, dest_new, dest_modified, dest_missing, dest_crc_errors, dest_dirs = set(d1), set(d2), set(d3), set(d4), set(d5), set(d6), set(d7)
-        source_only, dest_only, changed = set(source_only), set(dest_only), set(changed)
-        source_moved = set([f["source"] for f in moved])
-        dest_moved = set([f["dest"] for f in moved])
+    def _propagateSyncDeletions(self, transfer_lists: TransferLists) -> None:
+        pass
+
+    def _checkConsistency(self, dest_database_load_success: bool, transfer_lists: TransferLists) -> None:
+        source_dict, source_prev, source_new, source_modified, source_missing, source_crc_errors, source_dirs = self.source.getSets()
+        dest_dict, dest_prev, dest_new, dest_modified, dest_missing, dest_crc_errors, dest_dirs = self.dest.getSets()
+        source_only, dest_only, changed, source_moved, dest_moved = transfer_lists.getSets()
         assert not (source_moved & dest_moved)
         # changed - ... below would be any skipped files
         # assert changed <= (source_modified | dest_modified) | (source_new & dest_new) | (source_crc_errors | dest_crc_errors)
@@ -155,9 +155,6 @@ class BackupManager():
         # prev dirs and prev files under .backupy cause the next two asserts to be <=
         assert source_dict <= (source_prev - (source_missing | dest_moved)) | source_new | source_dirs
         assert dest_dict <= (dest_prev - (dest_missing | source_moved)) | dest_new | dest_dirs
-
-    def _propagateSyncDeletions(self, source_only: list, dest_only: list, changed: list) -> tuple:
-        return source_only, dest_only, changed
 
     def _databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
         # get databases
@@ -225,8 +222,9 @@ class BackupManager():
         self.log.append([getString("### %s MOVED FILES ###") % (side_str.upper())])
         self.log.printMovedFiles(moved, side_new, side_missing, "   New: ", "   Old: ")
 
-    def _printAndLogCompareDiffSummary(self, source_only: list, dest_only: list, changed: list, moved: list) -> None:
-        # get databases
+    def _printAndLogCompareDiffSummary(self, transfer_lists: TransferLists) -> None:
+        # get lists and databases
+        source_only, dest_only, changed, moved = transfer_lists.getLists()
         source_dict, _, _, _, _, _, _ = self.source.getDicts()
         dest_dict, _, _, _, _, _, _ = self.dest.getDicts()
         # prepare diff messages
@@ -263,8 +261,9 @@ class BackupManager():
             self.log.append([getString("### MOVED FILES ###")])
             self.log.printMovedFiles(moved, source_dict, dest_dict)
 
-    def _performBackup(self, source_only: list, dest_only: list, changed: list, moved: list, simulation_msg: str) -> None:
-        # get databases
+    def _performBackup(self, transfer_lists: TransferLists, simulation_msg: str) -> None:
+        # get lists and databases
+        source_only, dest_only, changed, moved = transfer_lists.getLists()
         source_dict, _, _, _, _, _, _ = self.source.getDicts()
         dest_dict, _, _, _, _, _, _ = self.dest.getDicts()
         # init file manager
@@ -322,9 +321,9 @@ class BackupManager():
         # compare directories (should be relatively fast, all the read operations are done during scan)
         if not self.config.scan_only:
             self.log.colourPrint(getString("Comparing directories..."), "OKBLUE")
-            source_only, dest_only, changed, moved = self.source.dirCompare(self.dest, self.config.nomoves)
+            transfer_lists = TransferLists(self.source.dirCompare(self.dest, self.config.nomoves))
             if self.config.main_mode == "sync" and self.config.sync_propagate_deletions:
-                source_only, dest_only, changed = self._propagateSyncDeletions(source_only, dest_only, changed)
+                self._propagateSyncDeletions(transfer_lists)
         # check for database conflicts or corruption
         detected_database_conflicts_or_corruption = self._databaseAndCorruptionCheck(dest_database_load_success)
         if self.config.quit_on_db_conflict and detected_database_conflicts_or_corruption:
@@ -339,17 +338,17 @@ class BackupManager():
             print(self.log.colourString(getString("Completed!"), "OKGREEN"))
             return 0
         # print differences between source and dest
-        self._printAndLogCompareDiffSummary(source_only, dest_only, changed, moved)
+        self._printAndLogCompareDiffSummary(transfer_lists)
         # check for consistency between comparison and database dicts
         try:
-            self._checkConsistency(dest_database_load_success, source_only, dest_only, changed, moved)
+            self._checkConsistency(dest_database_load_success, transfer_lists)
         except Exception as e:
             self.log.append(["BACKUPY ERROR", str(e)])
             print(e)
             print(self.log.colourString(getString("Error: Inconsistent directory comparison and database checks"), "FAIL"))
             return self.abortRun()
         # exit if directories already match
-        if len(source_only) == 0 and len(dest_only) == 0 and len(changed) == 0 and len(moved) == 0:
+        if transfer_lists.isEmpty():
             print(self.log.colourString(getString("Directories already match, completed!"), "OKGREEN"))
             self.log.append([getString("### NO CHANGES FOUND ###")])
             self.log.writeLog("database.json")
@@ -363,12 +362,13 @@ class BackupManager():
                 print(self.log.colourString(getString("Scan complete, continue with %s%s (y/N)?") % (self.config.main_mode, simulation_msg), "OKGREEN"))
                 go = input("> ")
             if len(go) == 4 and go.lower() == "skip":
-                if not self._skipFileTransfers(source_only, dest_only, changed):
+                if not self._skipFileTransfers(transfer_lists):
                     return self.abortRun()
             elif len(go) == 0 or go[0].lower() != "y":
                 return self.abortRun()
+        transfer_lists.freeze()
         # backup operations
-        self._performBackup(source_only, dest_only, changed, moved, simulation_msg)
+        self._performBackup(transfer_lists, simulation_msg)
         self.log.append([getString("### COMPLETED ###")])
         self.log.writeLog("database.json")
         print(self.log.colourString(getString("Completed!"), "OKGREEN"))

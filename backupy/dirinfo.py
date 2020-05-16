@@ -58,7 +58,23 @@ class DirInfo:
 
     def getDicts(self) -> tuple:
         """Returns tuple of dictionaries: current, prev, new, modified, missing, crc_errors, dirs"""
-        return self.dict_current, self.dict_prev, self.dict_new, self.dict_modified, self.dict_missing, self.dict_crc_errors, self.dict_dirs
+        return (self.dict_current,
+                self.dict_prev,
+                self.dict_new,
+                self.dict_modified,
+                self.dict_missing,
+                self.dict_crc_errors,
+                self.dict_dirs)
+
+    def getSets(self) -> tuple:
+        """Returns tuple of set(dictionaries): current, prev, new, modified, missing, crc_errors, dirs"""
+        return (set(self.dict_current),
+                set(self.dict_prev),
+                set(self.dict_new),
+                set(self.dict_modified),
+                set(self.dict_missing),
+                set(self.dict_crc_errors),
+                set(self.dict_dirs))
 
     def saveJson(self, db_name: str = "database.json") -> None:
         writeJson(os.path.join(self.dir, self.config_dir, db_name), self.dict_current, sort_keys=True)
@@ -264,7 +280,8 @@ class DirInfo:
         moved.reverse()
         return moved
 
-    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False) -> tuple:
+    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False) -> dict:
+        "Use source.dirCompare(dest) to return diff of source and dest as dict of file lists"
         # init variables
         file_list = set(self.dict_current)
         second_list = set(secondInfo.dict_current)
@@ -284,4 +301,4 @@ class DirInfo:
                 if pair["source"] not in self.dict_modified and pair["dest"] not in secondInfo.dict_modified:
                     _ = secondInfo.dict_missing.pop(pair["source"], 1)
                     _ = self.dict_missing.pop(pair["dest"], 1)
-        return self_only, second_only, changed, moved
+        return {"source_only": self_only, "dest_only": second_only, "changed": changed, "moved": moved}
