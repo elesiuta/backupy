@@ -20,6 +20,8 @@ class TransferLists:
         self.dest_only = dir_compare["dest_only"]
         self.changed = dir_compare["changed"]
         self.moved = dir_compare["moved"]
+        self.source_deleted = []
+        self.dest_deleted = []
 
     def __setattr__(self, name, value):
         if not hasattr(self, "locked") or not self.locked:
