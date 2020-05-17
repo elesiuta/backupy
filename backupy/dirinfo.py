@@ -280,6 +280,18 @@ class DirInfo:
         moved.reverse()
         return moved
 
+    def selfCompare(self, second_db: dict) -> dict:
+        crc_match = lambda a, b: "crc" in a and "crc" in b and a["crc"] == b["crc"]
+        file_match = lambda a, b, f: (a[f]["size"] == b[f]["size"] and
+                                   self.timeMatch(a[f]["mtime"], b[f]["mtime"], True) and
+                                   (self.compare_mode != "crc" or crc_match(a[f], b[f])))
+        file_set_a = set(self.dict_current)
+        file_set_b = set(second_db)
+        modified = sorted(list(filter(lambda f: not file_match(self.dict_current, second_db, f), file_set_a & file_set_b)))
+        new = sorted(list(file_set_a - file_set_b))
+        missing = sorted(list(file_set_b - file_set_a))
+        return {"modified": modified, "missing": missing, "new": new}
+
     def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False) -> dict:
         "Use source.dirCompare(dest) to return diff of source and dest as dict of file lists"
         # init variables

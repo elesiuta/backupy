@@ -49,6 +49,7 @@ class ConfigObject:
         self.stdout_status_bar = True
         self.sync_propagate_deletions = False
         self.verbose = True
+        self.write_database_x2 = False
         self.write_log_dest = False
         # load config
         for key in config:
