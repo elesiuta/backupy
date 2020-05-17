@@ -53,7 +53,7 @@ class DirInfo:
         self.config_dir = config.config_dir
         self.ignored_toplevel_folders = list(set([config.archive_dir, config.log_dir, config.trash_dir, config.config_dir]))
         self.force_posix_path_sep = config.force_posix_path_sep
-        self.write_database_x2 = config.write_database_x2
+        self.write_database_x2 = config.write_database_x2 and not config.scan_only
         # Init other variables
         self.dir = directory_root_path
         self.other_database_path = os.path.join(other_root_path, self.config_dir, "database-%s.json" % unique_id)
@@ -82,7 +82,7 @@ class DirInfo:
     def saveJson(self, db_name: str = "database.json") -> None:
         """Write database to config_dir on self and other if enabled"""
         writeJson(os.path.join(self.dir, self.config_dir, db_name), self.dict_current, sort_keys=True)
-        if self.write_database_x2 and db_name == "database.json":
+        if self.write_database_x2:
             writeJson(self.other_database_path, self.dict_current, sort_keys=True)
 
     def loadJson(self) -> None:
