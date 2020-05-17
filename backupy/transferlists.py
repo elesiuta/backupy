@@ -13,6 +13,10 @@
 
 # https://github.com/elesiuta/backupy
 
+from .logman import LogManager
+from .utils import getString
+
+
 class TransferLists:
     def __init__(self, dir_compare: dict):
         """Holds lists of files that are queued for copying/moving/deleting"""
@@ -24,7 +28,7 @@ class TransferLists:
         self.dest_deleted = []
 
     def __setattr__(self, name, value):
-        if not hasattr(self, "locked") or not self.locked:
+        if not hasattr(self, "locked") or not self.locked[0]:
             super().__setattr__(name, value)
         else:
             raise Exception("Error: Attempted modification to TransferLists after freezing")
@@ -56,4 +60,38 @@ class TransferLists:
         self.dest_only = tuple(self.dest_only)
         self.changed = tuple(self.changed)
         self.moved = tuple(self.moved)
-        self.locked = True
+        self.locked = [True]
+
+    def _unfreeze(self) -> None:
+        """Allow unfreezing for internal methods (obviously not actually private, but should be treated as such)"""
+        self.locked[0] = False
+        self.source_only = list(self.source_only)
+        self.dest_only = list(self.dest_only)
+        self.changed = list(self.changed)
+        self.moved = list(self.moved)
+
+    def skipFileTransfers(self, log: LogManager) -> bool:
+        self._unfreeze()
+        log.append([getString("### SKIPPED ###")])
+        print(log.colourString(getString("Enter file paths to remove them from the transfer queues, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
+        while True:
+            p = input("> ")
+            if len(p) == 0 or p == "?":
+                print(log.colourString(getString("Enter file paths to remove them from the transfer queues, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
+            elif p == "continue":
+                self.freeze()
+                return True
+            elif p == "cancel":
+                self.freeze()
+                return False
+            elif p in self.source_only:
+                self.source_only.remove(p)
+                log.append(["File:", "Source", p])
+            elif p in self.dest_only:
+                self.dest_only.remove(p)
+                log.append(["File:", "Dest", p])
+            elif p in self.changed:
+                self.changed.remove(p)
+                log.append(["File:", "Changed", p])
+            else:
+                print(log.colourString(getString("Could not find file in queues: %s") % (p), "WARNING"))

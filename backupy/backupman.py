@@ -113,30 +113,6 @@ class BackupManager():
         print(self.log.colourString(getString("Run aborted"), "WARNING"))
         return 1
 
-    def _skipFileTransfers(self, transfer_lists) -> bool:
-        source_only, dest_only, changed, _ = transfer_lists.getLists()
-        self.log.append([getString("### SKIPPED ###")])
-        print(self.log.colourString(getString("Enter file paths to remove them from the transfer queues, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
-        while True:
-            p = input("> ")
-            if len(p) == 0 or p == "?":
-                print(self.log.colourString(getString("Enter file paths to remove them from the transfer queues, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
-            elif p == "continue":
-                return True
-            elif p == "cancel":
-                return False
-            elif p in source_only:
-                source_only.remove(p)
-                self.log.append(["File:", "Source", p])
-            elif p in dest_only:
-                dest_only.remove(p)
-                self.log.append(["File:", "Dest", p])
-            elif p in changed:
-                changed.remove(p)
-                self.log.append(["File:", "Changed", p])
-            else:
-                print(self.log.colourString(getString("Could not find file in queues: %s") % (p), "WARNING"))
-
     def _propagateSyncDeletions(self, transfer_lists: TransferLists) -> None:
         source_only, dest_only, _, _, _ = transfer_lists.getSets()
         _, _, source_new, source_modified, source_missing, _, _ = self.source.getSets()
@@ -333,6 +309,7 @@ class BackupManager():
             transfer_lists = TransferLists(self.source.dirCompare(self.dest, self.config.nomoves))
             if self.config.main_mode == "sync" and self.config.sync_propagate_deletions:
                 self._propagateSyncDeletions(transfer_lists)
+            transfer_lists.freeze()
         # check for database conflicts or corruption
         detected_database_conflicts_or_corruption = self._databaseAndCorruptionCheck(dest_database_load_success)
         if self.config.quit_on_db_conflict and detected_database_conflicts_or_corruption:
@@ -371,11 +348,10 @@ class BackupManager():
                 print(self.log.colourString(getString("Scan complete, continue with %s%s (y/N)?") % (self.config.main_mode, simulation_msg), "OKGREEN"))
                 go = input("> ")
             if len(go) == 4 and go.lower() == "skip":
-                if not self._skipFileTransfers(transfer_lists):
+                if not transfer_lists.skipFileTransfers(self.log):
                     return self.abortRun()
             elif len(go) == 0 or go[0].lower() != "y":
                 return self.abortRun()
-        transfer_lists.freeze()
         # backup operations
         self._performBackup(transfer_lists, simulation_msg)
         self.log.append([getString("### COMPLETED ###")])
