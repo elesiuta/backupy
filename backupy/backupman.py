@@ -254,6 +254,13 @@ class BackupManager():
             print(self.log.colourString(getString("Moved Files (will move files on dest to match source): %s") % (len(moved)), "HEADER"))
             self.log.append([getString("### MOVED FILES ###")])
             self.log.printMovedFiles(moved, source_dict, dest_dict)
+        if self.config.main_mode == "sync" and self.config.sync_propagate_deletions:
+            print(self.log.colourString(getString("Deleted from source (will %s on dest): %s") % (archive_msg, len(source_deleted)), "HEADER"))
+            self.log.append([getString("### DELETED FROM SOURCE ###")])
+            self.log.printFiles(source_deleted, dest_dict)
+            print(self.log.colourString(getString("Deleted from dest (will %s on source): %s") % (archive_msg, len(dest_deleted)), "HEADER"))
+            self.log.append([getString("### DELETED FROM DESTINATION ###")])
+            self.log.printFiles(dest_deleted, source_dict)
 
     def _performBackup(self, transfer_lists: TransferLists, simulation_msg: str) -> None:
         # get lists and databases
@@ -275,6 +282,8 @@ class BackupManager():
             fileman.handleMovedFiles(moved)
             fileman.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
         elif self.config.main_mode == "sync":
+            fileman.handleDeletedFiles(self.config.source, dest_deleted)
+            fileman.handleDeletedFiles(self.config.dest, source_deleted)
             fileman.copyFiles(self.config.source, self.config.dest, source_only, source_only)
             fileman.copyFiles(self.config.dest, self.config.source, dest_only, dest_only)
             fileman.handleMovedFiles(moved)
