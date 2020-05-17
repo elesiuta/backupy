@@ -100,6 +100,12 @@ class TransferLists:
             elif p in self.changed:
                 self.changed.remove(p)
                 log.append(["File:", "Changed", p])
+            elif p in self.source_deleted:
+                self.source_deleted.remove(p)
+                log.append(["File:", "Deleted", p])
+            elif p in self.dest_deleted:
+                self.dest_deleted.remove(p)
+                log.append(["File:", "Deleted", p])
             else:
                 print(log.colourString(getString("Could not find file in queues: %s") % (p), "WARNING"))
 
