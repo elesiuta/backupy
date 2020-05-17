@@ -101,35 +101,39 @@ class FileManager:
     ##########################################################################
 
     def _removeFiles(self, root_path: str, file_relative_paths: list) -> None:
-        if file_relative_paths:
-            self.log.colourPrint(getString("Removing %s unique files from:\n%s") % (len(file_relative_paths), root_path), "OKBLUE")
-            for f in file_relative_paths:
-                self._removeFile(root_path, f)
-            self.log.colourPrint(getString("Removal completed!"), "NONE")
+        if not file_relative_paths:
+            return None
+        self.log.colourPrint(getString("Removing %s unique files from:\n%s") % (len(file_relative_paths), root_path), "OKBLUE")
+        for f in file_relative_paths:
+            self._removeFile(root_path, f)
+        self.log.colourPrint(getString("Removal completed!"), "NONE")
 
     def copyFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str) -> None:
-        if source_files:
-            self.log.colourPrint(getString("Copying %s unique files from:\n%s\nto:\n%s") % (len(source_files), source_root, dest_root), "OKBLUE")
-            copy_status = StatusBar("Copying", len(source_files), self.config.stdout_status_bar, gui=self.gui)
-            for i in range(len(source_files)):
-                copy_status.update(source_files[i])
-                self._copyFile(source_root, dest_root, source_files[i], dest_files[i])
-            copy_status.endProgress()
+        if not source_files:
+            return None
+        self.log.colourPrint(getString("Copying %s unique files from:\n%s\nto:\n%s") % (len(source_files), source_root, dest_root), "OKBLUE")
+        copy_status = StatusBar("Copying", len(source_files), self.config.stdout_status_bar, gui=self.gui)
+        for i in range(len(source_files)):
+            copy_status.update(source_files[i])
+            self._copyFile(source_root, dest_root, source_files[i], dest_files[i])
+        copy_status.endProgress()
 
     def _moveFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str) -> None:
-        if source_files:
-            self.log.colourPrint(getString("Archiving %s unique files from:\n%s") % (len(source_files), source_root), "OKBLUE")
-            for i in range(len(source_files)):
-                self._moveFile(source_root, dest_root, source_files[i], dest_files[i])
-            self.log.colourPrint(getString("Archiving completed!"), "NONE")
+        if not source_files:
+            return None
+        self.log.colourPrint(getString("Archiving %s unique files from:\n%s") % (len(source_files), source_root), "OKBLUE")
+        for i in range(len(source_files)):
+            self._moveFile(source_root, dest_root, source_files[i], dest_files[i])
+        self.log.colourPrint(getString("Archiving completed!"), "NONE")
 
     def handleDeletedFiles(self, root_path: str, file_relative_paths: list) -> None:
-        if file_relative_paths:
-            if self.config.noarchive:
-                self._removeFiles(root_path, file_relative_paths)
-            else:
-                recycle_bin = os.path.join(root_path, self.config.trash_dir, self.backup_time)
-                self._moveFiles(root_path, recycle_bin, file_relative_paths, file_relative_paths)
+        if not file_relative_paths:
+            return None
+        if self.config.noarchive:
+            self._removeFiles(root_path, file_relative_paths)
+        else:
+            recycle_bin = os.path.join(root_path, self.config.trash_dir, self.backup_time)
+            self._moveFiles(root_path, recycle_bin, file_relative_paths, file_relative_paths)
 
     def handleMovedFiles(self, moved_pairs: list, reverse: bool = False) -> None:
         if moved_pairs and not self.config.nomoves:
@@ -154,24 +158,25 @@ class FileManager:
             self._moveFile(root_path, archive_path, file_relative_path, file_relative_path)
 
     def handleChangedFiles(self, source_root: str, dest_root: str, source_dict: dict, dest_dict: dict, changed: list) -> None:
-        if changed:
-            self.log.colourPrint(getString("Handling %s file changes per selection mode") % (len(changed)), "OKBLUE")
-            copy_status = StatusBar("Copying", len(changed), self.config.stdout_status_bar, gui=self.gui)
-            for frp in changed:
-                copy_status.update(frp)
-                if self.config.select_mode == "source":
+        if not changed:
+            return None
+        self.log.colourPrint(getString("Handling %s file changes per selection mode") % (len(changed)), "OKBLUE")
+        copy_status = StatusBar("Copying", len(changed), self.config.stdout_status_bar, gui=self.gui)
+        for frp in changed:
+            copy_status.update(frp)
+            if self.config.select_mode == "source":
+                self._archiveFile(dest_root, frp)
+                self._copyFile(source_root, dest_root, frp, frp)
+            elif self.config.select_mode == "dest":
+                self._archiveFile(source_root, frp)
+                self._copyFile(dest_root, source_root, frp, frp)
+            elif self.config.select_mode == "new":
+                if source_dict[frp]["mtime"] > dest_dict[frp]["mtime"]:
                     self._archiveFile(dest_root, frp)
                     self._copyFile(source_root, dest_root, frp, frp)
-                elif self.config.select_mode == "dest":
+                else:
                     self._archiveFile(source_root, frp)
                     self._copyFile(dest_root, source_root, frp, frp)
-                elif self.config.select_mode == "new":
-                    if source_dict[frp]["mtime"] > dest_dict[frp]["mtime"]:
-                        self._archiveFile(dest_root, frp)
-                        self._copyFile(source_root, dest_root, frp, frp)
-                    else:
-                        self._archiveFile(source_root, frp)
-                        self._copyFile(dest_root, source_root, frp, frp)
-                else:
-                    break
-            copy_status.endProgress()
+            else:
+                break
+        copy_status.endProgress()
