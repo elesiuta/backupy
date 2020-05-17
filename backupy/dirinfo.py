@@ -130,7 +130,7 @@ class DirInfo:
                 prev = zlib.crc32(line, prev)
         return "%X" % (prev & 0xFFFFFFFF)
 
-    def timeMatch(self, t1: float, t2: float, exact_only: bool = False, tz_diffs: list = [], fs_tol: int = 2) -> bool:
+    def timeMatch(self, t1: float, t2: float, exact_only: bool = False, tz_diffs: list = [3600, 3601, 3602], fs_tol: int = 2) -> bool:
         if t1 == t2:
             return True
         elif exact_only:
@@ -160,7 +160,7 @@ class DirInfo:
 
     def fileMatch(self, f1: str, f2: str, secondInfo: 'DirInfo', compare_mode: str, move_check: bool = False) -> bool:
         if self.dict_current[f1]["size"] == secondInfo.dict_current[f2]["size"]:
-            if self.timeMatch(self.dict_current[f1]["mtime"], secondInfo.dict_current[f2]["mtime"], False, [3600, 3601, 3602]):
+            if self.timeMatch(self.dict_current[f1]["mtime"], secondInfo.dict_current[f2]["mtime"], False):
                 # these are the 'unchanged files (probably)' from both sides, crc should be up to date from the scan if using CRC mode
                 if compare_mode == "crc" and self.dict_current[f1]["crc"] != secondInfo.dict_current[f2]["crc"]:
                     # size and date match, but crc does not, probably corrupted
@@ -251,7 +251,7 @@ class DirInfo:
               "crc" in self.dict_prev[relative_path] and
               self.dict_prev[relative_path]["crc"] != self.dict_current[relative_path]["crc"] and
               self.dict_prev[relative_path]["size"] == size and
-              self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
+              self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, False)):
                 # corrupted file (probably, changed crc, unchanged size and mtime)
                 self.dict_crc_errors[relative_path] = self.dict_prev[relative_path]
         elif self.compare_mode == "attr+" and "crc" not in self.dict_current[relative_path]:
@@ -260,7 +260,7 @@ class DirInfo:
               relative_path in self.dict_prev and
               "crc" in self.dict_prev[relative_path] and
               self.dict_prev[relative_path]["size"] == size and
-              self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, False, [3600, 3601, 3602])):
+              self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, False)):
                 # attributes match, preserve old crc
                 self.dict_current[relative_path]["crc"] = self.dict_prev[relative_path]["crc"]
             else:
@@ -280,13 +280,19 @@ class DirInfo:
         moved.reverse()
         return moved
 
-    def selfCompare(self, second_db: dict) -> dict:
+    def selfCompare(self, second_db: dict, exact_time: bool = True, compare_crc: bool = False, ignore_empty_dirs: bool = True) -> dict:
+        # compare functions
+        compare_crc = compare_crc and self.compare_mode == "crc"
         crc_match = lambda a, b: "crc" in a and "crc" in b and a["crc"] == b["crc"]
         file_match = lambda a, b, f: (a[f]["size"] == b[f]["size"] and
-                                   self.timeMatch(a[f]["mtime"], b[f]["mtime"], True) and
-                                   (self.compare_mode != "crc" or crc_match(a[f], b[f])))
-        file_set_a = set(self.dict_current)
-        file_set_b = set(second_db)
+                                      self.timeMatch(a[f]["mtime"], b[f]["mtime"], exact_time) and
+                                      (not compare_crc or crc_match(a[f], b[f])))
+        # init and filter file sets
+        ignored_path_match = lambda f: self.pathMatch(f, self.ignored_toplevel_folders)
+        is_dir = lambda d, f: ignore_empty_dirs and "dir" in d[f] and d[f]["dir"] is True
+        file_set_a = set(filter(lambda f: not ignored_path_match(f) and not is_dir(self.dict_current, f), self.dict_current))
+        file_set_b = set(filter(lambda f: not ignored_path_match(f) and not is_dir(second_db, f), second_db))
+        # compare
         modified = sorted(list(filter(lambda f: not file_match(self.dict_current, second_db, f), file_set_a & file_set_b)))
         new = sorted(list(file_set_a - file_set_b))
         missing = sorted(list(file_set_b - file_set_a))

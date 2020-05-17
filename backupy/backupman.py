@@ -130,6 +130,8 @@ class BackupManager():
         dest_dict, dest_prev, dest_new, dest_modified, dest_missing, dest_crc_errors, dest_dirs = self.dest.getSets()
         source_only, dest_only, changed, source_moved, dest_moved = transfer_lists.getSets()
         assert not (source_moved & dest_moved)
+        assert not (source_only & source_moved)
+        assert not (dest_only & dest_moved)
         # changed - ... below would be any skipped files
         # assert changed <= (source_modified | dest_modified) | (source_new & dest_new) | (source_crc_errors | dest_crc_errors)
         assert source_only <= source_dict
@@ -140,6 +142,25 @@ class BackupManager():
         # prev dirs and prev files under .backupy cause the next two asserts to be <=
         assert source_dict <= (source_prev - (source_missing | dest_moved)) | source_new | source_dirs
         assert dest_dict <= (dest_prev - (dest_missing | source_moved)) | dest_new | dest_dirs
+        # basically redo all of dircompare and checks during scan (except crc errors) using set operations and filters
+        redundant_dict_source = self.source.selfCompare(self.source.dict_prev)
+        assert set(redundant_dict_source["modified"]) == source_modified
+        assert set(redundant_dict_source["missing"]) >= source_missing
+        assert set(redundant_dict_source["missing"]) <= source_missing | dest_moved
+        assert set(redundant_dict_source["new"]) == source_new
+        redundant_dict_dest = self.dest.selfCompare(self.dest.dict_prev)
+        assert set(redundant_dict_dest["modified"]) == dest_modified
+        assert set(redundant_dict_dest["missing"]) >= dest_missing
+        assert set(redundant_dict_dest["missing"]) <= dest_missing | source_moved
+        assert set(redundant_dict_dest["new"]) == dest_new
+        redundant_dict_compare = self.source.selfCompare(self.dest.dict_current, False, True, False)
+        redundant_dict_compare_reverse = self.dest.selfCompare(self.source.dict_current, False, True, False)
+        assert set(redundant_dict_compare["modified"]) == changed
+        assert set(redundant_dict_compare["new"]) == source_only | source_moved
+        assert set(redundant_dict_compare["missing"]) == dest_only | dest_moved
+        assert set(redundant_dict_compare_reverse["modified"]) == changed
+        assert set(redundant_dict_compare_reverse["new"]) == dest_only | dest_moved
+        assert set(redundant_dict_compare_reverse["missing"]) == source_only | source_moved
 
     def _databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
         # get databases
