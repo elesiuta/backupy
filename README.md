@@ -16,7 +16,7 @@ pip install backupy --upgrade
 - Filter files with regular expressions
 ## Under the Hood
 - Easy to use in scripts (see backupy_batch.py for an example)
-- Clear and easy to verify code, the only functions that touch your files are: copyFile(), moveFile(), and  removeFile()
+- Clear and easy to verify code, the only functions that touch your files are: _copyFile(), _moveFile(), and  _removeFile() under FileManager
 - Very simple design and only uses the Python standard library for fewer points of failure
 ## Usage Description
 - Source and destination directories can be any accessible directory (mounted drives, cloud storage, Syncthing folders, etc)
