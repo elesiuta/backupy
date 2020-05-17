@@ -89,7 +89,7 @@ class DirInfo:
         """Load database from config_dir"""
         self.dict_prev = readJson(os.path.join(self.dir, self.config_dir, "database.json"))
 
-    def getJsonX2(self, other_dir, unique_id) -> dict:
+    def getJsonX2(self) -> dict:
         """Get the 'last seen' database of this directory from the perspective of the other directory"""
         database_x2 = readJson(self.other_database_path)
         if database_x2:
