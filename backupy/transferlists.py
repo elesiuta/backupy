@@ -119,7 +119,7 @@ class TransferLists:
         # if it was moved on one side, it would have been removed from other_only, this is verified under checkConsistency
         source_deleted = (source_missing & dest_only) - (dest_new | dest_modified | dest_moved)
         dest_deleted = (dest_missing & source_only) - (source_new | source_modified | source_moved)
-        self.source_only = sorted(list(source_only - source_deleted))
+        self.source_only = sorted(list(source_only - dest_deleted))
         self.source_deleted = sorted(list(source_deleted))
-        self.dest_only = sorted(list(dest_only - dest_deleted))
+        self.dest_only = sorted(list(dest_only - source_deleted))
         self.dest_deleted = sorted(list(dest_deleted))
