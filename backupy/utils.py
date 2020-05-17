@@ -56,5 +56,8 @@ def readJson(file_path: str) -> dict:
 def writeJson(file_path: str, data: dict, subdir: bool = True, sort_keys: bool = False) -> None:
     if subdir and not os.path.isdir(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
-    with open(file_path, "w", encoding="utf-8", errors="surrogateescape") as json_file:
-        json.dump(data, json_file, indent=1, separators=(',', ': '), sort_keys=sort_keys, ensure_ascii=False)
+    try:
+        with open(file_path, "w", encoding="utf-8", errors="surrogateescape") as json_file:
+            json.dump(data, json_file, indent=1, separators=(',', ': '), sort_keys=sort_keys, ensure_ascii=False)
+    except:
+        print(getString("ERROR: Could not write : " + file_path))
