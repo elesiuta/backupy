@@ -116,7 +116,7 @@ class BackupManager():
     def _checkConsistency(self, dest_database_load_success: bool, transfer_lists: TransferLists) -> None:
         source_dict, source_prev, source_new, source_modified, source_missing, source_crc_errors, source_dirs = self.source.getSets()
         dest_dict, dest_prev, dest_new, dest_modified, dest_missing, dest_crc_errors, dest_dirs = self.dest.getSets()
-        source_only, dest_only, changed, source_moved, dest_moved = transfer_lists.getSets()
+        source_only, dest_only, changed, source_moved, dest_moved, source_deleted, dest_deleted = transfer_lists.getSets()
         assert not (source_moved & dest_moved)
         assert not (source_only & source_moved)
         assert not (dest_only & dest_moved)
@@ -218,7 +218,7 @@ class BackupManager():
 
     def _printAndLogCompareDiffSummary(self, transfer_lists: TransferLists) -> None:
         # get lists and databases
-        source_only, dest_only, changed, moved = transfer_lists.getLists()
+        source_only, dest_only, changed, moved, source_deleted, dest_deleted = transfer_lists.getLists()
         source_dict, _, _, _, _, _, _ = self.source.getDicts()
         dest_dict, _, _, _, _, _, _ = self.dest.getDicts()
         # prepare diff messages
@@ -257,7 +257,7 @@ class BackupManager():
 
     def _performBackup(self, transfer_lists: TransferLists, simulation_msg: str) -> None:
         # get lists and databases
-        source_only, dest_only, changed, moved = transfer_lists.getLists()
+        source_only, dest_only, changed, moved, source_deleted, dest_deleted = transfer_lists.getLists()
         source_dict, _, _, _, _, _, _ = self.source.getDicts()
         dest_dict, _, _, _, _, _, _ = self.dest.getDicts()
         # init file manager

@@ -39,7 +39,9 @@ class TransferLists:
         return (self.source_only,
                 self.dest_only,
                 self.changed,
-                self.moved,)
+                self.moved,
+                self.source_deleted,
+                self.dest_deleted)
 
     def getSets(self) -> tuple:
         """Returns tuple of set(lists): source_only, dest_only, changed, moved (files on source), moved (files on dest)"""
@@ -47,13 +49,17 @@ class TransferLists:
                 set(self.dest_only),
                 set(self.changed),
                 set([f["source"] for f in self.moved]),
-                set([f["dest"] for f in self.moved]),)
+                set([f["dest"] for f in self.moved]),
+                set(self.source_deleted),
+                set(self.dest_deleted))
 
     def isEmpty(self) -> bool:
         return (len(self.source_only) == 0 and
                 len(self.dest_only) == 0 and
                 len(self.changed) == 0 and
-                len(self.moved) == 0)
+                len(self.moved) == 0 and
+                len(self.source_deleted) == 0 and
+                len(self.dest_deleted) == 0)
 
     def freeze(self) -> None:
         """Make this object mostly immutable for code safety"""
@@ -98,15 +104,15 @@ class TransferLists:
                 print(log.colourString(getString("Could not find file in queues: %s") % (p), "WARNING"))
 
     def propagateSyncDeletions(self, source: DirInfo, dest: DirInfo) -> None:
-        source_only, dest_only, _, _, _ = self.getSets()
+        source_only, dest_only, _, source_moved, dest_moved, _, _= self.getSets()
         source_diff = source.selfCompare(source.getJsonX2(), True, False, False)
         source_new, source_modified, source_missing = set(source_diff["new"]), set(source_diff["modified"]), set(source_diff["missing"])
         dest_diff = dest.selfCompare(dest.getJsonX2(), True, False, False)
         dest_new, dest_modified, dest_missing = set(dest_diff["new"]), set(dest_diff["modified"]), set(dest_diff["missing"])
         # file was deleted on one side, and should be deleted from the other iff it exists and is not new or modified since the last scan
         # if it was moved on one side, it would have been removed from other_only, this is verified under checkConsistency
-        source_deleted = (source_missing & dest_only) - (dest_new | dest_modified)
-        dest_deleted = (dest_missing & source_only) - (source_new | source_modified)
+        source_deleted = (source_missing & dest_only) - (dest_new | dest_modified | dest_moved)
+        dest_deleted = (dest_missing & source_only) - (source_new | source_modified | source_moved)
         self.source_only = sorted(list(source_only - source_deleted))
         self.source_deleted = sorted(list(source_deleted))
         self.dest_only = sorted(list(dest_only - dest_deleted))
