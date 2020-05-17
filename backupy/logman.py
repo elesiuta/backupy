@@ -39,9 +39,9 @@ class LogManager:
             self.gui_colourize = colourize
             self.terminal_width = 80
         # init attributes for linting (replaced by BackupManager to reference the same object)
-        self.config = ConfigObject({})
-        self.source = DirInfo("", "", "")
-        self.dest = DirInfo("", "", "")
+        self.config = ConfigObject
+        self.source = DirInfo
+        self.dest = DirInfo
 
     def append(self, object) -> None:
         self.log.append(object)

@@ -18,6 +18,7 @@ import re
 import typing
 import zlib
 
+from .config import ConfigObject
 from .statusbar import StatusBar
 from .utils import (
     readJson,
@@ -26,9 +27,8 @@ from .utils import (
 
 
 class DirInfo:
-    def __init__(self, directory_root_path: str, compare_mode: str,  config_dir: str,
-                 ignored_toplevel_folders: list = [], gui: bool = False, force_posix_path_sep: bool = False,
-                 filter_include_list: typing.Union[list, None] = None, filter_exclude_list: typing.Union[list, None] = None):
+    def __init__(self, directory_root_path: str, unique_id: str,
+                 other_root_path: str, config: ConfigObject, gui: bool = False):
         """For scanning directories, tracking files and changes, meant only for internal use by BackupManager"""
         # File dictionaries, keys are paths relative to directory_root_path, values are dictionaries of file attributes
         self.dict_current = {}
@@ -42,19 +42,22 @@ class DirInfo:
         self.filter_include_list = None
         self.filter_exclude_list = None
         try:
-            if filter_include_list is not None:
-                self.filter_include_list = [re.compile(f) for f in filter_include_list]
-            if filter_exclude_list is not None:
-                self.filter_exclude_list = [re.compile(f) for f in filter_exclude_list]
+            if config.filter_include_list is not None:
+                self.filter_include_list = [re.compile(f) for f in config.filter_include_list]
+            if config.filter_exclude_list is not None:
+                self.filter_exclude_list = [re.compile(f) for f in config.filter_exclude_list]
         except Exception:
             raise Exception("Filter Processing Error")
+        # Init variables from config
+        self.compare_mode = config.compare_mode
+        self.config_dir = config.config_dir
+        self.ignored_toplevel_folders = list(set([config.archive_dir, config.log_dir, config.trash_dir, config.config_dir]))
+        self.force_posix_path_sep = config.force_posix_path_sep
+        self.write_database_x2 = config.write_database_x2
         # Init other variables
         self.dir = directory_root_path
-        self.compare_mode = compare_mode
-        self.config_dir = config_dir
-        self.ignored_toplevel_folders = list(set(ignored_toplevel_folders[:] + [config_dir]))
+        self.other_database_path = os.path.join(other_root_path, self.config_dir, "database-%s.json" % unique_id)
         self.gui = gui
-        self.force_posix_path_sep = force_posix_path_sep
 
     def getDicts(self) -> tuple:
         """Returns tuple of dictionaries: current, prev, new, modified, missing, crc_errors, dirs"""
@@ -77,10 +80,22 @@ class DirInfo:
                 set(self.dict_dirs))
 
     def saveJson(self, db_name: str = "database.json") -> None:
+        """Write database to config_dir on self and other if enabled"""
         writeJson(os.path.join(self.dir, self.config_dir, db_name), self.dict_current, sort_keys=True)
+        if self.write_database_x2 and db_name == "database.json":
+            writeJson(self.other_database_path, self.dict_current, sort_keys=True)
 
     def loadJson(self) -> None:
+        """Load database from config_dir"""
         self.dict_prev = readJson(os.path.join(self.dir, self.config_dir, "database.json"))
+
+    def getJsonX2(self, other_dir, unique_id) -> dict:
+        """Get the 'last seen' database of this directory from the perspective of the other directory"""
+        database_x2 = readJson(self.other_database_path)
+        if database_x2:
+            return database_x2
+        else:
+            return self.dict_prev
 
     def verifyCrcOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
         if self.dir == source_root and secondInfo.dir == dest_root:

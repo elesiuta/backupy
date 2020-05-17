@@ -301,14 +301,10 @@ class BackupManager():
         else:
             simulation_msg = ""
         # init DirInfo and load previous scan data if available
-        self.source = DirInfo(self.config.source, self.config.compare_mode, self.config.config_dir,
-                              [self.config.archive_dir, self.config.log_dir, self.config.trash_dir],
-                              self.gui, self.config.force_posix_path_sep,
-                              self.config.filter_include_list, self.config.filter_exclude_list)
-        self.dest = DirInfo(self.config.dest, self.config.compare_mode, self.config.config_dir,
-                            [self.config.archive_dir, self.config.log_dir, self.config.trash_dir],
-                            self.gui, self.config.force_posix_path_sep,
-                            self.config.filter_include_list, self.config.filter_exclude_list)
+        self.source = DirInfo(self.config.source, self.config.source_unique_id,
+                              self.config.dest, self.config, self.gui)
+        self.dest = DirInfo(self.config.dest, self.config.dest_unique_id,
+                            self.config.source, self.config, self.gui)
         dest_database_load_success = False
         self.source.loadJson()
         self.dest.loadJson()
