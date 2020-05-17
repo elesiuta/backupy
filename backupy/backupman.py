@@ -113,18 +113,6 @@ class BackupManager():
         print(self.log.colourString(getString("Run aborted"), "WARNING"))
         return 1
 
-    def _propagateSyncDeletions(self, transfer_lists: TransferLists) -> None:
-        source_only, dest_only, _, _, _ = transfer_lists.getSets()
-        _, _, source_new, source_modified, source_missing, _, _ = self.source.getSets()
-        _, _, dest_new, dest_modified, dest_missing, _, _ = self.dest.getSets()
-        # file was deleted on one side, and should be deleted from the other iff it exists and is not new or modified since the last scan
-        source_deleted = (source_missing & dest_only) - (dest_new | dest_modified)
-        dest_deleted = (dest_missing & source_only) - (source_new | source_modified)
-        transfer_lists.source_only = sorted(list(source_only - source_deleted))
-        transfer_lists.source_deleted = sorted(list(source_deleted))
-        transfer_lists.dest_only = sorted(list(dest_only - dest_deleted))
-        transfer_lists.dest_deleted = sorted(list(dest_deleted))
-
     def _checkConsistency(self, dest_database_load_success: bool, transfer_lists: TransferLists) -> None:
         source_dict, source_prev, source_new, source_modified, source_missing, source_crc_errors, source_dirs = self.source.getSets()
         dest_dict, dest_prev, dest_new, dest_modified, dest_missing, dest_crc_errors, dest_dirs = self.dest.getSets()
@@ -325,7 +313,7 @@ class BackupManager():
             self.log.colourPrint(getString("Comparing directories..."), "OKBLUE")
             transfer_lists = TransferLists(self.source.dirCompare(self.dest, self.config.nomoves))
             if self.config.main_mode == "sync" and self.config.sync_propagate_deletions:
-                self._propagateSyncDeletions(transfer_lists)
+                transfer_lists.propagateSyncDeletions(self.source, self.dest)
             transfer_lists.freeze()
         # check for database conflicts or corruption
         detected_database_conflicts_or_corruption = self._databaseAndCorruptionCheck(dest_database_load_success)

@@ -13,6 +13,7 @@
 
 # https://github.com/elesiuta/backupy
 
+from .dirinfo import DirInfo
 from .logman import LogManager
 from .utils import getString
 
@@ -95,3 +96,15 @@ class TransferLists:
                 log.append(["File:", "Changed", p])
             else:
                 print(log.colourString(getString("Could not find file in queues: %s") % (p), "WARNING"))
+
+    def propagateSyncDeletions(self, source: DirInfo, dest: DirInfo) -> None:
+        source_only, dest_only, _, _, _ = self.getSets()
+        _, _, source_new, source_modified, source_missing, _, _ = source.getSets()
+        _, _, dest_new, dest_modified, dest_missing, _, _ = dest.getSets()
+        # file was deleted on one side, and should be deleted from the other iff it exists and is not new or modified since the last scan
+        source_deleted = (source_missing & dest_only) - (dest_new | dest_modified)
+        dest_deleted = (dest_missing & source_only) - (source_new | source_modified)
+        self.source_only = sorted(list(source_only - source_deleted))
+        self.source_deleted = sorted(list(source_deleted))
+        self.dest_only = sorted(list(dest_only - dest_deleted))
+        self.dest_deleted = sorted(list(dest_deleted))
