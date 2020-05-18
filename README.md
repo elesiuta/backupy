@@ -128,7 +128,7 @@ configuration options:
 ## Extra Configuration Options
 - Some options can only be set from the config.json file
   - source_unique_id & dest_unique_id
-    - unique id used for syncing multiple folders, default = random string
+    - unique id for each folder, used when write_database_x2 is enabled, each assigned a random string by default
   - archive_dir
     - can be any subdirectory, default = ".backupy/Archive"
   - config_dir
@@ -144,7 +144,7 @@ configuration options:
   - stdout_status_bar
     - show progress status bar, default = True
   - sync_propagate_deletions
-    - use the database to propagate deletions during sync, default = False
+    - use the database to propagate deletions during sync (recommend enabling write_database_x2), default = False
   - verbose
     - print program status updates to stdout, default = True
   - write_database_x2
