@@ -1,8 +1,11 @@
 # quickly generate a call graph of backupy.py
 # depends on pyan3 and graphviz
 
+# ignore nodes or edges on lines containing these strings
 ignored_node_strings = [
     "File -> backupy__dirinfo__DirInfo [",
+    "DiffSummary -> backupy__dirinfo__DirInfo [",
+    "performBackup -> backupy__dirinfo__DirInfo [",
 ]
 
 # generate callgraph using pyan3
@@ -14,7 +17,7 @@ with open("callgraph.dot", "r") as f:
     dot = f.readlines()
 new_dot = [
     'digraph G {\n',
-    '    graph [rankdir=TB, clusterrank="local", concentrate=false, ranksep="2", nodesep="0.2"];\n',
+    '    graph [rankdir=TB, clusterrank="global", concentrate=false, ranksep="2", nodesep="0.2"];\n',
     '    overlap=false;\n'
     '    splines=true;\n',
     '    subgraph cluster_G {\n',

@@ -197,8 +197,9 @@ class BackupManager():
                 self.log.printChangedFiles(sorted(list(source_crc_errors)), source_crc_errors, dest_crc_errors)
         return abort_run
 
-    def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: "DirInfo") -> None:
+    def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: DirInfo) -> None:
         # get databases
+        side_info = DirInfo
         side_dict, side_prev, side_new, side_modified, side_missing, _, _ = side_info.getDicts()
         compare_func = lambda f1, f2: side_new[f1] == side_missing[f2]
         list_new, list_missing = sorted(list(side_new)), sorted(list(side_missing))

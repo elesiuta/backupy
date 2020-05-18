@@ -1,5 +1,5 @@
 digraph G {
-    graph [rankdir=TB, clusterrank="local", concentrate=false, ranksep="2", nodesep="0.2"];
+    graph [rankdir=TB, clusterrank="global", concentrate=false, ranksep="2", nodesep="0.2"];
     overlap=false;
     splines=true;
     subgraph cluster_G {
@@ -234,26 +234,27 @@ digraph G {
         backupy__backupman__BackupManager___checkConsistency -> backupy__dirinfo__DirInfo__getSets [style="solid", color="#000000"];
         backupy__backupman__BackupManager___checkConsistency -> backupy__dirinfo__DirInfo__selfCompare [style="solid", color="#000000"];
         backupy__backupman__BackupManager___databaseAndCorruptionCheck -> backupy__dirinfo__DirInfo__getDicts [style="solid", color="#000000"];
+        backupy__backupman__BackupManager___printAndLogScanOnlyDiffSummary -> backupy__dirinfo__DirInfo__getMovedAndUpdateLists [style="solid", color="#000000"];
+        backupy__backupman__BackupManager___printAndLogScanOnlyDiffSummary -> backupy__dirinfo__DirInfo__getDicts [style="solid", color="#000000"];
         backupy__backupman__BackupManager___printAndLogCompareDiffSummary -> backupy__dirinfo__DirInfo__getDicts [style="solid", color="#000000"];
-        backupy__backupman__BackupManager___performBackup -> backupy__dirinfo__DirInfo [style="solid", color="#000000"];
         backupy__backupman__BackupManager___performBackup -> backupy__fileman__FileManager [style="solid", color="#000000"];
-        backupy__backupman__BackupManager___performBackup -> backupy__dirinfo__DirInfo__getDicts [style="solid", color="#000000"];
         backupy__backupman__BackupManager___performBackup -> backupy__fileman__FileManager__handleDeletedFiles [style="solid", color="#000000"];
         backupy__backupman__BackupManager___performBackup -> backupy__fileman__FileManager__copyFiles [style="solid", color="#000000"];
         backupy__backupman__BackupManager___performBackup -> backupy__fileman__FileManager__handleMovedFiles [style="solid", color="#000000"];
         backupy__backupman__BackupManager___performBackup -> backupy__fileman__FileManager__handleChangedFiles [style="solid", color="#000000"];
+        backupy__backupman__BackupManager___performBackup -> backupy__dirinfo__DirInfo__getDicts [style="solid", color="#000000"];
         backupy__backupman__BackupManager___performBackup -> backupy__fileman__FileManager____init__ [style="solid", color="#000000"];
+        backupy__backupman__BackupManager__run -> backupy__dirinfo__DirInfo____init__ [style="solid", color="#000000"];
         backupy__backupman__BackupManager__run -> backupy__dirinfo__DirInfo [style="solid", color="#000000"];
+        backupy__backupman__BackupManager__run -> backupy__backupman__BackupManager___performBackup [style="solid", color="#000000"];
+        backupy__backupman__BackupManager__run -> backupy__dirinfo__DirInfo__loadJson [style="solid", color="#000000"];
         backupy__backupman__BackupManager__run -> backupy__backupman__BackupManager___databaseAndCorruptionCheck [style="solid", color="#000000"];
+        backupy__backupman__BackupManager__run -> backupy__dirinfo__DirInfo__scanDir [style="solid", color="#000000"];
+        backupy__backupman__BackupManager__run -> backupy__dirinfo__DirInfo__dirCompare [style="solid", color="#000000"];
         backupy__backupman__BackupManager__run -> backupy__backupman__BackupManager___checkConsistency [style="solid", color="#000000"];
         backupy__backupman__BackupManager__run -> backupy__backupman__BackupManager__abortRun [style="solid", color="#000000"];
         backupy__backupman__BackupManager__run -> backupy__backupman__BackupManager___printAndLogScanOnlyDiffSummary [style="solid", color="#000000"];
         backupy__backupman__BackupManager__run -> backupy__backupman__BackupManager___printAndLogCompareDiffSummary [style="solid", color="#000000"];
-        backupy__backupman__BackupManager__run -> backupy__backupman__BackupManager___performBackup [style="solid", color="#000000"];
-        backupy__backupman__BackupManager__run -> backupy__dirinfo__DirInfo____init__ [style="solid", color="#000000"];
-        backupy__backupman__BackupManager__run -> backupy__dirinfo__DirInfo__loadJson [style="solid", color="#000000"];
-        backupy__backupman__BackupManager__run -> backupy__dirinfo__DirInfo__scanDir [style="solid", color="#000000"];
-        backupy__backupman__BackupManager__run -> backupy__dirinfo__DirInfo__dirCompare [style="solid", color="#000000"];
         backupy__dirinfo__DirInfo__verifyCrcOnCopy -> backupy__dirinfo__DirInfo__getCrc [style="solid", color="#000000"];
         backupy__dirinfo__DirInfo__getCrc -> backupy__dirinfo__DirInfo__calcCrc [style="solid", color="#000000"];
         backupy__dirinfo__DirInfo__fileMatch -> backupy__dirinfo__DirInfo__timeMatch [style="solid", color="#000000"];
@@ -273,8 +274,8 @@ digraph G {
         backupy__fileman__FileManager___removeFiles -> backupy__fileman__FileManager___removeFile [style="solid", color="#000000"];
         backupy__fileman__FileManager__copyFiles -> backupy__fileman__FileManager___copyFile [style="solid", color="#000000"];
         backupy__fileman__FileManager___moveFiles -> backupy__fileman__FileManager___moveFile [style="solid", color="#000000"];
-        backupy__fileman__FileManager__handleDeletedFiles -> backupy__fileman__FileManager___removeFiles [style="solid", color="#000000"];
         backupy__fileman__FileManager__handleDeletedFiles -> backupy__fileman__FileManager___moveFiles [style="solid", color="#000000"];
+        backupy__fileman__FileManager__handleDeletedFiles -> backupy__fileman__FileManager___removeFiles [style="solid", color="#000000"];
         backupy__fileman__FileManager__handleMovedFiles -> backupy__fileman__FileManager___moveFile [style="solid", color="#000000"];
         backupy__fileman__FileManager___archiveFile -> backupy__fileman__FileManager___moveFile [style="solid", color="#000000"];
         backupy__fileman__FileManager__handleChangedFiles -> backupy__fileman__FileManager___copyFile [style="solid", color="#000000"];
