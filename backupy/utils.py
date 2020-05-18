@@ -59,5 +59,5 @@ def writeJson(file_path: str, data: dict, subdir: bool = True, sort_keys: bool =
     try:
         with open(file_path, "w", encoding="utf-8", errors="surrogateescape") as json_file:
             json.dump(data, json_file, indent=1, separators=(',', ': '), sort_keys=sort_keys, ensure_ascii=False)
-    except:
-        print(getString("ERROR: Could not write: ") + file_path)
+    except Exception:
+        print(getString("Error, could not write: ") + file_path)
