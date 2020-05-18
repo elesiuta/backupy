@@ -29,7 +29,7 @@ class LogManager:
     def __init__(self, backup_time: int, gui: bool):
         """Provides methods for log formatting and pretty printing (used by BackupManager)"""
         # init variables
-        self.log = []
+        self._log = []
         self.backup_time = backup_time
         self.gui = gui
         self.terminal_width = shutil.get_terminal_size()[0]
@@ -44,7 +44,7 @@ class LogManager:
         self.dest = DirInfo
 
     def append(self, object) -> None:
-        self.log.append(object)
+        self._log.append(object)
 
     def writeLog(self, db_name: str) -> None:
         if not self.config.nolog:
@@ -53,21 +53,21 @@ class LogManager:
                 db_name = db_name[:-4] + "dryrun.json"
             self.source.saveJson(db_name)
             self.dest.saveJson(db_name)
-            self.log[1][5] = self.source.calcCrc(os.path.join(self.source.dir, self.source.config_dir, db_name))
-            self.log[1][7] = self.dest.calcCrc(os.path.join(self.dest.dir, self.dest.config_dir, db_name))
+            self._log[1][5] = self.source.calcCrc(os.path.join(self.source.dir, self.source.config_dir, db_name))
+            self._log[1][7] = self.dest.calcCrc(os.path.join(self.dest.dir, self.dest.config_dir, db_name))
             # <source>/.backupy/Logs/log-yymmdd-HHMM.csv
             if self.config.root_alias_log or self.config.force_posix_path_sep:
-                for i in range(2, len(self.log)):
-                    for j in range(len(self.log[i])):
-                        if type(self.log[i][j]) == str:
+                for i in range(2, len(self._log)):
+                    for j in range(len(self._log[i])):
+                        if type(self._log[i][j]) == str:
                             if self.config.root_alias_log:
-                                self.log[i][j] = self.log[i][j].replace(self.config.source, getString("<source>"))
-                                self.log[i][j] = self.log[i][j].replace(self.config.dest, getString("<dest>"))
+                                self._log[i][j] = self._log[i][j].replace(self.config.source, getString("<source>"))
+                                self._log[i][j] = self._log[i][j].replace(self.config.dest, getString("<dest>"))
                             if self.config.force_posix_path_sep:
-                                self.log[i][j] = self.log[i][j].replace(os.path.sep, "/")
-            writeCsv(os.path.join(self.config.source, self.config.log_dir, "log-" + self.backup_time + ".csv"), self.log)
+                                self._log[i][j] = self._log[i][j].replace(os.path.sep, "/")
+            writeCsv(os.path.join(self.config.source, self.config.log_dir, "log-" + self.backup_time + ".csv"), self._log)
             if self.config.write_log_dest:
-                writeCsv(os.path.join(self.config.dest, self.config.log_dir, "log-" + self.backup_time + "-dest.csv"), self.log)
+                writeCsv(os.path.join(self.config.dest, self.config.log_dir, "log-" + self.backup_time + "-dest.csv"), self._log)
 
     def replaceSurrogates(self, string: str) -> str:
         return string.encode("utf-8", "surrogateescape").decode("utf-8", "replace")
@@ -118,10 +118,10 @@ class LogManager:
     def printFileInfo(self, header: str, f: str, d: dict, sub_header: str = "", skip_info: bool = False) -> None:
         header, sub_header = getString(header), getString(sub_header)
         if f in d and d[f] is not None:
-            self.log.append([header.strip(), sub_header.strip(), f] + self.prettyAttr(d[f]))
+            self.append([header.strip(), sub_header.strip(), f] + self.prettyAttr(d[f]))
             missing = False
         else:
-            self.log.append([header.strip(), sub_header.strip(), f] + [getString("Missing")])
+            self.append([header.strip(), sub_header.strip(), f] + [getString("Missing")])
             missing = True
         if header == "":
             s = ""
