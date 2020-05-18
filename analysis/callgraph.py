@@ -6,11 +6,14 @@ ignored_node_strings = [
     "File -> backupy__dirinfo__DirInfo [",
     "DiffSummary -> backupy__dirinfo__DirInfo [",
     "performBackup -> backupy__dirinfo__DirInfo [",
+    "Consistency -> backupy__transferlists__TransferLists [",
+    "DiffSummary -> backupy__transferlists__TransferLists [",
+    "performBackup -> backupy__transferlists__TransferLists ["
 ]
 
 # generate callgraph using pyan3
 import os
-os.system("pyan3 ../backupy/backupman.py ../backupy/dirinfo.py ../backupy/fileman.py --no-defines --uses --colored --nested-groups --dot > callgraph.dot")
+os.system("pyan3 ../backupy/backupman.py ../backupy/dirinfo.py ../backupy/fileman.py ../backupy/transferlists.py --no-defines --uses --colored --nested-groups --dot > callgraph.dot")
 
 # clean up callgraph
 with open("callgraph.dot", "r") as f:
