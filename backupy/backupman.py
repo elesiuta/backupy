@@ -144,11 +144,11 @@ class BackupManager():
         redundant_dict_compare = self.source.selfCompare(self.dest.dict_current, False, True, False)
         redundant_dict_compare_reverse = self.dest.selfCompare(self.source.dict_current, False, True, False)
         assert set(redundant_dict_compare["modified"]) == changed
-        assert set(redundant_dict_compare["new"]) == source_only | source_moved
-        assert set(redundant_dict_compare["missing"]) == dest_only | dest_moved
+        assert set(redundant_dict_compare["new"]) == source_only | source_moved | dest_deleted
+        assert set(redundant_dict_compare["missing"]) == dest_only | dest_moved | source_deleted
         assert set(redundant_dict_compare_reverse["modified"]) == changed
-        assert set(redundant_dict_compare_reverse["new"]) == dest_only | dest_moved
-        assert set(redundant_dict_compare_reverse["missing"]) == source_only | source_moved
+        assert set(redundant_dict_compare_reverse["new"]) == dest_only | dest_moved | source_deleted
+        assert set(redundant_dict_compare_reverse["missing"]) == source_only | source_moved | dest_deleted
 
     def _databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
         # get databases
