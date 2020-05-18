@@ -1,0 +1,30 @@
+### DATABASE CONFLICTS ###
+### SOURCE ONLY ###
+File:,,new file A.txt,11 B,Mon Dec  2 00:07:34 2019
+### DESTINATION ONLY ###
+File:,,new file B.txt,70 B,Mon Dec  2 00:09:48 2019
+### CHANGED FILES ###
+File:,Source,file modified newer on A.txt,640 B,Mon Dec  2 00:03:44 2019
+,Dest,file modified newer on A.txt,319 B,Wed Jul 17 13:23:38 2019
+File:,Source,file modified newer on B.txt,100 B,Wed Jul 17 13:22:28 2019
+,Dest,file modified newer on B.txt,202 B,Mon Dec  2 00:08:08 2019
+### MOVED FILES ###
+Source:,,renamed file A.txt,14 B,Wed Jul 17 13:14:48 2019
+Dest:,,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019
+### DELETED FROM SOURCE ###
+File:,,file only B.txt,9 B,Wed Jul 17 13:20:16 2019
+### DELETED FROM DESTINATION ###
+File:,,empty dir only A,0 B,Thu Jan  1 00:00:00 1970,0,dir: True
+File:,,file only A.txt,2 B,Wed Jul 17 13:19:48 2019
+### START SYNC ###
+Move:,<source>,empty dir only A,<source>\.backupy\Trash\000000-0000,empty dir only A
+Move:,<source>,file only A.txt,<source>\.backupy\Trash\000000-0000,file only A.txt
+Move:,<dest>,file only B.txt,<dest>\.backupy\Trash\000000-0000,file only B.txt
+Copy:,<source>,new file A.txt,<dest>,new file A.txt
+Copy:,<dest>,new file B.txt,<source>,new file B.txt
+Move:,<dest>,renamed file B.txt,<dest>,renamed file A.txt
+Move:,<dest>,file modified newer on A.txt,<dest>\.backupy\Archive\000000-0000,file modified newer on A.txt
+Copy:,<source>,file modified newer on A.txt,<dest>,file modified newer on A.txt
+Move:,<source>,file modified newer on B.txt,<source>\.backupy\Archive\000000-0000,file modified newer on B.txt
+Copy:,<dest>,file modified newer on B.txt,<source>,file modified newer on B.txt
+### COMPLETED ###

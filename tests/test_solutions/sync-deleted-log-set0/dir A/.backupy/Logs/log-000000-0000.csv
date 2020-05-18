@@ -1,0 +1,36 @@
+### SOURCE ONLY ###
+File:,,empty dir only A,0 B,Thu Jan  1 00:00:00 1970,0,dir: True
+File:,,file only A.txt,2 B,Wed Jul 17 13:19:48 2019
+### DESTINATION ONLY ###
+File:,,empty dir only B,0 B,Thu Jan  1 00:00:00 1970,0,dir: True
+File:,,file only B.txt,9 B,Wed Jul 17 13:20:16 2019
+### CHANGED FILES ###
+File:,Source,file modified newer on A.txt,319 B,Wed Jul 17 13:23:38 2019
+,Dest,file modified newer on A.txt,158 B,Wed Jul 17 13:22:46 2019
+File:,Source,file modified newer on B.txt,35 B,Wed Jul 17 13:21:32 2019
+,Dest,file modified newer on B.txt,100 B,Wed Jul 17 13:22:28 2019
+### MOVED FILES ###
+Source:,,renamed file A.txt,14 B,Wed Jul 17 13:14:48 2019
+Dest:,,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019
+Source:,,subdir\renamed dir A\file1.txt,11 B,Wed Jul 17 13:16:00 2019
+Dest:,,renamed dir B\file1.txt,11 B,Wed Jul 17 13:16:00 2019
+Source:,,subdir\renamed dir A\file2.txt,2 B,Wed Jul 17 13:16:06 2019
+Dest:,,renamed dir B\file2.txt,2 B,Wed Jul 17 13:16:06 2019
+Source:,,subdir\renamed dir A\file3.txt,45 B,Wed Jul 17 13:16:26 2019
+Dest:,,renamed dir B\file3.txt,45 B,Wed Jul 17 13:16:26 2019
+### DELETED FROM SOURCE ###
+### DELETED FROM DESTINATION ###
+### START SYNC ###
+Copy:,<source>,empty dir only A,<dest>,empty dir only A
+Copy:,<source>,file only A.txt,<dest>,file only A.txt
+Copy:,<dest>,empty dir only B,<source>,empty dir only B
+Copy:,<dest>,file only B.txt,<source>,file only B.txt
+Move:,<dest>,renamed file B.txt,<dest>,renamed file A.txt
+Move:,<dest>,renamed dir B\file1.txt,<dest>,subdir\renamed dir A\file1.txt
+Move:,<dest>,renamed dir B\file2.txt,<dest>,subdir\renamed dir A\file2.txt
+Move:,<dest>,renamed dir B\file3.txt,<dest>,subdir\renamed dir A\file3.txt
+Move:,<dest>,file modified newer on A.txt,<dest>\.backupy\Archive\000000-0000,file modified newer on A.txt
+Copy:,<source>,file modified newer on A.txt,<dest>,file modified newer on A.txt
+Move:,<source>,file modified newer on B.txt,<source>\.backupy\Archive\000000-0000,file modified newer on B.txt
+Copy:,<dest>,file modified newer on B.txt,<source>,file modified newer on B.txt
+### COMPLETED ###

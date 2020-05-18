@@ -1,0 +1,50 @@
+{
+ "file modified newer on A.txt": {
+  "mtime": 1575245024.0,
+  "size": 640
+ },
+ "file modified newer on B.txt": {
+  "mtime": 1575245288.0,
+  "size": 202
+ },
+ "new file A.txt": {
+  "mtime": 1575245254.0,
+  "size": 11
+ },
+ "new file B.txt": {
+  "mtime": 1575245388.0,
+  "size": 70
+ },
+ "renamed file A.txt": {
+  "mtime": 1563369288.0,
+  "size": 14
+ },
+ "same empty dir": {
+  "crc": "0",
+  "dir": true,
+  "mtime": 0,
+  "size": 0
+ },
+ "same file.txt": {
+  "mtime": 1563369444.0,
+  "size": 2
+ },
+ "same nested dir\\same empty dir": {
+  "crc": "0",
+  "dir": true,
+  "mtime": 0,
+  "size": 0
+ },
+ "subdir\\renamed dir A\\file1.txt": {
+  "mtime": 1563369360.0,
+  "size": 11
+ },
+ "subdir\\renamed dir A\\file2.txt": {
+  "mtime": 1563369366.0,
+  "size": 2
+ },
+ "subdir\\renamed dir A\\file3.txt": {
+  "mtime": 1563369386.0,
+  "size": 45
+ }
+}

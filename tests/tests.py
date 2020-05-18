@@ -646,5 +646,33 @@ class TestBackupy(unittest.TestCase):
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
+    def test_sync_deleted_set0(self):
+        test_name = "sync-deleted-log-set0"
+        config = {"main_mode": "sync", "select_mode": "new", "noprompt": True, "source_unique_id": "sourceid", "dest_unique_id": "destid", "sync_propagate_deletions": True, "write_database_x2": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=0)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_sync_deleted_set1(self):
+        test_name = "sync-deleted-log-set1"
+        config = {"main_mode": "sync", "select_mode": "new", "noprompt": True, "source_unique_id": "sourceid", "dest_unique_id": "destid", "sync_propagate_deletions": True, "write_database_x2": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_sync_deleted_set2(self):
+        test_name = "sync-deleted-log-set2"
+        config = {"main_mode": "sync", "select_mode": "new", "noprompt": True, "source_unique_id": "sourceid", "dest_unique_id": "destid", "sync_propagate_deletions": True, "write_database_x2": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
+    def test_sync_deleted_set3(self):
+        test_name = "sync-deleted-log-set3"
+        config = {"main_mode": "sync", "select_mode": "new", "noprompt": True, "source_unique_id": "sourceid", "dest_unique_id": "destid", "sync_propagate_deletions": True, "write_database_x2": True, "backup_time_override": "000000-0000"}
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=3)
+        self.assertEqual(dirA, dirAsol, str(compDict))
+        self.assertEqual(dirB, dirBsol, str(compDict))
+
 if __name__ == '__main__':
     unittest.main()
