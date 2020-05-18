@@ -162,7 +162,8 @@ class BackupManager():
             self.log.append([getString("### DATABASE CONFLICTS ###")])
             if self.config.main_mode == "sync":
                 sync_conflicts = sorted(list(set(source_modified) & set(dest_modified)))  # modified on both sides
-                sync_conflicts += sorted(list(set(source_missing) | set(dest_missing)))  # deleted from either or both sides
+                if not self.config.sync_propagate_deletions:
+                    sync_conflicts += sorted(list(set(source_missing) | set(dest_missing)))  # deleted from either or both sides
                 sync_conflicts += sorted(list(set(source_new) & set(dest_new)))  # new on both sides
                 # new and different on both sides
                 # sorted(list(filter(lambda f: source_new[f] != dest_new[f], set(source_new) & set(dest_new))))
