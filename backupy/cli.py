@@ -75,6 +75,8 @@ def main():
                              "    [compare file attributes and record CRC for changed files]\n"
                              "  CRC\n"
                              "    [compare file attributes and CRC for every file]"))
+    group2.add_argument("--sync-delete", dest="sync_propagate_deletions", action="store_true",
+                        help=getString("Use the database to propagate deletions since the last sync"))
     group2.add_argument("--fi", dest="filter_include_list", action="store", type=str, nargs="+", default=None, metavar="regex",
                         help=getString("Filter: Only include files matching the regular expression(s) (include all by default, searches file paths)"))
     group2.add_argument("--fe", dest="filter_exclude_list", action="store", type=str, nargs="+", default=None, metavar="regex",

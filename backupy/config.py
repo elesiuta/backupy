@@ -26,6 +26,7 @@ class ConfigObject:
         self.main_mode = "mirror"
         self.select_mode = "source"
         self.compare_mode = "attr"
+        self.sync_propagate_deletions = False
         self.filter_include_list = None
         self.filter_exclude_list = None
         self.noarchive = False
@@ -47,7 +48,6 @@ class ConfigObject:
         self.cleanup_empty_dirs = True
         self.root_alias_log = True
         self.stdout_status_bar = True
-        self.sync_propagate_deletions = False
         self.verbose = True
         self.write_database_x2 = False
         self.write_log_dest = False

@@ -90,6 +90,8 @@ file mode options:
 
 misc file options:
 
+  --sync-delete
+               Use the database to propagate deletions since the last sync
   --fi regex [regex ...]
                Filter: Only include files matching the regular expression(s)
                (include all by default, searches file paths)
@@ -143,8 +145,6 @@ configuration options:
     - replace source and dest paths with "\<source\>" and "\<dest\>" in logs, default = True
   - stdout_status_bar
     - show progress status bar, default = True
-  - sync_propagate_deletions
-    - use the database to propagate deletions during sync (recommend enabling write_database_x2), default = False
   - verbose
     - print program status updates to stdout, default = True
   - write_database_x2
