@@ -56,7 +56,8 @@ class DirInfo:
         self.write_database_x2 = config.write_database_x2 and not config.scan_only
         # Init other variables
         self.dir = directory_root_path
-        self.other_database_path = os.path.join(other_root_path, self.config_dir, "database-%s.json" % unique_id)
+        self.other_dir = other_root_path
+        self.unique_id = unique_id
         self.gui = gui
 
     def getDicts(self) -> tuple:
@@ -83,7 +84,8 @@ class DirInfo:
         """Write database to config_dir on self and other if enabled"""
         writeJson(os.path.join(self.dir, self.config_dir, db_name), self.dict_current, sort_keys=True)
         if self.write_database_x2:
-            writeJson(self.other_database_path, self.dict_current, sort_keys=True)
+            other_db_path = os.path.join(self.other_dir, self.config_dir, "database-%s%s" % (self.unique_id, db_name[8:]))
+            writeJson(other_db_path, self.dict_current, sort_keys=True)
 
     def loadJson(self) -> None:
         """Load database from config_dir"""
@@ -91,7 +93,8 @@ class DirInfo:
 
     def getJsonX2(self) -> dict:
         """Get the 'last seen' database of this directory from the perspective of the other directory"""
-        database_x2 = readJson(self.other_database_path)
+        other_db_path = os.path.join(self.other_dir, self.config_dir, "database-%s.json" % self.unique_id)
+        database_x2 = readJson(other_db_path)
         if database_x2:
             return database_x2
         else:
