@@ -118,7 +118,7 @@ class FileManager:
             self._copyFile(source_root, dest_root, source_files[i], dest_files[i])
         copy_status.endProgress()
 
-    def _moveFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str) -> None:
+    def _recycleFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str) -> None:
         if not source_files:
             return None
         self.log.colourPrint(getString("Archiving %s unique files from:\n%s") % (len(source_files), source_root), "OKBLUE")
@@ -133,7 +133,7 @@ class FileManager:
             self._removeFiles(root_path, file_relative_paths)
         else:
             recycle_bin = os.path.join(root_path, self.config.trash_dir, self.backup_time)
-            self._moveFiles(root_path, recycle_bin, file_relative_paths, file_relative_paths)
+            self._recycleFiles(root_path, recycle_bin, file_relative_paths, file_relative_paths)
 
     def handleMovedFiles(self, moved_pairs: list, reverse: bool = False) -> None:
         if moved_pairs and not self.config.nomoves:

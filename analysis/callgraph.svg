@@ -570,8 +570,8 @@
 <!-- backupy__dirinfo__DirInfo__updateDictOnRemove -->
 <g id="node35" class="node">
 <title>backupy__dirinfo__DirInfo__updateDictOnRemove</title>
-<ellipse fill="#e0ff65" fill-opacity="0.698039" stroke="black" cx="786.4" cy="-198" rx="112.38" ry="18"/>
-<text text-anchor="middle" x="786.4" y="-194.3" font-family="Times,serif" font-size="14.00" fill="#000000">updateDictOnRemove</text>
+<ellipse fill="#e0ff65" fill-opacity="0.698039" stroke="black" cx="770.4" cy="-198" rx="112.38" ry="18"/>
+<text text-anchor="middle" x="770.4" y="-194.3" font-family="Times,serif" font-size="14.00" fill="#000000">updateDictOnRemove</text>
 </g>
 <!-- backupy__dirinfo__DirInfo__verifyCrcOnCopy -->
 <g id="node36" class="node">
@@ -633,41 +633,41 @@
 <path fill="none" stroke="#000000" d="M1107.4,-359.93C1107.4,-328.97 1107.4,-263.3 1107.4,-226.13"/>
 <polygon fill="#000000" stroke="#000000" points="1110.9,-226.02 1107.4,-216.02 1103.9,-226.02 1110.9,-226.02"/>
 </g>
-<!-- backupy__fileman__FileManager___moveFiles -->
+<!-- backupy__fileman__FileManager___recycleFiles -->
 <g id="node42" class="node">
-<title>backupy__fileman__FileManager___moveFiles</title>
-<ellipse fill="#65ffa3" fill-opacity="0.698039" stroke="black" cx="935.4" cy="-558" rx="62.29" ry="18"/>
-<text text-anchor="middle" x="935.4" y="-554.3" font-family="Times,serif" font-size="14.00" fill="#000000">_moveFiles</text>
+<title>backupy__fileman__FileManager___recycleFiles</title>
+<ellipse fill="#65ffa3" fill-opacity="0.698039" stroke="black" cx="927.4" cy="-558" rx="70.69" ry="18"/>
+<text text-anchor="middle" x="927.4" y="-554.3" font-family="Times,serif" font-size="14.00" fill="#000000">_recycleFiles</text>
 </g>
-<!-- backupy__fileman__FileManager___moveFiles&#45;&gt;backupy__fileman__FileManager___moveFile -->
+<!-- backupy__fileman__FileManager___recycleFiles&#45;&gt;backupy__fileman__FileManager___moveFile -->
 <g id="edge54" class="edge">
-<title>backupy__fileman__FileManager___moveFiles&#45;&gt;backupy__fileman__FileManager___moveFile</title>
-<path fill="none" stroke="#000000" d="M951.27,-540.57C981.86,-508.92 1049.08,-439.35 1084.51,-402.69"/>
-<polygon fill="#000000" stroke="#000000" points="1087.13,-405.01 1091.56,-395.39 1082.1,-400.15 1087.13,-405.01"/>
+<title>backupy__fileman__FileManager___recycleFiles&#45;&gt;backupy__fileman__FileManager___moveFile</title>
+<path fill="none" stroke="#000000" d="M944.33,-540.25C976.52,-508.42 1046.62,-439.1 1083.55,-402.58"/>
+<polygon fill="#000000" stroke="#000000" points="1086.25,-404.83 1090.9,-395.31 1081.33,-399.86 1086.25,-404.83"/>
 </g>
 <!-- backupy__fileman__FileManager___removeFile -->
 <g id="node43" class="node">
 <title>backupy__fileman__FileManager___removeFile</title>
-<ellipse fill="#65ffa3" fill-opacity="0.698039" stroke="black" cx="786.4" cy="-378" rx="67.69" ry="18"/>
-<text text-anchor="middle" x="786.4" y="-374.3" font-family="Times,serif" font-size="14.00" fill="#000000">_removeFile</text>
+<ellipse fill="#65ffa3" fill-opacity="0.698039" stroke="black" cx="770.4" cy="-378" rx="67.69" ry="18"/>
+<text text-anchor="middle" x="770.4" y="-374.3" font-family="Times,serif" font-size="14.00" fill="#000000">_removeFile</text>
 </g>
 <!-- backupy__fileman__FileManager___removeFile&#45;&gt;backupy__dirinfo__DirInfo__updateDictOnRemove -->
 <g id="edge48" class="edge">
 <title>backupy__fileman__FileManager___removeFile&#45;&gt;backupy__dirinfo__DirInfo__updateDictOnRemove</title>
-<path fill="none" stroke="#000000" d="M786.4,-359.93C786.4,-328.97 786.4,-263.3 786.4,-226.13"/>
-<polygon fill="#000000" stroke="#000000" points="789.9,-226.02 786.4,-216.02 782.9,-226.02 789.9,-226.02"/>
+<path fill="none" stroke="#000000" d="M770.4,-359.93C770.4,-328.97 770.4,-263.3 770.4,-226.13"/>
+<polygon fill="#000000" stroke="#000000" points="773.9,-226.02 770.4,-216.02 766.9,-226.02 773.9,-226.02"/>
 </g>
 <!-- backupy__fileman__FileManager___removeFiles -->
 <g id="node44" class="node">
 <title>backupy__fileman__FileManager___removeFiles</title>
-<ellipse fill="#65ffa3" fill-opacity="0.698039" stroke="black" cx="786.4" cy="-558" rx="72.29" ry="18"/>
-<text text-anchor="middle" x="786.4" y="-554.3" font-family="Times,serif" font-size="14.00" fill="#000000">_removeFiles</text>
+<ellipse fill="#65ffa3" fill-opacity="0.698039" stroke="black" cx="770.4" cy="-558" rx="72.29" ry="18"/>
+<text text-anchor="middle" x="770.4" y="-554.3" font-family="Times,serif" font-size="14.00" fill="#000000">_removeFiles</text>
 </g>
 <!-- backupy__fileman__FileManager___removeFiles&#45;&gt;backupy__fileman__FileManager___removeFile -->
 <g id="edge52" class="edge">
 <title>backupy__fileman__FileManager___removeFiles&#45;&gt;backupy__fileman__FileManager___removeFile</title>
-<path fill="none" stroke="#000000" d="M786.4,-539.93C786.4,-508.97 786.4,-443.3 786.4,-406.13"/>
-<polygon fill="#000000" stroke="#000000" points="789.9,-406.02 786.4,-396.02 782.9,-406.02 789.9,-406.02"/>
+<path fill="none" stroke="#000000" d="M770.4,-539.93C770.4,-508.97 770.4,-443.3 770.4,-406.13"/>
+<polygon fill="#000000" stroke="#000000" points="773.9,-406.02 770.4,-396.02 766.9,-406.02 773.9,-406.02"/>
 </g>
 <!-- backupy__fileman__FileManager__copyFiles&#45;&gt;backupy__fileman__FileManager___copyFile -->
 <g id="edge53" class="edge">
@@ -687,17 +687,17 @@
 <path fill="none" stroke="#000000" d="M1300.08,-719.93C1331.37,-687.93 1398.9,-618.84 1434.44,-582.48"/>
 <polygon fill="#000000" stroke="#000000" points="1437.03,-584.84 1441.52,-575.24 1432.03,-579.95 1437.03,-584.84"/>
 </g>
-<!-- backupy__fileman__FileManager__handleDeletedFiles&#45;&gt;backupy__fileman__FileManager___moveFiles -->
+<!-- backupy__fileman__FileManager__handleDeletedFiles&#45;&gt;backupy__fileman__FileManager___recycleFiles -->
 <g id="edge55" class="edge">
-<title>backupy__fileman__FileManager__handleDeletedFiles&#45;&gt;backupy__fileman__FileManager___moveFiles</title>
-<path fill="none" stroke="#000000" d="M884.77,-719.93C894.55,-688.83 915.34,-622.73 927.01,-585.65"/>
-<polygon fill="#000000" stroke="#000000" points="930.38,-586.61 930.04,-576.02 923.7,-584.5 930.38,-586.61"/>
+<title>backupy__fileman__FileManager__handleDeletedFiles&#45;&gt;backupy__fileman__FileManager___recycleFiles</title>
+<path fill="none" stroke="#000000" d="M884,-719.93C892.35,-688.97 910.06,-623.3 920.08,-586.13"/>
+<polygon fill="#000000" stroke="#000000" points="923.58,-586.58 922.81,-576.02 916.82,-584.76 923.58,-586.58"/>
 </g>
 <!-- backupy__fileman__FileManager__handleDeletedFiles&#45;&gt;backupy__fileman__FileManager___removeFiles -->
 <g id="edge56" class="edge">
 <title>backupy__fileman__FileManager__handleDeletedFiles&#45;&gt;backupy__fileman__FileManager___removeFiles</title>
-<path fill="none" stroke="#000000" d="M870.48,-719.93C854.16,-688.7 819.4,-622.17 800.07,-585.18"/>
-<polygon fill="#000000" stroke="#000000" points="803.02,-583.26 795.29,-576.02 796.81,-586.5 803.02,-583.26"/>
+<path fill="none" stroke="#000000" d="M868.94,-719.93C849.74,-688.57 808.73,-621.6 786.14,-584.71"/>
+<polygon fill="#000000" stroke="#000000" points="789.02,-582.72 780.82,-576.02 783.05,-586.37 789.02,-582.72"/>
 </g>
 <!-- backupy__fileman__FileManager__handleMovedFiles&#45;&gt;backupy__fileman__FileManager___moveFile -->
 <g id="edge57" class="edge">

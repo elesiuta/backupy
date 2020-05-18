@@ -196,7 +196,7 @@ digraph G {
             subgraph cluster_backupy__fileman__FileManager {
 
                 graph [style="filled,rounded",fillcolor="#80808018", label="backupy.fileman.FileManager"];
-                backupy__fileman__FileManager___moveFiles [label="_moveFiles", style="filled", fillcolor="#65ffa3b2", fontcolor="#000000", group="2"];
+                backupy__fileman__FileManager___recycleFiles [label="_recycleFiles", style="filled", fillcolor="#65ffa3b2", fontcolor="#000000", group="2"];
             }
             subgraph cluster_backupy__fileman__FileManager {
 
@@ -333,8 +333,8 @@ digraph G {
         backupy__fileman__FileManager___moveFile -> backupy__dirinfo__DirInfo__updateDictOnMove [style="solid", color="#000000"];
         backupy__fileman__FileManager___removeFiles -> backupy__fileman__FileManager___removeFile [style="solid", color="#000000"];
         backupy__fileman__FileManager__copyFiles -> backupy__fileman__FileManager___copyFile [style="solid", color="#000000"];
-        backupy__fileman__FileManager___moveFiles -> backupy__fileman__FileManager___moveFile [style="solid", color="#000000"];
-        backupy__fileman__FileManager__handleDeletedFiles -> backupy__fileman__FileManager___moveFiles [style="solid", color="#000000"];
+        backupy__fileman__FileManager___recycleFiles -> backupy__fileman__FileManager___moveFile [style="solid", color="#000000"];
+        backupy__fileman__FileManager__handleDeletedFiles -> backupy__fileman__FileManager___recycleFiles [style="solid", color="#000000"];
         backupy__fileman__FileManager__handleDeletedFiles -> backupy__fileman__FileManager___removeFiles [style="solid", color="#000000"];
         backupy__fileman__FileManager__handleMovedFiles -> backupy__fileman__FileManager___moveFile [style="solid", color="#000000"];
         backupy__fileman__FileManager___archiveFile -> backupy__fileman__FileManager___moveFile [style="solid", color="#000000"];
