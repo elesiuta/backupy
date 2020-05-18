@@ -34,8 +34,8 @@ class FileManager:
         self.backup_time = backup_time
         self.gui = gui
         self.config = config
-        self.source = DirInfo
-        self.dest = DirInfo
+        self.source = source
+        self.dest = dest
 
     ##########################################################################
     # Basic file operation methods (only these methods touch files directly) #

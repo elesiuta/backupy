@@ -114,7 +114,6 @@ class BackupManager():
         return 1
 
     def _checkConsistency(self, dest_database_load_success: bool, transfer_lists: TransferLists) -> None:
-        transfer_lists = TransferLists
         source_dict, source_prev, source_new, source_modified, source_missing, source_crc_errors, source_dirs = self.source.getSets()
         dest_dict, dest_prev, dest_new, dest_modified, dest_missing, dest_crc_errors, dest_dirs = self.dest.getSets()
         source_only, dest_only, changed, source_moved, dest_moved, source_deleted, dest_deleted = transfer_lists.getSets()
@@ -200,7 +199,6 @@ class BackupManager():
 
     def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: DirInfo) -> None:
         # get databases
-        side_info = DirInfo
         side_dict, side_prev, side_new, side_modified, side_missing, _, _ = side_info.getDicts()
         compare_func = lambda f1, f2: side_new[f1] == side_missing[f2]
         list_new, list_missing = sorted(list(side_new)), sorted(list(side_missing))
@@ -221,7 +219,6 @@ class BackupManager():
 
     def _printAndLogCompareDiffSummary(self, transfer_lists: TransferLists) -> None:
         # get lists and databases
-        transfer_lists = TransferLists
         source_only, dest_only, changed, moved, source_deleted, dest_deleted = transfer_lists.getLists()
         source_dict, _, _, _, _, _, _ = self.source.getDicts()
         dest_dict, _, _, _, _, _, _ = self.dest.getDicts()
@@ -268,7 +265,6 @@ class BackupManager():
 
     def _performBackup(self, transfer_lists: TransferLists, simulation_msg: str) -> None:
         # get lists and databases
-        transfer_lists = TransferLists
         source_only, dest_only, changed, moved, source_deleted, dest_deleted = transfer_lists.getLists()
         source_dict, _, _, _, _, _, _ = self.source.getDicts()
         dest_dict, _, _, _, _, _, _ = self.dest.getDicts()

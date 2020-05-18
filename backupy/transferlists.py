@@ -110,8 +110,6 @@ class TransferLists:
                 print(log.colourString(getString("Could not find file in queues: %s") % (p), "WARNING"))
 
     def propagateSyncDeletions(self, source: DirInfo, dest: DirInfo) -> None:
-        source = DirInfo
-        dest = DirInfo
         source_only, dest_only, _, source_moved, dest_moved, _, _ = self.getSets()
         source_diff = source.selfCompare(source.getJsonX2(), True, False, False)
         source_new, source_modified, source_missing = set(source_diff["new"]), set(source_diff["modified"]), set(source_diff["missing"])
