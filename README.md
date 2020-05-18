@@ -35,8 +35,8 @@ pip install backupy --upgrade
   - Attribute+ mode: compare file attributes and calculate CRCs only for new and changed files for future verification
   - CRC mode: compare file attributes and CRC for every file, and checks previously stored CRCs to detect corruption
 - Test your settings first with the "dry-run" flag
-- You will always be notified of any changes, unexpected modifications, sync conflicts, or file corruption before being prompted to continue by default so you can cancel and manually intervene if needed
-- You can also "restore" files with BackuPy by swapping source and destination
+- By default, you will always be notified of any changes, unexpected modifications, sync conflicts, or file corruption before being prompted to continue, cancel, or skip selected files
+- You can also "restore" files with BackuPy by swapping your source and destination
 ## Example Usage
 - Just type "backupy" followed by your source and destination directories, and any combination of options
 - If you're unsure how something works, include "--dry-run" to see what would happen without actually doing anything
@@ -127,6 +127,8 @@ configuration options:
 ```
 ## Extra Configuration Options
 - Some options can only be set from the config.json file
+  - source_unique_id & dest_unique_id
+    - unique id used for syncing multiple folders, default = random string
   - archive_dir
     - can be any subdirectory, default = ".backupy/Archive"
   - config_dir
@@ -145,6 +147,8 @@ configuration options:
     - use the database to propagate deletions during sync, default = False
   - verbose
     - print program status updates to stdout, default = True
+  - write_database_x2
+    - write both source and destination databases to each side using their unique id, useful for syncing groups of more than two folders, default = False
   - write_log_dest
     - write a copy of the log to \<dest\>/\<log_dir\>/log-yymmdd-HHMM-dest.csv, default = False
 ## Building From Source

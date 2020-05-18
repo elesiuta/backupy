@@ -360,7 +360,7 @@ class BackupManager():
             if self.gui:
                 go = self.gui_simplePrompt(getString("Scan complete, continue with %s%s?") % (self.config.main_mode, simulation_msg))
             else:
-                print(self.log.colourString(getString("Scan complete, continue with %s%s (y/N)?") % (self.config.main_mode, simulation_msg), "OKGREEN"))
+                print(self.log.colourString(getString("Scan complete, continue with %s%s (y/N/skip)?") % (self.config.main_mode, simulation_msg), "OKGREEN"))
                 go = input("> ")
             if len(go) == 4 and go.lower() == "skip":
                 if not transfer_lists.skipFileTransfers(self.log):

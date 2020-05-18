@@ -22,9 +22,7 @@ class ConfigObject:
         """Used for storing user configuration, use these attribute names as keys in your configuration dictionary"""
         # default config (from argparse)
         self.source = None
-        self.source_unique_id = "%05x" % random.randrange(16**5)
         self.dest = None
-        self.dest_unique_id = "%05x" % random.randrange(16**5)
         self.main_mode = "mirror"
         self.select_mode = "source"
         self.compare_mode = "attr"
@@ -40,6 +38,8 @@ class ConfigObject:
         self.scan_only = False
         self.verify_copy = False
         # default config (additional)
+        self.source_unique_id = "%05x" % random.randrange(16**5)
+        self.dest_unique_id = "%05x" % random.randrange(16**5)
         self.archive_dir = ".backupy/Archive"
         self.config_dir = ".backupy"
         self.log_dir = ".backupy/Logs"
