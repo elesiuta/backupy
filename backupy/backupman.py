@@ -342,7 +342,7 @@ class BackupManager():
         self._printAndLogCompareDiffSummary(transfer_lists)
         # consistency checks used for testing (slow, disable for releases)
         try:
-            if True or self.backup_time == "000000-0000":
+            if False or self.backup_time == "000000-0000":
                 self._checkConsistency(transfer_lists)
         except Exception as e:
             self.log.append(["BACKUPY ERROR", str(e)])
