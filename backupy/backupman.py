@@ -113,7 +113,7 @@ class BackupManager():
         print(self.log.colourString(getString("Run aborted"), "WARNING"))
         return 1
 
-    def _checkConsistency(self, dest_database_load_success: bool, transfer_lists: TransferLists) -> None:
+    def _checkConsistency(self, transfer_lists: TransferLists) -> None:
         source_dict, source_prev, source_new, source_modified, source_missing, source_crc_errors, source_dirs = self.source.getSets()
         dest_dict, dest_prev, dest_new, dest_modified, dest_missing, dest_crc_errors, dest_dirs = self.dest.getSets()
         source_only, dest_only, changed, source_moved, dest_moved, source_deleted, dest_deleted = transfer_lists.getSets()
@@ -343,7 +343,7 @@ class BackupManager():
         # consistency checks used for testing (slow, disable for releases)
         try:
             if True or self.backup_time == "000000-0000":
-                self._checkConsistency(dest_database_load_success, transfer_lists)
+                self._checkConsistency(transfer_lists)
         except Exception as e:
             self.log.append(["BACKUPY ERROR", str(e)])
             print(e)
