@@ -117,6 +117,10 @@ class BackupManager():
         source_dict, source_prev, source_new, source_modified, source_missing, source_crc_errors, source_dirs = self.source.getSets()
         dest_dict, dest_prev, dest_new, dest_modified, dest_missing, dest_crc_errors, dest_dirs = self.dest.getSets()
         source_only, dest_only, changed, source_moved, dest_moved, source_deleted, dest_deleted = transfer_lists.getSets()
+        # make sure each item only appears in one set (makes some of the below redundant)
+        union_len = len(source_only | dest_only | changed | source_moved | dest_moved | source_deleted | dest_deleted)
+        total_len = len(source_only) + len(dest_only) + len(changed) + len(source_moved) + len(dest_moved) + len(source_deleted) + len(dest_deleted)
+        assert union_len == total_len
         assert not (source_moved & dest_moved)
         assert not (source_only & source_moved)
         assert not (dest_only & dest_moved)
@@ -342,7 +346,7 @@ class BackupManager():
         self._printAndLogCompareDiffSummary(transfer_lists)
         # consistency checks used for testing (slow, disable for releases)
         try:
-            if False or self.backup_time == "000000-0000":
+            if True or self.backup_time == "000000-0000":
                 self._checkConsistency(transfer_lists)
         except Exception as e:
             self.log.append(["BACKUPY ERROR", str(e)])
