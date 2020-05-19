@@ -153,6 +153,7 @@ class BackupManager():
         assert set(redundant_dict_compare_reverse["modified"]) == changed
         assert set(redundant_dict_compare_reverse["new"]) == dest_only | dest_moved | source_deleted
         assert set(redundant_dict_compare_reverse["missing"]) == source_only | source_moved | dest_deleted
+        # might be able to make a check for moved along the lines of source_only is approx source_new | dest_missing - dest_new - source_missing
 
     def _databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
         # get databases

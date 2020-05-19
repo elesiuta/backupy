@@ -123,3 +123,12 @@ class TransferLists:
         self.source_deleted = sorted(list(source_deleted))
         self.dest_only = sorted(list(dest_only - source_deleted))
         self.dest_deleted = sorted(list(dest_deleted))
+
+    def updateSyncMovedDirection(self, source: DirInfo, dest: DirInfo) -> None:
+        # this is probably pretty close to what should happen, WIP, needs testing
+        dest_diff = dest.selfCompare(dest.getJsonX2(), True, False, False)
+        dest_new, dest_missing = set(dest_diff["new"]), set(dest_diff["missing"])
+        for pair in self.moved:
+            if pair["dest"] in dest_new and pair["source"] in dest_missing:
+                # renamed on dest, should rename on source to match dest
+                pair["match"] = "dest"
