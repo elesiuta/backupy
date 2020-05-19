@@ -340,9 +340,10 @@ class BackupManager():
             return 0
         # print differences between source and dest
         self._printAndLogCompareDiffSummary(transfer_lists)
-        # check for consistency between comparison and database dicts
+        # consistency checks used for testing (slow, disable for releases)
         try:
-            self._checkConsistency(dest_database_load_success, transfer_lists)
+            if True or self.backup_time == "000000-0000":
+                self._checkConsistency(dest_database_load_success, transfer_lists)
         except Exception as e:
             self.log.append(["BACKUPY ERROR", str(e)])
             print(e)
