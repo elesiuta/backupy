@@ -135,21 +135,21 @@ class FileManager:
             recycle_bin = os.path.join(root_path, self.config.trash_dir, self.backup_time)
             self._recycleFiles(root_path, recycle_bin, file_relative_paths, file_relative_paths)
 
-    def handleMovedFiles(self, moved_pairs: list, reverse: bool = False) -> None:
+    def handleMovedFiles(self, moved_pairs: list) -> None:
         if moved_pairs and not self.config.nomoves:
             # conflicts shouldn't happen since moved is a subset of files from source_only and dest_only
             # depends on source_info.dirCompare(dest_info) otherwise source and dest keys will be reversed
             self.log.colourPrint(getString("Moving %s files on destination to match source") % (len(moved_pairs)), "OKBLUE")
             for f in moved_pairs:
-                if reverse:
-                    dest = self.config.source
+                if f["match"] == "dest":
+                    side = self.config.source
                     oldLoc = f["source"]
                     newLoc = f["dest"]
-                else:
-                    dest = self.config.dest
+                elif f["match"] == "source":
+                    side = self.config.dest
                     oldLoc = f["dest"]
                     newLoc = f["source"]
-                self._moveFile(dest, dest, oldLoc, newLoc)
+                self._moveFile(side, side, oldLoc, newLoc)
             self.log.colourPrint(getString("Moving completed!"), "NONE")
 
     def _archiveFile(self, root_path: str, file_relative_path: str) -> None:

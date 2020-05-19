@@ -291,7 +291,7 @@ class DirInfo:
                 for f2 in reversed(b_only):
                     if "dir" not in b_dict[f2]:
                         if compare_func(f1, f2):
-                            moved.append({"source": f1, "dest": f2})
+                            moved.append({"source": f1, "dest": f2, "match": "source"})
                             a_only.remove(f1)
                             b_only.remove(f2)
                             break
