@@ -139,7 +139,7 @@ class FileManager:
         if moved_pairs and not self.config.nomoves:
             # conflicts shouldn't happen since moved is a subset of files from source_only and dest_only
             # depends on source_info.dirCompare(dest_info) otherwise source and dest keys will be reversed
-            self.log.colourPrint(getString("Moving %s files on destination to match source") % (len(moved_pairs)), "OKBLUE")
+            self.log.colourPrint(getString("Moving %s files to match both sides") % (len(moved_pairs)), "OKBLUE")
             for f in moved_pairs:
                 if f["match"] == "dest":
                     side = self.config.source

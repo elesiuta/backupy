@@ -234,10 +234,13 @@ class BackupManager():
             archive_msg = getString("archive")
         if self.config.main_mode == "sync":
             dest_msg = getString("(will be copied to source)")
+            move_msg = getString("(will move other file to match)")
         elif self.config.main_mode == "backup":
             dest_msg = getString("(will be left as is)")
+            move_msg = getString("(will move files on dest to match source)")
         elif self.config.main_mode == "mirror":
             dest_msg = getString("(will be %sd)" % (archive_msg))
+            move_msg = getString("(will move files on dest to match source)")
         if self.config.select_mode == "source":
             change_msg = getString("(%s dest and copy source -> dest)" % (archive_msg))
         elif self.config.select_mode == "dest":
@@ -257,7 +260,7 @@ class BackupManager():
         self.log.append([getString("### CHANGED FILES ###")])
         self.log.printChangedFiles(changed, source_dict, dest_dict)
         if not self.config.nomoves:
-            print(self.log.colourString(getString("Moved Files (will move files on dest to match source): %s") % (len(moved)), "HEADER"))
+            print(self.log.colourString(getString("Moved Files %s: %s") % (move_msg, len(moved)), "HEADER"))
             self.log.append([getString("### MOVED FILES ###")])
             self.log.printMovedFiles(moved, source_dict, dest_dict)
         if self.config.main_mode == "sync" and self.config.sync_propagate_deletions:
@@ -327,8 +330,10 @@ class BackupManager():
         if not self.config.scan_only:
             self.log.colourPrint(getString("Comparing directories..."), "OKBLUE")
             transfer_lists = TransferLists(self.source.dirCompare(self.dest, self.config.nomoves))
-            if self.config.main_mode == "sync" and self.config.sync_propagate_deletions:
-                transfer_lists.propagateSyncDeletions(self.source, self.dest)
+            if self.config.main_mode == "sync":
+                transfer_lists.updateSyncMovedDirection(self.dest)
+                if self.config.sync_propagate_deletions:
+                    transfer_lists.propagateSyncDeletions(self.source, self.dest)
             transfer_lists.freeze()
         # check for database conflicts or corruption
         detected_database_conflicts_or_corruption = self._databaseAndCorruptionCheck(dest_database_load_success)

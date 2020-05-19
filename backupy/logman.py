@@ -152,8 +152,15 @@ class LogManager:
 
     def printMovedFiles(self, l: list, d1: dict, d2: dict, h1: str = "Source: ", h2: str = "  Dest: ") -> None:
         for f in l:
-            self.printFileInfo(h1, f["source"], d1, skip_info=True)
-            self.printFileInfo(h2, f["dest"], d2)
+            if self.config.main_mode != "sync":
+                self.printFileInfo(h1, f["source"], d1, skip_info=True)
+                self.printFileInfo(h2, f["dest"], d2)
+            elif f["match"] == "source":
+                self.printFileInfo(h1, f["source"], d1, skip_info=True)
+                self.printFileInfo(h2, f["dest"], d2, "Match Source")
+            elif f["match"] == "dest":
+                self.printFileInfo(h2, f["dest"], d2, skip_info=True)
+                self.printFileInfo(h1, f["source"], d1, "Match Dest")
 
     def printSyncDbConflicts(self, l: list, d1: dict, d2: dict, d1db: dict, d2db: dict) -> None:
         for f in l:
