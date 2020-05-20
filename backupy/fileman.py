@@ -70,7 +70,6 @@ class FileManager:
     def _copyFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
             self.log.append(["Copy:", source_root, source_file, dest_root, dest_file])
-            self.source.updateDictOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
             if not self.config.dry_run:
                 source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
@@ -86,6 +85,7 @@ class FileManager:
                         FileManager.copy_function(source, dest)
                     if self.config.verify_copy:
                         self.source.verifyCrcOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
+            self.source.updateDictOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
         except Exception as e:
             self.log.append(["COPY ERROR", source_root, source_file, dest_root, dest_file, str(e)])
             print(e)
