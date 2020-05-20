@@ -1,19 +1,62 @@
 # quickly generate a call graph of backupy.py
 # depends on pyan3 and graphviz
+import os
+import re
 
 # ignore nodes or edges on lines containing these strings
 ignored_node_strings = [
     "File -> backupy__dirinfo__DirInfo [",
     "DiffSummary -> backupy__dirinfo__DirInfo [",
     "performBackup -> backupy__dirinfo__DirInfo [",
+    "propagateSyncDeletions -> backupy__dirinfo__DirInfo [",
+    "updateSyncMovedDirection -> backupy__dirinfo__DirInfo [",
     "Consistency -> backupy__transferlists__TransferLists [",
     "DiffSummary -> backupy__transferlists__TransferLists [",
     "performBackup -> backupy__transferlists__TransferLists ["
 ]
 
+# modules to scan
+modules = [
+    "../backupy/backupman.py",
+    "../backupy/dirinfo.py",
+    "../backupy/fileman.py",
+    "../backupy/transferlists.py"
+]
+
+# quick workaround for pyan3 not supporting type hints or type inference
+# WARNING, THIS WILL EDIT THESE MODULES, MAKE SURE ANY CHANGES ARE COMMITTED SO THEY CAN EASILY BE RESTORED
+# depends on my coding style (linting with flake8), function defs containing objects of interest being 1 line, and indenting with 4 spaces
+# probably better to use ast or tokenize, but can't generate code back easily from those (at that point might as well figure out how to add this to pyan)
+class_names = []
+for module in modules:
+    with open(module, "r") as m:
+        m = m.readlines()
+        for line in m:
+            class_name = re.match(r'class ([A-Za-z]+?)[\(: ]', line)
+            if class_name:
+                class_names.append(class_name.groups()[0])
+for module in modules:
+    with open(module, "r") as m:
+        m = m.readlines()
+        updated_module = []
+        for line in m:
+            updated_module.append(line)
+            if "def" in line:
+                spaces = line.index("def") + 4
+                line = line.split(", ")
+                for arg in line:
+                    for class_name in class_names:
+                        if class_name in arg:
+                            arg_name = arg.split(":")[0]
+                            new_line = " "*spaces + arg_name + " = " + class_name + "\n"
+                            updated_module.append(new_line)
+                            new_line = " "*spaces + "self." + arg_name + " = " + class_name + "\n"
+                            updated_module.append(new_line)
+    with open(module, "w") as m:
+        m.writelines(updated_module)
+
 # generate callgraph using pyan3
-import os
-os.system("pyan3 ../backupy/backupman.py ../backupy/dirinfo.py ../backupy/fileman.py ../backupy/transferlists.py --no-defines --uses --colored --nested-groups --dot > callgraph.dot")
+os.system("pyan3 " + " ".join(modules) + " --no-defines --uses --colored --nested-groups --dot > callgraph.dot")
 
 # clean up callgraph
 with open("callgraph.dot", "r") as f:
