@@ -91,7 +91,7 @@
   "mtime": 0,
   "crc": 2716265695
  },
- "renamed file A.txt": {
+ "renamed file B.txt": {
   "size": 14,
   "mtime": 0,
   "crc": 2097105078
@@ -114,7 +114,7 @@
  ".backupy\\database.json": {
   "size": 2485,
   "mtime": 0,
-  "crc": 2701399345
+  "crc": 4017539526
  },
  ".backupy\\database.tmp.json": {
   "size": 2211,
@@ -122,9 +122,9 @@
   "crc": 3400607773
  },
  ".backupy\\Logs\\log-000000-0000.csv": {
-  "size": 7272,
+  "size": 7301,
   "mtime": 0,
-  "crc": 3965765532
+  "crc": 384900316
  },
  "same nested dir\\same empty dir": {
   "size": 0,

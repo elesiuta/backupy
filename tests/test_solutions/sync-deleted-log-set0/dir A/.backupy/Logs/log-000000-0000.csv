@@ -11,13 +11,13 @@ File:,Source,file modified newer on B.txt,35 B,Wed Jul 17 13:21:32 2019
 ,Dest,file modified newer on B.txt,100 B,Wed Jul 17 13:22:28 2019
 ### MOVED FILES ###
 Source:,,renamed file A.txt,14 B,Wed Jul 17 13:14:48 2019
-Dest:,,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019
+Dest:,Move Dest,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019
 Source:,,subdir\renamed dir A\file1.txt,11 B,Wed Jul 17 13:16:00 2019
-Dest:,,renamed dir B\file1.txt,11 B,Wed Jul 17 13:16:00 2019
+Dest:,Move Dest,renamed dir B\file1.txt,11 B,Wed Jul 17 13:16:00 2019
 Source:,,subdir\renamed dir A\file2.txt,2 B,Wed Jul 17 13:16:06 2019
-Dest:,,renamed dir B\file2.txt,2 B,Wed Jul 17 13:16:06 2019
+Dest:,Move Dest,renamed dir B\file2.txt,2 B,Wed Jul 17 13:16:06 2019
 Source:,,subdir\renamed dir A\file3.txt,45 B,Wed Jul 17 13:16:26 2019
-Dest:,,renamed dir B\file3.txt,45 B,Wed Jul 17 13:16:26 2019
+Dest:,Move Dest,renamed dir B\file3.txt,45 B,Wed Jul 17 13:16:26 2019
 ### DELETED FROM SOURCE ###
 ### DELETED FROM DESTINATION ###
 ### START SYNC ###

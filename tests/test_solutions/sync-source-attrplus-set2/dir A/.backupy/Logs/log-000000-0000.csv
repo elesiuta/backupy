@@ -52,11 +52,11 @@ File:,Source,file modified newer on B.txt,100 B,Wed Jul 17 13:22:28 2019,56FE7C8
 ,Dest,file modified newer on B.txt,202 B,Mon Dec  2 00:08:08 2019,FDB24CA6
 ### MOVED FILES ###
 Source:,,copied both - 1.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
-Dest:,,copied both - 2.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
+Dest:,Move Dest,copied both - 2.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
 Source:,,moved and copied A - 2.txt,362 B,Wed Feb 19 19:43:44 2020,9C457731
-Dest:,,moved and copied A.txt,362 B,Wed Feb 19 19:43:44 2020,9C457731
+Dest:,Move Dest,moved and copied A.txt,362 B,Wed Feb 19 19:43:44 2020,9C457731
 Source:,,renamed file A.txt,14 B,Wed Jul 17 13:14:48 2019,7CFF48B6
-Dest:,,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019,7CFF48B6
+Dest:,Move Source,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019,7CFF48B6
 ### START SYNC ###
 Copy:,\sync-source-attrplus-set2\dir A,copied A - copy.txt,\sync-source-attrplus-set2\dir B,copied A - copy.txt
 Copy:,\sync-source-attrplus-set2\dir A,empty dir only A,\sync-source-attrplus-set2\dir B,empty dir only A
@@ -69,7 +69,7 @@ Copy:,\sync-source-attrplus-set2\dir B,new file B.txt,\sync-source-attrplus-set2
 Copy:,\sync-source-attrplus-set2\dir B,same file corrupted.txt,\sync-source-attrplus-set2\dir A,same file corrupted.txt
 Move:,\sync-source-attrplus-set2\dir B,copied both - 2.txt,\sync-source-attrplus-set2\dir B,copied both - 1.txt
 Move:,\sync-source-attrplus-set2\dir B,moved and copied A.txt,\sync-source-attrplus-set2\dir B,moved and copied A - 2.txt
-Move:,\sync-source-attrplus-set2\dir B,renamed file B.txt,\sync-source-attrplus-set2\dir B,renamed file A.txt
+Move:,\sync-source-attrplus-set2\dir A,renamed file A.txt,\sync-source-attrplus-set2\dir A,renamed file B.txt
 Move:,\sync-source-attrplus-set2\dir B,file modified newer on A.txt,\sync-source-attrplus-set2\dir B\.backupy\Archive\000000-0000,file modified newer on A.txt
 Copy:,\sync-source-attrplus-set2\dir A,file modified newer on A.txt,\sync-source-attrplus-set2\dir B,file modified newer on A.txt
 Move:,\sync-source-attrplus-set2\dir B,file modified newer on B.txt,\sync-source-attrplus-set2\dir B\.backupy\Archive\000000-0000,file modified newer on B.txt

@@ -80,11 +80,11 @@ File:,Source,new corrupted file.txt,11 B,Wed Feb 19 18:35:44 2020,5F3DACAB
 ,Dest,new corrupted file.txt,11 B,Wed Feb 19 18:35:44 2020,57A92228
 ### MOVED FILES ###
 Source:,,copied both - 1.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
-Dest:,,copied both - 2.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
+Dest:,Move Dest,copied both - 2.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
 Source:,,moved and copied A - 2.txt,362 B,Wed Feb 19 19:43:44 2020,9C457731
-Dest:,,moved and copied A.txt,362 B,Wed Feb 19 19:43:44 2020,9C457731
+Dest:,Move Dest,moved and copied A.txt,362 B,Wed Feb 19 19:43:44 2020,9C457731
 Source:,,renamed file A.txt,14 B,Wed Jul 17 13:14:48 2019,7CFF48B6
-Dest:,,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019,7CFF48B6
+Dest:,Move Source,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019,7CFF48B6
 ### START SYNC ###
 Copy:,\sync-source-crc-set2\dir A,copied A - copy.txt,\sync-source-crc-set2\dir B,copied A - copy.txt
 Copy:,\sync-source-crc-set2\dir A,empty dir only A,\sync-source-crc-set2\dir B,empty dir only A
@@ -97,7 +97,7 @@ Copy:,\sync-source-crc-set2\dir B,new file B.txt,\sync-source-crc-set2\dir A,new
 Copy:,\sync-source-crc-set2\dir B,same file corrupted.txt,\sync-source-crc-set2\dir A,same file corrupted.txt
 Move:,\sync-source-crc-set2\dir B,copied both - 2.txt,\sync-source-crc-set2\dir B,copied both - 1.txt
 Move:,\sync-source-crc-set2\dir B,moved and copied A.txt,\sync-source-crc-set2\dir B,moved and copied A - 2.txt
-Move:,\sync-source-crc-set2\dir B,renamed file B.txt,\sync-source-crc-set2\dir B,renamed file A.txt
+Move:,\sync-source-crc-set2\dir A,renamed file A.txt,\sync-source-crc-set2\dir A,renamed file B.txt
 Move:,\sync-source-crc-set2\dir B,corrupted file A.txt,\sync-source-crc-set2\dir B\.backupy\Archive\000000-0000,corrupted file A.txt
 Copy:,\sync-source-crc-set2\dir A,corrupted file A.txt,\sync-source-crc-set2\dir B,corrupted file A.txt
 Move:,\sync-source-crc-set2\dir B,corrupted file B.txt,\sync-source-crc-set2\dir B\.backupy\Archive\000000-0000,corrupted file B.txt

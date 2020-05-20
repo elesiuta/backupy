@@ -44,7 +44,7 @@
  ".backupy\\database.dryrun.json": {
   "size": 1102,
   "mtime": 0,
-  "crc": 3056751003
+  "crc": 2322731111
  },
  ".backupy\\database.json": {
   "size": 1072,
@@ -57,9 +57,9 @@
   "crc": 1159719222
  },
  ".backupy\\log-000000-0000.csv": {
-  "size": 2542,
+  "size": 2553,
   "mtime": 0,
-  "crc": 1931275672
+  "crc": 2158769339
  },
  ".backupy\\000000-0000\\file modified newer on B.txt": {
   "size": 35,

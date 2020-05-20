@@ -91,7 +91,7 @@
   "mtime": 0,
   "crc": 2716265695
  },
- "renamed file A.txt": {
+ "renamed file B.txt": {
   "size": 14,
   "mtime": 0,
   "crc": 2097105078
@@ -112,9 +112,9 @@
   "crc": 458074504
  },
  ".backupy\\database.json": {
-  "size": 2485,
+  "size": 2016,
   "mtime": 0,
-  "crc": 642163585
+  "crc": 1727293704
  },
  ".backupy\\database.tmp.json": {
   "size": 1924,

@@ -1,9 +1,4 @@
 {
- "copied A - copy.txt": {
-  "crc": "C52AF0F0",
-  "mtime": 1582141538.0,
-  "size": 353
- },
  "copied A.txt": {
   "crc": "C52AF0F0",
   "mtime": 1582141538.0,
@@ -40,26 +35,6 @@
   "mtime": 0,
   "size": 0
  },
- "file modified newer on A.txt": {
-  "crc": "F39F3C52",
-  "mtime": 1575245024.0,
-  "size": 640
- },
- "file modified newer on B.txt": {
-  "crc": "56FE7C86",
-  "mtime": 1563369748.0,
-  "size": 100
- },
- "file only A.txt": {
-  "crc": "1B4DA988",
-  "mtime": 1563369588.0,
-  "size": 2
- },
- "moved and copied A - 1.txt": {
-  "crc": "9C457731",
-  "mtime": 1582141424.0,
-  "size": 362
- },
  "moved and copied A - 2.txt": {
   "crc": "9C457731",
   "mtime": 1582141424.0,
@@ -68,11 +43,6 @@
  "new corrupted file.txt": {
   "crc": "57A92228",
   "mtime": 1582137344.0,
-  "size": 11
- },
- "new file A.txt": {
-  "crc": "B8D2E194",
-  "mtime": 1575245254.0,
   "size": 11
  },
  "renamed file A.txt": {
@@ -85,11 +55,6 @@
   "dir": true,
   "mtime": 0,
   "size": 0
- },
- "same file copied.txt": {
-  "crc": "1B4DA988",
-  "mtime": 1563369444.0,
-  "size": 2
  },
  "same file.txt": {
   "crc": "1B4DA988",

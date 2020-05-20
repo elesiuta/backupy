@@ -52,27 +52,36 @@ File:,Source,file modified newer on B.txt,100 B,Wed Jul 17 13:22:28 2019,56FE7C8
 ,Dest,file modified newer on B.txt,202 B,Mon Dec  2 00:08:08 2019,FDB24CA6
 ### MOVED FILES ###
 Source:,,copied both - 1.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
-Dest:,,copied both - 2.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
+Dest:,Move Dest,copied both - 2.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
 Source:,,moved and copied A - 2.txt,362 B,Wed Feb 19 19:43:44 2020,9C457731
-Dest:,,moved and copied A.txt,362 B,Wed Feb 19 19:43:44 2020,9C457731
+Dest:,Move Dest,moved and copied A.txt,362 B,Wed Feb 19 19:43:44 2020,9C457731
 Source:,,renamed file A.txt,14 B,Wed Jul 17 13:14:48 2019,7CFF48B6
-Dest:,,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019,7CFF48B6
+Dest:,Move Source,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019,7CFF48B6
 ### START SYNC ###
 Copy:,<source>,copied A - copy.txt,<dest>,copied A - copy.txt
+COPY ERROR,<source>,copied A - copy.txt,<dest>,copied A - copy.txt,'copied A - copy.txt'
 Copy:,<source>,empty dir only A,<dest>,empty dir only A
 Copy:,<source>,file only A.txt,<dest>,file only A.txt
-COPY ERROR,<source>,file only A.txt,<dest>,file only A.txt,CRC Verification Failed
+COPY ERROR,<source>,file only A.txt,<dest>,file only A.txt,'file only A.txt'
 Copy:,<source>,moved and copied A - 1.txt,<dest>,moved and copied A - 1.txt
+COPY ERROR,<source>,moved and copied A - 1.txt,<dest>,moved and copied A - 1.txt,'moved and copied A - 1.txt'
 Copy:,<source>,new file A.txt,<dest>,new file A.txt
+COPY ERROR,<source>,new file A.txt,<dest>,new file A.txt,'new file A.txt'
 Copy:,<source>,same file copied.txt,<dest>,same file copied.txt
+COPY ERROR,<source>,same file copied.txt,<dest>,same file copied.txt,'same file copied.txt'
 Copy:,<dest>,file only B.txt,<source>,file only B.txt
+COPY ERROR,<dest>,file only B.txt,<source>,file only B.txt,'file only B.txt'
 Copy:,<dest>,new file B.txt,<source>,new file B.txt
+COPY ERROR,<dest>,new file B.txt,<source>,new file B.txt,'new file B.txt'
 Copy:,<dest>,same file corrupted.txt,<source>,same file corrupted.txt
+COPY ERROR,<dest>,same file corrupted.txt,<source>,same file corrupted.txt,'same file corrupted.txt'
 Move:,<dest>,copied both - 2.txt,<dest>,copied both - 1.txt
 Move:,<dest>,moved and copied A.txt,<dest>,moved and copied A - 2.txt
-Move:,<dest>,renamed file B.txt,<dest>,renamed file A.txt
+Move:,<source>,renamed file A.txt,<source>,renamed file B.txt
 Move:,<source>,file modified newer on A.txt,<source>\.backupy\Archive\000000-0000,file modified newer on A.txt
 Copy:,<dest>,file modified newer on A.txt,<source>,file modified newer on A.txt
+COPY ERROR,<dest>,file modified newer on A.txt,<source>,file modified newer on A.txt,'file modified newer on A.txt'
 Move:,<source>,file modified newer on B.txt,<source>\.backupy\Archive\000000-0000,file modified newer on B.txt
 Copy:,<dest>,file modified newer on B.txt,<source>,file modified newer on B.txt
+COPY ERROR,<dest>,file modified newer on B.txt,<source>,file modified newer on B.txt,'file modified newer on B.txt'
 ### COMPLETED ###

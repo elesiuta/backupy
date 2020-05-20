@@ -75,7 +75,7 @@
   "mtime": 0,
   "crc": 2716265695
  },
- "renamed file A.txt": {
+ "renamed file B.txt": {
   "size": 14,
   "mtime": 0,
   "crc": 2097105078
@@ -93,7 +93,7 @@
  ".backupy\\database-destid.json": {
   "size": 1732,
   "mtime": 0,
-  "crc": 3685031634
+  "crc": 129150895
  },
  ".backupy\\database-destid.tmp.json": {
   "size": 1578,
@@ -103,7 +103,7 @@
  ".backupy\\database.json": {
   "size": 1732,
   "mtime": 0,
-  "crc": 3685031634
+  "crc": 129150895
  },
  ".backupy\\database.tmp.json": {
   "size": 1836,
@@ -116,9 +116,9 @@
   "crc": 1459518598
  },
  ".backupy\\Logs\\log-000000-0000.csv": {
-  "size": 3265,
+  "size": 3307,
   "mtime": 0,
-  "crc": 1874849853
+  "crc": 233532425
  },
  ".backupy\\Trash\\000000-0000\\empty dir only A": {
   "size": 0,

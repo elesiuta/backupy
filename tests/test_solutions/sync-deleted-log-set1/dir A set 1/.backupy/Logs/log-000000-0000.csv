@@ -10,7 +10,7 @@ File:,Source,file modified newer on B.txt,100 B,Wed Jul 17 13:22:28 2019
 ,Dest,file modified newer on B.txt,202 B,Mon Dec  2 00:08:08 2019
 ### MOVED FILES ###
 Source:,,renamed file A.txt,14 B,Wed Jul 17 13:14:48 2019
-Dest:,,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019
+Dest:,Move Source,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019
 ### DELETED FROM SOURCE ###
 File:,,file only B.txt,9 B,Wed Jul 17 13:20:16 2019
 ### DELETED FROM DESTINATION ###
@@ -22,7 +22,7 @@ Move:,<source>,file only A.txt,<source>\.backupy\Trash\000000-0000,file only A.t
 Move:,<dest>,file only B.txt,<dest>\.backupy\Trash\000000-0000,file only B.txt
 Copy:,<source>,new file A.txt,<dest>,new file A.txt
 Copy:,<dest>,new file B.txt,<source>,new file B.txt
-Move:,<dest>,renamed file B.txt,<dest>,renamed file A.txt
+Move:,<source>,renamed file A.txt,<source>,renamed file B.txt
 Move:,<dest>,file modified newer on A.txt,<dest>\.backupy\Archive\000000-0000,file modified newer on A.txt
 Copy:,<source>,file modified newer on A.txt,<dest>,file modified newer on A.txt
 Move:,<source>,file modified newer on B.txt,<source>\.backupy\Archive\000000-0000,file modified newer on B.txt
