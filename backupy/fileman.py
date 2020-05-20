@@ -44,7 +44,6 @@ class FileManager:
     def _removeFile(self, root_path: str, file_relative_path: str) -> None:
         try:
             self.log.append(["Remove:", root_path, file_relative_path])
-            self.source.updateDictOnRemove(root_path, file_relative_path, self.dest)
             if not self.config.dry_run:
                 path = os.path.join(root_path, file_relative_path)
                 if os.path.isdir(path):
@@ -55,6 +54,7 @@ class FileManager:
                     head = os.path.dirname(path)
                     if len(os.listdir(head)) == 0:
                         os.removedirs(head)
+            self.source.updateDictOnRemove(root_path, file_relative_path, self.dest)
         except Exception as e:
             self.log.append(["REMOVE ERROR", root_path, file_relative_path, str(e)])
             print(e)
@@ -81,7 +81,6 @@ class FileManager:
     def _moveFile(self, source_root: str, dest_root: str, source_file: str, dest_file: str) -> None:
         try:
             self.log.append(["Move:", source_root, source_file, dest_root, dest_file])
-            self.source.updateDictOnMove(source_root, dest_root, source_file, dest_file, self.dest)
             if not self.config.dry_run:
                 source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
@@ -92,6 +91,7 @@ class FileManager:
                     head = os.path.dirname(source)
                     if len(os.listdir(head)) == 0:
                         os.removedirs(head)
+            self.source.updateDictOnMove(source_root, dest_root, source_file, dest_file, self.dest)
         except Exception as e:
             self.log.append(["MOVE ERROR", source_root, source_file, dest_root, dest_file, str(e)])
             print(e)
