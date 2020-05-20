@@ -137,6 +137,8 @@ class DirInfo:
             raise Exception("Update Database Error")
 
     def getCrc(self, relative_path: str, recalc: bool = False) -> str:
+        if relative_path not in self.dict_current:
+            self.dict_current[relative_path] = {"size": 0, "mtime": 0}
         if recalc or "crc" not in self.dict_current[relative_path]:
             full_path = os.path.join(self.dir, relative_path)
             self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
