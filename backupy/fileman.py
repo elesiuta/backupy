@@ -47,9 +47,17 @@ class FileManager:
             if not self.config.dry_run:
                 path = os.path.join(root_path, file_relative_path)
                 if os.path.isdir(path):
-                    os.rmdir(path)
+                    try:
+                        os.rmdir(path)
+                    except IOError:
+                        os.chmod(path, 0o777)
+                        os.rmdir(path)
                 else:
-                    os.remove(path)
+                    try:
+                        os.remove(path)
+                    except IOError:
+                        os.chmod(path, 0o777)
+                        os.remove(path)
                 if self.config.cleanup_empty_dirs:
                     head = os.path.dirname(path)
                     if len(os.listdir(head)) == 0:
@@ -71,7 +79,11 @@ class FileManager:
                 else:
                     if not os.path.isdir(os.path.dirname(dest)):
                         os.makedirs(os.path.dirname(dest))
-                    FileManager.copy_function(source, dest)
+                    try:
+                        FileManager.copy_function(source, dest)
+                    except IOError:
+                        os.chmod(dest, 0o777)
+                        FileManager.copy_function(source, dest)
                     if self.config.verify_copy:
                         self.source.verifyCrcOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
         except Exception as e:
