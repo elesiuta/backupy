@@ -141,17 +141,17 @@ class LogManager:
                 s = s + extra_space + self.colourString(getString(" Missing"), "OKBLUE")
         print(s)
 
-    def printFiles(self, l: list, d: dict) -> None:
-        for f in l:
+    def printFiles(self, files: list, d: dict) -> None:
+        for f in files:
             self.printFileInfo("File: ", f, d)
 
-    def printChangedFiles(self, l: list, d1: dict, d2: dict, s1: str = " Source", s2: str = "   Dest") -> None:
-        for f in l:
+    def printChangedFiles(self, files: list, d1: dict, d2: dict, s1: str = " Source", s2: str = "   Dest") -> None:
+        for f in files:
             self.printFileInfo("File: ", f, d1, " "*4 + s1)
             self.printFileInfo("", f, d2, " "*4 + s2)
 
-    def printMovedFiles(self, l: list, d1: dict, d2: dict, h1: str = "Source: ", h2: str = "  Dest: ") -> None:
-        for f in l:
+    def printMovedFiles(self, files: list, d1: dict, d2: dict, h1: str = "Source: ", h2: str = "  Dest: ") -> None:
+        for f in files:
             if self.config.main_mode != "sync":
                 self.printFileInfo(h1, f["source"], d1, skip_info=True)
                 self.printFileInfo(h2, f["dest"], d2)
@@ -162,8 +162,8 @@ class LogManager:
                 self.printFileInfo(h1, f["source"], d1, skip_info=True)
                 self.printFileInfo(h2, f["dest"], d2, "Move Source")
 
-    def printSyncDbConflicts(self, l: list, d1: dict, d2: dict, d1db: dict, d2db: dict) -> None:
-        for f in l:
+    def printSyncDbConflicts(self, files: list, d1: dict, d2: dict, d1db: dict, d2db: dict) -> None:
+        for f in files:
             self.printFileInfo("File: ", f, d1, "     Source")
             self.printFileInfo("", f, d1db, "         DB")
             self.printFileInfo("", f, d2, "       Dest")
