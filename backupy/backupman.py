@@ -117,43 +117,45 @@ class BackupManager():
         source_dict, source_prev, source_new, source_modified, source_missing, source_crc_errors, source_dirs = self.source.getSets()
         dest_dict, dest_prev, dest_new, dest_modified, dest_missing, dest_crc_errors, dest_dirs = self.dest.getSets()
         source_only, dest_only, changed, source_moved, dest_moved, source_deleted, dest_deleted = transfer_lists.getSets()
-        # make sure each item only appears in one set (makes some of the below redundant)
+        # make sure each item only appears in one set
         union_len = len(source_only | dest_only | changed | source_moved | dest_moved | source_deleted | dest_deleted)
         total_len = len(source_only) + len(dest_only) + len(changed) + len(source_moved) + len(dest_moved) + len(source_deleted) + len(dest_deleted)
         assert union_len == total_len
-        assert not (source_moved & dest_moved)
-        assert not (source_only & source_moved)
-        assert not (dest_only & dest_moved)
-        # changed - ... below would be any skipped files
-        # assert changed <= (source_modified | dest_modified) | (source_new & dest_new) | (source_crc_errors | dest_crc_errors)
-        assert source_only <= source_dict
-        assert dest_only <= dest_dict
-        assert not source_only & dest_only
-        assert not source_only & changed
-        assert not dest_only & changed
-        # prev dirs and prev files under .backupy cause the next two asserts to be <=
-        assert source_dict <= (source_prev - (source_missing | dest_moved)) | source_new | source_dirs
-        assert dest_dict <= (dest_prev - (dest_missing | source_moved)) | dest_new | dest_dirs
-        # basically redo all of dircompare and checks during scan (except crc errors) using set operations and filters
-        redundant_dict_source = self.source.selfCompare(self.source.dict_prev)
-        assert set(redundant_dict_source["modified"]) == source_modified
-        assert set(redundant_dict_source["missing"]) >= source_missing
-        assert set(redundant_dict_source["missing"]) <= source_missing | dest_moved
-        assert set(redundant_dict_source["new"]) == source_new
-        redundant_dict_dest = self.dest.selfCompare(self.dest.dict_prev)
-        assert set(redundant_dict_dest["modified"]) == dest_modified
-        assert set(redundant_dict_dest["missing"]) >= dest_missing
-        assert set(redundant_dict_dest["missing"]) <= dest_missing | source_moved
-        assert set(redundant_dict_dest["new"]) == dest_new
-        redundant_dict_compare = self.source.selfCompare(self.dest.dict_current, False, True, False)
-        redundant_dict_compare_reverse = self.dest.selfCompare(self.source.dict_current, False, True, False)
-        assert set(redundant_dict_compare["modified"]) == changed
-        assert set(redundant_dict_compare["new"]) == source_only | source_moved | dest_deleted
-        assert set(redundant_dict_compare["missing"]) == dest_only | dest_moved | source_deleted
-        assert set(redundant_dict_compare_reverse["modified"]) == changed
-        assert set(redundant_dict_compare_reverse["new"]) == dest_only | dest_moved | source_deleted
-        assert set(redundant_dict_compare_reverse["missing"]) == source_only | source_moved | dest_deleted
-        # might be able to make a check for moved along the lines of source_only is approx source_new | dest_missing - dest_new - source_missing
+        # these ones are slower, some are redundant, used for testing, disabled for releases
+        if True or self.backup_time == "000000-0000":
+            assert not (source_moved & dest_moved)
+            assert not (source_only & source_moved)
+            assert not (dest_only & dest_moved)
+            # changed - ... below would be any skipped files
+            # assert changed <= (source_modified | dest_modified) | (source_new & dest_new) | (source_crc_errors | dest_crc_errors)
+            assert source_only <= source_dict
+            assert dest_only <= dest_dict
+            assert not source_only & dest_only
+            assert not source_only & changed
+            assert not dest_only & changed
+            # prev dirs and prev files under .backupy cause the next two asserts to be <=
+            assert source_dict <= (source_prev - (source_missing | dest_moved)) | source_new | source_dirs
+            assert dest_dict <= (dest_prev - (dest_missing | source_moved)) | dest_new | dest_dirs
+            # basically redo all of dircompare and checks during scan (except crc errors) using set operations and filters
+            redundant_dict_source = self.source.selfCompare(self.source.dict_prev)
+            assert set(redundant_dict_source["modified"]) == source_modified
+            assert set(redundant_dict_source["missing"]) >= source_missing
+            assert set(redundant_dict_source["missing"]) <= source_missing | dest_moved
+            assert set(redundant_dict_source["new"]) == source_new
+            redundant_dict_dest = self.dest.selfCompare(self.dest.dict_prev)
+            assert set(redundant_dict_dest["modified"]) == dest_modified
+            assert set(redundant_dict_dest["missing"]) >= dest_missing
+            assert set(redundant_dict_dest["missing"]) <= dest_missing | source_moved
+            assert set(redundant_dict_dest["new"]) == dest_new
+            redundant_dict_compare = self.source.selfCompare(self.dest.dict_current, False, True, False)
+            redundant_dict_compare_reverse = self.dest.selfCompare(self.source.dict_current, False, True, False)
+            assert set(redundant_dict_compare["modified"]) == changed
+            assert set(redundant_dict_compare["new"]) == source_only | source_moved | dest_deleted
+            assert set(redundant_dict_compare["missing"]) == dest_only | dest_moved | source_deleted
+            assert set(redundant_dict_compare_reverse["modified"]) == changed
+            assert set(redundant_dict_compare_reverse["new"]) == dest_only | dest_moved | source_deleted
+            assert set(redundant_dict_compare_reverse["missing"]) == source_only | source_moved | dest_deleted
+            # might be able to make a check for moved along the lines of source_only is approx source_new | dest_missing - dest_new - source_missing
 
     def _databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
         # get databases
@@ -350,10 +352,9 @@ class BackupManager():
             return 0
         # print differences between source and dest
         self._printAndLogCompareDiffSummary(transfer_lists)
-        # consistency checks used for testing (slow, disable for releases)
+        # consistency checks to try to detect and prevent any weird edge cases
         try:
-            if True or self.backup_time == "000000-0000":
-                self._checkConsistency(transfer_lists)
+            self._checkConsistency(transfer_lists)
         except Exception as e:
             self.log.append(["BACKUPY ERROR", str(e)])
             print(e)
