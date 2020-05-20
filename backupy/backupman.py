@@ -122,7 +122,7 @@ class BackupManager():
         total_len = len(source_only) + len(dest_only) + len(changed) + len(source_moved) + len(dest_moved) + len(source_deleted) + len(dest_deleted)
         assert union_len == total_len
         # these ones are slower, some are redundant, used for testing, disabled for releases
-        if True or self.backup_time == "000000-0000":
+        if False or self.backup_time == "000000-0000":
             assert not (source_moved & dest_moved)
             assert not (source_only & source_moved)
             assert not (dest_only & dest_moved)
