@@ -153,6 +153,8 @@ def main_gui():
                         help=" Perform a dry run with no changes made to your files")
     group4.add_argument("-p", "--posix", dest="--force_posix_path_sep", action="store_true", metavar="Force posix paths", gooey_options={"full_width": True},
                         help=" Force posix style paths on non-posix operating systems")
+    group4.add_argument("--sync-delete", dest="sync_propagate_deletions", action="store_true", metavar="Propagate deletions during sync", gooey_options={"full_width": True},
+                        help=" Use the database to propagate deletions since the last sync")
     group4.add_argument("--noarchive", action="store_true", metavar="No archiving", gooey_options={"full_width": True},
                         help=" Disable archiving files before overwriting/deleting to:\n"
                              "  <source|dest>/.backupy/Archives/yymmdd-HHMM/\n"
