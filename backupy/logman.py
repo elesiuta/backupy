@@ -131,7 +131,7 @@ class LogManager:
                 s = s + "\n"
         if not skip_info:
             extra_space = " "*min(4, self.terminal_width//5-16)
-            s = s + extra_space*2 + self.colourString(sub_header, "OKBLUE") + " "*(8-len(sub_header))
+            s = s + extra_space + self.colourString(sub_header, "OKBLUE") + " "*(12-len(sub_header))
             if not missing:
                 s = s + extra_space + self.colourString(getString(" Size: "), "OKBLUE") + self.prettySize(d[f]["size"])
                 s = s + extra_space + self.colourString(getString(" Modified: "), "OKBLUE") + time.ctime(d[f]["mtime"])
@@ -147,8 +147,8 @@ class LogManager:
 
     def printChangedFiles(self, l: list, d1: dict, d2: dict, s1: str = " Source", s2: str = "   Dest") -> None:
         for f in l:
-            self.printFileInfo("File: ", f, d1, s1)
-            self.printFileInfo("", f, d2, s2)
+            self.printFileInfo("File: ", f, d1, " "*4 + s1)
+            self.printFileInfo("", f, d2, " "*4 + s2)
 
     def printMovedFiles(self, l: list, d1: dict, d2: dict, h1: str = "Source: ", h2: str = "  Dest: ") -> None:
         for f in l:
@@ -157,14 +157,14 @@ class LogManager:
                 self.printFileInfo(h2, f["dest"], d2)
             elif f["match"] == "source":
                 self.printFileInfo(h1, f["source"], d1, skip_info=True)
-                self.printFileInfo(h2, f["dest"], d2, "Match Source")
+                self.printFileInfo(h2, f["dest"], d2, "Move Dest  ")
             elif f["match"] == "dest":
-                self.printFileInfo(h2, f["dest"], d2, skip_info=True)
-                self.printFileInfo(h1, f["source"], d1, "Match Dest")
+                self.printFileInfo(h1, f["source"], d1, skip_info=True)
+                self.printFileInfo(h2, f["dest"], d2, "Move Source")
 
     def printSyncDbConflicts(self, l: list, d1: dict, d2: dict, d1db: dict, d2db: dict) -> None:
         for f in l:
-            self.printFileInfo("File: ", f, d1, " Source")
-            self.printFileInfo("", f, d1db, "     DB")
-            self.printFileInfo("", f, d2, "   Dest")
-            self.printFileInfo("", f, d2db, "     DB")
+            self.printFileInfo("File: ", f, d1, "     Source")
+            self.printFileInfo("", f, d1db, "         DB")
+            self.printFileInfo("", f, d2, "       Dest")
+            self.printFileInfo("", f, d2db, "         DB")
