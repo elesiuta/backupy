@@ -46,6 +46,11 @@ class LogManager:
     def append(self, object) -> None:
         self._log.append(object)
 
+    def convertLog(self) -> list:
+        log_csv = []
+        for row in self._log:
+            pass
+
     def writeLog(self, db_name: str) -> None:
         if not self.config.nolog:
             # <source|dest>/.backupy/database.json
