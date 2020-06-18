@@ -207,8 +207,10 @@ class BackupManager():
     def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: DirInfo) -> None:
         # get databases
         side_dict, side_prev, side_new, side_modified, side_missing, _, _ = side_info.getDicts()
+        # list_new, list_missing = sorted(list(side_new)), sorted(list(side_missing))
+        self_compare = side_info.selfCompare(side_info.dict_prev)
+        list_new, list_missing = self_compare["new"], self_compare["missing"]
         compare_func = lambda f1, f2: side_new[f1] == side_missing[f2]
-        list_new, list_missing = sorted(list(side_new)), sorted(list(side_missing))
         moved = side_info.getMovedAndUpdateLists(list_new, list_missing, side_new, side_missing, compare_func)
         # print differences
         print(self.log.colourString(getString("%s New Files: %s") % (side_str, len(list_new)), "HEADER"))
@@ -217,9 +219,9 @@ class BackupManager():
         print(self.log.colourString(getString("%s Missing Files: %s") % (side_str, len(list_missing)), "HEADER"))
         self.log.append([getString("### %s MISSING FILES ###") % (side_str.upper())])
         self.log.printFiles(list_missing, side_prev)
-        print(self.log.colourString(getString("%s Changed Files: %s") % (side_str, len(side_modified)), "HEADER"))
+        print(self.log.colourString(getString("%s Changed Files: %s") % (side_str, len(self_compare["modified"])), "HEADER"))
         self.log.append([getString("### %s CHANGED FILES ###") % (side_str.upper())])
-        self.log.printChangedFiles(sorted(list(side_modified)), side_dict, side_prev, "    New", "    Old")
+        self.log.printChangedFiles(sorted(self_compare["modified"]), side_dict, side_prev, "    New", "    Old")
         print(self.log.colourString(getString("%s Moved Files: %s") % (side_str, len(moved)), "HEADER"))
         self.log.append([getString("### %s MOVED FILES ###") % (side_str.upper())])
         self.log.printMovedFiles(moved, side_new, side_missing, "   New: ", "   Old: ")
