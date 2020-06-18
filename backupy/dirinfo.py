@@ -280,7 +280,7 @@ class DirInfo:
               relative_path in self.dict_prev and
               "crc" in self.dict_prev[relative_path] and
               self.dict_prev[relative_path]["size"] == size and
-              self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, False)):
+              self.timeMatch(self.dict_prev[relative_path]["mtime"], mtime, True)):
                 # attributes match, preserve old crc
                 self.dict_current[relative_path]["crc"] = self.dict_prev[relative_path]["crc"]
             else:
@@ -302,7 +302,7 @@ class DirInfo:
 
     def selfCompare(self, second_db: dict, exact_time: bool = True, compare_crc: bool = False, ignore_empty_dirs: bool = True) -> dict:
         # compare functions
-        compare_crc = compare_crc and self.compare_mode == "crc"
+        compare_crc = compare_crc and (self.compare_mode == "crc" or self.compare_mode == "attr+")
         crc_match = lambda a, b: "crc" in a and "crc" in b and a["crc"] == b["crc"]
         file_match = lambda a, b, f: (a[f]["size"] == b[f]["size"] and
                                       self.timeMatch(a[f]["mtime"], b[f]["mtime"], exact_time) and
