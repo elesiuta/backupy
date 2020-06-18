@@ -207,7 +207,7 @@ class BackupManager():
     def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: DirInfo) -> None:
         # get databases
         side_dict, side_prev, _, _, _, _, _ = side_info.getDicts()
-        self_compare = side_info.selfCompare(side_prev)
+        self_compare = side_info.selfCompare(side_prev, exact_time=False)
         list_new, list_missing, list_modified = self_compare["new"], self_compare["missing"], self_compare["modified"]
         compare_func = lambda f1, f2: side_dict[f1] == side_prev[f2]
         moved = side_info.getMovedAndUpdateLists(list_new, list_missing, side_dict, side_prev, compare_func)
