@@ -303,7 +303,7 @@ class DirInfo:
     def selfCompare(self, second_db: dict, exact_time: bool = True, compare_crc: bool = False, ignore_empty_dirs: bool = True) -> dict:
         # compare functions
         compare_crc = compare_crc and (self.compare_mode == "crc" or self.compare_mode == "attr+")
-        crc_match = lambda a, b: "crc" in a and "crc" in b and a["crc"] == b["crc"]
+        crc_match = lambda a, b: "crc" not in a or "crc" not in b or a["crc"] == b["crc"]
         file_match = lambda a, b, f: (a[f]["size"] == b[f]["size"] and
                                       self.timeMatch(a[f]["mtime"], b[f]["mtime"], exact_time) and
                                       (not compare_crc or crc_match(a[f], b[f])))
