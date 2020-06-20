@@ -129,13 +129,17 @@ class DirInfo:
         else:
             raise Exception("Update Database Error")
 
-    def getCrc(self, relative_path: str, recalc: bool = False) -> str:
-        if relative_path not in self.dict_current:
-            self.dict_current[relative_path] = {"size": 0, "mtime": 0}
-        if recalc or "crc" not in self.dict_current[relative_path]:
+    def getCrc(self, relative_path: str, recalc: bool = False, override_db: dict = None) -> str:
+        if override_db is None:
+            file_db = self.dict_current
+        else:
+            file_db = override_db
+        if relative_path not in file_db:
+            file_db[relative_path] = {"size": 0, "mtime": 0}
+        if recalc or "crc" not in file_db[relative_path]:
             full_path = os.path.join(self.dir, relative_path)
-            self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
-        return self.dict_current[relative_path]["crc"]
+            file_db[relative_path]["crc"] = self.calcCrc(full_path)
+        return file_db[relative_path]["crc"]
 
     def calcCrc(self, file_path: str, prev: int = 0) -> str:
         with open(file_path, "rb") as f:
@@ -171,24 +175,24 @@ class DirInfo:
                     return True
         return False
 
-    def fileMatch(self, f1: str, f2: str, secondInfo: 'DirInfo', compare_mode: str, move_check: bool = False) -> bool:
-        if self.dict_current[f1]["size"] == secondInfo.dict_current[f2]["size"]:
-            if self.timeMatch(self.dict_current[f1]["mtime"], secondInfo.dict_current[f2]["mtime"], False):
+    def fileMatch(self, f1: str, f2: str, other_db: dict, other_crc_errors: dict, compare_mode: str, exact_time: bool) -> bool:
+        if self.dict_current[f1]["size"] == other_db[f2]["size"]:
+            if self.timeMatch(self.dict_current[f1]["mtime"], other_db[f2]["mtime"], exact_time):
                 # these are the 'unchanged files (probably)' from both sides, crc should be up to date from the scan if using CRC mode
-                if compare_mode == "crc" and self.dict_current[f1]["crc"] != secondInfo.dict_current[f2]["crc"]:
+                if compare_mode == "crc" and self.dict_current[f1]["crc"] != other_db[f2]["crc"]:
                     # size and date match, but crc does not, probably corrupted
-                    if f1 not in self.dict_crc_errors and f2 not in secondInfo.dict_crc_errors:
+                    if f1 not in self.dict_crc_errors and f2 not in other_crc_errors:
                         # log error since it wasn't already detected during scan, that implies neither file has a past record
                         self.dict_crc_errors[f1] = None
-                        secondInfo.dict_crc_errors[f2] = None
+                        other_crc_errors[f2] = None
                     return False
                 # detect mismatched crc values across both sides (usually if corruption happened before crc database was created)
-                if compare_mode == "attr+" and self.dict_current[f1]["crc"] != secondInfo.dict_current[f2]["crc"]:
-                    if move_check:
-                        # it may be corrupted or coincidence, just won't flag these files as matching
+                if compare_mode == "attr+" and self.dict_current[f1]["crc"] != other_db[f2]["crc"]:
+                    if f1 != f2:
+                        # it may be corrupted or coincidence, just won't flag these files as matching (not the same file moved)
                         return False
                     self.dict_crc_errors[f1] = self.dict_current[f1]
-                    secondInfo.dict_crc_errors[f2] = secondInfo.dict_current[f2]
+                    other_crc_errors[f2] = other_db[f2]
                 return True
         return False
 
@@ -293,6 +297,16 @@ class DirInfo:
         moved.reverse()
         return moved
 
+    def compareDir(self, other_db: dict, other_crc_errors: dict, detect_moves: bool, exact_time: bool, compare_crc: bool, ignore_empty_dirs: bool) -> dict:
+        # init and filter file sets (for ignored paths, user filters are done on scan)
+        ignored_path_match = lambda f: self.pathMatch(f, self.ignored_toplevel_folders)
+        is_dir = lambda d, f: ignore_empty_dirs and "dir" in d[f] and d[f]["dir"] is True
+        file_set_a = set(filter(lambda f: not ignored_path_match(f) and not is_dir(self.dict_current, f), self.dict_current))
+        file_set_b = set(filter(lambda f: not ignored_path_match(f) and not is_dir(other_db, f), other_db))
+        # wrap compare functions
+
+        # compare file sets
+
     def selfCompare(self, second_db: dict, exact_time: bool = True, compare_crc: bool = False, ignore_empty_dirs: bool = True) -> dict:
         # compare functions
         compare_crc = compare_crc and (self.compare_mode == "crc" or self.compare_mode == "attr+")
@@ -321,12 +335,12 @@ class DirInfo:
         else:
             raise Exception("Inconsistent compare mode between directories")
         # compare
-        changed = sorted(list(filter(lambda f: not self.fileMatch(f, f, secondInfo, compare_mode), file_list & second_list)))
+        changed = sorted(list(filter(lambda f: not self.fileMatch(f, f, secondInfo.dict_current, secondInfo.dict_crc_errors, compare_mode, exact_time=False), file_list & second_list)))
         self_only = sorted(list(file_list - second_list))
         second_only = sorted(list(second_list - file_list))
         moved = []
         if not no_moves:
-            compare_func = lambda f1, f2: self.fileMatch(f1, f2, secondInfo, compare_mode, True)
+            compare_func = lambda f1, f2: self.fileMatch(f1, f2, secondInfo.dict_current, secondInfo.dict_crc_errors, compare_mode, exact_time=False)
             moved = self.getMovedAndUpdateLists(self_only, second_only, self.dict_current, secondInfo.dict_current, compare_func)
             for pair in moved:
                 if pair["source"] not in self.dict_modified and pair["dest"] not in secondInfo.dict_modified:
