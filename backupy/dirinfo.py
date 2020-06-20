@@ -61,20 +61,13 @@ class DirInfo:
         self.gui = gui
 
     def getDicts(self) -> tuple:
-        """Returns tuple of dictionaries: current, prev, new, modified, missing, crc_errors, dirs"""
+        """Returns tuple of dictionaries: current, prev"""
         return (self.dict_current,
-                self.dict_prev,
-                self.dict_new,
-                self.dict_modified,
-                self.dict_missing,
-                self.dict_crc_errors,
-                self.dict_dirs)
+                self.dict_prev)
 
     def getSets(self) -> tuple:
-        """Returns tuple of set(dictionaries): current, prev, new, modified, missing, crc_errors, dirs"""
-        return (set(self.dict_current),
-                set(self.dict_prev),
-                set(self.dict_new),
+        """Returns tuple of set(dictionaries): new, modified, missing, crc_errors, dirs"""
+        return (set(self.dict_new),
                 set(self.dict_modified),
                 set(self.dict_missing),
                 set(self.dict_crc_errors),

@@ -121,8 +121,12 @@ class BackupManager():
         assert union_len == total_len
         # these ones are slower, some are redundant, used for testing, disabled for releases
         if False or self.backup_time == "000000-0000":
-            source_dict, source_prev, source_new, source_modified, source_missing, source_crc_errors, source_dirs = self.source.getSets()
-            dest_dict, dest_prev, dest_new, dest_modified, dest_missing, dest_crc_errors, dest_dirs = self.dest.getSets()
+            source_dict, source_prev = self.source.getDicts()
+            source_dict, source_prev = set(source_dict), set(source_prev)
+            source_new, source_modified, source_missing, source_crc_errors, source_dirs = self.source.getSets()
+            dest_dict, dest_prev = self.dest.getDicts()
+            dest_dict, dest_prev = set(dest_dict), set(dest_prev)
+            dest_new, dest_modified, dest_missing, dest_crc_errors, dest_dirs = self.dest.getSets()
             assert not (source_moved & dest_moved)
             assert not (source_only & source_moved)
             assert not (dest_only & dest_moved)
@@ -160,8 +164,10 @@ class BackupManager():
 
     def _databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
         # get databases
-        source_dict, source_prev, source_new, source_modified, source_missing, source_crc_errors, _ = self.source.getDicts()
-        dest_dict, dest_prev, dest_new, dest_modified, dest_missing, dest_crc_errors, _ = self.dest.getDicts()
+        source_dict, source_prev = self.source.getDicts()
+        source_new, source_modified, source_missing, source_crc_errors, _ = self.source.getSets()
+        dest_dict, dest_prev = self.dest.getDicts()
+        dest_new, dest_modified, dest_missing, dest_crc_errors, _ = self.dest.getSets()
         # print database conflicts, including both collisions from files being modified independently on both sides and unexpected missing files
         # note: this only notifies the user so they can intervene, it does not handle them in any special way, treating them as regular file changes
         # it can also be triggered by time zone or dst changes, lower file system mod time precision, and corruption if using CRCs (handled next)
@@ -202,12 +208,12 @@ class BackupManager():
                 if set(source_crc_errors) != set(dest_crc_errors):
                     raise Exception("Inconsistent CRC error detection between source and dest")
                 print(self.log.colourString(getString("CRC Errors Detected: %s") % (len(source_crc_errors)), "HEADER"))
-                self.log.printChangedFiles(sorted(list(source_crc_errors)), source_crc_errors, dest_crc_errors)
+                self.log.printChangedFiles(sorted(list(source_crc_errors)), source_dict, dest_dict)
         return abort_run
 
     def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: DirInfo) -> None:
         # get databases
-        side_dict, side_prev, _, _, _, _, _ = side_info.getDicts()
+        side_dict, side_prev = side_info.getDicts()
         self_compare = side_info.selfCompare(side_prev, exact_time=False, compare_crc=True)
         list_new, list_missing, list_modified = self_compare["new"], self_compare["missing"], self_compare["modified"]
         compare_func = lambda f1, f2: side_dict[f1] == side_prev[f2]
@@ -229,8 +235,8 @@ class BackupManager():
     def _printAndLogCompareDiffSummary(self, transfer_lists: TransferLists) -> None:
         # get lists and databases
         source_only, dest_only, changed, moved, source_deleted, dest_deleted = transfer_lists.getLists()
-        source_dict, _, _, _, _, _, _ = self.source.getDicts()
-        dest_dict, _, _, _, _, _, _ = self.dest.getDicts()
+        source_dict, _ = self.source.getDicts()
+        dest_dict, _ = self.dest.getDicts()
         # prepare diff messages
         if self.config.noarchive:
             archive_msg = getString("delete")
@@ -278,8 +284,8 @@ class BackupManager():
     def _performBackup(self, transfer_lists: TransferLists, simulation_msg: str) -> None:
         # get lists and databases
         source_only, dest_only, changed, moved, source_deleted, dest_deleted = transfer_lists.getLists()
-        source_dict, _, _, _, _, _, _ = self.source.getDicts()
-        dest_dict, _, _, _, _, _, _ = self.dest.getDicts()
+        source_dict, _ = self.source.getDicts()
+        dest_dict, _ = self.dest.getDicts()
         # init file manager
         fileman = FileManager(self.config, self.source, self.dest, self.log, self.backup_time, self.gui)
         # perform the backup/mirror/sync
