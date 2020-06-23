@@ -240,8 +240,8 @@ class DirInfo:
             self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
         # check if file is new, modified, or corrupted
         if relative_path in self.dict_prev:
-            # recalculation of crc for attr+ depends on an exact time match
-            if self.compare_mode == "attr+" and not self.fileMatch(relative_path, relative_path, self.dict_prev, {}, exact_time=True):
+            # calculate crc for attr+ unless it's an exact time match and there's a previous crc to copy
+            if self.compare_mode == "attr+" and not ("crc" in self.dict_prev[relative_path] and self.fileMatch(relative_path, relative_path, self.dict_prev, {}, exact_time=True)):
                 self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
             # checking if the file changed, accounting for time rounding and DST
             if self.fileMatch(relative_path, relative_path, self.dict_prev, {}, exact_time=False):
