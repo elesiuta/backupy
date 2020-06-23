@@ -176,8 +176,12 @@ def dirStats(path):
 
 def writeTestSolInfo(sol_path: str, dir_A_sol_path: str, dir_B_sol_path: str) -> None:
     """Write test solution info when creating new test cases or updating old ones for changes in log/database structure (pretty stable now)"""
-    writeJson(os.path.join(sol_path, "dir_A_stats.json"), dirStats(dir_A_sol_path))
-    writeJson(os.path.join(sol_path, "dir_B_stats.json"), dirStats(dir_B_sol_path))
+    dirAsol_stats = dirStats(dir_A_sol_path)
+    dirBsol_stats = dirStats(dir_B_sol_path)
+    _ = dirAsol_stats.pop("total_folder_size")
+    _ = dirBsol_stats.pop("total_folder_size")
+    writeJson(os.path.join(sol_path, "dir_A_stats.json"), dirAsol_stats)
+    writeJson(os.path.join(sol_path, "dir_B_stats.json"), dirBsol_stats)
     writeJson(os.path.join(sol_path, "dir_A_info.json"), dirInfo(dir_A_sol_path))
     writeJson(os.path.join(sol_path, "dir_B_info.json"), dirInfo(dir_B_sol_path))
 
@@ -294,11 +298,8 @@ def runTest(test_name, config, set=0, rewrite_log=True, rewrite_sep=True, compar
         a_test, a_sol, a_diff = dirCompare(dirInfo(dir_A_path), readJson(os.path.join(sol_path, "dir_A_info.json")))
         b_test, b_sol, b_diff = dirCompare(dirInfo(dir_B_path), readJson(os.path.join(sol_path, "dir_B_info.json")))
         compDict = {"a_test_only": a_test, "a_sol_only": a_sol, "a_diff": a_diff, "b_test_only": b_test, "b_sol_only": b_sol, "b_diff": b_diff}
-        if os.name != "nt":
-            _ = dirA_stats.pop("total_folder_size")
-            _ = dirB_stats.pop("total_folder_size")
-            _ = dirAsol_stats.pop("total_folder_size")
-            _ = dirBsol_stats.pop("total_folder_size")
+        _ = dirA_stats.pop("total_folder_size")
+        _ = dirB_stats.pop("total_folder_size")
     # helps to leave this for debugging when tests fail, or creating new test solutions
     if cleanup:
         cleanupTestDir(test_name)
