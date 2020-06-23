@@ -240,23 +240,18 @@ class DirInfo:
             self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
         # check if file is new, modified, or corrupted
         if relative_path in self.dict_prev:
-            if self.fileMatch(relative_path, relative_path, self.dict_prev, {}, exact_time=True):
-                # unchanged file (if using crc mode)
-                if self.compare_mode in ["attr", "attr+"]:  # and "crc" in self.dict_prev:
-                    # unchanged file (probably) (keep old crc value)
-                    # self.dict_current[relative_path]["crc"] = self.dict_prev[relative_path]["crc"]
-                    self.dict_current[relative_path] = self.dict_prev[relative_path].copy()  # to keep old, and possibly rounded/DST adjusted time
-                if self.compare_mode == "attr+" and "crc" not in self.dict_current[relative_path]:
-                    self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
+            # recalculation of crc for attr+ depends on an exact time match
+            if self.compare_mode == "attr+" and not self.fileMatch(relative_path, relative_path, self.dict_prev, {}, exact_time=True):
+                self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
+            # checking if the file changed, accounting for time rounding and DST
+            if self.fileMatch(relative_path, relative_path, self.dict_prev, {}, exact_time=False):
+                # unchanged file (probably) (keep old crc value if exists and not already recalculated)
+                if self.compare_mode in ["attr", "attr+"] and "crc" in self.dict_prev[relative_path] and "crc" not in self.dict_current[relative_path]:
+                    self.dict_current[relative_path]["crc"] = self.dict_prev[relative_path]["crc"]
             else:
                 # changed file (or corrupted and added to self.dict_crc_errors by fileMatch)
                 if relative_path not in self.dict_crc_errors:
                     self.dict_modified[relative_path] = self.dict_prev[relative_path]
-                if self.compare_mode == "attr+":
-                    self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
-            # (attr+ also recalculates crc if time is not an exact match) (might remove this later or update to check corruption too)
-            # if self.compare_mode == "attr+" and not self.fileMatch(relative_path, relative_path, self.dict_prev, {}, exact_time=True):
-            #     self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
         else:
             # new file
             self.dict_new[relative_path] = self.dict_current[relative_path]
