@@ -9,6 +9,14 @@ import json
 import typing
 import sys
 
+# import better_exceptions
+# def patch(self, err, test):
+#     lines = better_exceptions.format_exception(*err)
+#     if sys.version_info[0] == 2:
+#         return u"".join(lines).encode("utf-8")
+#     return "".join(lines)
+# unittest.result.TestResult._exc_info_to_string = patch
+
 path = os.path.abspath(__file__)
 path = os.path.dirname(os.path.dirname(path))
 sys.path.insert(0, path)

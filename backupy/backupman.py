@@ -141,12 +141,12 @@ class BackupManager():
             assert source_dict <= (source_prev - (source_missing | dest_moved)) | source_new | source_dirs
             assert dest_dict <= (dest_prev - (dest_missing | source_moved)) | dest_new | dest_dirs
             # basically redo all of dircompare and checks during scan (except crc errors) using set operations and filters
-            redundant_dict_source = self.source.selfCompare(self.source.dict_prev)
+            redundant_dict_source = self.source.selfCompare(self.source.dict_prev, True, False)
             assert set(redundant_dict_source["modified"]) == source_modified
             assert set(redundant_dict_source["missing"]) >= source_missing
             assert set(redundant_dict_source["missing"]) <= source_missing | dest_moved
             assert set(redundant_dict_source["new"]) == source_new
-            redundant_dict_dest = self.dest.selfCompare(self.dest.dict_prev)
+            redundant_dict_dest = self.dest.selfCompare(self.dest.dict_prev, True, False)
             assert set(redundant_dict_dest["modified"]) == dest_modified
             assert set(redundant_dict_dest["missing"]) >= dest_missing
             assert set(redundant_dict_dest["missing"]) <= dest_missing | source_moved
@@ -361,6 +361,7 @@ class BackupManager():
         # print differences between source and dest
         self._printAndLogCompareDiffSummary(transfer_lists)
         # consistency checks to try to detect and prevent any weird edge cases
+        # self._checkConsistency(transfer_lists)
         try:
             self._checkConsistency(transfer_lists)
         except Exception as e:
