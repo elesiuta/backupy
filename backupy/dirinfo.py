@@ -246,7 +246,7 @@ class DirInfo:
             self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
         # check if file is new, modified, or corrupted
         if relative_path in self.dict_prev:
-            if self.fileMatch(relative_path, relative_path, self.dict_prev, {}, exact_time=False):
+            if self.fileMatch(relative_path, relative_path, self.dict_prev, {}, exact_time=True):
                 # unchanged file (if using crc mode)
                 # if self.compare_mode in ["attr", "attr+"]:  # and "crc" in self.dict_prev
                 #     # unchanged file (probably) (keep old crc value)
@@ -258,9 +258,8 @@ class DirInfo:
                     self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
             else:
                 # changed file (or corrupted and added to self.dict_crc_errors by fileMatch)
-                # if relative_path not in self.dict_crc_errors:
-                #     self.dict_modified[relative_path] = self.dict_prev[relative_path]
-                self.dict_modified[relative_path] = self.dict_prev[relative_path]
+                if relative_path not in self.dict_crc_errors:
+                    self.dict_modified[relative_path] = self.dict_prev[relative_path]
                 if self.compare_mode == "attr+":
                     self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
             # keep same behaviour as before (will remove this later)
