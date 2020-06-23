@@ -8,6 +8,7 @@
   "size": 1
  },
  "c.txt": {
+  "crc": "6B9DF6F",
   "mtime": 1585771804.0,
   "size": 1
  },
@@ -16,6 +17,7 @@
   "size": 1
  },
  "d.txt": {
+  "crc": "98DD4ACC",
   "mtime": 1585771866.0,
   "size": 1
  },

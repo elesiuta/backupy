@@ -3,10 +3,6 @@ File:,Source,b.txt,1 B,Wed Apr  1 20:08:40 2020
 ,DB,b.txt,1 B,Wed Apr  1 19:09:08 2020,71BEEFF9
 ,Dest,b.txt,1 B,Wed Apr  1 20:08:40 2020
 ,DB,b.txt,1 B,Wed Apr  1 19:09:08 2020,71BEEFF9
-File:,Source,d.txt,1 B,Wed Apr  1 20:10:04 2020
-,DB,d.txt,1 B,Wed Apr  1 19:11:05 2020,98DD4ACC
-,Dest,d.txt,1 B,Wed Apr  1 20:11:06 2020
-,DB,d.txt,1 B,Wed Apr  1 19:11:05 2020,98DD4ACC
 File:,Source,b-rename-repalce-both.txt,1 B,Wed Apr  1 20:09:10 2020
 ,DB,b-rename-repalce-both.txt,Missing
 ,Dest,b-rename-repalce-both.txt,1 B,Wed Apr  1 20:09:10 2020
@@ -22,10 +18,10 @@ File:,Source,g-rename.txt,1 B,Wed Apr  1 20:14:02 2020
 ### SOURCE ONLY ###
 File:,,d-rename-replace.txt,1 B,Wed Apr  1 20:11:06 2020
 ### DESTINATION ONLY ###
-File:,,c.txt,1 B,Wed Apr  1 20:10:04 2020
+File:,,c.txt,1 B,Wed Apr  1 20:10:04 2020,6B9DF6F
 ### CHANGED FILES ###
 File:,Source,d.txt,1 B,Wed Apr  1 20:10:04 2020
-,Dest,d.txt,1 B,Wed Apr  1 20:11:06 2020
+,Dest,d.txt,1 B,Wed Apr  1 20:11:06 2020,98DD4ACC
 ### MOVED FILES ###
 Source:,,e-rename.txt,1 B,Wed Apr  1 20:12:10 2020
 Dest:,Move Dest,e-rename-dif.txt,1 B,Wed Apr  1 20:12:10 2020

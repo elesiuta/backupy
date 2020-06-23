@@ -40,19 +40,19 @@
   "crc": 30677878
  },
  ".backupy\\database-destid.json": {
-  "size": 519,
+  "size": 562,
   "mtime": 0,
-  "crc": 3417394963
+  "crc": 3066204774
  },
  ".backupy\\database-destid.tmp.json": {
-  "size": 451,
+  "size": 494,
   "mtime": 0,
-  "crc": 3452246027
+  "crc": 704208798
  },
  ".backupy\\database.json": {
-  "size": 519,
+  "size": 562,
   "mtime": 0,
-  "crc": 3417394963
+  "crc": 3066204774
  },
  ".backupy\\database.tmp.json": {
   "size": 462,
@@ -65,8 +65,8 @@
   "crc": 112844655
  },
  ".backupy\\Logs\\log-000000-0000.csv": {
-  "size": 1697,
+  "size": 1525,
   "mtime": 0,
-  "crc": 1967566333
+  "crc": 3389079428
  }
 }
