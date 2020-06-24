@@ -39,12 +39,12 @@
  "corrupted file A.txt": {
   "size": 2,
   "mtime": 0,
-  "crc": 4063104189
+  "crc": 458074504
  },
  "corrupted file B.txt": {
   "size": 2,
   "mtime": 0,
-  "crc": 458074504
+  "crc": 4063104189
  },
  "file modified newer on A.txt": {
   "size": 640,
@@ -74,7 +74,7 @@
  "new corrupted file.txt": {
   "size": 11,
   "mtime": 0,
-  "crc": 1597877419
+  "crc": 1470702120
  },
  "new file A.txt": {
   "size": 11,
@@ -99,22 +99,12 @@
  ".backupy\\database.json": {
   "size": 2211,
   "mtime": 0,
-  "crc": 3400607773
+  "crc": 2061805689
  },
  ".backupy\\database.tmp.json": {
   "size": 1924,
   "mtime": 0,
   "crc": 3709867155
- },
- ".backupy\\Archive\\000000-0000\\corrupted file A.txt": {
-  "size": 2,
-  "mtime": 0,
-  "crc": 458074504
- },
- ".backupy\\Archive\\000000-0000\\corrupted file B.txt": {
-  "size": 2,
-  "mtime": 0,
-  "crc": 4063104189
  },
  ".backupy\\Archive\\000000-0000\\file modified newer on A.txt": {
   "size": 319,
@@ -125,11 +115,6 @@
   "size": 202,
   "mtime": 0,
   "crc": 4256320678
- },
- ".backupy\\Archive\\000000-0000\\new corrupted file.txt": {
-  "size": 11,
-  "mtime": 0,
-  "crc": 1470702120
  },
  ".backupy\\Trash\\000000-0000\\file only B.txt": {
   "size": 9,

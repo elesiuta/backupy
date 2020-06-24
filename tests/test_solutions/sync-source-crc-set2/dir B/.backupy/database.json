@@ -25,12 +25,12 @@
   "size": 325
  },
  "corrupted file A.txt": {
-  "crc": "F22E0CBD",
+  "crc": "1B4DA988",
   "mtime": 1563369444.0,
   "size": 2
  },
  "corrupted file B.txt": {
-  "crc": "1B4DA988",
+  "crc": "F22E0CBD",
   "mtime": 1563369444.0,
   "size": 2
  },
@@ -71,7 +71,7 @@
   "size": 362
  },
  "new corrupted file.txt": {
-  "crc": "5F3DACAB",
+  "crc": "57A92228",
   "mtime": 1582137344.0,
   "size": 11
  },

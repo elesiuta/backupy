@@ -25,7 +25,17 @@ File:,Dest,same file corrupted.txt,2 B,Wed Jul 17 13:17:24 2019,F22E0CBD
 ,DB,same file corrupted.txt,Missing
 ### CRC ERRORS DETECTED ###
 File:,Source,new corrupted file.txt,11 B,Wed Feb 19 18:35:44 2020,5F3DACAB
+,DB,new corrupted file.txt,Missing
 ,Dest,new corrupted file.txt,11 B,Wed Feb 19 18:35:44 2020,57A92228
+,DB,new corrupted file.txt,Missing
+File:,Source,same file copied.txt,2 B,Wed Jul 17 13:17:24 2019,1B4DA988
+,DB,same file copied.txt,Missing
+,Dest,same file copied.txt,Missing
+,DB,same file copied.txt,Missing
+File:,Source,same file corrupted.txt,Missing
+,DB,same file corrupted.txt,Missing
+,Dest,same file corrupted.txt,2 B,Wed Jul 17 13:17:24 2019,F22E0CBD
+,DB,same file corrupted.txt,Missing
 ### SOURCE ONLY ###
 File:,,copied A - copy.txt,353 B,Wed Feb 19 19:45:38 2020,C52AF0F0
 File:,,empty dir only A,0 B,Thu Jan  1 00:00:00 1970,0,dir: True
