@@ -73,18 +73,18 @@ class DirInfo:
                 self.set_crc_errors,
                 self.set_dirs)
 
-    def saveJson(self, db_name: str = "database.json") -> None:
+    def saveDatabase(self, db_name: str = "database.json") -> None:
         """Write database to config_dir on self and other if enabled"""
         writeJson(os.path.join(self.dir, self.config_dir, db_name), self.dict_current, sort_keys=True)
         if self.write_database_x2:
             other_db_path = os.path.join(self.other_dir, self.config_dir, "database-%s%s" % (self.unique_id, db_name[8:]))
             writeJson(other_db_path, self.dict_current, sort_keys=True)
 
-    def loadJson(self) -> None:
+    def loadDatabase(self) -> None:
         """Load database from config_dir"""
         self.dict_prev = readJson(os.path.join(self.dir, self.config_dir, "database.json"))
 
-    def getJsonX2(self) -> dict:
+    def getDatabaseX2(self) -> dict:
         """Get the 'last seen' database of this directory from the perspective of the other directory"""
         other_db_path = os.path.join(self.other_dir, self.config_dir, "database-%s.json" % self.unique_id)
         database_x2 = readJson(other_db_path)

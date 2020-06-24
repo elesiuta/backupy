@@ -316,8 +316,8 @@ class BackupManager():
         self.dest = DirInfo(self.config.dest, self.config.dest_unique_id,
                             self.config.source, self.config, self.gui)
         dest_database_load_success = False
-        self.source.loadJson()
-        self.dest.loadJson()
+        self.source.loadDatabase()
+        self.dest.loadDatabase()
         if self.dest.dict_prev != {}:
             dest_database_load_success = True
         # scan directories (also calculates CRC if enabled) (didn't parallelize scans to prevent excess vibration of adjacent consumer grade disks and keep status bars simple)

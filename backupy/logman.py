@@ -56,8 +56,8 @@ class LogManager:
             # <source|dest>/.backupy/database.json
             if self.config.dry_run:
                 db_name = db_name[:-4] + "dryrun.json"
-            self.source.saveJson(db_name)
-            self.dest.saveJson(db_name)
+            self.source.saveDatabase(db_name)
+            self.dest.saveDatabase(db_name)
             self._log[1][5] = self.source.calcCrc(os.path.join(self.source.dir, self.source.config_dir, db_name))
             self._log[1][7] = self.dest.calcCrc(os.path.join(self.dest.dir, self.dest.config_dir, db_name))
             # <source>/.backupy/Logs/log-yymmdd-HHMM.csv
