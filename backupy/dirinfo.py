@@ -176,12 +176,10 @@ class DirInfo:
             if self.timeMatch(self.dict_current[f1]["mtime"], other_db[f2]["mtime"], exact_time):
                 # unchanged files (probably)
                 if "crc" in self.dict_current[f1] and "crc" in other_db[f2] and self.dict_current[f1]["crc"] != other_db[f2]["crc"]:
-                    # size and date match, but crc does not, probably corrupted, log error if scanning or comparing sides (f1 == f2, otherwise checked if moved)
-                    if not self.compare_mode == "attr" and (f1 == f2 or self.compare_mode == "crc"):
+                    # size and date match, but crc does not, probably corrupted, log error if scanning or comparing sides (f1 == f2), otherwise this is just checking if moved (f1 != f2) (but if time is exact, still flag it to be safe)
+                    if f1 == f2 or exact_time:
                         self.dict_crc_errors[f1] = True
                         other_crc_errors[f2] = True
-                        if self.compare_mode == "attr+":
-                            return True
                     return False
                 return True
         return False
@@ -311,11 +309,12 @@ class DirInfo:
             raise Exception("Inconsistent compare mode between directories")
         # compare
         changed = sorted(list(filter(lambda f: not self.fileMatch(f, f, secondInfo.dict_current, secondInfo.dict_crc_errors, exact_time=False), file_list & second_list)))
+        changed = sorted(list(set(changed) - (set(self.dict_crc_errors) | set(secondInfo.dict_crc_errors))))  # quick fix, will move this somewhere else probably
         self_only = sorted(list(file_list - second_list))
         second_only = sorted(list(second_list - file_list))
         moved = []
         if not no_moves:
-            compare_func = lambda f1, f2: self.fileMatch(f1, f2, secondInfo.dict_current, secondInfo.dict_crc_errors, exact_time=False)
+            compare_func = lambda f1, f2: self.fileMatch(f1, f2, secondInfo.dict_current, secondInfo.dict_crc_errors, exact_time=True)
             moved = self.getMovedAndUpdateLists(self_only, second_only, self.dict_current, secondInfo.dict_current, compare_func)
             for pair in moved:
                 if pair["source"] not in self.dict_modified and pair["dest"] not in secondInfo.dict_modified:

@@ -200,15 +200,9 @@ class BackupManager():
             self.log.append([getString("### CRC ERRORS DETECTED ###")])
             print(self.log.colourString(getString("WARNING: found non matching CRC values, possible corruption detected"), "WARNING"))
             abort_run = True
-            if self.config.compare_mode == "crc":
-                crc_errors_detected = sorted(list(set(source_crc_errors) | set(dest_crc_errors)))
-                print(self.log.colourString(getString("CRC Errors Detected: %s") % (len(crc_errors_detected)), "HEADER"))
-                self.log.printSyncDbConflicts(crc_errors_detected, source_dict, dest_dict, source_prev, dest_prev)
-            elif self.config.compare_mode == "attr+":
-                if set(source_crc_errors) != set(dest_crc_errors):
-                    raise Exception("Inconsistent CRC error detection between source and dest")
-                print(self.log.colourString(getString("CRC Errors Detected: %s") % (len(source_crc_errors)), "HEADER"))
-                self.log.printChangedFiles(sorted(list(source_crc_errors)), source_dict, dest_dict)
+            crc_errors_detected = sorted(list(set(source_crc_errors) | set(dest_crc_errors)))
+            print(self.log.colourString(getString("CRC Errors Detected: %s") % (len(crc_errors_detected)), "HEADER"))
+            self.log.printSyncDbConflicts(crc_errors_detected, source_dict, dest_dict, source_prev, dest_prev)
         return abort_run
 
     def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: DirInfo) -> None:
@@ -362,13 +356,13 @@ class BackupManager():
         self._printAndLogCompareDiffSummary(transfer_lists)
         # consistency checks to try to detect and prevent any weird edge cases
         # self._checkConsistency(transfer_lists)
-        try:
-            self._checkConsistency(transfer_lists)
-        except Exception as e:
-            self.log.append(["BACKUPY ERROR", str(e)])
-            print(e)
-            print(self.log.colourString(getString("Error: Inconsistent directory comparison and database checks"), "FAIL"))
-            return self.abortRun()
+        # try:
+        #     self._checkConsistency(transfer_lists)
+        # except Exception as e:
+        #     self.log.append(["BACKUPY ERROR", str(e)])
+        #     print(e)
+        #     print(self.log.colourString(getString("Error: Inconsistent directory comparison and database checks"), "FAIL"))
+        #     return self.abortRun()
         # exit if directories already match
         if transfer_lists.isEmpty():
             print(self.log.colourString(getString("Directories already match, completed!"), "OKGREEN"))
