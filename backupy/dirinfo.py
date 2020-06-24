@@ -33,11 +33,11 @@ class DirInfo:
         # File dictionaries, keys are paths relative to directory_root_path, values are dictionaries of file attributes
         self.dict_current = {}
         self.dict_prev = {}
-        self.dict_modified = {}
-        self.dict_missing = {}
-        self.dict_new = {}
-        self.dict_crc_errors = {}
-        self.dict_dirs = {}
+        self.set_modified = set()
+        self.set_missing = set()
+        self.set_new = set()
+        self.set_crc_errors = set()
+        self.set_dirs = set()
         # Init filters
         self.filter_include_list = None
         self.filter_exclude_list = None
@@ -66,12 +66,12 @@ class DirInfo:
                 self.dict_prev)
 
     def getSets(self) -> tuple:
-        """Returns tuple of set(dictionaries): new, modified, missing, crc_errors, dirs"""
-        return (set(self.dict_new),
-                set(self.dict_modified),
-                set(self.dict_missing),
-                set(self.dict_crc_errors),
-                set(self.dict_dirs))
+        """Returns tuple of sets: new, modified, missing, crc_errors, dirs"""
+        return (self.set_new,
+                self.set_modified,
+                self.set_missing,
+                self.set_crc_errors,
+                self.set_dirs)
 
     def saveJson(self, db_name: str = "database.json") -> None:
         """Write database to config_dir on self and other if enabled"""
@@ -171,15 +171,15 @@ class DirInfo:
                     return True
         return False
 
-    def fileMatch(self, f1: str, f2: str, other_db: dict, other_crc_errors: dict, exact_time: bool) -> bool:
+    def fileMatch(self, f1: str, f2: str, other_db: dict, other_crc_errors: set, exact_time: bool) -> bool:
         if self.dict_current[f1]["size"] == other_db[f2]["size"]:
             if self.timeMatch(self.dict_current[f1]["mtime"], other_db[f2]["mtime"], exact_time):
                 # unchanged files (probably)
                 if "crc" in self.dict_current[f1] and "crc" in other_db[f2] and self.dict_current[f1]["crc"] != other_db[f2]["crc"]:
                     # size and date match, but crc does not, probably corrupted, log error if scanning or comparing sides (f1 == f2), otherwise this is just checking if moved (f1 != f2) (but if time is exact, still flag it to be safe)
                     if f1 == f2 or exact_time:
-                        self.dict_crc_errors[f1] = True
-                        other_crc_errors[f2] = True
+                        self.set_crc_errors.add(f1)
+                        other_crc_errors.add(f2)
                     return False
                 return True
         return False
@@ -211,7 +211,7 @@ class DirInfo:
                         if self.force_posix_path_sep:
                             relative_path = relative_path.replace(os.path.sep, "/")
                         self.dict_current[relative_path] = {"size": 0, "mtime": 0, "crc": "0", "dir": True}
-                        self.dict_dirs[relative_path] = {"size": 0, "mtime": 0, "crc": "0", "dir": True}
+                        self.set_dirs.add(relative_path)
                 # scan files
                 for file_name in file_list:
                     full_path = os.path.join(dir_path, file_name)
@@ -225,7 +225,7 @@ class DirInfo:
             for relative_path in (set(self.dict_prev) - set(self.dict_current)):
                 if "dir" not in self.dict_prev[relative_path]:
                     if not self.pathMatch(relative_path, self.ignored_toplevel_folders):
-                        self.dict_missing[relative_path] = self.dict_prev[relative_path]
+                        self.set_missing.add(relative_path)
                 # else:
                 #     self.dict_dirs[relative_path] = {"size": 0, "mtime": 0, "crc": "0", "dir": False}
 
@@ -239,20 +239,20 @@ class DirInfo:
         # check if file is new, modified, or corrupted
         if relative_path in self.dict_prev:
             # calculate crc for attr+ unless it's an exact time match and there's a previous crc to copy
-            if self.compare_mode == "attr+" and not ("crc" in self.dict_prev[relative_path] and self.fileMatch(relative_path, relative_path, self.dict_prev, {}, exact_time=True)):
+            if self.compare_mode == "attr+" and not ("crc" in self.dict_prev[relative_path] and self.fileMatch(relative_path, relative_path, self.dict_prev, set(), exact_time=True)):
                 self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
             # checking if the file changed, accounting for time rounding and DST
-            if self.fileMatch(relative_path, relative_path, self.dict_prev, {}, exact_time=False):
+            if self.fileMatch(relative_path, relative_path, self.dict_prev, set(), exact_time=False):
                 # unchanged file (probably) (keep old crc value if exists and not already recalculated)
                 if self.compare_mode in ["attr", "attr+"] and "crc" in self.dict_prev[relative_path] and "crc" not in self.dict_current[relative_path]:
                     self.dict_current[relative_path]["crc"] = self.dict_prev[relative_path]["crc"]
             else:
-                # changed file (or corrupted and added to self.dict_crc_errors by fileMatch)
-                if relative_path not in self.dict_crc_errors:
-                    self.dict_modified[relative_path] = self.dict_prev[relative_path]
+                # changed file (or corrupted and added to self.set_crc_errors by fileMatch)
+                if relative_path not in self.set_crc_errors:
+                    self.set_modified.add(relative_path)
         else:
             # new file
-            self.dict_new[relative_path] = self.dict_current[relative_path]
+            self.set_new.add(relative_path)
             if self.compare_mode == "attr+":
                 self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
 
@@ -308,16 +308,16 @@ class DirInfo:
         else:
             raise Exception("Inconsistent compare mode between directories")
         # compare
-        changed = sorted(list(filter(lambda f: not self.fileMatch(f, f, secondInfo.dict_current, secondInfo.dict_crc_errors, exact_time=False), file_list & second_list)))
-        changed = sorted(list(set(changed) - (set(self.dict_crc_errors) | set(secondInfo.dict_crc_errors))))  # quick fix, will move this somewhere else probably
+        changed = sorted(list(filter(lambda f: not self.fileMatch(f, f, secondInfo.dict_current, secondInfo.set_crc_errors, exact_time=False), file_list & second_list)))
+        changed = sorted(list(set(changed) - (self.set_crc_errors | secondInfo.set_crc_errors)))  # quick fix, will move this somewhere else probably
         self_only = sorted(list(file_list - second_list))
         second_only = sorted(list(second_list - file_list))
         moved = []
         if not no_moves:
-            compare_func = lambda f1, f2: self.fileMatch(f1, f2, secondInfo.dict_current, secondInfo.dict_crc_errors, exact_time=True)
+            compare_func = lambda f1, f2: self.fileMatch(f1, f2, secondInfo.dict_current, secondInfo.set_crc_errors, exact_time=True)
             moved = self.getMovedAndUpdateLists(self_only, second_only, self.dict_current, secondInfo.dict_current, compare_func)
             for pair in moved:
-                if pair["source"] not in self.dict_modified and pair["dest"] not in secondInfo.dict_modified:
-                    _ = secondInfo.dict_missing.pop(pair["source"], 1)
-                    _ = self.dict_missing.pop(pair["dest"], 1)
+                if pair["source"] not in self.set_modified and pair["dest"] not in secondInfo.set_modified:
+                    secondInfo.set_missing.discard(pair["source"])
+                    self.set_missing.discard(pair["dest"])
         return {"source_only": self_only, "dest_only": second_only, "changed": changed, "moved": moved}
