@@ -123,10 +123,10 @@ class BackupManager():
         if False or self.backup_time == "000000-0000":
             source_dict, source_prev = self.source.getDicts()
             source_dict, source_prev = set(source_dict), set(source_prev)
-            source_new, source_modified, source_missing, source_crc_errors, source_dirs = self.source.getSets()
+            source_new, source_modified, source_missing, source_crc_errors, source_dirs, source_unmodified = self.source.getSets()
             dest_dict, dest_prev = self.dest.getDicts()
             dest_dict, dest_prev = set(dest_dict), set(dest_prev)
-            dest_new, dest_modified, dest_missing, dest_crc_errors, dest_dirs = self.dest.getSets()
+            dest_new, dest_modified, dest_missing, dest_crc_errors, dest_dirs, dest_unmodified = self.dest.getSets()
             assert not (source_moved & dest_moved)
             assert not (source_only & source_moved)
             assert not (dest_only & dest_moved)
@@ -165,9 +165,9 @@ class BackupManager():
     def _databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
         # get databases
         source_dict, source_prev = self.source.getDicts()
-        source_new, source_modified, source_missing, source_crc_errors, _ = self.source.getSets()
+        source_new, source_modified, source_missing, source_crc_errors, _, _ = self.source.getSets()
         dest_dict, dest_prev = self.dest.getDicts()
-        dest_new, dest_modified, dest_missing, dest_crc_errors, _ = self.dest.getSets()
+        dest_new, dest_modified, dest_missing, dest_crc_errors, _, _ = self.dest.getSets()
         # print database conflicts, including both collisions from files being modified independently on both sides and unexpected missing files
         # note: this only notifies the user so they can intervene, it does not handle them in any special way, treating them as regular file changes
         # it can also be triggered by time zone or dst changes, lower file system mod time precision, and corruption if using CRCs (handled next)

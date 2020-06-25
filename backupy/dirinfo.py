@@ -33,6 +33,8 @@ class DirInfo:
         # File dictionaries, keys are paths relative to directory_root_path, values are dictionaries of file attributes
         self.dict_current = {}
         self.dict_prev = {}
+        # File sets of relative paths
+        self.set_unmodified = set()
         self.set_modified = set()
         self.set_missing = set()
         self.set_new = set()
@@ -71,7 +73,8 @@ class DirInfo:
                 self.set_modified,
                 self.set_missing,
                 self.set_crc_errors,
-                self.set_dirs)
+                self.set_dirs,
+                self.set_unmodified)
 
     def saveDatabase(self, db_name: str = "database.json") -> None:
         """Write database to config_dir on self and other if enabled"""
@@ -244,6 +247,7 @@ class DirInfo:
             # checking if the file changed, accounting for time rounding and DST
             if self.fileMatch(relative_path, relative_path, self.dict_prev, set(), exact_time=False):
                 # unchanged file (probably) (keep old crc value if exists and not already recalculated)
+                self.set_unmodified.add(relative_path)
                 if self.compare_mode in ["attr", "attr+"] and "crc" in self.dict_prev[relative_path] and "crc" not in self.dict_current[relative_path]:
                     self.dict_current[relative_path]["crc"] = self.dict_prev[relative_path]["crc"]
             else:
