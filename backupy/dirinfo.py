@@ -68,7 +68,7 @@ class DirInfo:
                 self.dict_prev)
 
     def getSets(self) -> tuple:
-        """Returns tuple of sets: new, modified, missing, crc_errors, dirs"""
+        """Returns tuple of sets: new, modified, missing, crc_errors, dirs, unmodified"""
         return (self.set_new,
                 self.set_modified,
                 self.set_missing,
@@ -229,7 +229,6 @@ class DirInfo:
                 if "dir" not in self.dict_prev[relative_path]:
                     if not self.pathMatch(relative_path, self.ignored_toplevel_folders):
                         self.set_missing.add(relative_path)
-            # add redundancy check prev <= current | missing - new
 
     def scanFile(self, full_path: str, relative_path: str) -> None:
         # get file attributes and create entry

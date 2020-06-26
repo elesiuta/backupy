@@ -61,3 +61,54 @@ def writeJson(file_path: str, data: dict, subdir: bool = True, sort_keys: bool =
             json.dump(data, json_file, indent=1, separators=(',', ': '), sort_keys=sort_keys, ensure_ascii=False)
     except Exception:
         print(getString("Error, could not write: ") + file_path)
+
+
+def testConsistency(source_dicts: tuple, source_sets: tuple, dest_dicts: tuple, dest_sets: tuple, transfer_lists: tuple) -> None:
+    # get sets
+    source_only, dest_only, changed, source_moved, dest_moved, source_deleted, dest_deleted = transfer_lists
+    source_dict, source_prev = source_dicts
+    source_dict, source_prev = set(source_dict), set(source_prev)
+    source_new, source_modified, source_missing, source_crc_errors, source_dirs, source_unmodified = source_sets
+    dest_dict, dest_prev = dest_dicts
+    dest_dict, dest_prev = set(dest_dict), set(dest_prev)
+    dest_new, dest_modified, dest_missing, dest_crc_errors, dest_dirs, dest_unmodified = dest_sets
+    # make sure each item only appears in one set
+    union_len = len(source_only | dest_only | changed | source_moved | dest_moved | source_deleted | dest_deleted)
+    total_len = len(source_only) + len(dest_only) + len(changed) + len(source_moved) + len(dest_moved) + len(source_deleted) + len(dest_deleted)
+    assert union_len == total_len
+    # contradictions
+    assert not (source_moved & dest_moved)
+    assert not (source_only & source_moved)
+    assert not (dest_only & dest_moved)
+    # changed - ... below would be any skipped files
+    # assert changed <= (source_modified | dest_modified) | (source_new & dest_new) | (source_crc_errors | dest_crc_errors)
+    assert source_only <= source_dict
+    assert dest_only <= dest_dict
+    assert not source_only & dest_only
+    assert not source_only & changed
+    assert not dest_only & changed
+    # prev dirs and prev files under .backupy cause the next two asserts to be <=
+    assert source_dict <= (source_prev - (source_missing | dest_moved)) | source_new | source_dirs
+    assert dest_dict <= (dest_prev - (dest_missing | source_moved)) | dest_new | dest_dirs
+    # add redundancy check prev <= current | missing - new
+    # basically redo all of dircompare and checks during scan (except crc errors) using set operations and filters
+    # redundant_dict_source = self.source.compareDb(self.source.dict_prev, set(), False, False, True)
+    # assert set(redundant_dict_source["changed"]) == source_modified
+    # assert set(redundant_dict_source["other_only"]) >= source_missing
+    # assert set(redundant_dict_source["other_only"]) <= source_missing | dest_moved
+    # assert set(redundant_dict_source["self_only"]) == source_new
+    # redundant_dict_dest = self.dest.compareDb(self.dest.dict_prev, set(), False, False, True)
+    # assert set(redundant_dict_dest["changed"]) == dest_modified
+    # assert set(redundant_dict_dest["other_only"]) >= dest_missing
+    # assert set(redundant_dict_dest["other_only"]) <= dest_missing | source_moved
+    # assert set(redundant_dict_dest["self_only"]) == dest_new
+    # redundant_dict_compare = self.source.selfCompare(self.dest.dict_current, False, True, False)
+    # redundant_dict_compare_reverse = self.dest.selfCompare(self.source.dict_current, False, True, False)
+    # assert set(redundant_dict_compare["modified"]) == (changed | (source_crc_errors & source_dict & dest_dict) | (dest_crc_errors & dest_dict & source_dict))
+    # assert set(redundant_dict_compare["modified"]) == (changed | (source_crc_errors - (source_dict - dest_dict)) | (dest_crc_errors - (dest_dict - source_dict)))
+    # assert set(redundant_dict_compare["new"]) == source_only | source_moved | dest_deleted
+    # assert set(redundant_dict_compare["missing"]) == dest_only | dest_moved | source_deleted
+    # assert set(redundant_dict_compare_reverse["modified"]) == (changed | (source_crc_errors - (source_dict - dest_dict)) | (dest_crc_errors - (dest_dict - source_dict)))
+    # assert set(redundant_dict_compare_reverse["new"]) == dest_only | dest_moved | source_deleted
+    # assert set(redundant_dict_compare_reverse["missing"]) == source_only | source_moved | dest_deleted
+    # might be able to make a check for moved along the lines of source_only is approx source_new | dest_missing - dest_new - source_missing
