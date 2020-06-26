@@ -30,6 +30,7 @@ class LogManager:
         """Provides methods for log formatting and pretty printing (used by BackupManager)"""
         # init variables
         self._log = []
+        self._log_columns = []
         self.backup_time = backup_time
         self.gui = gui
         self.terminal_width = shutil.get_terminal_size()[0]
@@ -43,13 +44,23 @@ class LogManager:
         self.source = DirInfo
         self.dest = DirInfo
 
-    def append(self, object) -> None:
-        self._log.append(object)
+    def append(self, entry: list, columns: list = []) -> None:
+        # columns corresponds to the column names of each item in entry
+        # the last item in columns is True if this entry should start a new row in the csv
+        # leave columns empty if this entry should not appear in the csv
+        self._log.append(entry)
+        self._log_columns.append(columns)
 
     def convertLog(self) -> list:
-        log_csv = []
-        for row in self._log:
-            pass
+        columns = ["Status", ]
+        log_csv = [columns]
+        for i in range(len(self._log)):
+            if self._log_columns[i]:
+                if self._log_columns[i][-1]:
+                    log_csv.append([""]*len(columns))
+                for j in range(len(self._log[i])):
+                    log_csv[-1][columns.index(self._log_columns[i][j])] = self._log[i][j]
+        return log_csv
 
     def writeLog(self, db_name: str) -> None:
         if not self.config.nolog:
@@ -73,6 +84,8 @@ class LogManager:
             writeCsv(os.path.join(self.config.source, self.config.log_dir, "log-" + self.backup_time + ".csv"), self._log)
             if self.config.write_log_dest:
                 writeCsv(os.path.join(self.config.dest, self.config.log_dir, "log-" + self.backup_time + "-dest.csv"), self._log)
+            if self.config.new_log_format:
+                writeCsv(os.path.join(self.config.source, self.config.log_dir, "log-" + self.backup_time + "-plus.csv"), self.convertLog())
 
     def replaceSurrogates(self, string: str) -> str:
         return string.encode("utf-8", "surrogateescape").decode("utf-8", "replace")
