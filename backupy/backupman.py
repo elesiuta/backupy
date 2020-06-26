@@ -175,21 +175,18 @@ class BackupManager():
         if dest_database_load_success and self.config.source != self.config.dest:
             self.log.append([getString("### DATABASE CONFLICTS ###")])
             if self.config.main_mode == "sync":
-                sync_conflicts = sorted(list(set(source_modified) & set(dest_modified)))  # modified on both sides
-                if not self.config.sync_propagate_deletions:
-                    sync_conflicts += sorted(list(set(source_missing) | set(dest_missing)))  # deleted from either or both sides
-                sync_conflicts += sorted(list(set(source_new) & set(dest_new)))  # new on both sides
-                # new and different on both sides
-                # sorted(list(filter(lambda f: source_new[f] != dest_new[f], set(source_new) & set(dest_new))))
+                sync_conflicts = sorted(list(source_modified & dest_modified))  # modified on both sides
+                sync_conflicts += sorted(list(source_new & dest_new))  # new on both sides
+                sync_conflicts = sorted(list(filter(lambda f: not self.source.fileMatch(f, f, dest_dict, set(), True), sync_conflicts)))  # don't already match
                 if len(sync_conflicts) >= 1:
                     print(self.log.colourString(getString("WARNING: found files modified in both source and destination since last scan"), "WARNING"))
                     abort_run = True
                 print(self.log.colourString(getString("Sync Database Conflicts: %s") % (len(sync_conflicts)), "HEADER"))
                 self.log.printSyncDbConflicts(sync_conflicts, source_dict, dest_dict, source_prev, dest_prev)
             else:
-                dest_conflicts = sorted(list(set(dest_modified)))
-                dest_conflicts += sorted(list(set(dest_missing)))
-                dest_conflicts += sorted(list(set(dest_new)))
+                dest_conflicts = sorted(list(dest_modified))
+                dest_conflicts += sorted(list(dest_missing))
+                dest_conflicts += sorted(list(dest_new))
                 if len(dest_conflicts) >= 1:
                     print(self.log.colourString(getString("WARNING: found files modified in the destination since last scan"), "WARNING"))
                     abort_run = True
@@ -200,7 +197,7 @@ class BackupManager():
             self.log.append([getString("### CRC ERRORS DETECTED ###")])
             print(self.log.colourString(getString("WARNING: found non matching CRC values, possible corruption detected"), "WARNING"))
             abort_run = True
-            crc_errors_detected = sorted(list(set(source_crc_errors) | set(dest_crc_errors)))
+            crc_errors_detected = sorted(list(source_crc_errors | dest_crc_errors))
             print(self.log.colourString(getString("CRC Errors Detected: %s") % (len(crc_errors_detected)), "HEADER"))
             self.log.printSyncDbConflicts(crc_errors_detected, source_dict, dest_dict, source_prev, dest_prev)
         return abort_run
@@ -227,7 +224,7 @@ class BackupManager():
         if len(side_crc_errors) > 0:
             self.log.append([getString("### CRC ERRORS DETECTED ###")])
             print(self.log.colourString(getString("WARNING: found non matching CRC values, possible corruption detected"), "WARNING"))
-            crc_errors_detected = sorted(list(set(side_crc_errors)))
+            crc_errors_detected = sorted(list(side_crc_errors))
             print(self.log.colourString(getString("CRC Errors Detected: %s") % (len(crc_errors_detected)), "HEADER"))
             if side_str == "Source":
                 prt_str = " Source"
