@@ -80,6 +80,11 @@ def testConsistency(source_dicts: tuple, source_sets: tuple,
     union_len = len(source_only | dest_only | changed | source_moved | dest_moved | source_deleted | dest_deleted)
     total_len = len(source_only) + len(dest_only) + len(changed) + len(source_moved) + len(dest_moved) + len(source_deleted) + len(dest_deleted)
     assert union_len == total_len
+    # these versions fail because side comparasion can find crc errors and won't remove them from side_x
+    # union_len = len(source_new | source_modified | source_missing | source_crc_errors | source_dirs | source_unmodified)
+    # total_len = len(source_new) + len(source_modified) + len(source_missing) + len(source_crc_errors) + len(source_dirs) + len(source_unmodified)
+    # union_len = len(dest_new | dest_modified | dest_missing | dest_crc_errors | dest_dirs | dest_unmodified)
+    # total_len = len(dest_new) + len(dest_modified) + len(dest_missing) + len(dest_crc_errors) + len(dest_dirs) + len(dest_unmodified)
     # contradictions
     assert not (source_moved & dest_moved)
     assert not (source_only & source_moved)
@@ -94,7 +99,8 @@ def testConsistency(source_dicts: tuple, source_sets: tuple,
     # prev dirs and prev files under .backupy cause the next two asserts to be <=
     assert source_dict <= (source_prev - (source_missing | dest_moved)) | source_new | source_dirs
     assert dest_dict <= (dest_prev - (dest_missing | source_moved)) | dest_new | dest_dirs
-    # add redundancy check prev <= current | missing - new
+    assert source_prev >= (source_unmodified | source_missing) - source_new  # same, basically old stuff that should have been ignored in the old dictionary
+    assert dest_prev >= (dest_unmodified | dest_missing) - dest_new
     # basically redo all the logic done during dir and file scan using compareDb to see if they match
     assert set(redundant_source["changed"]) == source_modified
     assert set(redundant_source["other_only"]) >= source_missing
