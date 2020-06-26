@@ -208,10 +208,8 @@ class BackupManager():
     def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: DirInfo) -> None:
         # get databases
         side_dict, side_prev = side_info.getDicts()
-        self_compare = side_info.selfCompare(side_prev, exact_time=False, compare_crc=True)
-        list_new, list_missing, list_modified = self_compare["new"], self_compare["missing"], self_compare["modified"]
-        compare_func = lambda f1, f2: side_dict[f1] == side_prev[f2]
-        moved = side_info.getMovedAndUpdateLists(list_new, list_missing, side_dict, side_prev, compare_func)
+        self_compare = side_info.compareDb(side_prev, set(), detect_moves=True, exact_time=False, ignore_empty_dirs=True)
+        list_new, list_missing, list_modified, moved = self_compare["self_only"], self_compare["other_only"], self_compare["changed"], self_compare["moved"]
         # print differences
         print(self.log.colourString(getString("%s New Files: %s") % (side_str, len(list_new)), "HEADER"))
         self.log.append([getString("### %s NEW FILES ###") % (side_str.upper())])
@@ -333,7 +331,7 @@ class BackupManager():
         # compare directories (should be relatively fast, all the read operations are done during scan)
         if not self.config.scan_only:
             self.log.colourPrint(getString("Comparing directories..."), "OKBLUE")
-            transfer_lists = TransferLists(self.source.dirCompare(self.dest, self.config.nomoves))
+            transfer_lists = TransferLists(self.source.compareDirInfo(self.dest, self.config.nomoves))
             if self.config.main_mode == "sync":
                 transfer_lists.updateSyncMovedDirection(self.dest)
                 if self.config.sync_propagate_deletions:

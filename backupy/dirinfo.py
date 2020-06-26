@@ -229,8 +229,7 @@ class DirInfo:
                 if "dir" not in self.dict_prev[relative_path]:
                     if not self.pathMatch(relative_path, self.ignored_toplevel_folders):
                         self.set_missing.add(relative_path)
-                # else:
-                #     self.dict_dirs[relative_path] = {"size": 0, "mtime": 0, "crc": "0", "dir": False}
+            # add redundancy check prev <= current | missing - new
 
     def scanFile(self, full_path: str, relative_path: str) -> None:
         # get file attributes and create entry
@@ -261,6 +260,7 @@ class DirInfo:
                 self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
 
     def getMovedAndUpdateLists(self, a_only: list, b_only: list, a_dict: dict, b_dict: dict, compare_func: typing.Callable) -> tuple:
+        # f1 is in a is "source" and f2 is in b is "dest"
         moved = []
         for f1 in reversed(a_only):
             if "dir" not in a_dict[f1]:
@@ -274,54 +274,28 @@ class DirInfo:
         moved.reverse()
         return moved
 
-    def compareDir(self, other_db: dict, other_crc_errors: dict, detect_moves: bool, exact_time: bool, compare_crc: bool, ignore_empty_dirs: bool) -> dict:
+    def compareDb(self, other_db: dict, other_crc_errors: dict, detect_moves: bool, exact_time: bool, ignore_empty_dirs: bool) -> dict:
         # init and filter file sets (for ignored paths, user filters are done on scan)
         ignored_path_match = lambda f: self.pathMatch(f, self.ignored_toplevel_folders)
         is_dir = lambda d, f: ignore_empty_dirs and "dir" in d[f] and d[f]["dir"] is True
-        file_set_a = set(filter(lambda f: not ignored_path_match(f) and not is_dir(self.dict_current, f), self.dict_current))
-        file_set_b = set(filter(lambda f: not ignored_path_match(f) and not is_dir(other_db, f), other_db))
-        # wrap compare functions
-
+        self_set = set(filter(lambda f: not ignored_path_match(f) and not is_dir(self.dict_current, f), self.dict_current))
+        other_set = set(filter(lambda f: not ignored_path_match(f) and not is_dir(other_db, f), other_db))
         # compare file sets
-
-    def selfCompare(self, second_db: dict, exact_time: bool = True, compare_crc: bool = False, ignore_empty_dirs: bool = True) -> dict:
-        # compare functions
-        compare_crc = compare_crc and (self.compare_mode == "crc" or self.compare_mode == "attr+")
-        crc_match = lambda a, b: "crc" not in a or "crc" not in b or a["crc"] == b["crc"]
-        file_match = lambda a, b, f: (a[f]["size"] == b[f]["size"] and
-                                      self.timeMatch(a[f]["mtime"], b[f]["mtime"], exact_time) and
-                                      (not compare_crc or crc_match(a[f], b[f])))
-        # init and filter file sets
-        ignored_path_match = lambda f: self.pathMatch(f, self.ignored_toplevel_folders)
-        is_dir = lambda d, f: ignore_empty_dirs and "dir" in d[f] and d[f]["dir"] is True
-        file_set_a = set(filter(lambda f: not ignored_path_match(f) and not is_dir(self.dict_current, f), self.dict_current))
-        file_set_b = set(filter(lambda f: not ignored_path_match(f) and not is_dir(second_db, f), second_db))
-        # compare
-        modified = sorted(list(filter(lambda f: not file_match(self.dict_current, second_db, f), file_set_a & file_set_b)))
-        new = sorted(list(file_set_a - file_set_b))
-        missing = sorted(list(file_set_b - file_set_a))
-        return {"modified": modified, "missing": missing, "new": new}
-
-    def dirCompare(self, secondInfo: 'DirInfo', no_moves: bool = False) -> dict:
-        "Use source.dirCompare(dest) to return diff of source and dest as dict of file lists"
-        # init variables
-        file_list = set(self.dict_current)
-        second_list = set(secondInfo.dict_current)
-        if self.compare_mode == secondInfo.compare_mode:
-            compare_mode = self.compare_mode
-        else:
-            raise Exception("Inconsistent compare mode between directories")
-        # compare
-        changed = sorted(list(filter(lambda f: not self.fileMatch(f, f, secondInfo.dict_current, secondInfo.set_crc_errors, exact_time=False), file_list & second_list)))
-        changed = sorted(list(set(changed) - (self.set_crc_errors | secondInfo.set_crc_errors)))  # quick fix, will move this somewhere else probably
-        self_only = sorted(list(file_list - second_list))
-        second_only = sorted(list(second_list - file_list))
+        changed_compare_func = lambda f: not self.fileMatch(f, f, other_db, other_crc_errors, exact_time=exact_time)
+        changed = set(filter(changed_compare_func, self_set & other_set))
+        changed = sorted(list(changed - (self.set_crc_errors | other_crc_errors)))
+        self_only = sorted(list(self_set - other_set))
+        other_only = sorted(list(other_set - self_set))
         moved = []
-        if not no_moves:
-            compare_func = lambda f1, f2: self.fileMatch(f1, f2, secondInfo.dict_current, secondInfo.set_crc_errors, exact_time=True)
-            moved = self.getMovedAndUpdateLists(self_only, second_only, self.dict_current, secondInfo.dict_current, compare_func)
-            for pair in moved:
-                if pair["source"] not in self.set_modified and pair["dest"] not in secondInfo.set_modified:
-                    secondInfo.set_missing.discard(pair["source"])
-                    self.set_missing.discard(pair["dest"])
-        return {"source_only": self_only, "dest_only": second_only, "changed": changed, "moved": moved}
+        if detect_moves:
+            moved_compare_func = lambda f1, f2: self.fileMatch(f1, f2, other_db, other_crc_errors, exact_time=True)
+            moved = self.getMovedAndUpdateLists(self_only, other_only, self.dict_current, other_db, moved_compare_func)
+        return {"self_only": self_only, "other_only": other_only, "changed": changed, "moved": moved}
+
+    def compareDirInfo(self, other_info: "DirInfo", no_moves: bool) -> dict:
+        diff = self.compareDb(other_info.dict_current, other_info.set_crc_errors, not no_moves, False, False)
+        for pair in diff["moved"]:
+            if pair["source"] not in self.set_modified and pair["dest"] not in other_info.set_modified:
+                other_info.set_missing.discard(pair["source"])
+                self.set_missing.discard(pair["dest"])
+        return diff

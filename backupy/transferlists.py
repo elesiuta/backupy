@@ -21,8 +21,8 @@ from .utils import getString
 class TransferLists:
     def __init__(self, dir_compare: dict):
         """Holds lists of files that are queued for copying/moving/deleting"""
-        self.source_only = dir_compare["source_only"]
-        self.dest_only = dir_compare["dest_only"]
+        self.source_only = dir_compare["self_only"]
+        self.dest_only = dir_compare["other_only"]
         self.changed = dir_compare["changed"]
         self.moved = dir_compare["moved"]
         self.source_deleted = []
