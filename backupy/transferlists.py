@@ -111,10 +111,10 @@ class TransferLists:
 
     def propagateSyncDeletions(self, source: DirInfo, dest: DirInfo) -> None:
         source_only, dest_only, _, source_moved, dest_moved, _, _ = self.getSets()
-        source_diff = source.selfCompare(source.getDatabaseX2(), True, False, False)
-        source_new, source_modified, source_missing = set(source_diff["new"]), set(source_diff["modified"]), set(source_diff["missing"])
-        dest_diff = dest.selfCompare(dest.getDatabaseX2(), True, False, False)
-        dest_new, dest_modified, dest_missing = set(dest_diff["new"]), set(dest_diff["modified"]), set(dest_diff["missing"])
+        source_diff = source.compareDb(source.getDatabaseX2(), set(), False, True, False)
+        source_new, source_modified, source_missing = set(source_diff["self_only"]), set(source_diff["changed"]), set(source_diff["other_only"])
+        dest_diff = dest.compareDb(dest.getDatabaseX2(), set(), False, True, False)
+        dest_new, dest_modified, dest_missing = set(dest_diff["self_only"]), set(dest_diff["changed"]), set(dest_diff["other_only"])
         # file was deleted on one side, and should be deleted from the other iff it exists and is not new or modified since the last scan
         # if it was moved on one side, it would have been removed from other_only, this is verified under checkConsistency
         source_deleted = (source_missing & dest_only) - (dest_new | dest_modified | dest_moved)
@@ -126,8 +126,8 @@ class TransferLists:
 
     def updateSyncMovedDirection(self, dest: DirInfo) -> None:
         # default action is to leave as (move on dest to) match source if unsure
-        dest_diff = dest.selfCompare(dest.getDatabaseX2(), True, False, False)
-        dest_new, dest_missing = set(dest_diff["new"]), set(dest_diff["missing"])
+        dest_diff = dest.compareDb(dest.getDatabaseX2(), set(), False, True, False)
+        dest_new, dest_missing = set(dest_diff["self_only"]), set(dest_diff["other_only"])
         for pair in self.moved:
             if pair["dest"] in dest_new and pair["source"] in dest_missing:
                 # renamed on dest, should move on source to match dest
