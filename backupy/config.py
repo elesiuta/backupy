@@ -46,12 +46,12 @@ class ConfigObject:
         self.log_dir = ".backupy/Logs"
         self.trash_dir = ".backupy/Trash"
         self.cleanup_empty_dirs = True
-        self.new_log_format = False
         self.root_alias_log = True
         self.stdout_status_bar = True
         self.verbose = True
         self.write_database_x2 = False
         self.write_log_dest = False
+        self.write_log_summary = False
         # load config
         for key in config:
             if config[key] is not None and hasattr(self, key):

@@ -57,9 +57,14 @@ class LogManager:
         for i in range(len(self._log)):
             if self._log_columns[i]:
                 if self._log_columns[i][-1]:
+                    # create new row based on last value of log_columns
                     log_csv.append([""]*len(columns))
                 for j in range(len(self._log[i])):
+                    # fill in row with items from entries under the correct column
                     log_csv[-1][columns.index(self._log_columns[i][j])] = self._log[i][j]
+                if not log_csv[-1][0]:
+                    # copy the status from the above row if missing
+                    log_csv[-1][0] = log_csv[-2][0]
         return log_csv
 
     def writeLog(self, db_name: str) -> None:
@@ -84,7 +89,7 @@ class LogManager:
             writeCsv(os.path.join(self.config.source, self.config.log_dir, "log-" + self.backup_time + ".csv"), self._log)
             if self.config.write_log_dest:
                 writeCsv(os.path.join(self.config.dest, self.config.log_dir, "log-" + self.backup_time + "-dest.csv"), self._log)
-            if self.config.new_log_format:
+            if self.config.write_log_summary:
                 writeCsv(os.path.join(self.config.source, self.config.log_dir, "log-" + self.backup_time + "-plus.csv"), self.convertLog())
 
     def replaceSurrogates(self, string: str) -> str:
