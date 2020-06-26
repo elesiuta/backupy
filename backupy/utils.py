@@ -63,7 +63,11 @@ def writeJson(file_path: str, data: dict, subdir: bool = True, sort_keys: bool =
         print(getString("Error, could not write: ") + file_path)
 
 
-def testConsistency(source_dicts: tuple, source_sets: tuple, dest_dicts: tuple, dest_sets: tuple, transfer_lists: tuple) -> None:
+def testConsistency(source_dicts: tuple, source_sets: tuple,
+                    dest_dicts: tuple, dest_sets: tuple,
+                    transfer_lists: tuple,
+                    redundant_source: dict, redundant_dest: dict,
+                    redundant_source_moves: dict, redundant_dest_moves: dict) -> None:
     # get sets
     source_only, dest_only, changed, source_moved, dest_moved, source_deleted, dest_deleted = transfer_lists
     source_dict, source_prev = source_dicts
@@ -91,17 +95,16 @@ def testConsistency(source_dicts: tuple, source_sets: tuple, dest_dicts: tuple, 
     assert source_dict <= (source_prev - (source_missing | dest_moved)) | source_new | source_dirs
     assert dest_dict <= (dest_prev - (dest_missing | source_moved)) | dest_new | dest_dirs
     # add redundancy check prev <= current | missing - new
-    # basically redo all of dircompare and checks during scan (except crc errors) using set operations and filters
-    # redundant_dict_source = self.source.compareDb(self.source.dict_prev, set(), False, False, True)
-    # assert set(redundant_dict_source["changed"]) == source_modified
-    # assert set(redundant_dict_source["other_only"]) >= source_missing
-    # assert set(redundant_dict_source["other_only"]) <= source_missing | dest_moved
-    # assert set(redundant_dict_source["self_only"]) == source_new
-    # redundant_dict_dest = self.dest.compareDb(self.dest.dict_prev, set(), False, False, True)
-    # assert set(redundant_dict_dest["changed"]) == dest_modified
-    # assert set(redundant_dict_dest["other_only"]) >= dest_missing
-    # assert set(redundant_dict_dest["other_only"]) <= dest_missing | source_moved
-    # assert set(redundant_dict_dest["self_only"]) == dest_new
+    # basically redo all the logic done during dir and file scan using compareDb to see if they match
+    assert set(redundant_source["changed"]) == source_modified
+    assert set(redundant_source["other_only"]) >= source_missing
+    assert set(redundant_source["other_only"]) <= source_missing | dest_moved
+    assert set(redundant_source["self_only"]) == source_new
+    assert set(redundant_dest["changed"]) == dest_modified
+    assert set(redundant_dest["other_only"]) >= dest_missing
+    assert set(redundant_dest["other_only"]) <= dest_missing | source_moved
+    assert set(redundant_dest["self_only"]) == dest_new
+    # no need to check compareDirInfo anymore since it's just a wrapper for compareDb now
     # redundant_dict_compare = self.source.selfCompare(self.dest.dict_current, False, True, False)
     # redundant_dict_compare_reverse = self.dest.selfCompare(self.source.dict_current, False, True, False)
     # assert set(redundant_dict_compare["modified"]) == (changed | (source_crc_errors & source_dict & dest_dict) | (dest_crc_errors & dest_dict & source_dict))

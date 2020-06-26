@@ -314,7 +314,13 @@ class BackupManager():
         self._printAndLogCompareDiffSummary(transfer_lists)
         # consistency checks used for testing and debugging
         if self.backup_time == "000000-0000":
-            testConsistency(self.source.getDicts(), self.source.getSets(), self.dest.getDicts(), self.dest.getSets(), transfer_lists.getSets())
+            testConsistency(self.source.getDicts(), self.source.getSets(),
+                            self.dest.getDicts(), self.dest.getSets(),
+                            transfer_lists.getSets(),
+                            self.source.compareDb(self.source.dict_prev, set(), False, False, True),
+                            self.dest.compareDb(self.dest.dict_prev, set(), False, False, True),
+                            self.source.compareDb(self.source.dict_prev, set(), True, False, True),
+                            self.dest.compareDb(self.dest.dict_prev, set(), True, False, True))
         # exit if directories already match
         if transfer_lists.isEmpty():
             print(self.log.colourString(getString("Directories already match, completed!"), "OKGREEN"))
