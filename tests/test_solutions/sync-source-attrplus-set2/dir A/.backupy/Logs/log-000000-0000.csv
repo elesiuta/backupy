@@ -1,32 +1,4 @@
 ### DATABASE CONFLICTS ###
-File:,Source,db only B.missing,Missing
-,DB,db only B.missing,Missing
-,Dest,db only B.missing,Missing
-,DB,db only B.missing,2 B,Thu Jan  1 00:00:02 1970,41
-File:,Source,db only a.missing,Missing
-,DB,db only a.missing,0 B,Thu Jan  1 00:00:00 1970,B00
-,Dest,db only a.missing,Missing
-,DB,db only a.missing,Missing
-File:,Source,file only A.txt,2 B,Wed Jul 17 13:19:48 2019,2A
-,DB,file only A.txt,2 B,Wed Jul 17 13:19:48 2019,2A
-,Dest,file only A.txt,Missing
-,DB,file only A.txt,2 B,Wed Jul 17 13:19:48 2019
-File:,Source,file only B.txt,Missing
-,DB,file only B.txt,9 B,Wed Jul 17 13:20:16 2019
-,Dest,file only B.txt,9 B,Wed Jul 17 13:20:16 2019,420CD42
-,DB,file only B.txt,9 B,Wed Jul 17 13:20:16 2019
-File:,Source,copied A.txt,353 B,Wed Feb 19 19:45:38 2020,C52AF0F0
-,DB,copied A.txt,Missing
-,Dest,copied A.txt,353 B,Wed Feb 19 19:45:38 2020,C52AF0F0
-,DB,copied A.txt,Missing
-File:,Source,copied both - copy.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
-,DB,copied both - copy.txt,Missing
-,Dest,copied both - copy.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
-,DB,copied both - copy.txt,Missing
-File:,Source,copied both.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
-,DB,copied both.txt,Missing
-,Dest,copied both.txt,325 B,Wed Feb 19 19:47:14 2020,EDEF17B
-,DB,copied both.txt,Missing
 File:,Source,new corrupted file.txt,11 B,Wed Feb 19 18:35:44 2020,5F3DACAB
 ,DB,new corrupted file.txt,Missing
 ,Dest,new corrupted file.txt,11 B,Wed Feb 19 18:35:44 2020,57A92228

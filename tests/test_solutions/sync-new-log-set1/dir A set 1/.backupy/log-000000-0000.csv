@@ -1,12 +1,4 @@
 ### DATABASE CONFLICTS ###
-File:,Source,file only A.txt,2 B,Wed Jul 17 13:19:48 2019
-,DB,file only A.txt,2 B,Wed Jul 17 13:19:48 2019
-,Dest,file only A.txt,Missing
-,DB,file only A.txt,2 B,Wed Jul 17 13:19:48 2019
-File:,Source,file only B.txt,Missing
-,DB,file only B.txt,9 B,Wed Jul 17 13:20:16 2019
-,Dest,file only B.txt,9 B,Wed Jul 17 13:20:16 2019
-,DB,file only B.txt,9 B,Wed Jul 17 13:20:16 2019
 ### SOURCE ONLY ###
 File:,,empty dir only A,0 B,Thu Jan  1 00:00:00 1970,0,dir: True
 File:,,file only A.txt,2 B,Wed Jul 17 13:19:48 2019

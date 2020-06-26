@@ -1,20 +1,4 @@
 ### DATABASE CONFLICTS ###
-File:,Source,copied A.txt,353 B,Wed Feb 19 19:45:38 2020
-,DB,copied A.txt,Missing
-,Dest,copied A.txt,353 B,Wed Feb 19 19:45:38 2020
-,DB,copied A.txt,Missing
-File:,Source,copied both - copy.txt,325 B,Wed Feb 19 19:47:14 2020
-,DB,copied both - copy.txt,Missing
-,Dest,copied both - copy.txt,325 B,Wed Feb 19 19:47:14 2020
-,DB,copied both - copy.txt,Missing
-File:,Source,copied both.txt,325 B,Wed Feb 19 19:47:14 2020
-,DB,copied both.txt,Missing
-,Dest,copied both.txt,325 B,Wed Feb 19 19:47:14 2020
-,DB,copied both.txt,Missing
-File:,Source,new corrupted file.txt,11 B,Wed Feb 19 18:35:44 2020
-,DB,new corrupted file.txt,Missing
-,Dest,new corrupted file.txt,11 B,Wed Feb 19 18:35:44 2020
-,DB,new corrupted file.txt,Missing
 ### SOURCE ONLY ###
 File:,,copied A - copy.txt,353 B,Wed Feb 19 19:45:38 2020
 File:,,moved and copied A - 1.txt,362 B,Wed Feb 19 19:43:44 2020

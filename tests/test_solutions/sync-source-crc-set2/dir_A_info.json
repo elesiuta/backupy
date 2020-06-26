@@ -122,9 +122,9 @@
   "crc": 3400607773
  },
  ".backupy\\Logs\\log-000000-0000.csv": {
-  "size": 6153,
+  "size": 4849,
   "mtime": 0,
-  "crc": 3168625506
+  "crc": 129416812
  },
  "same nested dir\\same empty dir": {
   "size": 0,
