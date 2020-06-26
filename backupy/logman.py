@@ -47,23 +47,40 @@ class LogManager:
     def append(self, entry: list, columns: list = []) -> None:
         # columns corresponds to the column names of each item in entry
         # the last item in columns is True if this entry should start a new row in the csv
-        # leave columns empty if this entry should not appear in the csv
+        # leave columns empty if this item or entry should not appear in the csv
         self._log.append(entry)
         self._log_columns.append(columns)
 
+    def appendNewRowFlag(self) -> None:
+        # shouldn't need check or crash since at least 1 section will have been created by now
+        self._log_columns[-1].append(True)
+
     def convertLog(self) -> list:
-        columns = ["Status", ]
+        columns = ["Section", "Status",
+                   "Header1", "Subheader1", "Path1", "Size1", "Modified1", "Hash1",
+                   "Header2", "Subheader2", "Path2", "Size2", "Modified2", "Hash2",
+                   "Header3", "Subheader3", "Path3", "Size3", "Modified3", "Hash3",
+                   "Header4", "Subheader4", "Path4", "Size4", "Modified4", "Hash4"]
         log_csv = [columns]
+        new_section = False
         for i in range(len(self._log)):
             if self._log_columns[i]:
-                if self._log_columns[i][-1]:
-                    # create new row based on last value of log_columns
+                if self._log_columns[i][-1] and not new_section:
+                    # create new row based on last value of log_columns (unless last row is just a new section)
                     log_csv.append([""]*len(columns))
+                if self._log_columns[i][0] == "Section":
+                    new_section = True
+                else:
+                    new_section = False
                 for j in range(len(self._log[i])):
                     # fill in row with items from entries under the correct column
-                    log_csv[-1][columns.index(self._log_columns[i][j])] = self._log[i][j]
+                    if self._log_columns[i][j]:
+                        k = columns.index(self._log_columns[i][j])
+                        while log_csv[-1][k] != "":
+                            k += 6
+                        log_csv[-1][k] = self._log[i][j]
                 if not log_csv[-1][0]:
-                    # copy the status from the above row if missing
+                    # copy the section from the above row if missing
                     log_csv[-1][0] = log_csv[-2][0]
         return log_csv
 
@@ -141,10 +158,10 @@ class LogManager:
     def printFileInfo(self, header: str, f: str, d: dict, sub_header: str = "", skip_info: bool = False) -> None:
         header, sub_header = getString(header), getString(sub_header)
         if f in d and d[f] is not None:
-            self.append([header.strip(), sub_header.strip(), f] + self.prettyAttr(d[f]))
+            self.append([header.strip(), sub_header.strip(), f] + self.prettyAttr(d[f]), ["Header1", "Subheader1", "Path1", "Size1", "Modified1", "Hash1", False])
             missing = False
         else:
-            self.append([header.strip(), sub_header.strip(), f] + [getString("Missing")])
+            self.append([header.strip(), sub_header.strip(), f] + [getString("Missing")], ["Header1", "Subheader1", "Path1", "Status", False])
             missing = True
         if header == "":
             s = ""
@@ -166,15 +183,18 @@ class LogManager:
 
     def printFiles(self, files: list, d: dict) -> None:
         for f in files:
+            self.appendNewRowFlag()
             self.printFileInfo("File: ", f, d)
 
     def printChangedFiles(self, files: list, d1: dict, d2: dict, s1: str = " Source", s2: str = "   Dest") -> None:
         for f in files:
+            self.appendNewRowFlag()
             self.printFileInfo("File: ", f, d1, " "*4 + s1)
             self.printFileInfo("", f, d2, " "*4 + s2)
 
     def printMovedFiles(self, files: list, d1: dict, d2: dict, h1: str = "Source: ", h2: str = "  Dest: ") -> None:
         for f in files:
+            self.appendNewRowFlag()
             if self.config.main_mode != "sync":
                 self.printFileInfo(h1, f["source"], d1, skip_info=True)
                 self.printFileInfo(h2, f["dest"], d2)
@@ -187,6 +207,7 @@ class LogManager:
 
     def printSyncDbConflicts(self, files: list, d1: dict, d2: dict, d1db: dict, d2db: dict) -> None:
         for f in files:
+            self.appendNewRowFlag()
             self.printFileInfo("File: ", f, d1, "     Source")
             self.printFileInfo("", f, d1db, "         DB")
             self.printFileInfo("", f, d2, "       Dest")

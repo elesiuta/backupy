@@ -125,7 +125,7 @@ class BackupManager():
         # it can also be triggered by time zone or dst changes, lower file system mod time precision, and corruption if using CRCs (handled next)
         abort_run = False
         if dest_database_load_success and self.config.source != self.config.dest:
-            self.log.append([getString("### DATABASE CONFLICTS ###")])
+            self.log.append([getString("### DATABASE CONFLICTS ###")], ["Section"])
             if self.config.main_mode == "sync":
                 sync_conflicts = sorted(list(source_modified & dest_modified))  # modified on both sides
                 sync_conflicts += sorted(list(source_new & dest_new))  # new on both sides
@@ -146,7 +146,7 @@ class BackupManager():
                 self.log.printChangedFiles(dest_conflicts, dest_dict, dest_prev, "   Dest", "     DB")
         # print database conflicts concerning CRCs if available, as well as CRC conflicts between source and dest if attributes otherwise match
         if len(source_crc_errors) > 0 or len(dest_crc_errors) > 0:
-            self.log.append([getString("### CRC ERRORS DETECTED ###")])
+            self.log.append([getString("### CRC ERRORS DETECTED ###")], ["Section"])
             print(self.log.colourString(getString("WARNING: found non matching CRC values, possible corruption detected"), "WARNING"))
             abort_run = True
             crc_errors_detected = sorted(list(source_crc_errors | dest_crc_errors))
@@ -162,19 +162,19 @@ class BackupManager():
         list_new, list_missing, list_modified, moved = self_compare["self_only"], self_compare["other_only"], self_compare["changed"], self_compare["moved"]
         # print differences
         print(self.log.colourString(getString("%s New Files: %s") % (side_str, len(list_new)), "HEADER"))
-        self.log.append([getString("### %s NEW FILES ###") % (side_str.upper())])
+        self.log.append([getString("### %s NEW FILES ###") % (side_str.upper())], ["Section"])
         self.log.printFiles(list_new, side_dict)
         print(self.log.colourString(getString("%s Missing Files: %s") % (side_str, len(list_missing)), "HEADER"))
-        self.log.append([getString("### %s MISSING FILES ###") % (side_str.upper())])
+        self.log.append([getString("### %s MISSING FILES ###") % (side_str.upper())], ["Section"])
         self.log.printFiles(list_missing, side_prev)
         print(self.log.colourString(getString("%s Changed Files: %s") % (side_str, len(list_modified)), "HEADER"))
-        self.log.append([getString("### %s CHANGED FILES ###") % (side_str.upper())])
+        self.log.append([getString("### %s CHANGED FILES ###") % (side_str.upper())], ["Section"])
         self.log.printChangedFiles(list_modified, side_dict, side_prev, "    New", "    Old")
         print(self.log.colourString(getString("%s Moved Files: %s") % (side_str, len(moved)), "HEADER"))
-        self.log.append([getString("### %s MOVED FILES ###") % (side_str.upper())])
+        self.log.append([getString("### %s MOVED FILES ###") % (side_str.upper())], ["Section"])
         self.log.printMovedFiles(moved, side_dict, side_prev, "   New: ", "   Old: ")
         if len(side_crc_errors) > 0:
-            self.log.append([getString("### CRC ERRORS DETECTED ###")])
+            self.log.append([getString("### CRC ERRORS DETECTED ###")], ["Section"])
             print(self.log.colourString(getString("WARNING: found non matching CRC values, possible corruption detected"), "WARNING"))
             crc_errors_detected = sorted(list(side_crc_errors))
             print(self.log.colourString(getString("CRC Errors Detected: %s") % (len(crc_errors_detected)), "HEADER"))
@@ -213,24 +213,24 @@ class BackupManager():
             change_msg = getString("(will be left as is)")
         # print differences
         print(self.log.colourString(getString("Source Only (will be copied to dest): %s") % (len(source_only)), "HEADER"))
-        self.log.append([getString("### SOURCE ONLY ###")])
+        self.log.append([getString("### SOURCE ONLY ###")], ["Section"])
         self.log.printFiles(source_only, source_dict)
         print(self.log.colourString(getString("Destination Only %s: %s") % (dest_msg, len(dest_only)), "HEADER"))
-        self.log.append([getString("### DESTINATION ONLY ###")])
+        self.log.append([getString("### DESTINATION ONLY ###")], ["Section"])
         self.log.printFiles(dest_only, dest_dict)
         print(self.log.colourString(getString("Changed Files %s: %s") % (change_msg, len(changed)), "HEADER"))
-        self.log.append([getString("### CHANGED FILES ###")])
+        self.log.append([getString("### CHANGED FILES ###")], ["Section"])
         self.log.printChangedFiles(changed, source_dict, dest_dict)
         if not self.config.nomoves:
             print(self.log.colourString(getString("Moved Files %s: %s") % (move_msg, len(moved)), "HEADER"))
-            self.log.append([getString("### MOVED FILES ###")])
+            self.log.append([getString("### MOVED FILES ###")], ["Section"])
             self.log.printMovedFiles(moved, source_dict, dest_dict)
         if self.config.main_mode == "sync" and self.config.sync_propagate_deletions:
             print(self.log.colourString(getString("Deleted from source (will %s on dest): %s") % (archive_msg, len(source_deleted)), "HEADER"))
-            self.log.append([getString("### DELETED FROM SOURCE ###")])
+            self.log.append([getString("### DELETED FROM SOURCE ###")], ["Section"])
             self.log.printFiles(source_deleted, dest_dict)
             print(self.log.colourString(getString("Deleted from dest (will %s on source): %s") % (archive_msg, len(dest_deleted)), "HEADER"))
-            self.log.append([getString("### DELETED FROM DESTINATION ###")])
+            self.log.append([getString("### DELETED FROM DESTINATION ###")], ["Section"])
             self.log.printFiles(dest_deleted, source_dict)
 
     def _performBackup(self, transfer_lists: TransferLists, simulation_msg: str) -> None:

@@ -79,7 +79,7 @@ class TransferLists:
 
     def skipFileTransfers(self, log: LogManager) -> bool:
         self._unfreeze()
-        log.append([getString("### SKIPPED ###")])
+        log.append([getString("### SKIPPED ###")], ["Section"])
         print(log.colourString(getString("Enter file paths to remove them from the transfer queues, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
         while True:
             p = input("> ")
@@ -93,19 +93,19 @@ class TransferLists:
                 return False
             elif p in self.source_only:
                 self.source_only.remove(p)
-                log.append(["File:", "Source", p])
+                log.append(["File:", "Source", p], ["Header", "Subheader", "Path", True])
             elif p in self.dest_only:
                 self.dest_only.remove(p)
-                log.append(["File:", "Dest", p])
+                log.append(["File:", "Dest", p], ["Header", "Subheader", "Path", True])
             elif p in self.changed:
                 self.changed.remove(p)
-                log.append(["File:", "Changed", p])
+                log.append(["File:", "Changed", p], ["Header", "Subheader", "Path", True])
             elif p in self.source_deleted:
                 self.source_deleted.remove(p)
-                log.append(["File:", "Deleted", p])
+                log.append(["File:", "Deleted", p], ["Header", "Subheader", "Path", True])
             elif p in self.dest_deleted:
                 self.dest_deleted.remove(p)
-                log.append(["File:", "Deleted", p])
+                log.append(["File:", "Deleted", p], ["Header", "Subheader", "Path", True])
             else:
                 print(log.colourString(getString("Could not find file in queues: %s") % (p), "WARNING"))
 
