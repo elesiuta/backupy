@@ -31,6 +31,7 @@ class LogManager:
         # init variables
         self._log = []
         self._log_columns = []
+        self._log_row_split = False
         self.backup_time = backup_time
         self.gui = gui
         self.terminal_width = shutil.get_terminal_size()[0]
@@ -44,16 +45,18 @@ class LogManager:
         self.source = DirInfo
         self.dest = DirInfo
 
-    def append(self, entry: list, columns: list = []) -> None:
+    def append(self, entry: list, columns: list = [], row_split: bool = True) -> None:
         # columns corresponds to the column names of each item in entry
-        # the last item in columns is True if this entry should start a new row in the csv
         # leave columns empty if this item or entry should not appear in the csv
         self._log.append(entry)
-        self._log_columns.append(columns)
+        if columns:
+            self._log_columns.append(columns + [row_split or self._log_row_split])
+            self._log_row_split = False
+        else:
+            self._log_columns.append([])
 
     def appendNewRowFlag(self) -> None:
-        # shouldn't need check or crash since at least 1 section will have been created by now
-        self._log_columns[-1].append(True)
+        self._log_row_split = True
 
     def convertLog(self) -> list:
         columns = ["Section", "Status",
@@ -76,7 +79,7 @@ class LogManager:
                     # fill in row with items from entries under the correct column
                     if self._log_columns[i][j]:
                         k = columns.index(self._log_columns[i][j])
-                        while log_csv[-1][k] != "":
+                        while self._log_columns[i][j] not in ["Section", "Status"] and log_csv[-1][k] != "":
                             k += 6
                         log_csv[-1][k] = self._log[i][j]
                 if not log_csv[-1][0]:
@@ -158,10 +161,10 @@ class LogManager:
     def printFileInfo(self, header: str, f: str, d: dict, sub_header: str = "", skip_info: bool = False) -> None:
         header, sub_header = getString(header), getString(sub_header)
         if f in d and d[f] is not None:
-            self.append([header.strip(), sub_header.strip(), f] + self.prettyAttr(d[f]), ["Header1", "Subheader1", "Path1", "Size1", "Modified1", "Hash1", False])
+            self.append([header.strip(), sub_header.strip(), f] + self.prettyAttr(d[f]), ["Header1", "Subheader1", "Path1", "Size1", "Modified1", "Hash1", ""], False)
             missing = False
         else:
-            self.append([header.strip(), sub_header.strip(), f] + [getString("Missing")], ["Header1", "Subheader1", "Path1", "Status", False])
+            self.append([header.strip(), sub_header.strip(), f] + [getString("Missing")], ["Header1", "Subheader1", "Path1", "Status"], False)
             missing = True
         if header == "":
             s = ""
