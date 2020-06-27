@@ -43,7 +43,7 @@ for module in modules:
             updated_module.append(line)
             if "def" in line:
                 spaces = line.index("def") + 4
-                line = line.split(", ")
+                line = line[line.index("(")+1:].split(", ")
                 for arg in line:
                     for class_name in class_names:
                         if class_name in arg:
