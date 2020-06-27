@@ -291,7 +291,7 @@ class DirInfo:
             moved = self.getMovedAndUpdateLists(self_only, other_only, self.dict_current, other_db, moved_compare_func)
         return {"self_only": self_only, "other_only": other_only, "changed": changed, "moved": moved}
 
-    def compareDirInfo(self, other_info: "DirInfo", no_moves: bool) -> dict:
+    def compareDirInfo(self, other_info: 'DirInfo', no_moves: bool) -> dict:
         diff = self.compareDb(other_info.dict_current, other_info.set_crc_errors, not no_moves, False, False)
         for pair in diff["moved"]:
             if pair["source"] not in self.set_modified and pair["dest"] not in other_info.set_modified:
