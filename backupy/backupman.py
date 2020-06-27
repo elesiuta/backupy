@@ -151,7 +151,10 @@ class BackupManager():
             abort_run = True
             crc_errors_detected = sorted(list(source_crc_errors | dest_crc_errors))
             print(self.log.colourString(getString("CRC Errors Detected: %s") % (len(crc_errors_detected)), "HEADER"))
-            self.log.printSyncDbConflicts(crc_errors_detected, source_dict, dest_dict, source_prev, dest_prev)
+            if self.config.source != self.config.dest:
+                self.log.printSyncDbConflicts(crc_errors_detected, source_dict, dest_dict, source_prev, dest_prev)
+            else:
+                self.log.printChangedFiles(crc_errors_detected, source_dict, source_prev, " Source", "     DB")
         return abort_run
 
     def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: DirInfo) -> None:
