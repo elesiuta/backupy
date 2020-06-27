@@ -173,16 +173,6 @@ class BackupManager():
         print(self.log.colourString(getString("%s Moved Files: %s") % (side_str, len(moved)), "HEADER"))
         self.log.append([getString("### %s MOVED FILES ###") % (side_str.upper())], ["Section"])
         self.log.printMovedFiles(moved, side_dict, side_prev, "   New: ", "   Old: ")
-        if len(side_crc_errors) > 0:
-            self.log.append([getString("### CRC ERRORS DETECTED ###")], ["Section"])
-            print(self.log.colourString(getString("WARNING: found non matching CRC values, possible corruption detected"), "WARNING"))
-            crc_errors_detected = sorted(list(side_crc_errors))
-            print(self.log.colourString(getString("CRC Errors Detected: %s") % (len(crc_errors_detected)), "HEADER"))
-            if side_str == "Source":
-                prt_str = " Source"
-            else:
-                prt_str = "   Dest"
-            self.log.printChangedFiles(sorted(list(side_crc_errors)), side_dict, side_prev, prt_str, "     DB")
 
     def _printAndLogCompareDiffSummary(self, transfer_lists: TransferLists) -> None:
         # get lists and databases
