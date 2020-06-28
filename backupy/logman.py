@@ -85,6 +85,8 @@ class LogManager:
                 if not log_csv[-1][0]:
                     # copy the section from the above row if missing
                     log_csv[-1][0] = log_csv[-2][0]
+        if all(entry == "" for entry in log_csv[-1][1:]):
+            _ = log_csv.pop(-1)
         return log_csv
 
     def writeLog(self, db_name: str) -> None:
