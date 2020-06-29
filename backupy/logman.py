@@ -75,13 +75,14 @@ class LogManager:
                     new_section = True
                 else:
                     new_section = False
+                entry_number = 0
                 for j in range(len(self._log[i])):
                     # fill in row with items from entries under the correct column
                     if self._log_columns[i][j]:
-                        k = columns.index(self._log_columns[i][j])
-                        while self._log_columns[i][j] != "Section" and log_csv[-1][k] != "":
-                            k += 6
-                        log_csv[-1][k] = self._log[i][j]
+                        entry_offset = columns.index(self._log_columns[i][j])
+                        while self._log_columns[i][j] != "Section" and log_csv[-1][entry_offset + entry_number*6] != "":
+                            entry_number += 1
+                        log_csv[-1][entry_offset + entry_number*6] = self._log[i][j]
                 if not log_csv[-1][0]:
                     # copy the section from the above row if missing
                     log_csv[-1][0] = log_csv[-2][0]
