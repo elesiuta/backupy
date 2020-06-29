@@ -59,7 +59,7 @@ class LogManager:
         self._log_row_split = True
 
     def convertLog(self) -> list:
-        columns = ["Section", "Status",
+        columns = ["Section",
                    "Header1", "Subheader1", "Path1", "Size1", "Modified1", "Hash1",
                    "Header2", "Subheader2", "Path2", "Size2", "Modified2", "Hash2",
                    "Header3", "Subheader3", "Path3", "Size3", "Modified3", "Hash3",
@@ -79,7 +79,7 @@ class LogManager:
                     # fill in row with items from entries under the correct column
                     if self._log_columns[i][j]:
                         k = columns.index(self._log_columns[i][j])
-                        while self._log_columns[i][j] not in ["Section", "Status"] and log_csv[-1][k] != "":
+                        while self._log_columns[i][j] != "Section" and log_csv[-1][k] != "":
                             k += 6
                         log_csv[-1][k] = self._log[i][j]
                 if not log_csv[-1][0]:
@@ -166,7 +166,7 @@ class LogManager:
             self.append([header.strip(), sub_header.strip(), f] + self.prettyAttr(d[f]), ["Header1", "Subheader1", "Path1", "Size1", "Modified1", "Hash1", ""], False)
             missing = False
         else:
-            self.append([header.strip(), sub_header.strip(), f] + [getString("Missing")], ["Header1", "Subheader1", "Path1", "Status"], False)
+            self.append([header.strip(), sub_header.strip(), f] + [getString("Missing")], ["Header1", "Subheader1", "Path1", "Modified1"], False)
             missing = True
         if header == "":
             s = ""
