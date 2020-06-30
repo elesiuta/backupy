@@ -4,8 +4,6 @@
 ```
 pip install backupy --upgrade
 ```
-- GUI version is also available by installing BackuPy-Setup.exe from the GitHub releases page
-- The GUI can also be run directly from backupy_gui.py and packaged for other operating systems
 ## Features
 - Backup, Mirror, and Sync Modes
 - Compare files using attributes or CRCs
@@ -15,9 +13,8 @@ pip install backupy --upgrade
 - Files are always safe by default, being moved to an identically structured archive directory before being deleted or overwritten
 - Filter files with regular expressions
 ## Under the Hood
-- Easy to use in scripts (see backupy_batch.py for an example)
-- Clear and easy to verify code, the only functions that touch your files are: _copyFile(), _moveFile(), and  _removeFile() under FileManager
-- Very simple design and only uses the Python standard library for fewer points of failure
+- Easy to use in scripts, see backupy_batch.py for an example
+- Clear and easy to verify code, see the callgraph under analysis
 ## Usage Description
 - Source and destination directories can be any accessible directory (mounted drives, cloud storage, Syncthing folders, etc)
 - Destination can be empty or contain files from a previous backup, matching files on both sides will be skipped
