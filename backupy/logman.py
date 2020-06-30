@@ -65,10 +65,10 @@ class LogManager:
         # combines multiple log entries into a single row
         # each row contains all relevant info of a single file across source, destination and databases on both sides
         columns = ["Section",
-                   "Header1", "Subheader1", "Path1", "Size1", "Modified1", "Hash1",
-                   "Header2", "Subheader2", "Path2", "Size2", "Modified2", "Hash2",
-                   "Header3", "Subheader3", "Path3", "Size3", "Modified3", "Hash3",
-                   "Header4", "Subheader4", "Path4", "Size4", "Modified4", "Hash4"]
+                   "Header", "Subheader", "Path", "Size", "Modified", "Hash",
+                   "Header", "Subheader", "Path", "Size", "Modified", "Hash",
+                   "Header", "Subheader", "Path", "Size", "Modified", "Hash",
+                   "Header", "Subheader", "Path", "Size", "Modified", "Hash"]
         log_csv = [columns]
         new_section = False
         for i in range(len(self._log)):
@@ -79,7 +79,7 @@ class LogManager:
                     entry_number = -1
                 if self._log_columns[i][0] == "Section":
                     # fill in the label for the new section
-                    log_csv[-1][0] = self._log[i][0]
+                    log_csv[-1][0] = self._log[i][0].strip("# ")
                     new_section = True
                     entry_number = -1
                 else:
@@ -174,10 +174,10 @@ class LogManager:
     def printFileInfo(self, header: str, f: str, d: dict, sub_header: str = "", skip_info: bool = False) -> None:
         header, sub_header = getString(header), getString(sub_header)
         if f in d and d[f] is not None:
-            self.append([header.strip(), sub_header.strip(), f] + self.prettyAttr(d[f]), ["Header1", "Subheader1", "Path1", "Size1", "Modified1", "Hash1", ""], False)
+            self.append([header.strip(), sub_header.strip(), f] + self.prettyAttr(d[f]), ["Header", "Subheader", "Path", "Size", "Modified", "Hash", ""], False)
             missing = False
         else:
-            self.append([header.strip(), sub_header.strip(), f] + [getString("Missing")], ["Header1", "Subheader1", "Path1", "Modified1"], False)
+            self.append([header.strip(), sub_header.strip(), f] + [getString("Missing")], ["Header", "Subheader", "Path", "Size"], False)
             missing = True
         if header == "":
             s = ""

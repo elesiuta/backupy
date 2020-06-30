@@ -93,19 +93,19 @@ class TransferLists:
                 return False
             elif p in self.source_only:
                 self.source_only.remove(p)
-                log.append(["File:", "Source", p], ["Header1", "Subheader1", "Path1"])
+                log.append(["File:", "Source", p], ["Header", "Subheader", "Path"])
             elif p in self.dest_only:
                 self.dest_only.remove(p)
-                log.append(["File:", "Dest", p], ["Header1", "Subheader1", "Path1"])
+                log.append(["File:", "Dest", p], ["Header", "Subheader", "Path"])
             elif p in self.changed:
                 self.changed.remove(p)
-                log.append(["File:", "Changed", p], ["Header1", "Subheader1", "Path1"])
+                log.append(["File:", "Changed", p], ["Header", "Subheader", "Path"])
             elif p in self.source_deleted:
                 self.source_deleted.remove(p)
-                log.append(["File:", "Deleted", p], ["Header1", "Subheader1", "Path1"])
+                log.append(["File:", "Deleted", p], ["Header", "Subheader", "Path"])
             elif p in self.dest_deleted:
                 self.dest_deleted.remove(p)
-                log.append(["File:", "Deleted", p], ["Header1", "Subheader1", "Path1"])
+                log.append(["File:", "Deleted", p], ["Header", "Subheader", "Path"])
             else:
                 print(log.colourString(getString("Could not find file in queues: %s") % (p), "WARNING"))
 
