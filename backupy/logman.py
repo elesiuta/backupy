@@ -46,8 +46,10 @@ class LogManager:
         self.dest = DirInfo
 
     def append(self, entry: list, columns: list = [], row_split: bool = True) -> None:
-        # columns corresponds to the column names of each item in entry
-        # leave columns empty if this item or entry should not appear in the csv
+        # entry to appear in log, label columns for summary, row_split for a new file
+        # columns corresponds to the column names of each item in entry or an empty string to omit from summary
+        # columns should be an empty list if this entry should be omitted entirely from summary
+        # len(columns) should be >= len(entry) or an empty list
         self._log.append(entry)
         if columns:
             self._log_columns.append(columns + [row_split or self._log_row_split])
@@ -59,6 +61,9 @@ class LogManager:
         self._log_row_split = True
 
     def convertLog(self) -> list:
+        # convert existing log into log summary
+        # combines multiple log entries into a single row
+        # each row contains all relevant info of a single file across source, destination and databases on both sides
         columns = ["Section",
                    "Header1", "Subheader1", "Path1", "Size1", "Modified1", "Hash1",
                    "Header2", "Subheader2", "Path2", "Size2", "Modified2", "Hash2",
@@ -69,23 +74,28 @@ class LogManager:
         for i in range(len(self._log)):
             if self._log_columns[i]:
                 if self._log_columns[i][-1] and not new_section:
-                    # create new row based on last value of log_columns (unless last row is just a new section)
+                    # create new row based on last value of log_columns (unless a new section was just started)
                     log_csv.append([""]*len(columns))
+                    entry_number = -1
                 if self._log_columns[i][0] == "Section":
+                    # fill in the label for the new section
+                    log_csv[-1][0] = self._log[i][0]
                     new_section = True
+                    entry_number = -1
                 else:
-                    new_section = False
-                entry_number = 0
-                for j in range(len(self._log[i])):
-                    # fill in row with items from entries under the correct column
-                    if self._log_columns[i][j]:
-                        entry_offset = columns.index(self._log_columns[i][j])
-                        while self._log_columns[i][j] != "Section" and log_csv[-1][entry_offset + entry_number*6] != "":
-                            entry_number += 1
-                        log_csv[-1][entry_offset + entry_number*6] = self._log[i][j]
-                if not log_csv[-1][0]:
-                    # copy the section from the above row if missing
-                    log_csv[-1][0] = log_csv[-2][0]
+                    new_entry = True
+                    for j in range(len(self._log[i])):
+                        # fill in row with items from entries under the correct column
+                        if self._log_columns[i][j]:
+                            if new_entry:
+                                entry_number += 1
+                                new_entry = False
+                                new_section = False
+                            entry_offset = columns.index(self._log_columns[i][j])
+                            log_csv[-1][entry_offset + entry_number*6] = self._log[i][j]
+                    if not log_csv[-1][0]:
+                        # copy the section from the above row if missing
+                        log_csv[-1][0] = log_csv[-2][0]
         if all(entry == "" for entry in log_csv[-1][1:]):
             _ = log_csv.pop(-1)
         return log_csv
