@@ -27,7 +27,7 @@ class FileManager:
     # expose the copy function as a class attribute for easy monkey-patching
     copy_function = shutil.copy2
 
-    def __init__(self, config: ConfigObject, source: DirInfo, dest: DirInfo, log: LogManager, backup_time: int, gui: bool):
+    def __init__(self, config: ConfigObject, source: DirInfo, dest: DirInfo, log: LogManager, backup_time: str, gui: bool):
         """Provides file operation methods (used by BackupManager)"""
         # init variables
         self.log = log
@@ -120,7 +120,7 @@ class FileManager:
             self._removeFile(root_path, f)
         self.log.colourPrint(getString("Removal completed!"), "NONE")
 
-    def copyFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str) -> None:
+    def copyFiles(self, source_root: str, dest_root: str, source_files: list, dest_files: list) -> None:
         if not source_files:
             return None
         self.log.colourPrint(getString("Copying %s unique files from:\n%s\nto:\n%s") % (len(source_files), source_root, dest_root), "OKBLUE")
@@ -130,7 +130,7 @@ class FileManager:
             self._copyFile(source_root, dest_root, source_files[i], dest_files[i])
         copy_status.endProgress()
 
-    def _recycleFiles(self, source_root: str, dest_root: str, source_files: str, dest_files: str) -> None:
+    def _recycleFiles(self, source_root: str, dest_root: str, source_files: list, dest_files: list) -> None:
         if not source_files:
             return None
         self.log.colourPrint(getString("Archiving %s unique files from:\n%s") % (len(source_files), source_root), "OKBLUE")

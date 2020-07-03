@@ -273,7 +273,7 @@ class DirInfo:
         moved.reverse()
         return moved
 
-    def compareDb(self, other_db: dict, other_crc_errors: dict, detect_moves: bool, exact_time: bool, ignore_empty_dirs: bool) -> dict:
+    def compareDb(self, other_db: dict, other_crc_errors: set, detect_moves: bool, exact_time: bool, ignore_empty_dirs: bool) -> dict:
         # init and filter file sets (for ignored paths, user filters are done on scan)
         ignored_path_match = lambda f: self.pathMatch(f, self.ignored_toplevel_folders)
         is_dir = lambda d, f: ignore_empty_dirs and "dir" in d[f] and d[f]["dir"] is True
