@@ -27,7 +27,7 @@ class ArgparseCustomFormatter(argparse.HelpFormatter):
         return argparse.HelpFormatter._split_lines(self, text, width)
 
 
-def main():
+def main() -> int:
     # create CLI and parse arguments with argparse
     parser = argparse.ArgumentParser(description=getString("BackuPy: A simple backup program in python with an emphasis on data integrity and transparent behaviour"),
                                      formatter_class=lambda prog: ArgparseCustomFormatter(prog, max_help_position=15),
@@ -119,7 +119,7 @@ def main():
     args = parser.parse_args()
     # create and run job
     backup_manager = BackupManager(args)
-    backup_manager.run()
+    return backup_manager.run()
 
 
 if __name__ == "__main__":

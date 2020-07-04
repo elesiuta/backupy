@@ -10,10 +10,10 @@ def create_job(config: dict) -> BackupManager:
     return BackupManager(config)
 
 
-def run(config: dict):
+def run(config: dict) -> int:
     """Execute backupy for a given configuration"""
     backup_man = BackupManager(config)
-    backup_man.run()
+    return backup_man.run()
 
 
 def start_gui():

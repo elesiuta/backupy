@@ -263,7 +263,7 @@ class BackupManager():
             fileman.handleMovedFiles(moved)
             fileman.handleChangedFiles(self.config.source, self.config.dest, source_dict, dest_dict, changed)
 
-    def run(self):
+    def run(self) -> int:
         """Main method, use this to run your job"""
         # dry run confirmation message
         if self.config.dry_run:
