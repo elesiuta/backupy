@@ -133,16 +133,13 @@ class LogManager:
         if self.gui:
             return self.gui_colourize(string, colour)
         colours = {
-            "HEADER": '\033[95m',
-            "OKBLUE": '\033[94m',
-            "OKGREEN": '\033[92m',
-            "WARNING": '\033[93m',
-            "FAIL": '\033[91m',
-            "ENDC": '\033[0m',
-            "BOLD": '\033[1m',
-            "UNDERLINE": '\033[4m'
+            "R": "\033[91m",
+            "G": "\033[92m",
+            "Y": "\033[93m",
+            "B": "\033[94m",
+            "V": "\033[95m"
         }
-        return colours[colour] + string + colours["ENDC"]
+        return colours[colour] + string + "\033[0m"
 
     def prettySize(self, size: float) -> str:
         if size > 10**9:
@@ -182,19 +179,19 @@ class LogManager:
         if header == "":
             s = ""
         else:
-            s = self.colourString(header, "OKBLUE") + self.replaceSurrogates(f)
+            s = self.colourString(header, "B") + self.replaceSurrogates(f)
             if not skip_info:
                 s = s + "\n"
         if not skip_info:
             extra_space = " "*min(4, self.terminal_width//5-16)
-            s = s + extra_space + self.colourString(sub_header, "OKBLUE") + " "*(12-len(sub_header))
+            s = s + extra_space + self.colourString(sub_header, "B") + " "*(12-len(sub_header))
             if not missing:
-                s = s + extra_space + self.colourString(getString(" Size: "), "OKBLUE") + self.prettySize(d[f]["size"])
-                s = s + extra_space + self.colourString(getString(" Modified: "), "OKBLUE") + time.ctime(d[f]["mtime"])
+                s = s + extra_space + self.colourString(getString(" Size: "), "B") + self.prettySize(d[f]["size"])
+                s = s + extra_space + self.colourString(getString(" Modified: "), "B") + time.ctime(d[f]["mtime"])
                 if "crc" in d[f]:
-                    s = s + extra_space + self.colourString(getString(" Hash: "), "OKBLUE") + d[f]["crc"]
+                    s = s + extra_space + self.colourString(getString(" Hash: "), "B") + d[f]["crc"]
             else:
-                s = s + extra_space + self.colourString(getString(" Missing"), "OKBLUE")
+                s = s + extra_space + self.colourString(getString(" Missing"), "B")
         print(s)
 
     def printFiles(self, files: list, d: dict) -> None:

@@ -80,11 +80,11 @@ class TransferLists:
     def skipFileTransfers(self, log: LogManager) -> bool:
         self._unfreeze()
         log.append([getString("### SKIPPED ###")], ["Section"])
-        print(log.colourString(getString("Enter file paths to remove them from the transfer queues, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
+        print(log.colourString(getString("Enter file paths to remove them from the transfer queues, then 'continue' when ready or 'cancel' to abort"), "G"))
         while True:
             p = input("> ")
             if len(p) == 0 or p == "?":
-                print(log.colourString(getString("Enter file paths to remove them from the transfer queues, then 'continue' when ready or 'cancel' to abort"), "OKGREEN"))
+                print(log.colourString(getString("Enter file paths to remove them from the transfer queues, then 'continue' when ready or 'cancel' to abort"), "G"))
             elif p == "continue":
                 self.freeze()
                 return True
@@ -107,7 +107,7 @@ class TransferLists:
                 self.dest_deleted.remove(p)
                 log.append(["File:", "Deleted", p], ["Header", "Subheader", "Path"])
             else:
-                print(log.colourString(getString("Could not find file in queues: %s") % (p), "WARNING"))
+                print(log.colourString(getString("Could not find file in queues: %s") % (p), "Y"))
 
     def propagateSyncDeletions(self, source: DirInfo, dest: DirInfo) -> None:
         source_only, dest_only, _, source_moved, dest_moved, _, _ = self.getSets()

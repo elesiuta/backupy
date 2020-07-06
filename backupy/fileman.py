@@ -115,7 +115,7 @@ class FileManager:
     def _removeFiles(self, root_path: str, file_relative_paths: list) -> None:
         if not file_relative_paths:
             return None
-        self.log.colourPrint(getString("Removing %s unique files from:\n%s") % (len(file_relative_paths), root_path), "OKBLUE")
+        self.log.colourPrint(getString("Removing %s unique files from:\n%s") % (len(file_relative_paths), root_path), "B")
         for f in file_relative_paths:
             self._removeFile(root_path, f)
         self.log.colourPrint(getString("Removal completed!"), "NONE")
@@ -123,7 +123,7 @@ class FileManager:
     def copyFiles(self, source_root: str, dest_root: str, source_files: list, dest_files: list) -> None:
         if not source_files:
             return None
-        self.log.colourPrint(getString("Copying %s unique files from:\n%s\nto:\n%s") % (len(source_files), source_root, dest_root), "OKBLUE")
+        self.log.colourPrint(getString("Copying %s unique files from:\n%s\nto:\n%s") % (len(source_files), source_root, dest_root), "B")
         copy_status = StatusBar("Copying", len(source_files), self.config.stdout_status_bar, gui=self.gui)
         for i in range(len(source_files)):
             copy_status.update(source_files[i])
@@ -133,7 +133,7 @@ class FileManager:
     def _recycleFiles(self, source_root: str, dest_root: str, source_files: list, dest_files: list) -> None:
         if not source_files:
             return None
-        self.log.colourPrint(getString("Archiving %s unique files from:\n%s") % (len(source_files), source_root), "OKBLUE")
+        self.log.colourPrint(getString("Archiving %s unique files from:\n%s") % (len(source_files), source_root), "B")
         for i in range(len(source_files)):
             self._moveFile(source_root, dest_root, source_files[i], dest_files[i])
         self.log.colourPrint(getString("Archiving completed!"), "NONE")
@@ -151,7 +151,7 @@ class FileManager:
         if moved_pairs and not self.config.nomoves:
             # conflicts shouldn't happen since moved is a subset of files from source_only and dest_only
             # depends on source_info.dirCompare(dest_info) otherwise source and dest keys will be reversed
-            self.log.colourPrint(getString("Moving %s files to match both sides") % (len(moved_pairs)), "OKBLUE")
+            self.log.colourPrint(getString("Moving %s files to match both sides") % (len(moved_pairs)), "B")
             for f in moved_pairs:
                 if f["match"] == "dest":
                     side = self.config.source
@@ -172,7 +172,7 @@ class FileManager:
     def handleChangedFiles(self, source_root: str, dest_root: str, source_dict: dict, dest_dict: dict, changed: list) -> None:
         if not changed:
             return None
-        self.log.colourPrint(getString("Handling %s file changes per selection mode") % (len(changed)), "OKBLUE")
+        self.log.colourPrint(getString("Handling %s file changes per selection mode") % (len(changed)), "B")
         copy_status = StatusBar("Copying", len(changed), self.config.stdout_status_bar, gui=self.gui)
         for frp in changed:
             copy_status.update(frp)

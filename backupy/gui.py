@@ -49,13 +49,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>."""
 
 def colourize(string: str, colour: str) -> str:
     colours = {
-            "HEADER": fg("magenta"),
-            "OKBLUE": fg("blue"),
-            "OKGREEN": fg("green"),
-            "WARNING": fg("yellow"),
-            "FAIL": fg("red"),
-            "BOLD": attr("bold"),
-            "UNDERLINE": attr("underlined")
+            "R": fg("red"),
+            "G": fg("green"),
+            "B": fg("blue"),
+            "Y": fg("yellow"),
+            "V": fg("magenta")
         }
     return stylize(string, colours[colour])
 
@@ -216,7 +214,7 @@ def main_gui():
             print(colourize("At least one of the following conditions must be satisfied:\n"
                             "\t1) Select at least one profile\n"
                             "\t2) Specify source and destination directories\n"
-                            "\t3) Specify source directory and load configuration\n", "FAIL"))
+                            "\t3) Specify source directory and load configuration\n", "R"))
 
 
 if __name__ == "__main__":
