@@ -24,8 +24,10 @@ Future<String> getHello() async {
 
 
 Future main() async {
-  Process.start('./venv/bin/python', ['flutter_flask.py'], mode: ProcessStartMode.normal);
-  http.get('http://127.0.0.1:5000/watchparent');
+  Process.start('./venv/bin/python', ['flutter_flask.py'], mode: ProcessStartMode.normal).then((process){
+    stdout.addStream(process.stdout);
+    stderr.addStream(process.stderr);
+  });
   runApp(MyApp());
 }
 

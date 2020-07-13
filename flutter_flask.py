@@ -1,7 +1,7 @@
 import os
-import time
+import subprocess
+import sys
 
-import psutil
 from flask import Flask, request
 from flask_cors import CORS
 app = Flask(__name__)
@@ -18,19 +18,6 @@ def terminate():
     os._exit(0)
 
 
-@app.route('/watchparent')
-def watchparent():
-    # workaround since there appears to be no onDestroy in flutter
-    # https://github.com/flutter/flutter/issues/21982
-    self = psutil.Process(os.getpid())
-    while True:
-        if self.parent is not None:
-            time.sleep(0.2)
-            continue
-        else:
-            os._exit(0)
-
-
 @app.route('/name/<name>')
 def hello_name(name):
     return "Hello {}!".format(name)
@@ -43,4 +30,7 @@ def hello_args():
 
 
 if __name__ == '__main__':
+    # workaround since there appears to be no onDestroy in flutter
+    # https://github.com/flutter/flutter/issues/21982
+    subprocess.Popen([sys.executable, "flutter_watcher.py", str(os.getpid()), str(os.getppid())])
     app.run(host='127.0.0.1', port=5000)
