@@ -24,10 +24,8 @@ Future<String> getHello() async {
 
 
 Future main() async {
-  Process.start('echo', ['hello', 'world']).then((process) {
-    stdout.addStream(process.stdout);
-    stderr.addStream(process.stderr);
-  });
+  Process.start('./venv/bin/python', ['flutter_flask.py'], mode: ProcessStartMode.normal);
+  http.get('http://127.0.0.1:5000/watchparent');
   runApp(MyApp());
 }
 
@@ -40,13 +38,24 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Future<String> futureText;
 
   @override
   void initState() {
     super.initState();
     futureText = getHello();
+  }
+  @override
+  void dispose() {
+    http.get('http://127.0.0.1:5000/terminate');
+    super.dispose();
+  }
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state){
+      if (state == AppLifecycleState.detached){
+        http.get('http://127.0.0.1:5000/terminate');
+      }
   }
   @override
   Widget build(BuildContext context) {
