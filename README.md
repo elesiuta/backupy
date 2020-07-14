@@ -15,8 +15,13 @@ pip install backupy --upgrade
 ## Design
 - Easy to use in scripts, see backupy_batch.py for an example
 - Clear and easy to verify code, see the callgraph under analysis
-- Designed with simplicity and a singular goal: clear backup behaviour between directories, meaning the current status of files and how they will be handled by backupy upon execution should always be perfectly obvious to the user
-- Avoid mission creep and duplicating other programs: no delta-transfer (but you can monkey patch the copy function to use rsync), no network storage or FUSE support (these must be mounted by another program for backupy to see them), no backup encryption (use encrypted storage), no filesystem monitoring (this is not a continuous backup/sync program)
+- Designed with simplicity and a singular goal: clear backup behaviour between directories
+  - meaning the current status of files and how they will be handled by BackuPy upon execution should always be perfectly obvious to the user
+- Avoid feature creep and duplicating other programs
+  - no delta-transfer (but you can monkey patch the copy function to use rsync)
+  - no network storage or FUSE support (these must be mounted by another program for BackuPy to see them)
+  - no backup encryption (use encrypted storage)
+  - no filesystem monitoring (this is not a continuous backup/sync program)
 ## Usage Description
 - Source and destination directories can be any directory accessible via the computer's file system (mounted drives or cloud storage, Syncthing folders, etc)
 - Destination can be empty or contain files from a previous backup, matching files on both sides will be skipped
