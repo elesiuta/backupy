@@ -147,7 +147,8 @@ class DirInfo:
                     prev = zlib.crc32(line, prev)
             return "%X" % (prev & 0xFFFFFFFF)
         except Exception:
-            raise Exception("Exiting, error trying to access file (most likely removed by your antivirus during scan): " + file_path)
+            # file either removed by user, or another program such as antimalware (using realtime monitoring) during scan, or lack permissions
+            raise Exception("Exiting, error trying to read file: " + file_path)
 
     def timeMatch(self, t1: float, t2: float, exact_only: bool = False, tz_diffs: list = [3600, 3601, 3602], fs_tol: int = 2) -> bool:
         if t1 == t2:
