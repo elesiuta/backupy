@@ -141,10 +141,13 @@ class DirInfo:
         return self.dict_current[relative_path]["crc"]
 
     def calcCrc(self, file_path: str, prev: int = 0) -> str:
-        with open(file_path, "rb") as f:
-            for line in f:
-                prev = zlib.crc32(line, prev)
-        return "%X" % (prev & 0xFFFFFFFF)
+        try:
+            with open(file_path, "rb") as f:
+                for line in f:
+                    prev = zlib.crc32(line, prev)
+            return "%X" % (prev & 0xFFFFFFFF)
+        except Exception:
+            raise Exception("Exiting, error trying to access file (most likely removed by your antivirus during scan): " + file_path)
 
     def timeMatch(self, t1: float, t2: float, exact_only: bool = False, tz_diffs: list = [3600, 3601, 3602], fs_tol: int = 2) -> bool:
         if t1 == t2:
