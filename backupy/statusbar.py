@@ -59,9 +59,9 @@ class StatusBar:
             msg = msg.encode("utf-8", "surrogateescape").decode("utf-8", "replace")
             if self.total == -1:
                 progress_str = str(self.progress) + ": "
-                self.msg_len = self.char_display - len(progress_str) - len(self.title_str)
             else:
                 progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + str(self.total) + ": "
+            self.msg_len = self.char_display - len(progress_str) - len(self.title_str)
             while self.getStringMaxWidth(msg) > self.msg_len:
                 splice = (len(msg) - 4) // 2
                 msg = msg[:splice] + "..." + msg[-splice:]
