@@ -30,6 +30,7 @@ class ConfigObject:
         self.filter_include_list = None
         self.filter_exclude_list = None
         self.noarchive = False
+        self.nocolour = False
         self.nolog = False
         self.nomoves = False
         self.noprompt = False

@@ -132,6 +132,8 @@ class LogManager:
         string = self.replaceSurrogates(string)
         if self.gui:
             return self.gui_colourize(string, colour)
+        elif self.config.nocolour:
+            return string
         colours = {
             "R": "\033[91m",
             "G": "\033[92m",
