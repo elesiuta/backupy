@@ -19,7 +19,7 @@ import os
 
 
 def getVersion() -> str:
-    return "1.8.6"
+    return "1.8.7"
 
 
 def getString(text: str) -> str:

@@ -52,9 +52,9 @@ class BackupManager():
         # load config (be careful if using a non-default config_dir!)
         if "load" in args and args["load"] is True:
             self.loadConfig()
-        # update log manager to reference the same config (don't create a new ConfigObject after this point)
+        # update log manager to ensure it references the same config (don't create a new ConfigObject after this point)
         self.log.config = self.config
-        # set args that can overwrite loaded config
+        # set args that can overwrite loaded config (note: all other args are silently replaced with loaded configuration)
         if "dry_run" in args and args["dry_run"] is True:
             self.config.dry_run = True
         if "scan_only" in args and args["scan_only"] is True:
@@ -73,7 +73,7 @@ class BackupManager():
             sys.exit()
         self.config.source = os.path.abspath(self.config.source)
         self.config.dest = os.path.abspath(self.config.dest)
-        # save config
+        # save config (still works with --load, so you can cleanup a messy json file from an old version this way)
         if "save" in args and args["save"] is True:
             self.saveConfig()
         # init gui flag
@@ -99,6 +99,7 @@ class BackupManager():
         sys.exit()
 
     def loadConfig(self) -> None:
+        # will probably raise an exception and crash (safely) if the configuration is not valid json
         current_source = self.config.source
         config_dir = os.path.abspath(os.path.join(self.config.source, self.config.config_dir, "config.json"))
         config = readJson(config_dir)
