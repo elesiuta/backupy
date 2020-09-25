@@ -102,8 +102,9 @@ class BackupManager():
         current_source = self.config.source
         config_dir = os.path.abspath(os.path.join(self.config.source, self.config.config_dir, "config.json"))
         config = readJson(config_dir)
-        print(self.log.colourString(getString("Loaded config from:") + "\n" + config_dir, "G"))
         self.config = ConfigObject(config)
+        self.log.config = self.config
+        print(self.log.colourString(getString("Loaded config from:") + "\n" + config_dir, "G"))
         if self.config.source is None or os.path.abspath(current_source) != os.path.abspath(self.config.source):
             print(self.log.colourString(getString("A config file matching the specified source was not found (case sensitive)"), "R"))
             sys.exit()
