@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "BackuPy"
-#define MyAppVersion "1.8.2"
+#define MyAppVersion "1.8.4"
 #define MyAppURL "https://github.com/elesiuta/backupy"
 #define MyAppExeName "BackuPy.exe"
 
