@@ -340,10 +340,10 @@ class BackupManager():
             else:
                 print(self.log.colourString(getString("Scan complete, continue with %s%s (y/N/skip)?") % (self.config.main_mode, simulation_msg), "G"))
                 go = input("> ")
-            if len(go) == 4 and go.lower() == "skip":
+            if len(go.strip()) == 4 and go.strip().lower() == "skip":
                 if not transfer_lists.skipFileTransfers(self.log):
                     return self.abortRun()
-            elif len(go) == 0 or go[0].lower() != "y":
+            elif len(go.strip()) == 0 or go.strip()[0].lower() != "y":
                 return self.abortRun()
         # backup operations
         self._performBackup(transfer_lists, simulation_msg)
