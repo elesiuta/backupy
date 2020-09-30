@@ -118,6 +118,8 @@ def main() -> int:
                         help=getString("Load configuration from <source>/.backupy/config.json"))
     parser.add_argument("--nocolour", dest="nocolour", action="store_true",
                         help=argparse.SUPPRESS)
+    parser.add_argument("--rsync", dest="use_rsync", action="store_true",
+                        help=argparse.SUPPRESS)
     args = parser.parse_args()
     # create and run job
     backup_manager = BackupManager(args)

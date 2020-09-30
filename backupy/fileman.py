@@ -15,6 +15,7 @@
 
 import os
 import shutil
+import subprocess
 
 from .config import ConfigObject
 from .dirinfo import DirInfo
@@ -36,6 +37,9 @@ class FileManager:
         self.config = config
         self.source = source
         self.dest = dest
+        # use rsync
+        if self.config.use_rsync:
+            FileManager.copy_function = lambda source, dest: subprocess.run(["rsync", "--archive", source, dest])
 
     ##########################################################################
     # Basic file operation methods (only these methods touch files directly) #
