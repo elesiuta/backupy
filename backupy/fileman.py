@@ -41,8 +41,8 @@ class FileManager:
         if self.config.use_rsync:
             def rsync_proc(source, dest):
                 proc = subprocess.run(["rsync", "--archive", source, dest], capture_output=True, universal_newlines=True)
-                if proc.stderr:
-                    raise Exception("rsync error: " + " ".join(proc.stderr.splitlines()))
+                if proc.stderr or proc.returncode:
+                    raise Exception("rsync error: " + " ".join(proc.stderr.splitlines()) + " return code " + str(proc.returncode))
             FileManager.copy_function = rsync_proc
 
     ##########################################################################
