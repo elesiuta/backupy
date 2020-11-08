@@ -197,7 +197,8 @@ class DirInfo:
             total = sum(len(f) for r, d, f in os.walk(self.dir))
             scan_status = StatusBar("Scanning", total, stdout_status_bar, gui=self.gui)
             # will never enable followlinks, adds too many possible issues and complexity in handling them
-            for dir_path, subdir_list, file_list in os.walk(self.dir, followlinks=False):
+            # may add notification if backupy encounters a directory it cannot access (likely due to permissions)
+            for dir_path, subdir_list, file_list in os.walk(self.dir, onerror=None, followlinks=False):
                 # ignore folders
                 if self.pathMatch(dir_path, self.ignored_toplevel_folders):
                     subdir_list.clear()
