@@ -39,7 +39,11 @@ class FileManager:
         self.dest = dest
         # use rsync
         if self.config.use_rsync:
-            FileManager.copy_function = lambda source, dest: subprocess.run(["rsync", "--archive", source, dest])
+            def rsync_proc(source, dest):
+                proc = subprocess.run(["rsync", "--archive", source, dest], capture_output=True, universal_newlines=True)
+                if proc.stderr:
+                    raise Exception("rsync error: " + " ".join(proc.stderr.splitlines()))
+            FileManager.copy_function = rsync_proc
 
     ##########################################################################
     # Basic file operation methods (only these methods touch files directly) #
