@@ -334,7 +334,7 @@ class BackupManager():
             return 0
         # wait for go ahead
         self.log.writeLog("database.tmp.json")
-        if not self.config.noprompt:
+        while not self.config.noprompt:
             if self.gui:
                 go = self.gui_simplePrompt(getString("Scan complete, continue with %s%s?") % (self.config.main_mode, simulation_msg))
             else:
@@ -343,8 +343,17 @@ class BackupManager():
             if len(go.strip()) == 4 and go.strip().lower() == "skip":
                 if not transfer_lists.skipFileTransfers(self.log):
                     return self.abortRun()
+            elif len(go.strip()) == 6 and go.strip().lower() == "curses":
+                try:
+                    from .treeman import tree_man
+                    tree_man(transfer_lists.getLists())
+                except Exception:
+                    print(self.log.colourString(getString("Curses Error"), "R"))
+                    return self.abortRun()
             elif len(go.strip()) == 0 or go.strip()[0].lower() != "y":
                 return self.abortRun()
+            elif go.strip()[0].lower() == "y":
+                break
         # backup operations
         self._performBackup(transfer_lists, simulation_msg)
         self.log.append([getString("### COMPLETED ###")])

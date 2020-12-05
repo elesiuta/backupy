@@ -16,6 +16,7 @@
 import csv
 import json
 import os
+import unicodedata
 
 
 def getVersion() -> str:
@@ -27,6 +28,16 @@ def getString(text: str) -> str:
     # logic for localisation goes here, set language with either a global or singleton
     # store strings in a dictionary or use this as an alias for gettext
     return text
+
+
+def getStringMaxWidth(string: str) -> int:
+        width = 0
+        for char in string:
+            if unicodedata.east_asian_width(char) in ["W", "F", "A"]:
+                width += 2
+            else:
+                width += 1
+        return width
 
 
 def writeCsv(file_path: str, data: list) -> None:

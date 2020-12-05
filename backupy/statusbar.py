@@ -14,9 +14,8 @@
 # https://github.com/elesiuta/backupy
 
 import shutil
-import unicodedata
 
-from .utils import getString
+from .utils import getString, getStringMaxWidth
 
 
 class StatusBar:
@@ -44,15 +43,6 @@ class StatusBar:
             self.progress = 0
             print("progress: %s/%s" % (self.progress, self.total))
 
-    def getStringMaxWidth(self, string: str) -> int:
-        width = 0
-        for char in string:
-            if unicodedata.east_asian_width(char) in ["W", "F", "A"]:
-                width += 2
-            else:
-                width += 1
-        return width
-
     def update(self, msg: str) -> None:
         if self.display:
             self.progress += 1
@@ -62,10 +52,10 @@ class StatusBar:
             else:
                 progress_str = str("{:>" + self.digits + "}").format(self.progress) + "/" + str(self.total) + ": "
             self.msg_len = self.char_display - len(progress_str) - len(self.title_str)
-            while self.getStringMaxWidth(msg) > self.msg_len:
+            while getStringMaxWidth(msg) > self.msg_len:
                 splice = (len(msg) - 4) // 2
                 msg = msg[:splice] + "..." + msg[-splice:]
-            msg = msg + " " * int(self.msg_len - self.getStringMaxWidth(msg))
+            msg = msg + " " * int(self.msg_len - getStringMaxWidth(msg))
             print(self.title_str + progress_str + msg, end="\r")
         elif self.gui and self.total > 0:
             self.progress += 1
