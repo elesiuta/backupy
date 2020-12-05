@@ -31,13 +31,13 @@ def getString(text: str) -> str:
 
 
 def getStringMaxWidth(string: str) -> int:
-        width = 0
-        for char in string:
-            if unicodedata.east_asian_width(char) in ["W", "F", "A"]:
-                width += 2
-            else:
-                width += 1
-        return width
+    width = 0
+    for char in string:
+        if unicodedata.east_asian_width(char) in ["W", "F", "A"]:
+            width += 2
+        else:
+            width += 1
+    return width
 
 
 def writeCsv(file_path: str, data: list) -> None:
