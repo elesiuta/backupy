@@ -34,6 +34,7 @@ class ConfigObject:
         self.nolog = False
         self.nomoves = False
         self.noprompt = False
+        self.curses = False
         self.dry_run = False
         self.force_posix_path_sep = False
         self.quit_on_db_conflict = False

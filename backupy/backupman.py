@@ -157,6 +157,18 @@ class BackupManager():
                 self.log.printSyncDbConflicts(crc_errors_detected, source_dict, dest_dict, source_prev, dest_prev)
             else:
                 self.log.printChangedFiles(crc_errors_detected, source_dict, source_prev, " Source", "     DB")
+        # show curses tree
+        if self.config.curses:
+            try:
+                from .treeman import dest_conflicts_tree, sync_conflicts_tree
+                self.log.writeLog("database.tmp.json")
+                if self.config.main_mode == "sync":
+                    sync_conflicts_tree(sync_conflicts, crc_errors_detected)
+                else:
+                    dest_conflicts_tree(dest_new, dest_modified, dest_missing, crc_errors_detected)
+            except Exception:
+                print(self.log.colourString(getString("Curses Error"), "R"))
+                abort_run = True
         return abort_run
 
     def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: DirInfo) -> None:
@@ -182,6 +194,14 @@ class BackupManager():
         print(self.log.colourString(getString("%s Moved Files: %s (%s)") % (side_str, len(moved), sum_size), "V"))
         self.log.append([getString("### %s MOVED FILES ###") % (side_str.upper())], ["Section"])
         self.log.printMovedFiles(moved, side_dict, side_prev, "   New: ", "   Old: ")
+        # show curses tree
+        if self.config.curses:
+            try:
+                from .treeman import scan_only_tree
+                self.log.writeLog("database.tmp.json")
+                scan_only_tree(side_str, list_new, list_missing, list_modified, moved)
+            except Exception:
+                print(self.log.colourString(getString("Curses Error"), "R"))
 
     def _printAndLogCompareDiffSummary(self, transfer_lists: TransferLists) -> None:
         # get lists and databases
@@ -345,8 +365,8 @@ class BackupManager():
                     return self.abortRun()
             elif len(go.strip()) == 6 and go.strip().lower() == "curses":
                 try:
-                    from .treeman import tree_man
-                    tree_man(transfer_lists.getLists())
+                    from .treeman import transfer_lists_tree
+                    transfer_lists_tree(transfer_lists.getLists())
                 except Exception:
                     print(self.log.colourString(getString("Curses Error"), "R"))
                     return self.abortRun()

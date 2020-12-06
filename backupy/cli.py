@@ -116,6 +116,8 @@ def main() -> int:
                         help=getString("Save configuration to <source>/.backupy/config.json"))
     group4.add_argument("-l", "--load", dest="load", action="store_true",
                         help=getString("Load configuration from <source>/.backupy/config.json"))
+    parser.add_argument("--curses", dest="curses", action="store_true",
+                        help=argparse.SUPPRESS)
     parser.add_argument("--nocolour", dest="nocolour", action="store_true",
                         help=argparse.SUPPRESS)
     parser.add_argument("--rsync", dest="use_rsync", action="store_true",
