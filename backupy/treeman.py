@@ -20,165 +20,81 @@ from .utils import getStringMaxWidth
 
 
 def dest_conflicts_tree(dest_new: list, dest_modified: list, dest_missing: list, crc_errors_detected: list) -> None:
-    pages = ["return"]
-    if dest_new:
-        pages.append("Dest Conflicts (new)")
-    if dest_modified:
-        pages.append("Dest Conflicts (changed)")
-    if dest_missing:
-        pages.append("Dest Conflicts (missing)")
-    if crc_errors_detected:
-        pages.append("CRC Errors Detected")
-    pages.append("return")
-    transfer_trees = []
-    if dest_new:
-        i = pages.index("Dest Conflicts (new)")
-        transfer_trees.append(TreeMan(dest_new, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
-    if dest_modified:
-        i = pages.index("Dest Conflicts (changed)")
-        transfer_trees.append(TreeMan(dest_modified, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
-    if dest_missing:
-        i = pages.index("Dest Conflicts (missing)")
-        transfer_trees.append(TreeMan(dest_missing, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
-    if crc_errors_detected:
-        i = pages.index("CRC Errors Detected")
-        transfer_trees.append(TreeMan(crc_errors_detected, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
-    i = 0
-    while transfer_trees:
-        transfer_trees[i].show()
-        if transfer_trees[i].next_screen == "left":
-            i -= 1
-        elif transfer_trees[i].next_screen == "right":
-            i += 1
-        elif transfer_trees[i].next_screen == "esc":
-            break
-        if i < 0 or i >= len(transfer_trees):
-            break
+    seed = {
+        "Dest Conflicts (new)": dest_new,
+        "Dest Conflicts (changed)": dest_modified,
+        "Dest Conflicts (missing)": dest_missing,
+        "CRC Errors Detected": crc_errors_detected
+    }
+    trees = tree_gen(seed, "return")
+    tree_loop(trees)
 
 
 def scan_only_tree(side_str: str, side_new: list, side_missing: list, side_modified: list, moved) -> None:
     source_moved = [f["source"] for f in moved]
     dest_moved = [f["dest"] for f in moved]
-    pages = ["return"]
-    if side_new:
-        pages.append(side_str + " New")
-    if side_modified:
-        pages.append(side_str + " Changed")
-    if side_missing:
-        pages.append(side_str + " Missing")
-    if source_moved:
-        pages.append("Source Moved")
-    if dest_moved:
-        pages.append("Dest Moved")
-    pages.append("return")
-    transfer_trees = []
-    if side_new:
-        i = pages.index(side_str + " New")
-        transfer_trees.append(TreeMan(side_new, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
-    if side_modified:
-        i = pages.index(side_str + " Changed")
-        transfer_trees.append(TreeMan(side_modified, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
-    if side_missing:
-        i = pages.index(side_str + " Missing")
-        transfer_trees.append(TreeMan(side_missing, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
-    if source_moved:
-        i = pages.index("Source Moved")
-        transfer_trees.append(TreeMan(source_moved, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
-    if dest_moved:
-        i = pages.index("Dest Moved")
-        transfer_trees.append(TreeMan(dest_moved, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
-    i = 0
-    while transfer_trees:
-        transfer_trees[i].show()
-        if transfer_trees[i].next_screen == "left":
-            i -= 1
-        elif transfer_trees[i].next_screen == "right":
-            i += 1
-        elif transfer_trees[i].next_screen == "esc":
-            break
-        if i < 0 or i >= len(transfer_trees):
-            break
+    seed = {
+        side_str + " New": side_new,
+        side_str + " Changed": side_modified,
+        side_str + " Missing": side_missing,
+        "Source Moved": source_moved,
+        "Dest Moved": dest_moved
+    }
+    trees = tree_gen(seed, "return")
+    tree_loop(trees)
 
 
 def sync_conflicts_tree(sync_conflicts: list, crc_errors_detected: list) -> None:
-    pages = ["return"]
-    if sync_conflicts:
-        pages.append("Sync Database Conflicts")
-    if crc_errors_detected:
-        pages.append("CRC Errors Detected")
-    pages.append("return")
-    transfer_trees = []
-    if sync_conflicts:
-        i = pages.index("Sync Database Conflicts")
-        transfer_trees.append(TreeMan(sync_conflicts, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
-    if crc_errors_detected:
-        i = pages.index("CRC Errors Detected")
-        transfer_trees.append(TreeMan(crc_errors_detected, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
-    i = 0
-    while transfer_trees:
-        transfer_trees[i].show()
-        if transfer_trees[i].next_screen == "left":
-            i -= 1
-        elif transfer_trees[i].next_screen == "right":
-            i += 1
-        elif transfer_trees[i].next_screen == "esc":
-            break
-        if i < 0 or i >= len(transfer_trees):
-            break
+    seed = {
+        "Sync Database Conflicts": sync_conflicts,
+        "CRC Errors Detected": crc_errors_detected
+    }
+    trees = tree_gen(seed, "return")
+    tree_loop(trees)
 
 
 def transfer_lists_tree(transfer_lists_list: tuple) -> None:
-    source_only, dest_only, changed, moved, source_deleted, dest_deleted = transfer_lists_lis
+    source_only, dest_only, changed, moved, source_deleted, dest_deleted = transfer_lists_list
     source_moved = [f["source"] for f in moved]
     dest_moved = [f["dest"] for f in moved]
-    pages = ["prompt"]
-    if source_only:
-        pages.append("Source Only")
-    if dest_only:
-        pages.append("Dest Only")
-    if changed:
-        pages.append("Changed")
-    if source_moved:
-        pages.append("Source Moved")
-    if dest_moved:
-        pages.append("Dest Moved")
-    if source_deleted:
-        pages.append("Deleted from source")
-    if dest_deleted:
-        pages.append("Deleted from dest")
-    pages.append("prompt")
-    transfer_trees = []
-    if source_only:
-        i = pages.index("Source Only")
-        transfer_trees.append(TreeMan(source_only, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
-    if dest_only:
-        i = pages.index("Dest Only")
-        transfer_trees.append(TreeMan(dest_only, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
-    if changed:
-        i = pages.index("Changed")
-        transfer_trees.append(TreeMan(changed, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
-    if source_moved:
-        i = pages.index("Source Moved")
-        transfer_trees.append(TreeMan(source_moved, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
-    if dest_moved:
-        i = pages.index("Dest Moved")
-        transfer_trees.append(TreeMan(dest_moved, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
-    if source_deleted:
-        i = pages.index("Deleted from source")
-        transfer_trees.append(TreeMan(source_deleted, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
-    if dest_deleted:
-        i = pages.index("Deleted from dest")
-        transfer_trees.append(TreeMan(dest_deleted, "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
+    seed = {
+        "Source Only": source_only,
+        "Dest Only": dest_only,
+        "Changed": changed,
+        "Source Moved": source_moved,
+        "Dest Moved": dest_moved,
+        "Deleted from source": source_deleted,
+        "Deleted from dest": dest_deleted
+    }
+    trees = tree_gen(seed, "prompt")
+    tree_loop(trees)
+
+
+def tree_gen(seed: dict, exit_str: str) -> list:
+    pages = [exit_str]
+    for key in seed:
+        if seed["key"]:
+            pages.append(key)
+    pages.append(exit_str)
+    trees = []
+    for key in seed:
+        if seed["key"]:
+            i = pages.index(key)
+            trees.append(TreeMan(seed["key"], "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
+    return trees
+
+
+def tree_loop(trees: list) -> None:
     i = 0
-    while True:
-        transfer_trees[i].show()
-        if transfer_trees[i].next_screen == "left":
+    while trees:
+        trees[i].show()
+        if trees[i].next_screen == "left":
             i -= 1
-        elif transfer_trees[i].next_screen == "right":
+        elif trees[i].next_screen == "right":
             i += 1
-        elif transfer_trees[i].next_screen == "esc":
+        elif trees[i].next_screen == "esc":
             break
-        if i < 0 or i >= len(transfer_trees):
+        if i < 0 or i >= len(trees):
             break
 
 
