@@ -163,10 +163,13 @@ class BackupManager():
             try:
                 from .treeman import dest_conflicts_tree, sync_conflicts_tree
                 self.log.writeLog("database.tmp.json")
-                if self.config.main_mode == "sync":
-                    sync_conflicts_tree(sync_conflicts, crc_errors_detected)
+                if dest_database_load_success and self.config.source != self.config.dest:
+                    if self.config.main_mode == "sync":
+                        sync_conflicts_tree(sync_conflicts, crc_errors_detected)
+                    else:
+                        dest_conflicts_tree(dest_new, dest_modified, dest_missing, crc_errors_detected)
                 else:
-                    dest_conflicts_tree(dest_new, dest_modified, dest_missing, crc_errors_detected)
+                    sync_conflicts_tree([], crc_errors_detected)
             except Exception:
                 print(self.log.colourString(getString("Curses Error"), "R"))
                 abort_run = True
