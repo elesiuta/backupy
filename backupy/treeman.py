@@ -73,14 +73,14 @@ def transfer_lists_tree(transfer_lists_list: tuple) -> None:
 def tree_gen(seed: dict, exit_str: str) -> list:
     pages = [exit_str]
     for key in seed:
-        if seed["key"]:
+        if seed[key]:
             pages.append(key)
     pages.append(exit_str)
     trees = []
     for key in seed:
-        if seed["key"]:
+        if seed[key]:
             i = pages.index(key)
-            trees.append(TreeMan(seed["key"], "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
+            trees.append(TreeMan(seed[key], "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
     return trees
 
 

@@ -147,6 +147,7 @@ class BackupManager():
                 print(self.log.colourString(getString("Destination Database Conflicts: %s") % (len(dest_conflicts)), "V"))
                 self.log.printChangedFiles(dest_conflicts, dest_dict, dest_prev, "   Dest", "     DB")
         # print database conflicts concerning CRCs if available, as well as CRC conflicts between source and dest if attributes otherwise match
+        crc_errors_detected = []
         if len(source_crc_errors) > 0 or len(dest_crc_errors) > 0:
             self.log.append([getString("### CRC ERRORS DETECTED ###")], ["Section"])
             print(self.log.colourString(getString("WARNING: found non matching CRC values, possible corruption detected"), "Y"))
