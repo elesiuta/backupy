@@ -205,11 +205,11 @@ class DirInfo:
                     continue
                 # apply filters
                 if self.filter_include_list is not None:
-                    subdir_list = filter(lambda x: any([True if r.search(x) else False for r in self.filter_include_list]), subdir_list)
-                    file_list = filter(lambda x: any([True if r.search(x) else False for r in self.filter_include_list]), file_list)
+                    subdir_list = filter(lambda x: any([True if r.search(os.path.join(dir_path, x)) else False for r in self.filter_include_list]), subdir_list)
+                    file_list = filter(lambda x: any([True if r.search(os.path.join(dir_path, x)) else False for r in self.filter_include_list]), file_list)
                 if self.filter_exclude_list is not None:
-                    subdir_list = filter(lambda x: all([False if r.search(x) else True for r in self.filter_exclude_list]), subdir_list)
-                    file_list = filter(lambda x: all([False if r.search(x) else True for r in self.filter_exclude_list]), file_list)
+                    subdir_list = filter(lambda x: all([False if r.search(os.path.join(dir_path, x)) else True for r in self.filter_exclude_list]), subdir_list)
+                    file_list = filter(lambda x: all([False if r.search(os.path.join(dir_path, x)) else True for r in self.filter_exclude_list]), file_list)
                 # scan folders
                 for subdir in subdir_list:
                     full_path = os.path.join(dir_path, subdir)
