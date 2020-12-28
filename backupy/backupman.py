@@ -308,13 +308,18 @@ class BackupManager():
         if self.dest.dict_prev != {}:
             dest_database_load_success = True
         # scan directories (also calculates CRC if enabled) (didn't parallelize scans to prevent excess vibration of adjacent consumer grade disks and keep status bars simple)
-        self.log.colourPrint(getString("Scanning files on source:\n%s") % (self.config.source), "B")
-        self.source.scanDir(self.config.stdout_status_bar)
-        if self.config.source != self.config.dest:
-            self.log.colourPrint(getString("Scanning files on destination:\n%s") % (self.config.dest), "B")
-            self.dest.scanDir(self.config.stdout_status_bar)
-        else:
-            self.dest = self.source
+        try:
+            self.log.colourPrint(getString("Scanning files on source:\n%s") % (self.config.source), "B")
+            self.source.scanDir(self.config.stdout_status_bar)
+            if self.config.source != self.config.dest:
+                self.log.colourPrint(getString("Scanning files on destination:\n%s") % (self.config.dest), "B")
+                self.dest.scanDir(self.config.stdout_status_bar)
+            else:
+                self.dest = self.source
+        except Exception as e:
+            self.log.colourPrint(getString(e.args[0]), "R")
+            self.log.colourPrint(getString("BackuPy will now exit without taking any action."), "R")
+            return 1
         # update log manager to reference the same source and dest
         self.log.source, self.log.dest = self.source, self.dest
         # compare directories (should be relatively fast, all the read operations are done during scan)

@@ -213,13 +213,16 @@ class DirInfo:
                 # scan folders
                 for subdir in subdir_list:
                     full_path = os.path.join(dir_path, subdir)
-                    if len(os.listdir(full_path)) == 0:
-                        # track empty directories with a dummy entry, non-empty directories should not have entries, they are handled automatically by having files inside them
-                        relative_path = os.path.relpath(full_path, self.dir)
-                        if self.force_posix_path_sep:
-                            relative_path = relative_path.replace(os.path.sep, "/")
-                        self.dict_current[relative_path] = {"size": 0, "mtime": 0, "crc": "0", "dir": True}
-                        self.set_dirs.add(relative_path)
+                    try:
+                        if len(os.listdir(full_path)) == 0:
+                            # track empty directories with a dummy entry, non-empty directories should not have entries, they are handled automatically by having files inside them
+                            relative_path = os.path.relpath(full_path, self.dir)
+                            if self.force_posix_path_sep:
+                                relative_path = relative_path.replace(os.path.sep, "/")
+                            self.dict_current[relative_path] = {"size": 0, "mtime": 0, "crc": "0", "dir": True}
+                            self.set_dirs.add(relative_path)
+                    except Exception as e:
+                        raise Exception("Error encountered during scan: %s %s for directory: %s" % (type(e).__name__, str(e.args), full_path))
                 # scan files
                 for file_name in file_list:
                     full_path = os.path.join(dir_path, file_name)
