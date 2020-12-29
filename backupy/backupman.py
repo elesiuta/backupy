@@ -71,6 +71,15 @@ class BackupManager():
         if self.config.dest is None:
             print(self.log.colourString(getString("Destination directory not provided or config failed to load"), "R"))
             sys.exit()
+        try:
+            access_test = self.config.source
+            _ = os.listdir(access_test)
+            access_test = self.config.dest
+            _ = os.listdir(access_test)
+        except Exception as e:
+            self.log.colourPrint("%s: %s for %s" % (type(e).__name__, str(e.args), access_test), "R")
+            self.log.colourPrint(getString("BackuPy will now exit without taking any action."), "R")
+            sys.exit()
         self.config.source = os.path.abspath(self.config.source)
         self.config.dest = os.path.abspath(self.config.dest)
         # save config (still works with --load, so you can cleanup a messy json file from an old version this way)
