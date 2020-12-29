@@ -66,16 +66,18 @@ class BackupManager():
             self.config.dest = self.config.source
         # check source & dest
         if not os.path.isdir(self.config.source):
-            print(self.log.colourString(getString("Invalid source directory: ") + self.config.source, "R"))
+            print(self.log.colourString(getString("Unable to access source directory: ") + self.config.source, "R"))
+            print(self.log.colourString(getString("Check folder permissions and if the directory exists."), "R"))
             sys.exit()
         if self.config.dest is None:
             print(self.log.colourString(getString("Destination directory not provided or config failed to load"), "R"))
             sys.exit()
         try:
-            access_test = self.config.source
-            _ = os.listdir(access_test)
-            access_test = self.config.dest
-            _ = os.listdir(access_test)
+            for access_test in [self.config.source, self.config.dest]:
+                if os.path.isdir(access_test):
+                    _ = os.listdir(access_test)
+                else:
+                    os.makedirs(access_test)
         except Exception as e:
             self.log.colourPrint("%s: %s for %s" % (type(e).__name__, str(e.args), access_test), "R")
             self.log.colourPrint(getString("BackuPy will now exit without taking any action."), "R")
