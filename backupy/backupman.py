@@ -317,7 +317,7 @@ class BackupManager():
             else:
                 self.dest = self.source
         except Exception as e:
-            self.log.colourPrint(getString(e.args[0]), "R")
+            self.log.colourPrint(getString("Error encountered during scan: ") + str(e.args[0]), "R")
             self.log.colourPrint(getString("BackuPy will now exit without taking any action."), "R")
             return 1
         # update log manager to reference the same source and dest

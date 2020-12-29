@@ -222,7 +222,7 @@ class DirInfo:
                             self.dict_current[relative_path] = {"size": 0, "mtime": 0, "crc": "0", "dir": True}
                             self.set_dirs.add(relative_path)
                     except Exception as e:
-                        raise Exception("Error encountered during scan: %s %s for directory: %s" % (type(e).__name__, str(e.args), full_path))
+                        raise Exception("%s %s for directory: %s" % (type(e).__name__, str(e.args), full_path))
                 # scan files
                 for file_name in file_list:
                     full_path = os.path.join(dir_path, file_name)
