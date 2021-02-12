@@ -180,7 +180,7 @@ class TreeDisplay:
                 elif ch == curses.KEY_RIGHT:
                     self.next_screen = "right"
                     return
-                elif ch == 27:
+                elif ch == 27 or ch == ord("q"):
                     self.next_screen = "esc"
                     return
                 cursor %= line

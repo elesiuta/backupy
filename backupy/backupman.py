@@ -28,6 +28,7 @@ from .transferlists import TransferLists
 from .utils import (
     getString,
     getVersion,
+    simplePrompt,
     readJson,
     writeJson,
     testConsistency
@@ -136,7 +137,7 @@ class BackupManager():
         # print database conflicts, including both collisions from files being modified independently on both sides and unexpected missing files
         # note: this only notifies the user so they can intervene, it does not handle them in any special way, treating them as regular file changes
         # it can also be triggered by time zone or dst changes, lower file system mod time precision, and corruption if using CRCs (handled next)
-        abort_run = False
+        detection_flag = False
         if dest_database_load_success and self.config.source != self.config.dest:
             self.log.append([getString("### DATABASE CONFLICTS ###")], ["Section"])
             if self.config.main_mode == "sync":
@@ -145,7 +146,7 @@ class BackupManager():
                 sync_conflicts = sorted(list(filter(lambda f: not self.source.fileMatch(f, f, dest_dict, set(), True), sync_conflicts)))  # don't already match
                 if len(sync_conflicts) >= 1:
                     print(self.log.colourString(getString("WARNING: found files modified in both source and destination since last scan"), "Y"))
-                    abort_run = True
+                    detection_flag = True
                 print(self.log.colourString(getString("Sync Database Conflicts: %s") % (len(sync_conflicts)), "V"))
                 self.log.printSyncDbConflicts(sync_conflicts, source_dict, dest_dict, source_prev, dest_prev)
             else:
@@ -154,7 +155,7 @@ class BackupManager():
                 dest_conflicts += sorted(list(dest_new))
                 if len(dest_conflicts) >= 1:
                     print(self.log.colourString(getString("WARNING: found files modified in the destination since last scan"), "Y"))
-                    abort_run = True
+                    detection_flag = True
                 print(self.log.colourString(getString("Destination Database Conflicts: %s") % (len(dest_conflicts)), "V"))
                 self.log.printChangedFiles(dest_conflicts, dest_dict, dest_prev, "   Dest", "     DB")
         # print database conflicts concerning CRCs if available, as well as CRC conflicts between source and dest if attributes otherwise match
@@ -162,7 +163,7 @@ class BackupManager():
         if len(source_crc_errors) > 0 or len(dest_crc_errors) > 0:
             self.log.append([getString("### CRC ERRORS DETECTED ###")], ["Section"])
             print(self.log.colourString(getString("WARNING: found non matching CRC values, possible corruption detected"), "Y"))
-            abort_run = True
+            detection_flag = True
             crc_errors_detected = sorted(list(source_crc_errors | dest_crc_errors))
             print(self.log.colourString(getString("CRC Errors Detected: %s") % (len(crc_errors_detected)), "V"))
             if self.config.source != self.config.dest:
@@ -170,21 +171,24 @@ class BackupManager():
             else:
                 self.log.printChangedFiles(crc_errors_detected, source_dict, source_prev, " Source", "     DB")
         # show curses tree
-        if self.config.curses:
-            try:
-                from .treedisplay import dest_conflicts_tree, sync_conflicts_tree
-                self.log.writeLog("database.tmp.json")
-                if dest_database_load_success and self.config.source != self.config.dest:
-                    if self.config.main_mode == "sync":
-                        sync_conflicts_tree(sync_conflicts, crc_errors_detected)
+        if detection_flag:
+            while not self.config.noprompt:
+                print(self.log.colourString(getString("Show files as tree with curses (y/n)?"), "G"))
+                response = simplePrompt(["y", "n"])
+                if response == "n":
+                    break
+                try:
+                    from .treedisplay import dest_conflicts_tree, sync_conflicts_tree
+                    if dest_database_load_success and self.config.source != self.config.dest:
+                        if self.config.main_mode == "sync":
+                            sync_conflicts_tree(sync_conflicts, crc_errors_detected)
+                        else:
+                            dest_conflicts_tree(dest_new, dest_modified, dest_missing, crc_errors_detected)
                     else:
-                        dest_conflicts_tree(dest_new, dest_modified, dest_missing, crc_errors_detected)
-                else:
-                    sync_conflicts_tree([], crc_errors_detected)
-            except Exception:
-                print(self.log.colourString(getString("Curses Error"), "R"))
-                abort_run = True
-        return abort_run
+                        sync_conflicts_tree([], crc_errors_detected)
+                except Exception:
+                    print(self.log.colourString(getString("Curses Error"), "R"))
+        return detection_flag
 
     def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: FileScanner) -> None:
         # get databases
@@ -210,13 +214,17 @@ class BackupManager():
         self.log.append([getString("### %s MOVED FILES ###") % (side_str.upper())], ["Section"])
         self.log.printMovedFiles(moved, side_dict, side_prev, "   New: ", "   Old: ")
         # show curses tree
-        if self.config.curses:
-            try:
-                from .treedisplay import scan_only_tree
-                self.log.writeLog("database.tmp.json")
-                scan_only_tree(side_str, list_new, list_missing, list_modified, moved)
-            except Exception:
-                print(self.log.colourString(getString("Curses Error"), "R"))
+        if list_new or list_missing or list_modified or moved:
+            while not self.config.noprompt:
+                print(self.log.colourString(getString("Show files as tree with curses (y/n)?"), "G"))
+                response = simplePrompt(["y", "n"])
+                if response == "n":
+                    break
+                try:
+                    from .treedisplay import scan_only_tree
+                    scan_only_tree(side_str, list_new, list_missing, list_modified, moved)
+                except Exception:
+                    print(self.log.colourString(getString("Curses Error"), "R"))
 
     def _printAndLogCompareDiffSummary(self, transfer_lists: TransferLists) -> None:
         # get lists and databases
@@ -378,21 +386,20 @@ class BackupManager():
             if self.gui:
                 go = self.gui_simplePrompt(getString("Scan complete, continue with %s%s?") % (self.config.main_mode, simulation_msg))
             else:
-                print(self.log.colourString(getString("Scan complete, continue with %s%s (y/N/skip)?") % (self.config.main_mode, simulation_msg), "G"))
-                go = input("> ")
-            if len(go.strip()) == 4 and go.strip().lower() == "skip":
+                print(self.log.colourString(getString("Scan complete, continue with %s%s (y/n/skip/curses)?") % (self.config.main_mode, simulation_msg), "G"))
+                go = simplePrompt(["y", "n", "skip", "curses"])
+            if go == "skip":
                 if not transfer_lists.skipFileTransfers(self.log):
                     return self.abortRun()
-            elif len(go.strip()) == 6 and go.strip().lower() == "curses":
+            elif go == "curses":
                 try:
                     from .treedisplay import transfer_lists_tree
                     transfer_lists_tree(transfer_lists.getLists())
                 except Exception:
                     print(self.log.colourString(getString("Curses Error"), "R"))
-                    return self.abortRun()
-            elif len(go.strip()) == 0 or go.strip()[0].lower() != "y":
+            elif go == "n":
                 return self.abortRun()
-            elif go.strip()[0].lower() == "y":
+            elif go == "y":
                 break
         # backup operations
         self._performBackup(transfer_lists, simulation_msg)

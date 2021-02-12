@@ -40,6 +40,14 @@ def getStringMaxWidth(string: str) -> int:
     return width
 
 
+def simplePrompt(options: list) -> str:
+    while True:
+        response = input("> ")
+        for option in options:
+            if response.strip().lower().startswith(option):
+                return option
+
+
 def writeCsv(file_path: str, data: list) -> None:
     if not os.path.isdir(os.path.dirname(file_path)):
         os.makedirs(os.path.dirname(file_path))
