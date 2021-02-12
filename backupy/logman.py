@@ -18,7 +18,7 @@ import shutil
 import time
 
 from .config import ConfigObject
-from .dirinfo import DirInfo
+from .filescanner import FileScanner
 from .utils import (
     getString,
     writeCsv,
@@ -42,8 +42,8 @@ class LogManager:
             self.terminal_width = 80
         # init attributes for linting (replaced by BackupManager to reference the same object)
         self.config = ConfigObject
-        self.source = DirInfo
-        self.dest = DirInfo
+        self.source = FileScanner
+        self.dest = FileScanner
 
     def append(self, entry: list, columns: list = [], row_split: bool = True) -> None:
         # entry to appear in log, label columns for summary, row_split for a new file

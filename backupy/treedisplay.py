@@ -80,7 +80,7 @@ def tree_gen(seed: dict, exit_str: str) -> list:
     for key in seed:
         if seed[key]:
             i = pages.index(key)
-            trees.append(TreeMan(seed[key], "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
+            trees.append(TreeDisplay(seed[key], "<-"+pages[i-1], pages[i], pages[i+1]+"->"))
     return trees
 
 
@@ -98,7 +98,7 @@ def tree_loop(trees: list) -> None:
             break
 
 
-class TreeMan:
+class TreeDisplay:
     def __init__(self, files: list, prev: str, curr: str, next: str):
         self.tree = {"children": {}, "depth": -1, "expanded": True}
         for file_path in files:

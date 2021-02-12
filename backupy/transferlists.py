@@ -13,7 +13,7 @@
 
 # https://github.com/elesiuta/backupy
 
-from .dirinfo import DirInfo
+from .filescanner import FileScanner
 from .logman import LogManager
 from .utils import getString
 
@@ -109,7 +109,7 @@ class TransferLists:
             else:
                 print(log.colourString(getString("Could not find file in queues: %s") % (p), "Y"))
 
-    def propagateSyncDeletions(self, source: DirInfo, dest: DirInfo) -> None:
+    def propagateSyncDeletions(self, source: FileScanner, dest: FileScanner) -> None:
         source_only, dest_only, _, source_moved, dest_moved, _, _ = self.getSets()
         source_diff = source.compareDb(source.getDatabaseX2(), set(), False, True, False)
         source_new, source_modified, source_missing = set(source_diff["self_only"]), set(source_diff["changed"]), set(source_diff["other_only"])
@@ -124,7 +124,7 @@ class TransferLists:
         self.dest_only = sorted(list(dest_only - source_deleted))
         self.dest_deleted = sorted(list(dest_deleted))
 
-    def updateSyncMovedDirection(self, dest: DirInfo) -> None:
+    def updateSyncMovedDirection(self, dest: FileScanner) -> None:
         # default action is to leave as (move on dest to) match source if unsure
         dest_diff = dest.compareDb(dest.getDatabaseX2(), set(), False, True, False)
         dest_new, dest_missing = set(dest_diff["self_only"]), set(dest_diff["other_only"])

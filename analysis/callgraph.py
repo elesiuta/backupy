@@ -5,11 +5,11 @@ import re
 
 # ignore nodes or edges on lines containing these strings
 ignored_node_strings = [
-    "File -> backupy__dirinfo__DirInfo [",
-    "DiffSummary -> backupy__dirinfo__DirInfo [",
-    "performBackup -> backupy__dirinfo__DirInfo [",
-    "propagateSyncDeletions -> backupy__dirinfo__DirInfo [",
-    "updateSyncMovedDirection -> backupy__dirinfo__DirInfo [",
+    "File -> backupy__filescanner__FileScanner [",
+    "DiffSummary -> backupy__filescanner__FileScanner [",
+    "performBackup -> backupy__filescanner__FileScanner [",
+    "propagateSyncDeletions -> backupy__filescanner__FileScanner [",
+    "updateSyncMovedDirection -> backupy__filescanner__FileScanner [",
     "Consistency -> backupy__transferlists__TransferLists [",
     "DiffSummary -> backupy__transferlists__TransferLists [",
     "performBackup -> backupy__transferlists__TransferLists ["
@@ -18,8 +18,8 @@ ignored_node_strings = [
 # modules to scan
 modules = [
     "../backupy/backupman.py",
-    "../backupy/dirinfo.py",
     "../backupy/fileman.py",
+    "../backupy/filescanner.py",
     "../backupy/transferlists.py"
 ]
 

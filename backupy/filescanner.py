@@ -26,7 +26,7 @@ from .utils import (
 )
 
 
-class DirInfo:
+class FileScanner:
     def __init__(self, directory_root_path: str, unique_id: str,
                  other_root_path: str, config: ConfigObject, gui: bool = False):
         """For scanning directories, tracking files and changes, meant only for internal use by BackupManager"""
@@ -96,39 +96,39 @@ class DirInfo:
         else:
             return self.dict_prev
 
-    def verifyCrcOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
-        if self.dir == source_root and secondInfo.dir == dest_root:
-            if secondInfo.getCrc(dest_file, recalc=True) != self.getCrc(source_file):
+    def verifyCrcOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, other_scanner: 'FileScanner') -> None:
+        if self.dir == source_root and other_scanner.dir == dest_root:
+            if other_scanner.getCrc(dest_file, recalc=True) != self.getCrc(source_file):
                 raise Exception("CRC Verification Failed")
-        elif self.dir == dest_root and secondInfo.dir == source_root:
-            if self.getCrc(dest_file, recalc=True) != secondInfo.getCrc(source_file):
+        elif self.dir == dest_root and other_scanner.dir == source_root:
+            if self.getCrc(dest_file, recalc=True) != other_scanner.getCrc(source_file):
                 raise Exception("CRC Verification Failed")
 
-    def updateDictOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
-        if self.dir == source_root and secondInfo.dir == dest_root:
-            secondInfo.dict_current[dest_file] = self.dict_current[source_file].copy()
-        elif self.dir == dest_root and secondInfo.dir == source_root:
-            self.dict_current[dest_file] = secondInfo.dict_current[source_file].copy()
+    def updateDictOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, other_scanner: 'FileScanner') -> None:
+        if self.dir == source_root and other_scanner.dir == dest_root:
+            other_scanner.dict_current[dest_file] = self.dict_current[source_file].copy()
+        elif self.dir == dest_root and other_scanner.dir == source_root:
+            self.dict_current[dest_file] = other_scanner.dict_current[source_file].copy()
         else:
             raise Exception("Update Database Error")
 
-    def updateDictOnMove(self, source_root: str, dest_root: str, source_file: str, dest_file: str, secondInfo: 'DirInfo') -> None:
+    def updateDictOnMove(self, source_root: str, dest_root: str, source_file: str, dest_file: str, other_scanner: 'FileScanner') -> None:
         if source_root == dest_root == self.dir:
             self.dict_current[dest_file] = self.dict_current.pop(source_file)
-        elif source_root == dest_root == secondInfo.dir:
-            secondInfo.dict_current[dest_file] = secondInfo.dict_current.pop(source_file)
-        elif source_root == self.dir and dest_root != secondInfo.dir:
+        elif source_root == dest_root == other_scanner.dir:
+            other_scanner.dict_current[dest_file] = other_scanner.dict_current.pop(source_file)
+        elif source_root == self.dir and dest_root != other_scanner.dir:
             _ = self.dict_current.pop(source_file)
-        elif source_root == secondInfo.dir and dest_root != self.dir:
-            _ = secondInfo.dict_current.pop(source_file)
+        elif source_root == other_scanner.dir and dest_root != self.dir:
+            _ = other_scanner.dict_current.pop(source_file)
         else:
             raise Exception("Update Database Error")
 
-    def updateDictOnRemove(self, root_path: str, file_relative_path: str, secondInfo: 'DirInfo') -> None:
+    def updateDictOnRemove(self, root_path: str, file_relative_path: str, other_scanner: 'FileScanner') -> None:
         if root_path == self.dir:
             _ = self.dict_current.pop(file_relative_path)
-        elif root_path == secondInfo.dir:
-            _ = secondInfo.dict_current.pop(file_relative_path)
+        elif root_path == other_scanner.dir:
+            _ = other_scanner.dict_current.pop(file_relative_path)
         else:
             raise Exception("Update Database Error")
 
@@ -299,10 +299,10 @@ class DirInfo:
             moved = self.getMovedAndUpdateLists(self_only, other_only, self.dict_current, other_db, moved_compare_func)
         return {"self_only": self_only, "other_only": other_only, "changed": changed, "moved": moved}
 
-    def compareDirInfo(self, other_info: 'DirInfo', no_moves: bool) -> dict:
-        diff = self.compareDb(other_info.dict_current, other_info.set_crc_errors, not no_moves, False, False)
+    def compareOtherScanner(self, other_scanner: 'FileScanner', no_moves: bool) -> dict:
+        diff = self.compareDb(other_scanner.dict_current, other_scanner.set_crc_errors, not no_moves, False, False)
         for pair in diff["moved"]:
-            if pair["source"] not in self.set_modified and pair["dest"] not in other_info.set_modified:
-                other_info.set_missing.discard(pair["source"])
+            if pair["source"] not in self.set_modified and pair["dest"] not in other_scanner.set_modified:
+                other_scanner.set_missing.discard(pair["source"])
                 self.set_missing.discard(pair["dest"])
         return diff

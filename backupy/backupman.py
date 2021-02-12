@@ -21,8 +21,8 @@ import time
 import typing
 
 from .config import ConfigObject
-from .dirinfo import DirInfo
 from .fileman import FileManager
+from .filescanner import FileScanner
 from .logman import LogManager
 from .transferlists import TransferLists
 from .utils import (
@@ -172,7 +172,7 @@ class BackupManager():
         # show curses tree
         if self.config.curses:
             try:
-                from .treeman import dest_conflicts_tree, sync_conflicts_tree
+                from .treedisplay import dest_conflicts_tree, sync_conflicts_tree
                 self.log.writeLog("database.tmp.json")
                 if dest_database_load_success and self.config.source != self.config.dest:
                     if self.config.main_mode == "sync":
@@ -186,7 +186,7 @@ class BackupManager():
                 abort_run = True
         return abort_run
 
-    def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: DirInfo) -> None:
+    def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: FileScanner) -> None:
         # get databases
         side_dict, side_prev = side_info.getDicts()
         side_new, side_modified, side_missing, side_crc_errors, side_dirs, side_unmodified = side_info.getSets()
@@ -212,7 +212,7 @@ class BackupManager():
         # show curses tree
         if self.config.curses:
             try:
-                from .treeman import scan_only_tree
+                from .treedisplay import scan_only_tree
                 self.log.writeLog("database.tmp.json")
                 scan_only_tree(side_str, list_new, list_missing, list_modified, moved)
             except Exception:
@@ -308,10 +308,10 @@ class BackupManager():
             print(self.log.colourString(getString("Dry Run"), "V"))
         else:
             simulation_msg = ""
-        # init DirInfo and load previous scan data if available
-        self.source = DirInfo(self.config.source, self.config.source_unique_id,
+        # init FileScanner and load previous scan data if available
+        self.source = FileScanner(self.config.source, self.config.source_unique_id,
                               self.config.dest, self.config, self.gui)
-        self.dest = DirInfo(self.config.dest, self.config.dest_unique_id,
+        self.dest = FileScanner(self.config.dest, self.config.dest_unique_id,
                             self.config.source, self.config, self.gui)
         dest_database_load_success = False
         self.source.loadDatabase()
@@ -336,7 +336,7 @@ class BackupManager():
         # compare directories (should be relatively fast, all the read operations are done during scan)
         if not self.config.scan_only:
             self.log.colourPrint(getString("Comparing directories..."), "B")
-            transfer_lists = TransferLists(self.source.compareDirInfo(self.dest, self.config.nomoves))
+            transfer_lists = TransferLists(self.source.compareOtherScanner(self.dest, self.config.nomoves))
             if self.config.main_mode == "sync":
                 transfer_lists.updateSyncMovedDirection(self.dest)
                 if self.config.sync_propagate_deletions:
@@ -385,7 +385,7 @@ class BackupManager():
                     return self.abortRun()
             elif len(go.strip()) == 6 and go.strip().lower() == "curses":
                 try:
-                    from .treeman import transfer_lists_tree
+                    from .treedisplay import transfer_lists_tree
                     transfer_lists_tree(transfer_lists.getLists())
                 except Exception:
                     print(self.log.colourString(getString("Curses Error"), "R"))

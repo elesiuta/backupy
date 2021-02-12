@@ -18,7 +18,7 @@ import shutil
 import subprocess
 
 from .config import ConfigObject
-from .dirinfo import DirInfo
+from .filescanner import FileScanner
 from .logman import LogManager
 from .statusbar import StatusBar
 from .utils import getString
@@ -28,7 +28,7 @@ class FileManager:
     # expose the copy function as a class attribute for easy monkey-patching
     copy_function = shutil.copy2
 
-    def __init__(self, config: ConfigObject, source: DirInfo, dest: DirInfo, log: LogManager, backup_time: str, gui: bool):
+    def __init__(self, config: ConfigObject, source: FileScanner, dest: FileScanner, log: LogManager, backup_time: str, gui: bool):
         """Provides file operation methods (used by BackupManager)"""
         # init variables
         self.log = log
