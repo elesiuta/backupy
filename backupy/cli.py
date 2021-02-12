@@ -42,7 +42,8 @@ def main() -> int:
     group1 = parser.add_argument_group("file mode options", "")
     group2 = parser.add_argument_group("misc file options", "")
     group3 = parser.add_argument_group("execution options", "")
-    group4 = parser.add_argument_group("configuration options", "")
+    group4 = parser.add_argument_group("backend options", "")
+    group5 = parser.add_argument_group("configuration options", "")
     group1.add_argument("-m", type=str.lower, dest="main_mode", default="mirror", metavar="mode", choices=["mirror", "backup", "sync"],
                         help=getString(
                              "F!\n"
@@ -104,21 +105,25 @@ def main() -> int:
                              "  -> file corruption (ATTR+ or CRC compare modes)"))
     group3.add_argument("-v", "--verify", dest="verify_copy", action="store_true",
                         help=getString("Verify CRC of copied files"))
-    group4.add_argument("--nolog", dest="nolog", action="store_true",
+    # group4.add_argument("--cold", dest="cold", action="store_true",
+                        # help="Do not read files from destination and only use local databases")
+    # group4.add_argument("--rclone", dest="use_rclone", action="store_true",
+                        # help="Use rclone backend")
+    group4.add_argument("--rsync", dest="use_rsync", action="store_true",
+                        help="Use rsync backend")
+    group5.add_argument("--nolog", dest="nolog", action="store_true",
                         help=getString(
                              "F!\n"
                              "Disable writing log and file databases to:\n"
                              "   <source>/.backupy/Logs/log-yymmdd-HHMM.csv\n"
                              "   <source|dest>/.backupy/database.json"))
-    group4.add_argument("-p", "--posix", dest="force_posix_path_sep", action="store_true",
+    group5.add_argument("-p", "--posix", dest="force_posix_path_sep", action="store_true",
                         help=getString("Force posix style paths on non-posix operating systems"))
-    group4.add_argument("-k", "--save", dest="save", action="store_true",
+    group5.add_argument("-k", "--save", dest="save", action="store_true",
                         help=getString("Save configuration to <source>/.backupy/config.json"))
-    group4.add_argument("-l", "--load", dest="load", action="store_true",
+    group5.add_argument("-l", "--load", dest="load", action="store_true",
                         help=getString("Load configuration from <source>/.backupy/config.json"))
     parser.add_argument("--nocolour", dest="nocolour", action="store_true",
-                        help=argparse.SUPPRESS)
-    parser.add_argument("--rsync", dest="use_rsync", action="store_true",
                         help=argparse.SUPPRESS)
     args = parser.parse_args()
     # create and run job
