@@ -1,7 +1,7 @@
 # [BackuPy](#backupy)
   - [Installation](#installation)
   - [Features](#features)
-  - [Design](#design)
+  - [Design Goals](#design-goals)
   - [Usage Description](#usage-description)
   - [Command Line Interface](#command-line-interface)
   - [Extra Configuration Options](#extra-configuration-options)
@@ -20,15 +20,14 @@ pip install backupy --upgrade
 - JSON formatted database for tracking files and CSV formatted logs
 - Files are always safe by default, being moved to an identically structured archive directory before being deleted or overwritten
 - Filter files with regular expressions
-## [Design](#design)
-- Uses [file-based increments](https://wiki.archlinux.org/index.php/Synchronization_and_backup_programs#File-based_increments) and human readable database/log files so your backups are future proof, even without BackuPy
-- Easy to use in scripts
-  - see backupy_batch.py for an example
-- Clear and easy to verify code
-  - see the callgraph under analysis
+## [Design Goals](#design-goals)
+- Backups should be future proof and verifiable, even without BackuPy
+  - uses [file-based increments](https://wiki.archlinux.org/index.php/Synchronization_and_backup_programs#File-based_increments) and human readable database/log files that are also easy to parse
+- Code should be simple and easy to verify to ensure predicable and reliable operation
+  - a callgraph is available under analysis
   - all the source code is under backupy
-- Clear backup behaviour between directories
-  - the current status of files and how they will be handled by BackuPy upon execution should always be perfectly obvious to the user
+- Follow the principle of least astonishment
+  - clear backup behaviour between directories, the current status of files and how they will be handled upon execution should be perfectly obvious
 - Avoid feature creep and duplicating other programs
   - no delta-transfer (but you can use rsync as a backend or monkey patch the copy function to use any other program)
   - no network storage or FUSE support (these must be mounted by another program for BackuPy to see them)
@@ -126,8 +125,9 @@ execution options:
   -v, --verify
                Verify CRC of copied files
 
-backend options:
+backend options (experimental):
 
+  --cold       Do not read files from destination and only use local databases
   --rsync      Use rsync backend
 
 configuration options:
