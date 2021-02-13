@@ -44,8 +44,6 @@ class FileManager:
                 if proc.stderr or proc.returncode:
                     raise Exception("rsync error: " + " ".join(proc.stderr.splitlines()) + " return code " + str(proc.returncode))
             FileManager.copy_function = rsync_proc
-        elif self.config.use_rclone:
-            raise NotImplementedError()
 
     ##########################################################################
     # Basic file operation methods (only these methods touch files directly) #

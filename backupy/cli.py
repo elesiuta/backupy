@@ -107,8 +107,6 @@ def main() -> int:
                         help=getString("Verify CRC of copied files"))
     group4.add_argument("--cold", dest="use_cold_storage", action="store_true",
                         help="Do not read files from destination and only use local databases")
-    group4.add_argument("--rclone", dest="use_rclone", action="store_true",
-                        help="Use rclone backend")
     group4.add_argument("--rsync", dest="use_rsync", action="store_true",
                         help="Use rsync backend")
     group5.add_argument("--nolog", dest="nolog", action="store_true",

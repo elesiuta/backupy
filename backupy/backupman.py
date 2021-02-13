@@ -68,10 +68,6 @@ class BackupManager():
         # cold storage mode
         if self.config.use_cold_storage:
             self.config.write_database_x2 = True
-        # check backend
-        if self.config.use_rclone and self.config.use_rsync:
-            print(self.log.colourString(getString("Error, invalid backend combination selected."), "R"))
-            sys.exit(1)
         # check source & dest
         if not os.path.isdir(self.config.source):
             print(self.log.colourString(getString("Unable to access source directory: ") + self.config.source, "R"))
