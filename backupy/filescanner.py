@@ -83,15 +83,20 @@ class FileScanner:
             other_db_path = os.path.join(self.other_dir, self.config_dir, "database-%s%s" % (self.unique_id, db_name[8:]))
             writeJson(other_db_path, self.dict_current, sort_keys=True)
 
-    def loadDatabase(self) -> None:
+    def loadDatabase(self, use_cold_storage: bool = False) -> None:
         """Load database from config_dir"""
-        self.dict_prev = readJson(os.path.join(self.dir, self.config_dir, "database.json"))
+        if use_cold_storage:
+            self.dict_current = self.getDatabaseX2(False)
+            self.dict_prev = self.dict_current
+            self.set_unmodified = set(self.dict_current.keys())
+        else:
+            self.dict_prev = readJson(os.path.join(self.dir, self.config_dir, "database.json"))
 
-    def getDatabaseX2(self) -> dict:
+    def getDatabaseX2(self, fallback: bool = True) -> dict:
         """Get the 'last seen' database of this directory from the perspective of the other directory"""
         other_db_path = os.path.join(self.other_dir, self.config_dir, "database-%s.json" % self.unique_id)
         database_x2 = readJson(other_db_path)
-        if database_x2:
+        if database_x2 or not fallback:
             return database_x2
         else:
             return self.dict_prev
@@ -266,7 +271,7 @@ class FileScanner:
             if self.compare_mode == "attr+":
                 self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
 
-    def getMovedAndUpdateLists(self, a_only: list, b_only: list, a_dict: dict, b_dict: dict, compare_func: typing.Callable) -> tuple:
+    def getMovedAndUpdateLists(self, a_only: list, b_only: list, a_dict: dict, b_dict: dict, compare_func: typing.Callable) -> list:
         # f1 is in a is "source" and f2 is in b is "dest"
         moved = []
         for f1 in reversed(a_only):

@@ -37,13 +37,15 @@ class FileManager:
         self.config = config
         self.source = source
         self.dest = dest
-        # use rsync
+        # use other backend
         if self.config.use_rsync:
             def rsync_proc(source, dest):
                 proc = subprocess.run(["rsync", "--archive", source, dest], capture_output=True, universal_newlines=True)
                 if proc.stderr or proc.returncode:
                     raise Exception("rsync error: " + " ".join(proc.stderr.splitlines()) + " return code " + str(proc.returncode))
             FileManager.copy_function = rsync_proc
+        elif self.config.use_rclone:
+            raise NotImplementedError()
 
     ##########################################################################
     # Basic file operation methods (only these methods touch files directly) #

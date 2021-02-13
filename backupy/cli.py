@@ -42,7 +42,7 @@ def main() -> int:
     group1 = parser.add_argument_group("file mode options", "")
     group2 = parser.add_argument_group("misc file options", "")
     group3 = parser.add_argument_group("execution options", "")
-    group4 = parser.add_argument_group("backend options", "")
+    group4 = parser.add_argument_group("backend options (experimental)", "")
     group5 = parser.add_argument_group("configuration options", "")
     group1.add_argument("-m", type=str.lower, dest="main_mode", default="mirror", metavar="mode", choices=["mirror", "backup", "sync"],
                         help=getString(
@@ -105,10 +105,10 @@ def main() -> int:
                              "  -> file corruption (ATTR+ or CRC compare modes)"))
     group3.add_argument("-v", "--verify", dest="verify_copy", action="store_true",
                         help=getString("Verify CRC of copied files"))
-    # group4.add_argument("--cold", dest="cold", action="store_true",
-                        # help="Do not read files from destination and only use local databases")
-    # group4.add_argument("--rclone", dest="use_rclone", action="store_true",
-                        # help="Use rclone backend")
+    group4.add_argument("--cold", dest="use_cold_storage", action="store_true",
+                        help="Do not read files from destination and only use local databases")
+    group4.add_argument("--rclone", dest="use_rclone", action="store_true",
+                        help="Use rclone backend")
     group4.add_argument("--rsync", dest="use_rsync", action="store_true",
                         help="Use rsync backend")
     group5.add_argument("--nolog", dest="nolog", action="store_true",

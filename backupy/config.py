@@ -38,6 +38,8 @@ class ConfigObject:
         self.force_posix_path_sep = False
         self.quit_on_db_conflict = False
         self.scan_only = False
+        self.use_cold_storage = False
+        self.use_rclone = False
         self.use_rsync = False
         self.verify_copy = False
         # default config (additional)

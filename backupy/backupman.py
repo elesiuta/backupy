@@ -65,14 +65,21 @@ class BackupManager():
         # scan only mode
         if self.config.scan_only and (self.config.dest is None or not os.path.isdir(self.config.dest)):
             self.config.dest = self.config.source
+        # cold storage mode
+        if self.config.use_cold_storage:
+            self.config.write_database_x2 = True
+        # check backend
+        if self.config.use_rclone and self.config.use_rsync:
+            print(self.log.colourString(getString("Error, invalid backend combination selected."), "R"))
+            sys.exit(1)
         # check source & dest
         if not os.path.isdir(self.config.source):
             print(self.log.colourString(getString("Unable to access source directory: ") + self.config.source, "R"))
             print(self.log.colourString(getString("Check folder permissions and if the directory exists."), "R"))
-            sys.exit()
+            sys.exit(1)
         if self.config.dest is None:
             print(self.log.colourString(getString("Destination directory not provided or config failed to load"), "R"))
-            sys.exit()
+            sys.exit(1)
         try:
             for access_test in [self.config.source, self.config.dest]:
                 if os.path.isdir(access_test):
@@ -82,7 +89,7 @@ class BackupManager():
         except Exception as e:
             self.log.colourPrint("%s: %s for %s" % (type(e).__name__, str(e.args), access_test), "R")
             self.log.colourPrint(getString("BackuPy will now exit without taking any action."), "R")
-            sys.exit()
+            sys.exit(1)
         self.config.source = os.path.abspath(self.config.source)
         self.config.dest = os.path.abspath(self.config.dest)
         # save config (still works with --load, so you can cleanup a messy json file from an old version this way)
@@ -108,7 +115,7 @@ class BackupManager():
     def saveConfig(self) -> None:
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
         print(self.log.colourString(getString("Config saved"), "G"))
-        sys.exit()
+        sys.exit(0)
 
     def loadConfig(self) -> None:
         # will probably raise an exception and crash (safely) if the configuration is not valid json
@@ -120,7 +127,7 @@ class BackupManager():
         print(self.log.colourString(getString("Loaded config from:") + "\n" + config_dir, "G"))
         if self.config.source is None or os.path.abspath(current_source) != os.path.abspath(self.config.source):
             print(self.log.colourString(getString("A config file matching the specified source was not found (case sensitive)"), "R"))
-            sys.exit()
+            sys.exit(1)
 
     def abortRun(self) -> int:
         self.log.append([getString("### ABORTED ###")])
@@ -323,18 +330,19 @@ class BackupManager():
                             self.config.source, self.config, self.gui)
         dest_database_load_success = False
         self.source.loadDatabase()
-        self.dest.loadDatabase()
+        self.dest.loadDatabase(self.config.use_cold_storage)
         if self.dest.dict_prev != {}:
             dest_database_load_success = True
         # scan directories (also calculates CRC if enabled) (didn't parallelize scans to prevent excess vibration of adjacent consumer grade disks and keep status bars simple)
         try:
             self.log.colourPrint(getString("Scanning files on source:\n%s") % (self.config.source), "B")
             self.source.scanDir(self.config.stdout_status_bar)
-            if self.config.source != self.config.dest:
-                self.log.colourPrint(getString("Scanning files on destination:\n%s") % (self.config.dest), "B")
-                self.dest.scanDir(self.config.stdout_status_bar)
-            else:
-                self.dest = self.source
+            if not self.config.use_cold_storage:
+                if self.config.source != self.config.dest:
+                    self.log.colourPrint(getString("Scanning files on destination:\n%s") % (self.config.dest), "B")
+                    self.dest.scanDir(self.config.stdout_status_bar)
+                else:
+                    self.dest = self.source
         except Exception as e:
             self.log.colourPrint(getString("Error encountered during scan: ") + str(e.args[0]), "R")
             self.log.colourPrint(getString("BackuPy will now exit without taking any action."), "R")
