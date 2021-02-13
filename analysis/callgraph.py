@@ -1,5 +1,6 @@
 # quickly generate a call graph of backupy.py
 # depends on pyan3 and graphviz
+# tested with pyan3==1.0.4 (note this version has issues if running from venv)
 import os
 import re
 

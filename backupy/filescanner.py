@@ -86,8 +86,9 @@ class FileScanner:
     def loadDatabase(self, use_cold_storage: bool = False) -> None:
         """Load database from config_dir"""
         if use_cold_storage:
-            self.dict_current = self.getDatabaseX2(False)
-            self.dict_prev = self.dict_current
+            local_dict = self.getDatabaseX2(False)
+            self.dict_current = local_dict.copy()
+            self.dict_prev = local_dict.copy()
             self.set_unmodified = set(self.dict_current.keys())
         else:
             self.dict_prev = readJson(os.path.join(self.dir, self.config_dir, "database.json"))
