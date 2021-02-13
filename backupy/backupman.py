@@ -14,6 +14,7 @@
 # https://github.com/elesiuta/backupy
 
 import argparse
+from backupy.treedisplay import dest_conflicts_tree
 import datetime
 import os
 import sys
@@ -130,6 +131,45 @@ class BackupManager():
         self.log.writeLog("database.aborted.json")
         print(self.log.colourString(getString("Run aborted"), "Y"))
         return 1
+
+    def _scanAndCompare(self) -> tuple:
+        # init FileScanner and load previous scan data if available
+        self.source = FileScanner(self.config.source, self.config.source_unique_id,
+                              self.config.dest, self.config, self.gui)
+        self.dest = FileScanner(self.config.dest, self.config.dest_unique_id,
+                            self.config.source, self.config, self.gui)
+        dest_database_load_success = False
+        self.source.loadDatabase()
+        self.dest.loadDatabase(self.config.use_cold_storage)
+        if self.dest.dict_prev != {}:
+            dest_database_load_success = True
+        # scan directories (also calculates CRC if enabled) (didn't parallelize scans to prevent excess vibration of adjacent consumer grade disks and keep status bars simple)
+        try:
+            self.log.colourPrint(getString("Scanning files on source:\n%s") % (self.config.source), "B")
+            self.source.scanDir(self.config.stdout_status_bar)
+            if not self.config.use_cold_storage:
+                if self.config.source != self.config.dest:
+                    self.log.colourPrint(getString("Scanning files on destination:\n%s") % (self.config.dest), "B")
+                    self.dest.scanDir(self.config.stdout_status_bar)
+                else:
+                    self.dest = self.source
+        except Exception as e:
+            self.log.colourPrint(getString("Error encountered during scan: ") + str(e.args[0]), "R")
+            self.log.colourPrint(getString("BackuPy will now exit without taking any action."), "R")
+            sys.exit(1)
+        # update log manager to reference the same source and dest
+        self.log.source, self.log.dest = self.source, self.dest
+        # compare directories (should be relatively fast, all the read operations are done during scan)
+        transfer_lists = TransferLists
+        if not self.config.scan_only:
+            self.log.colourPrint(getString("Comparing directories..."), "B")
+            transfer_lists = TransferLists(self.source.compareOtherScanner(self.dest, self.config.nomoves))
+            if self.config.main_mode == "sync":
+                transfer_lists.updateSyncMovedDirection(self.dest)
+                if self.config.sync_propagate_deletions:
+                    transfer_lists.propagateSyncDeletions(self.source, self.dest)
+            transfer_lists.freeze()
+        return transfer_lists, dest_database_load_success
 
     def _databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
         # get databases
@@ -319,41 +359,8 @@ class BackupManager():
             print(self.log.colourString(getString("Dry Run"), "V"))
         else:
             simulation_msg = ""
-        # init FileScanner and load previous scan data if available
-        self.source = FileScanner(self.config.source, self.config.source_unique_id,
-                              self.config.dest, self.config, self.gui)
-        self.dest = FileScanner(self.config.dest, self.config.dest_unique_id,
-                            self.config.source, self.config, self.gui)
-        dest_database_load_success = False
-        self.source.loadDatabase()
-        self.dest.loadDatabase(self.config.use_cold_storage)
-        if self.dest.dict_prev != {}:
-            dest_database_load_success = True
-        # scan directories (also calculates CRC if enabled) (didn't parallelize scans to prevent excess vibration of adjacent consumer grade disks and keep status bars simple)
-        try:
-            self.log.colourPrint(getString("Scanning files on source:\n%s") % (self.config.source), "B")
-            self.source.scanDir(self.config.stdout_status_bar)
-            if not self.config.use_cold_storage:
-                if self.config.source != self.config.dest:
-                    self.log.colourPrint(getString("Scanning files on destination:\n%s") % (self.config.dest), "B")
-                    self.dest.scanDir(self.config.stdout_status_bar)
-                else:
-                    self.dest = self.source
-        except Exception as e:
-            self.log.colourPrint(getString("Error encountered during scan: ") + str(e.args[0]), "R")
-            self.log.colourPrint(getString("BackuPy will now exit without taking any action."), "R")
-            return 1
-        # update log manager to reference the same source and dest
-        self.log.source, self.log.dest = self.source, self.dest
-        # compare directories (should be relatively fast, all the read operations are done during scan)
-        if not self.config.scan_only:
-            self.log.colourPrint(getString("Comparing directories..."), "B")
-            transfer_lists = TransferLists(self.source.compareOtherScanner(self.dest, self.config.nomoves))
-            if self.config.main_mode == "sync":
-                transfer_lists.updateSyncMovedDirection(self.dest)
-                if self.config.sync_propagate_deletions:
-                    transfer_lists.propagateSyncDeletions(self.source, self.dest)
-            transfer_lists.freeze()
+        # scan and compare directories
+        transfer_lists, dest_database_load_success = self._scanAndCompare()
         # check for database conflicts or corruption
         detected_database_conflicts_or_corruption = self._databaseAndCorruptionCheck(dest_database_load_success)
         if self.config.quit_on_db_conflict and detected_database_conflicts_or_corruption:
