@@ -142,7 +142,7 @@ class BackupManager():
                             self.source.compareDb(self.source.dict_prev, set(), True, False, True),
                             self.dest.compareDb(self.dest.dict_prev, set(), True, False, True))
 
-    def _scanAndCompare(self) -> tuple:
+    def _scanDirectories(self) -> bool:
         # init FileScanner and load previous scan data if available
         self.source = FileScanner(self.config.source, self.config.source_unique_id,
                               self.config.dest, self.config, self.gui)
@@ -169,6 +169,9 @@ class BackupManager():
             sys.exit(1)
         # update log manager to reference the same source and dest
         self.log.source, self.log.dest = self.source, self.dest
+        return dest_database_load_success
+
+    def _compareDirectories(self) -> TransferLists:
         # compare directories (should be relatively fast, all the read operations are done during scan)
         transfer_lists = TransferLists
         if not self.config.scan_only:
@@ -179,7 +182,7 @@ class BackupManager():
                 if self.config.sync_propagate_deletions:
                     transfer_lists.propagateSyncDeletions(self.source, self.dest)
             transfer_lists.freeze()
-        return transfer_lists, dest_database_load_success
+        return transfer_lists
 
     def _databaseAndCorruptionCheck(self, dest_database_load_success: bool) -> bool:
         # get databases
@@ -370,7 +373,8 @@ class BackupManager():
         else:
             simulation_msg = ""
         # scan and compare directories
-        transfer_lists, dest_database_load_success = self._scanAndCompare()
+        dest_database_load_success = self._scanDirectories()
+        transfer_lists = self._compareDirectories()
         # check for database conflicts or corruption
         detected_database_conflicts_or_corruption = self._databaseAndCorruptionCheck(dest_database_load_success)
         if self.config.quit_on_db_conflict and detected_database_conflicts_or_corruption:

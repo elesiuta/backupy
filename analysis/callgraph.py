@@ -6,14 +6,10 @@ import re
 
 # ignore nodes or edges on lines containing these strings
 ignored_node_strings = [
-    "File -> backupy__filescanner__FileScanner [",
-    "DiffSummary -> backupy__filescanner__FileScanner [",
-    "performBackup -> backupy__filescanner__FileScanner [",
-    "propagateSyncDeletions -> backupy__filescanner__FileScanner [",
-    "updateSyncMovedDirection -> backupy__filescanner__FileScanner [",
-    "Consistency -> backupy__transferlists__TransferLists [",
-    "DiffSummary -> backupy__transferlists__TransferLists [",
-    "performBackup -> backupy__transferlists__TransferLists ["
+    "backupy__backupman__BackupManager___internalTests",
+    " -> backupy__filescanner__FileManager [",
+    " -> backupy__filescanner__FileScanner [",
+    " -> backupy__transferlists__TransferLists ["
 ]
 
 # modules to scan
