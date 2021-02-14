@@ -132,6 +132,16 @@ class BackupManager():
         print(self.log.colourString(getString("Run aborted"), "Y"))
         return 1
 
+    def _internalTests(self, transfer_lists: TransferLists) -> None:
+        if self.backup_time == "000000-0000":
+            testConsistency(self.source.getDicts(), self.source.getSets(),
+                            self.dest.getDicts(), self.dest.getSets(),
+                            transfer_lists.getSets(),
+                            self.source.compareDb(self.source.dict_prev, set(), False, False, True),
+                            self.dest.compareDb(self.dest.dict_prev, set(), False, False, True),
+                            self.source.compareDb(self.source.dict_prev, set(), True, False, True),
+                            self.dest.compareDb(self.dest.dict_prev, set(), True, False, True))
+
     def _scanAndCompare(self) -> tuple:
         # init FileScanner and load previous scan data if available
         self.source = FileScanner(self.config.source, self.config.source_unique_id,
@@ -377,14 +387,7 @@ class BackupManager():
         # print differences between source and dest
         self._printAndLogCompareDiffSummary(transfer_lists)
         # consistency checks used for testing and debugging
-        if self.backup_time == "000000-0000":
-            testConsistency(self.source.getDicts(), self.source.getSets(),
-                            self.dest.getDicts(), self.dest.getSets(),
-                            transfer_lists.getSets(),
-                            self.source.compareDb(self.source.dict_prev, set(), False, False, True),
-                            self.dest.compareDb(self.dest.dict_prev, set(), False, False, True),
-                            self.source.compareDb(self.source.dict_prev, set(), True, False, True),
-                            self.dest.compareDb(self.dest.dict_prev, set(), True, False, True))
+        self._internalTests(transfer_lists)
         # exit if directories already match
         if transfer_lists.isEmpty():
             print(self.log.colourString(getString("Directories already match, completed!"), "G"))
