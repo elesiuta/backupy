@@ -14,7 +14,6 @@
 # https://github.com/elesiuta/backupy
 
 import argparse
-from backupy.treedisplay import dest_conflicts_tree
 import datetime
 import os
 import sys
@@ -126,7 +125,7 @@ class BackupManager():
             print(self.log.colourString(getString("A config file matching the specified source was not found (case sensitive)"), "R"))
             sys.exit(1)
 
-    def abortRun(self) -> int:
+    def _abortRun(self) -> int:
         self.log.append([getString("### ABORTED ###")])
         self.log.writeLog("database.aborted.json")
         print(self.log.colourString(getString("Run aborted"), "Y"))
@@ -378,7 +377,7 @@ class BackupManager():
         # check for database conflicts or corruption
         detected_database_conflicts_or_corruption = self._databaseAndCorruptionCheck(dest_database_load_success)
         if self.config.quit_on_db_conflict and detected_database_conflicts_or_corruption:
-            return self.abortRun()
+            return self._abortRun()
         # print differences between current and previous scans then exit if only scanning
         if self.config.scan_only:
             self._printAndLogScanOnlyDiffSummary("Source", self.source)
@@ -408,7 +407,7 @@ class BackupManager():
                 go = simplePrompt(["y", "n", "skip", "curses"])
             if go == "skip":
                 if not transfer_lists.skipFileTransfers(self.log):
-                    return self.abortRun()
+                    return self._abortRun()
             elif go == "curses":
                 try:
                     from .treedisplay import transfer_lists_tree
@@ -416,7 +415,7 @@ class BackupManager():
                 except Exception:
                     print(self.log.colourString(getString("Curses Error"), "R"))
             elif go == "n":
-                return self.abortRun()
+                return self._abortRun()
             elif go == "y":
                 break
         # backup operations

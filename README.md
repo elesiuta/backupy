@@ -127,8 +127,8 @@ execution options:
 
 backend options (experimental):
 
-  --cold       Do not read files from destination and only use local databases
-  --rsync      Use rsync backend
+  --cold       Do not scan files on destination and only use local databases
+  --rsync      Use rsync for copying files
 
 configuration options:
 

@@ -17,6 +17,6 @@ def run(config: dict) -> int:
 
 
 def start_gui():
-    """Launch the GUI"""
+    """Launch the GUI (DEPRECATED)"""
     from .gui import main_gui
     main_gui()
