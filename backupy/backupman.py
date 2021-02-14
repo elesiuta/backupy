@@ -171,9 +171,9 @@ class BackupManager():
         self.log.source, self.log.dest = self.source, self.dest
         return dest_database_load_success
 
-    def _compareDirectories(self) -> TransferLists:
+    def _compareDirectories(self):
         # compare directories (should be relatively fast, all the read operations are done during scan)
-        transfer_lists = TransferLists
+        transfer_lists = None
         if not self.config.scan_only:
             self.log.colourPrint(getString("Comparing directories..."), "B")
             transfer_lists = TransferLists(self.source.compareOtherScanner(self.dest, self.config.nomoves))
