@@ -20,7 +20,7 @@ import unicodedata
 
 
 def getVersion() -> str:
-    return "1.9.1"
+    return "1.9.2"
 
 
 def getString(text: str) -> str:
