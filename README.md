@@ -108,6 +108,7 @@ misc file options:
   --noarchive  Disable archiving files before overwriting/deleting to:
                   <source|dest>/.backupy/Archives/yymmdd-HHMM/
                   <source|dest>/.backupy/Trash/yymmdd-HHMM/
+  --nofollow   Do not follow symlinks when copying files
   --nomoves    Do not detect when files are moved or renamed
 
 execution options:
@@ -152,7 +153,9 @@ configuration options:
   - trash_dir
     - can be any subdirectory, default = ".backupy/Trash"
   - cleanup_empty_dirs
-    - delete directories when they become empty, default = True 
+    - delete directories when they become empty, default = True
+  - nocolour
+    - disable colour when printing to stdout, default = False
   - root_alias_log
     - replace source and dest paths with "\<source\>" and "\<dest\>" in logs, default = True
   - stdout_status_bar
@@ -160,9 +163,11 @@ configuration options:
   - verbose
     - print program status updates to stdout, default = True
   - write_database_x2
-    - write both source and destination databases to each side using their unique id, useful for syncing groups of more than two folders, default = False
+    - write both source and destination databases to each side using their unique id, useful for syncing groups of more than two folders or with the --sync-delete flag, default = False
   - write_log_dest
     - write a copy of the log to \<dest\>/\<log_dir\>/log-yymmdd-HHMM-dest.csv, default = False
+  - write_log_summary
+    - alternative log structure, written in addition to standard log, default = False
 ## [Building From Source](#building-from-source)
 - Run tests with
 ```
