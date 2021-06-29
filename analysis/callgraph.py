@@ -6,8 +6,10 @@ import re
 
 # ignore nodes or edges on lines containing these strings
 ignored_node_strings = [
-    "backupy__backupman__BackupManager___internalTests",
-    " -> backupy__filescanner__FileManager [",
+    "abortRun",
+    "internalTests",
+    "rsync_proc",
+    " -> backupy__fileman__FileManager [",
     " -> backupy__filescanner__FileScanner [",
     " -> backupy__transferlists__TransferLists ["
 ]
