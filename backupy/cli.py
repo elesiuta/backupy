@@ -88,6 +88,8 @@ def main() -> int:
                              "Disable archiving files before overwriting/deleting to:\n"
                              "   <source|dest>/.backupy/Archives/yymmdd-HHMM/\n"
                              "   <source|dest>/.backupy/Trash/yymmdd-HHMM/"))
+    group2.add_argument("--nofollow", dest="nofollow", action="store_true",
+                        help=getString("Do not follow symlinks when copying files"))
     group2.add_argument("--nomoves", dest="nomoves", action="store_true",
                         help=getString("Do not detect when files are moved or renamed"))
     group3.add_argument("--noprompt", dest="noprompt", action="store_true",

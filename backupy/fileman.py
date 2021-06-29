@@ -37,6 +37,9 @@ class FileManager:
         self.config = config
         self.source = source
         self.dest = dest
+        # update file operation functions from config
+        if self.config.nofollow:
+            FileManager.copy_function = lambda source, dest: shutil.copy2(source, dest, follow_symlinks=False)
         # use other backend
         if self.config.use_rsync:
             def rsync_proc(source, dest):

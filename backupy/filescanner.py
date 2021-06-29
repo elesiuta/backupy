@@ -56,6 +56,10 @@ class FileScanner:
         self.ignored_toplevel_folders = list(set([config.archive_dir, config.log_dir, config.trash_dir, config.config_dir]))
         self.force_posix_path_sep = config.force_posix_path_sep
         self.write_database_x2 = config.write_database_x2 and not config.scan_only
+        self.follow_symlinks = not config.nofollow
+        # self.opener = None
+        # if config.nofollow:
+        #     self.opener = lambda path, flags: os.open(path, flags | os.O_PATH | os.O_NOFOLLOW)
         # Init other variables
         self.dir = directory_root_path
         self.other_dir = other_root_path
@@ -148,10 +152,14 @@ class FileScanner:
 
     def calcCrc(self, file_path: str, prev: int = 0) -> str:
         try:
-            with open(file_path, "rb") as f:
-                for line in f:
-                    prev = zlib.crc32(line, prev)
-            return "%X" % (prev & 0xFFFFFFFF)
+            if self.follow_symlinks or not os.path.islink(file_path):
+                with open(file_path, "rb") as f:
+                    for line in f:
+                        prev = zlib.crc32(line, prev)
+                return "%X" % (prev & 0xFFFFFFFF)
+            else:
+                crc = zlib.crc32(os.readlink(file_path).encode())
+                return "%X" % (crc & 0xFFFFFFFF)
         except Exception:
             # file either removed by user, or another program such as antimalware (using realtime monitoring) during scan, or lack permissions
             raise Exception("Exiting, error trying to read file: " + file_path)
@@ -246,8 +254,9 @@ class FileScanner:
 
     def scanFile(self, full_path: str, relative_path: str) -> None:
         # get file attributes and create entry
-        size = os.path.getsize(full_path)
-        mtime = os.path.getmtime(full_path)
+        stat = os.stat(full_path, follow_symlinks=self.follow_symlinks)
+        size = stat.st_size
+        mtime = stat.st_mtime
         self.dict_current[relative_path] = {"size": size, "mtime": mtime}
         if self.compare_mode == "crc":
             self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)

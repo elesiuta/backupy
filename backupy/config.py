@@ -31,6 +31,7 @@ class ConfigObject:
         self.filter_exclude_list = None
         self.noarchive = False
         self.nocolour = False
+        self.nofollow = False
         self.nolog = False
         self.nomoves = False
         self.noprompt = False
