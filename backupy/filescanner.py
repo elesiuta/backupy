@@ -21,6 +21,7 @@ import zlib
 from .config import ConfigObject
 from .statusbar import StatusBar
 from .utils import (
+    FileOps,
     readJson,
     writeJson,
 )
@@ -149,8 +150,8 @@ class FileScanner:
 
     def calcCrc(self, file_path: str, prev: int = 0) -> str:
         try:
-            if self.follow_symlinks or not os.path.islink(file_path):
-                with open(file_path, "rb") as f:
+            if self.follow_symlinks or not FileOps.islink(file_path):
+                with FileOps.open(file_path, "rb") as f:
                     for line in f:
                         prev = zlib.crc32(line, prev)
                 return "%X" % (prev & 0xFFFFFFFF)
@@ -161,8 +162,8 @@ class FileScanner:
             raise Exception("Exiting, error trying to read file: " + file_path)
 
     def symlinkCrc(self, file_path: str) -> str:
-        if os.path.islink(file_path):
-            crc = zlib.crc32(os.readlink(file_path).encode())
+        if FileOps.islink(file_path):
+            crc = zlib.crc32(FileOps.readlink(file_path).encode())
             return "%X" % (crc & 0xFFFFFFFF)
         return "0"
 
@@ -179,13 +180,13 @@ class FileScanner:
 
     def pathMatch(self, path: str, path_list: list) -> bool:
         # is path in path_list (or a subdir of one in it)
-        if os.path.isabs(path):
+        if FileOps.isabs(path):
             relpath, _abspath = os.path.relpath(path, self.dir), path
         else:
             relpath, _abspath = path, os.path.join(self.dir, path)
         for p in path_list:
             p = os.path.normcase(p)
-            if os.path.isabs(p):
+            if FileOps.isabs(p):
                 raise Exception("Default .backupy dirs have been changed to absolute paths in the config, they should be relative paths.")
                 # if os.path.normcase(os.path.commonpath([p, abspath])) == p:
                 #     return True
@@ -209,12 +210,12 @@ class FileScanner:
 
     def scanDir(self, stdout_status_bar: bool) -> None:
         # init
-        if os.path.isdir(self.dir) and self.dict_current == {}:
-            total = sum(len(f) for r, d, f in os.walk(self.dir))
+        if FileOps.isdir(self.dir) and self.dict_current == {}:
+            total = sum(len(f) for r, d, f in FileOps.walk(self.dir))
             scan_status = StatusBar("Scanning", total, stdout_status_bar, gui=self.gui)
             # will never enable followlinks, adds too many possible issues and complexity in handling them
             # may add notification if backupy encounters a directory it cannot access (likely due to permissions)
-            for dir_path, subdir_list, file_list in os.walk(self.dir, onerror=None, followlinks=False):
+            for dir_path, subdir_list, file_list in FileOps.walk(self.dir, onerror=None, followlinks=False):
                 # ignore folders
                 if self.pathMatch(dir_path, self.ignored_toplevel_folders):
                     subdir_list.clear()
@@ -230,7 +231,7 @@ class FileScanner:
                 for subdir in subdir_list:
                     full_path = os.path.join(dir_path, subdir)
                     try:
-                        if len(os.listdir(full_path)) == 0 or os.path.islink(full_path):
+                        if len(FileOps.listdir(full_path)) == 0 or FileOps.islink(full_path):
                             # track empty directories with a dummy entry, non-empty directories should not have entries, they are handled automatically by having files inside them
                             relative_path = os.path.relpath(full_path, self.dir)
                             if self.force_posix_path_sep:
@@ -256,7 +257,7 @@ class FileScanner:
 
     def scanFile(self, full_path: str, relative_path: str) -> None:
         # get file attributes and create entry
-        stat = os.stat(full_path, follow_symlinks=self.follow_symlinks)
+        stat = FileOps.stat(full_path, follow_symlinks=self.follow_symlinks)
         size = stat.st_size
         mtime = stat.st_mtime
         self.dict_current[relative_path] = {"size": size, "mtime": mtime}

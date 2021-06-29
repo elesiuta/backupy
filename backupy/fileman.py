@@ -21,12 +21,12 @@ from .config import ConfigObject
 from .filescanner import FileScanner
 from .logman import LogManager
 from .statusbar import StatusBar
-from .utils import getString
+from .utils import getString, FileOps
 
 
 class FileManager:
     # expose the copy function as a class attribute for easy monkey-patching
-    copy_function = shutil.copy2
+    copy_function = shutil.copy2  # todo: use FileOps instead in next major version
 
     def __init__(self, config: ConfigObject, source: FileScanner, dest: FileScanner, log: LogManager, backup_time: str, gui: bool):
         """Provides file operation methods (used by BackupManager)"""
@@ -57,22 +57,22 @@ class FileManager:
             self.log.append(["Remove:", root_path, file_relative_path])
             if not self.config.dry_run:
                 path = os.path.join(root_path, file_relative_path)
-                if os.path.isdir(path):
+                if FileOps.isdir(path):
                     try:
-                        os.rmdir(path)
+                        FileOps.rmdir(path)
                     except IOError:
-                        os.chmod(path, 0o777)
-                        os.rmdir(path)
+                        FileOps.chmod(path, 0o777)
+                        FileOps.rmdir(path)
                 else:
                     try:
-                        os.remove(path)
+                        FileOps.remove(path)
                     except IOError:
-                        os.chmod(path, 0o777)
-                        os.remove(path)
+                        FileOps.chmod(path, 0o777)
+                        FileOps.remove(path)
                 if self.config.cleanup_empty_dirs:
                     head = os.path.dirname(path)
-                    if len(os.listdir(head)) == 0:
-                        os.removedirs(head)
+                    if len(FileOps.listdir(head)) == 0:
+                        FileOps.removedirs(head)
             self.source.updateDictOnRemove(root_path, file_relative_path, self.dest)
         except Exception as e:
             self.log.append(["REMOVE ERROR", root_path, file_relative_path, str(e)])
@@ -84,18 +84,18 @@ class FileManager:
             if not self.config.dry_run:
                 source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
-                if os.path.isdir(source):
-                    if os.path.islink(source):
-                        shutil.copyfile(source, dest, follow_symlinks=False)
+                if FileOps.isdir(source):
+                    if FileOps.islink(source):
+                        FileOps.copylink(source, dest)
                     else:
-                        os.makedirs(dest)
+                        FileOps.makedirs(dest)
                 else:
-                    if not os.path.isdir(os.path.dirname(dest)):
-                        os.makedirs(os.path.dirname(dest))
+                    if not FileOps.isdir(os.path.dirname(dest)):
+                        FileOps.makedirs(os.path.dirname(dest))
                     try:
                         FileManager.copy_function(source, dest)
                     except IOError:
-                        os.chmod(dest, 0o777)
+                        FileOps.chmod(dest, 0o777)
                         FileManager.copy_function(source, dest)
                     if self.config.verify_copy:
                         self.source.verifyCrcOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
@@ -110,13 +110,13 @@ class FileManager:
             if not self.config.dry_run:
                 source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
-                if not os.path.isdir(os.path.dirname(dest)):
-                    os.makedirs(os.path.dirname(dest))
-                shutil.move(source, dest)
+                if not FileOps.isdir(os.path.dirname(dest)):
+                    FileOps.makedirs(os.path.dirname(dest))
+                FileOps.move(source, dest)
                 if self.config.cleanup_empty_dirs:
                     head = os.path.dirname(source)
-                    if len(os.listdir(head)) == 0:
-                        os.removedirs(head)
+                    if len(FileOps.listdir(head)) == 0:
+                        FileOps.removedirs(head)
             self.source.updateDictOnMove(source_root, dest_root, source_file, dest_file, self.dest)
         except Exception as e:
             self.log.append(["MOVE ERROR", source_root, source_file, dest_root, dest_file, str(e)])

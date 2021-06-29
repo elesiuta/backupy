@@ -16,6 +16,7 @@
 import csv
 import json
 import os
+import shutil
 import unicodedata
 
 
@@ -80,6 +81,28 @@ def writeJson(file_path: str, data: dict, subdir: bool = True, sort_keys: bool =
             json.dump(data, json_file, indent=1, separators=(',', ': '), sort_keys=sort_keys, ensure_ascii=False)
     except Exception:
         print(getString("Error, could not write: ") + file_path)
+
+
+class FileOps:
+    """expose file operation functions as class attributes for easy monkey-patching"""
+    # functions for read operations (used in FileManager or FileScanner)
+    isabs = os.path.isabs
+    isdir = os.path.isdir
+    islink = os.path.islink
+    listdir = os.listdir
+    open = open  # only used to read file for crc
+    readlink = os.readlink
+    stat = os.stat
+    walk = os.walk
+    # functions for read/write operations (only used in FileManager)
+    chmod = os.chmod
+    copy = shutil.copy2  # todo: update FileManager to use this in next major version
+    copylink = lambda source, dest: shutil.copy2(source, dest, follow_symlinks=False)
+    makedirs = os.makedirs
+    move = shutil.move
+    remove = os.remove
+    removedirs = os.removedirs
+    rmdir = os.rmdir
 
 
 def testConsistency(source_dicts: tuple, source_sets: tuple,
