@@ -151,7 +151,7 @@ class FileScanner:
     def calcCrc(self, file_path: str, prev: int = 0) -> str:
         try:
             if self.follow_symlinks or not FileOps.islink(file_path):
-                with FileOps.open(file_path, "rb") as f:
+                with FileOps.open(file_path) as f:
                     for line in f:
                         prev = zlib.crc32(line, prev)
                 return "%X" % (prev & 0xFFFFFFFF)

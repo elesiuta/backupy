@@ -14,7 +14,6 @@
 # https://github.com/elesiuta/backupy
 
 import os
-import shutil
 import subprocess
 
 from .config import ConfigObject
@@ -26,7 +25,7 @@ from .utils import getString, FileOps
 
 class FileManager:
     # expose the copy function as a class attribute for easy monkey-patching
-    copy_function = shutil.copy2  # todo: use FileOps instead in next major version
+    copy_function = FileOps.copy  # todo: deprecate this reference in next major version
 
     def __init__(self, config: ConfigObject, source: FileScanner, dest: FileScanner, log: LogManager, backup_time: str, gui: bool):
         """Provides file operation methods (used by BackupManager)"""
@@ -39,7 +38,7 @@ class FileManager:
         self.dest = dest
         # update file operation functions from config
         if self.config.nofollow:
-            FileManager.copy_function = lambda source, dest: shutil.copy2(source, dest, follow_symlinks=False)
+            FileManager.copy_function = FileOps.copyff
         # use other backend
         if self.config.use_rsync:
             def rsync_proc(source, dest):
@@ -86,7 +85,7 @@ class FileManager:
                 dest = os.path.join(dest_root, dest_file)
                 if FileOps.isdir(source):
                     if FileOps.islink(source):
-                        FileOps.copylink(source, dest)
+                        FileOps.copyff(source, dest)
                     else:
                         FileOps.makedirs(dest)
                 else:

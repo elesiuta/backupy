@@ -90,14 +90,14 @@ class FileOps:
     isdir = os.path.isdir
     islink = os.path.islink
     listdir = os.listdir
-    open = open  # only used to read file for crc
+    open = lambda path: open(path, "rb")
     readlink = os.readlink
     stat = os.stat
     walk = os.walk
     # functions for read/write operations (only used in FileManager)
     chmod = os.chmod
-    copy = shutil.copy2  # todo: update FileManager to use this in next major version
-    copylink = lambda source, dest: shutil.copy2(source, dest, follow_symlinks=False)
+    copy = shutil.copy2
+    copyff = lambda source, dest: shutil.copy2(source, dest, follow_symlinks=False)
     makedirs = os.makedirs
     move = shutil.move
     remove = os.remove
