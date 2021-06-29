@@ -85,7 +85,10 @@ class FileManager:
                 source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
                 if os.path.isdir(source):
-                    os.makedirs(dest)
+                    if os.path.islink(source):
+                        shutil.copyfile(source, dest, follow_symlinks=False)
+                    else:
+                        os.makedirs(dest)
                 else:
                     if not os.path.isdir(os.path.dirname(dest)):
                         os.makedirs(os.path.dirname(dest))

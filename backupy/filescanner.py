@@ -57,9 +57,6 @@ class FileScanner:
         self.force_posix_path_sep = config.force_posix_path_sep
         self.write_database_x2 = config.write_database_x2 and not config.scan_only
         self.follow_symlinks = not config.nofollow
-        # self.opener = None
-        # if config.nofollow:
-        #     self.opener = lambda path, flags: os.open(path, flags | os.O_PATH | os.O_NOFOLLOW)
         # Init other variables
         self.dir = directory_root_path
         self.other_dir = other_root_path
@@ -158,11 +155,16 @@ class FileScanner:
                         prev = zlib.crc32(line, prev)
                 return "%X" % (prev & 0xFFFFFFFF)
             else:
-                crc = zlib.crc32(os.readlink(file_path).encode())
-                return "%X" % (crc & 0xFFFFFFFF)
+                return self.symlinkCrc(file_path)
         except Exception:
             # file either removed by user, or another program such as antimalware (using realtime monitoring) during scan, or lack permissions
             raise Exception("Exiting, error trying to read file: " + file_path)
+
+    def symlinkCrc(self, file_path: str) -> str:
+        if os.path.islink(file_path):
+            crc = zlib.crc32(os.readlink(file_path).encode())
+            return "%X" % (crc & 0xFFFFFFFF)
+        return "0"
 
     def timeMatch(self, t1: float, t2: float, exact_only: bool = False, tz_diffs: list = [3600, 3601, 3602], fs_tol: int = 2) -> bool:
         if t1 == t2:
@@ -228,12 +230,12 @@ class FileScanner:
                 for subdir in subdir_list:
                     full_path = os.path.join(dir_path, subdir)
                     try:
-                        if len(os.listdir(full_path)) == 0:
+                        if len(os.listdir(full_path)) == 0 or os.path.islink(full_path):
                             # track empty directories with a dummy entry, non-empty directories should not have entries, they are handled automatically by having files inside them
                             relative_path = os.path.relpath(full_path, self.dir)
                             if self.force_posix_path_sep:
                                 relative_path = relative_path.replace(os.path.sep, "/")
-                            self.dict_current[relative_path] = {"size": 0, "mtime": 0, "crc": "0", "dir": True}
+                            self.dict_current[relative_path] = {"size": 0, "mtime": 0, "crc": self.symlinkCrc(full_path), "dir": True}
                             self.set_dirs.add(relative_path)
                     except Exception as e:
                         raise Exception("%s %s for directory: %s" % (type(e).__name__, str(e.args), full_path))
