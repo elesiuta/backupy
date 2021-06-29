@@ -58,12 +58,19 @@ class ConfigObject:
         # load config
         for key in config:
             if config[key] is not None and hasattr(self, key):
+                if getattr(self, key) is not None and type(getattr(self, key)) != type(config[key]):
+                    raise Exception("Error: Invalid type for %s in config, should be %s" % (key, type(getattr(self, key))))
                 self.__setattr__(key, config[key])
         # normalize paths (these should be relative, not absolute!)
         self.archive_dir = os.path.normpath(self.archive_dir)
         self.config_dir = os.path.normpath(self.config_dir)
         self.log_dir = os.path.normpath(self.log_dir)
         self.trash_dir = os.path.normpath(self.trash_dir)
+        # check modes are valid
+        self.main_mode, self.select_mode, self.compare_mode = self.main_mode.lower(), self.select_mode.lower(), self.compare_mode.lower()
+        assert self.main_mode in ["mirror", "backup", "sync"]
+        assert self.select_mode in ["source", "dest", "new", "no"]
+        assert self.compare_mode in ["attr", "attr+", "crc"]
 
     def __setattr__(self, name, value):
         if not hasattr(self, "locked") or not self.locked:
