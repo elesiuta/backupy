@@ -97,8 +97,23 @@ while i < len(dot):
             # keep
             new_dot.append(dot[i])
         i += 1
+# sort edges so output is deterministic
+newer_dot = []
+newer_edges = []
+edge_start = False
+edge_end = False
+for line in new_dot:
+    if "->" in line and not edge_end:
+        edge_start = True
+        newer_edges.append(line)
+    elif edge_start and not edge_end:
+        edge_end = True
+        newer_dot += sorted(newer_edges)
+        newer_dot += line
+    else:
+        newer_dot.append(line)   
 with open("callgraph.dot", "w") as f:
-    f.writelines(new_dot)
+    f.writelines(newer_dot)
 
 # create svg with graphviz
 os.system("dot -Tsvg callgraph.dot > callgraph.svg")
