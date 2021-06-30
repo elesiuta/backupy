@@ -109,7 +109,7 @@ for line in new_dot:
     elif edge_start and not edge_end:
         edge_end = True
         newer_dot += sorted(newer_edges)
-        newer_dot += line
+        newer_dot.append(line)
     else:
         newer_dot.append(line)   
 with open("callgraph.dot", "w") as f:
