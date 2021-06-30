@@ -20,7 +20,7 @@ from .config import ConfigObject
 from .filescanner import FileScanner
 from .logman import LogManager
 from .statusbar import StatusBar
-from .utils import getString, FileOps
+from .utils import FileOps, getString
 
 
 class FileManager:

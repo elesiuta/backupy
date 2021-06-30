@@ -85,7 +85,8 @@ def writeJson(file_path: str, data: dict, subdir: bool = True, sort_keys: bool =
 
 class FileOps:
     """expose file operation functions as class attributes for easy monkey-patching"""
-    # functions for readonly operations (used in FileManager or FileScanner)
+    # functions for readonly operations (used in BackupManager, FileManager, or FileScanner)
+    abspath = os.path.abspath
     isabs = os.path.isabs
     isdir = os.path.isdir
     islink = os.path.islink

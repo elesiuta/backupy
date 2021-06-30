@@ -26,6 +26,7 @@ from .filescanner import FileScanner
 from .logman import LogManager
 from .transferlists import TransferLists
 from .utils import (
+    FileOps,
     getString,
     getVersion,
     simplePrompt,
@@ -63,13 +64,13 @@ class BackupManager():
         if "compare_mode" in args and args["compare_mode"] is not None and not gui:
             self.config.compare_mode = args["compare_mode"]
         # scan only mode
-        if self.config.scan_only and (self.config.dest is None or not os.path.isdir(self.config.dest)):
+        if self.config.scan_only and (self.config.dest is None or not FileOps.isdir(self.config.dest)):
             self.config.dest = self.config.source
         # cold storage mode
         if self.config.use_cold_storage:
             self.config.write_database_x2 = True
         # check source & dest
-        if not os.path.isdir(self.config.source):
+        if not FileOps.isdir(self.config.source):
             print(self.log.colourString(getString("Unable to access source directory: ") + self.config.source, "R"))
             print(self.log.colourString(getString("Check folder permissions and if the directory exists."), "R"))
             sys.exit(1)
@@ -78,16 +79,16 @@ class BackupManager():
             sys.exit(1)
         try:
             for access_test in [self.config.source, self.config.dest]:
-                if os.path.isdir(access_test):
-                    _ = os.listdir(access_test)
+                if FileOps.isdir(access_test):
+                    _ = FileOps.listdir(access_test)
                 else:
-                    os.makedirs(access_test)
+                    FileOps.makedirs(access_test)
         except Exception as e:
             self.log.colourPrint("%s: %s for %s" % (type(e).__name__, str(e.args), access_test), "R")
             self.log.colourPrint(getString("BackuPy will now exit without taking any action."), "R")
             sys.exit(1)
-        self.config.source = os.path.abspath(self.config.source)
-        self.config.dest = os.path.abspath(self.config.dest)
+        self.config.source = FileOps.abspath(self.config.source)
+        self.config.dest = FileOps.abspath(self.config.dest)
         # save config (still works with --load, so you can cleanup a messy json file from an old version this way)
         if "save" in args and args["save"] is True:
             self.saveConfig()
@@ -118,12 +119,12 @@ class BackupManager():
         """Load config from JSON file (internal use only during init)"""
         # will probably raise an exception and crash (safely) if the configuration is not valid json
         current_source = self.config.source
-        config_dir = os.path.abspath(os.path.join(self.config.source, self.config.config_dir, "config.json"))
+        config_dir = FileOps.abspath(os.path.join(self.config.source, self.config.config_dir, "config.json"))
         config = readJson(config_dir)
         self.config = ConfigObject(config)
         self.log.config = self.config
         print(self.log.colourString(getString("Loaded config from:") + "\n" + config_dir, "G"))
-        if self.config.source is None or os.path.abspath(current_source) != os.path.abspath(self.config.source):
+        if self.config.source is None or FileOps.abspath(current_source) != FileOps.abspath(self.config.source):
             print(self.log.colourString(getString("A config file matching the specified source was not found (case sensitive)"), "R"))
             sys.exit(1)
 
