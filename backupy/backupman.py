@@ -72,7 +72,7 @@ class BackupManager():
         # check source & dest
         if not FileOps.isdir(self.config.source):
             print(self.log.colourString(getString("Unable to access source directory: ") + self.config.source, "R"))
-            print(self.log.colourString(getString("Check folder permissions and if the directory exists."), "R"))
+            print(self.log.colourString(getString("Check permissions and if the directory exists."), "R"))
             sys.exit(1)
         if self.config.dest is None:
             print(self.log.colourString(getString("Destination directory not provided or config failed to load"), "R"))
@@ -84,7 +84,7 @@ class BackupManager():
                 else:
                     FileOps.makedirs(access_test)
         except Exception as e:
-            self.log.colourPrint("%s: %s for %s" % (type(e).__name__, str(e.args), access_test), "R")
+            self.log.colourPrint("%s: %s" % (type(e).__name__, str(e)), "R")
             self.log.colourPrint(getString("BackuPy will now exit without taking any action."), "R")
             sys.exit(1)
         self.config.source = FileOps.abspath(self.config.source)
@@ -167,7 +167,7 @@ class BackupManager():
                 else:
                     self.dest = self.source
         except Exception as e:
-            self.log.colourPrint("%s: %s encountered during scan" % (type(e).__name__, str(e.args)), "R")
+            self.log.colourPrint("%s encountered during scan: %s" % (type(e).__name__, str(e)), "R")
             self.log.colourPrint(getString("BackuPy will now exit without taking any action."), "R")
             sys.exit(1)
         # update log manager to reference the same source and dest
