@@ -25,14 +25,16 @@ pip install backupy --upgrade
   - uses [file-based increments](https://wiki.archlinux.org/index.php/Synchronization_and_backup_programs#File-based_increments) and human readable database/log files that are also easy to parse
 - Code should be simple and easy to verify to ensure predicable and reliable operation
   - a callgraph is available under analysis
-  - all the source code is under backupy
+  - there are only three, easy to follow functions under `FileManager` from `backupy.fileman` that ever touch your files, no more, no less, three shall be the number of thou functions, and the number of the functions shall be three
 - Follow the principle of least astonishment
   - clear backup behaviour between directories, the current status of files and how they will be handled upon execution should be perfectly obvious
 - Avoid feature creep and duplicating other programs
-  - no delta-transfer (but you can use rsync as a backend or monkey patch the copy function to use any other program)
+  - no delta-transfer (extend with another backend)
   - no network storage or FUSE support (these must be mounted by another program for BackuPy to see them)
   - no backup encryption (use encrypted storage)
   - no filesystem monitoring (this is not a continuous backup/sync program)
+- Easily extensible with other backends
+  - all the low level functions used for file operations are under `FileOps` from `backupy.utils` for easy monkey patching
 ## [Usage Description](#usage-description)
 - Source and destination directories can be any directory accessible via the computer's file system
 - Destination can be empty or contain files from a previous backup (even one made without BackuPy), matching files on both sides will be skipped
@@ -49,7 +51,7 @@ pip install backupy --upgrade
   - Attribute mode: compare file attributes (size and last modified time)
   - Attribute+ mode: compare file attributes and calculate CRCs only for new and changed files for future verification
   - CRC mode: compare file attributes and CRC for every file, and checks previously stored CRCs to detect corruption
-- Test your settings first with the "dry-run" flag
+- Test your settings first with the `--dry-run` flag
 - By default, you will always be notified of any changes, unexpected modifications, sync conflicts, or file corruption before being prompted to continue, cancel, or skip selected files
 - You can also "restore" files with BackuPy by swapping your source and destination
 ## [Command Line Interface](#command-line-interface)
