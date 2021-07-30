@@ -1,8 +1,12 @@
+#!/usr/bin/env python3
 # quickly generate a call graph of backupy.py
 # depends on pyan3 and graphviz
 # tested with pyan3==1.0.4 (note this version has issues if running from a venv)
 import os
 import re
+
+# don't need to cd into analysis
+os.chdir(os.path.dirname(__file__))
 
 # ignore nodes or edges on lines containing these strings
 ignored_node_strings = [
@@ -26,6 +30,7 @@ modules = [
 # WARNING, THIS WILL EDIT THESE MODULES, MAKE SURE ANY CHANGES ARE COMMITTED SO THEY CAN EASILY BE RESTORED
 # depends on my coding style (linting with flake8), function defs containing objects of interest being 1 line, and indenting with 4 spaces
 # probably better to use ast or tokenize, but can't generate code back easily from those (at that point might as well figure out how to add this to pyan)
+print("Applying workarounds to modules to generate callgraph with pyan3")
 class_names = []
 for module in modules:
     with open(module, "r") as m:
@@ -55,6 +60,7 @@ for module in modules:
         m.writelines(updated_module)
 
 # generate callgraph using pyan3
+print("Generating callgraph")
 os.system("pyan3 " + " ".join(modules) + " --no-defines --uses --colored --nested-groups --dot > callgraph.dot")
 
 # clean up callgraph
@@ -117,3 +123,10 @@ with open("callgraph.dot", "w") as f:
 
 # create svg with graphviz
 os.system("dot -Tsvg callgraph.dot > callgraph.svg")
+
+# cleanup
+print("Cleaning up (restoring modules)")
+for module in modules:
+    os.system("git restore " + module)
+
+print("Done")
