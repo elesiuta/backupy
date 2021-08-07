@@ -70,6 +70,7 @@ positional arguments:
 
 optional arguments:
   -h, --help   show this help message and exit
+  --version    show program's version number and exit
 
 file mode options:
 

@@ -125,13 +125,8 @@ def main() -> int:
                         help=getString("Load configuration from <source>/.backupy/config.json"))
     parser.add_argument("--nocolour", dest="nocolour", action="store_true",
                         help=argparse.SUPPRESS)
-    parser.add_argument("--version", dest="version", action="store_true",
-                        help=argparse.SUPPRESS)
+    parser.add_argument("--version", action="version", version=getVersion())
     args = parser.parse_args()
-    # get version and exit
-    if args.version:
-        print(getVersion())
-        return 0
     # create and run job
     backup_manager = BackupManager(args)
     return backup_manager.run()
