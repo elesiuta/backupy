@@ -24,9 +24,6 @@ from .utils import FileOps, getString
 
 
 class FileManager:
-    # expose the copy function as a class attribute for easy monkey-patching
-    copy_function = FileOps.copy  # todo: deprecate this reference in next major version
-
     def __init__(self, config: ConfigObject, source: FileScanner, dest: FileScanner, log: LogManager, backup_time: str, gui: bool):
         """Provides file operation methods (used by BackupManager)"""
         # init variables
@@ -38,14 +35,14 @@ class FileManager:
         self.dest = dest
         # update file operation functions from config
         if self.config.nofollow:
-            FileManager.copy_function = FileOps.copyff
+            FileOps.copy = FileOps.copyff
         # use other backend
         if self.config.use_rsync:
             def rsync_proc(source, dest):
                 proc = subprocess.run(["rsync", "--archive", source, dest], capture_output=True, universal_newlines=True)
                 if proc.stderr or proc.returncode:
                     raise Exception("rsync error: " + " ".join(proc.stderr.splitlines()) + " return code " + str(proc.returncode))
-            FileManager.copy_function = rsync_proc
+            FileOps.copy = rsync_proc
 
     ##########################################################################
     # Basic file operation methods (only these methods touch files directly) #
@@ -92,10 +89,10 @@ class FileManager:
                     if not FileOps.isdir(os.path.dirname(dest)):
                         FileOps.makedirs(os.path.dirname(dest))
                     try:
-                        FileManager.copy_function(source, dest)
+                        FileOps.copy(source, dest)
                     except IOError:
                         FileOps.chmod(dest, 0o777)
-                        FileManager.copy_function(source, dest)
+                        FileOps.copy(source, dest)
                     if self.config.verify_copy:
                         self.source.verifyCrcOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
             self.source.updateDictOnCopy(source_root, dest_root, source_file, dest_file, self.dest)
