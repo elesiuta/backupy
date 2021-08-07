@@ -1,6 +1,6 @@
 from .backupman import BackupManager
 from .cli import main
-from .utils import getVersion
+from .utils import version
 
 __all__ = ["create_job", "run", "start_gui"]
 

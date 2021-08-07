@@ -17,7 +17,7 @@ import argparse
 import sys
 
 from .backupman import BackupManager
-from .utils import getString
+from .utils import getString, getVersion
 
 
 class ArgparseCustomFormatter(argparse.HelpFormatter):
@@ -28,7 +28,7 @@ class ArgparseCustomFormatter(argparse.HelpFormatter):
 
 
 def main() -> int:
-    # create CLI and parse arguments with argparse
+    """start the command line interface for backupy"""
     parser = argparse.ArgumentParser(description=getString("BackuPy: A simple backup program in python with an emphasis on data integrity and transparent behaviour"),
                                      formatter_class=lambda prog: ArgparseCustomFormatter(prog, max_help_position=15),
                                      usage="%(prog)s [options] -- <source> <dest>\n"
@@ -125,7 +125,13 @@ def main() -> int:
                         help=getString("Load configuration from <source>/.backupy/config.json"))
     parser.add_argument("--nocolour", dest="nocolour", action="store_true",
                         help=argparse.SUPPRESS)
+    parser.add_argument("--version", dest="version", action="store_true",
+                        help=argparse.SUPPRESS)
     args = parser.parse_args()
+    # get version and exit
+    if args.version:
+        print(getVersion())
+        return 0
     # create and run job
     backup_manager = BackupManager(args)
     return backup_manager.run()

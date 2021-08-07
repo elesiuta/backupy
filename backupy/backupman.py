@@ -53,7 +53,7 @@ class BackupManager():
         self.config = ConfigObject(args)
         # load config (be careful if using a non-default config_dir!)
         if "load" in args and args["load"] is True:
-            self.loadConfig()
+            self._loadConfig()
         # update log manager to ensure it references the same config (don't create a new ConfigObject after this point)
         self.log.config = self.config
         # set args that can overwrite loaded config (note: all other args are silently replaced with loaded configuration)
@@ -91,7 +91,7 @@ class BackupManager():
         self.config.dest = FileOps.abspath(self.config.dest)
         # save config (still works with --load, so you can cleanup a messy json file from an old version this way)
         if "save" in args and args["save"] is True:
-            self.saveConfig()
+            self._saveConfig()
         # init gui flag
         self.gui = gui
         # gui modifications
@@ -109,13 +109,13 @@ class BackupManager():
         # lock config from future changes (makes code safer and easier to verify)
         self.config.locked = True
 
-    def saveConfig(self) -> None:
+    def _saveConfig(self) -> None:
         """Saves config as JSON file"""
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
         print(self.log.colourString(getString("Config saved"), "G"))
         sys.exit(0)
 
-    def loadConfig(self) -> None:
+    def _loadConfig(self) -> None:
         """Load config from JSON file (internal use only during init)"""
         # will probably raise an exception and crash (safely) if the configuration is not valid json
         current_source = self.config.source
@@ -128,7 +128,7 @@ class BackupManager():
             print(self.log.colourString(getString("A config file matching the specified source was not found (case sensitive)"), "R"))
             sys.exit(1)
 
-    def abortRun(self) -> int:
+    def _abortRun(self) -> int:
         """Write log for aborted run and return 1 (internal use only)"""
         self.log.append([getString("### ABORTED ###")])
         self.log.writeLog("database.aborted.json")
@@ -381,7 +381,7 @@ class BackupManager():
         # check for database conflicts or corruption
         detected_database_conflicts_or_corruption = self._databaseAndCorruptionCheck(dest_database_load_success)
         if self.config.quit_on_db_conflict and detected_database_conflicts_or_corruption:
-            return self.abortRun()
+            return self._abortRun()
         # print differences between current and previous scans then exit if only scanning
         if self.config.scan_only:
             self._printAndLogScanOnlyDiffSummary("Source", self.source)
@@ -411,7 +411,7 @@ class BackupManager():
                 go = simplePrompt(["y", "n", "skip", "curses"])
             if go == "skip":
                 if not transfer_lists.skipFileTransfers(self.log):
-                    return self.abortRun()
+                    return self._abortRun()
             elif go == "curses":
                 try:
                     from .treedisplay import transfer_lists_tree
@@ -419,7 +419,7 @@ class BackupManager():
                 except Exception:
                     print(self.log.colourString(getString("Curses Error"), "R"))
             elif go == "n":
-                return self.abortRun()
+                return self._abortRun()
             elif go == "y":
                 break
         # backup operations
