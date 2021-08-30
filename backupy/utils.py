@@ -21,7 +21,7 @@ import unicodedata
 
 
 def getVersion() -> str:
-    return "1.9.5"
+    return "1.9.6"
 version = getVersion()
 
 
