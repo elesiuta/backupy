@@ -13,6 +13,7 @@
 
 # https://github.com/elesiuta/backupy
 
+import json
 import os
 import re
 import typing
@@ -80,10 +81,15 @@ class FileScanner:
 
     def saveDatabase(self, db_name: str = "database.json") -> None:
         """Write database to config_dir on self and other if enabled"""
+        self_entry = os.path.join(self.config_dir, "database")
+        self_crc = self.calcDatabaseCrc(self.dict_current)
+        assert self_entry not in self.dict_current
+        self.dict_current[self_entry] = {"size": 0, "mtime": 0, "crc": self_crc, "dir": False}
         writeJson(os.path.join(self.dir, self.config_dir, db_name), self.dict_current, sort_keys=True)
         if self.write_database_x2:
             other_db_path = os.path.join(self.other_dir, self.config_dir, "database-%s%s" % (self.unique_id, db_name[8:]))
             writeJson(other_db_path, self.dict_current, sort_keys=True)
+        _ = self.dict_current.pop(self_entry)
 
     def loadDatabase(self, use_cold_storage: bool = False) -> None:
         """Load database from config_dir"""
@@ -94,15 +100,29 @@ class FileScanner:
             self.set_unmodified = set(self.dict_current.keys())
         else:
             self.dict_prev = readJson(os.path.join(self.dir, self.config_dir, "database.json"))
+            self.verifyDatabaseCrc(self.dict_prev)
 
     def getDatabaseX2(self, fallback: bool = True) -> dict:
         """Get the 'last seen' database of this directory from the perspective of the other directory"""
         other_db_path = os.path.join(self.other_dir, self.config_dir, "database-%s.json" % self.unique_id)
         database_x2 = readJson(other_db_path)
+        self.verifyDatabaseCrc(database_x2)
         if database_x2 or not fallback:
             return database_x2
         else:
             return self.dict_prev
+
+    def calcDatabaseCrc(self, database: dict) -> str:
+        return "%X" % (zlib.crc32(json.dumps(database, sort_keys=True).encode()) & 0xFFFFFFFF)
+
+    def verifyDatabaseCrc(self, database: dict) -> None:
+        """Verify the data in the database matches the CRC and pops the entry, otherwise raises exception"""
+        self_entry = os.path.join(self.config_dir, "database")
+        if self_entry in database:
+            crc_record = database.pop(self_entry)["crc"]
+            crc_calc = self.calcDatabaseCrc(database)
+            if crc_record != crc_calc:
+                raise Exception("Warning: CRC of database contents (%s) does not match recorded CRC (%s), database may be corrupted. To continue, remove entry %s from database." % (crc_calc, crc_record, self_entry))
 
     def verifyCrcOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, other_scanner: 'FileScanner') -> None:
         if self.dir == source_root and other_scanner.dir == dest_root:
