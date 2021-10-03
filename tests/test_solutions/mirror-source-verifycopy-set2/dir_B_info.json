@@ -97,14 +97,14 @@
   "crc": 458074504
  },
  ".backupy\\database.json": {
-  "size": 1941,
+  "size": 2039,
   "mtime": 0,
-  "crc": 354763643
+  "crc": 2524322423
  },
  ".backupy\\database.tmp.json": {
-  "size": 1578,
+  "size": 1676,
   "mtime": 0,
-  "crc": 581640702
+  "crc": 2506295247
  },
  ".backupy\\Archive\\000000-0000\\file modified newer on A.txt": {
   "size": 319,

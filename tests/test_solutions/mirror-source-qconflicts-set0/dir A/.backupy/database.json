@@ -1,4 +1,10 @@
 {
+ ".backupy\\database": {
+  "crc": "C8D84F30",
+  "dir": false,
+  "mtime": 0,
+  "size": 0
+ },
  "empty dir only A": {
   "crc": "0",
   "dir": true,

@@ -36,24 +36,24 @@
   "crc": 458074504
  },
  ".backupy\\database-destid.json": {
-  "size": 880,
+  "size": 978,
   "mtime": 0,
-  "crc": 739466264
+  "crc": 659090844
  },
  ".backupy\\database-destid.tmp.json": {
-  "size": 880,
+  "size": 978,
   "mtime": 0,
-  "crc": 4240537338
+  "crc": 3894019537
  },
  ".backupy\\database.json": {
-  "size": 880,
+  "size": 978,
   "mtime": 0,
-  "crc": 739466264
+  "crc": 659090844
  },
  ".backupy\\database.tmp.json": {
-  "size": 968,
+  "size": 1066,
   "mtime": 0,
-  "crc": 1159719222
+  "crc": 986874414
  },
  ".backupy\\000000-0000\\file modified newer on B.txt": {
   "size": 35,

@@ -47,14 +47,14 @@
   "crc": 1459518598
  },
  ".backupy\\Config\\database.json": {
-  "size": 166,
+  "size": 272,
   "mtime": 0,
-  "crc": 1280663001
+  "crc": 476721082
  },
  ".backupy\\Config\\database.tmp.json": {
-  "size": 167,
+  "size": 273,
   "mtime": 0,
-  "crc": 1146853704
+  "crc": 349603055
  },
  "renamed dir B\\file1.txt": {
   "size": 11,

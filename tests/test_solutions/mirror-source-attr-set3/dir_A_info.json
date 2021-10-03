@@ -35,14 +35,14 @@
   "crc": 30677878
  },
  ".backupy\\database.json": {
-  "size": 462,
+  "size": 560,
   "mtime": 0,
-  "crc": 795581820
+  "crc": 3851601158
  },
  ".backupy\\database.tmp.json": {
-  "size": 462,
+  "size": 560,
   "mtime": 0,
-  "crc": 795581820
+  "crc": 3851601158
  },
  ".backupy\\Logs\\log-000000-0000.csv": {
   "size": 1505,

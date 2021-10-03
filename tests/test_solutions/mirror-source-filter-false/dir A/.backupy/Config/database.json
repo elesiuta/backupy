@@ -1,4 +1,10 @@
 {
+ ".backupy\\Config\\database": {
+  "crc": "3040A32C",
+  "dir": false,
+  "mtime": 0,
+  "size": 0
+ },
  "empty dir only A": {
   "crc": "0",
   "dir": true,

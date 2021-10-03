@@ -42,9 +42,9 @@
   "crc": 458074504
  },
  ".backupy\\database.dryrun.json": {
-  "size": 1102,
+  "size": 1200,
   "mtime": 0,
-  "crc": 2322731111
+  "crc": 1586059422
  },
  ".backupy\\database.json": {
   "size": 1072,
@@ -52,9 +52,9 @@
   "crc": 3811296163
  },
  ".backupy\\database.tmp.dryrun.json": {
-  "size": 968,
+  "size": 1066,
   "mtime": 0,
-  "crc": 1159719222
+  "crc": 986874414
  },
  ".backupy\\log-000000-0000.csv": {
   "size": 2173,

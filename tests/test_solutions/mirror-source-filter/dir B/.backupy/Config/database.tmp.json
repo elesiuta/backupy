@@ -1,4 +1,10 @@
 {
+ ".backupy\\Config\\database": {
+  "crc": "2959592B",
+  "dir": false,
+  "mtime": 0,
+  "size": 0
+ },
  "file modified newer on A.txt": {
   "mtime": 1563369766.0,
   "size": 158

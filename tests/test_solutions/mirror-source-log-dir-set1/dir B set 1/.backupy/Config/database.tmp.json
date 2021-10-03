@@ -3,6 +3,12 @@
   "mtime": 1563369766.0,
   "size": 158
  },
+ ".backupy\\Config\\database": {
+  "crc": "1388DC7E",
+  "dir": false,
+  "mtime": 0,
+  "size": 0
+ },
  ".backupy\\database.json": {
   "mtime": 1582431414.0,
   "size": 1073
