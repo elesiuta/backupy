@@ -252,7 +252,7 @@ class FileScanner:
                     full_path = os.path.join(dir_path, subdir)
                     try:
                         if len(FileOps.listdir(full_path)) == 0 or FileOps.islink(full_path):
-                            # track empty directories with a dummy entry, non-empty directories should not have entries, they are handled automatically by having files inside them
+                            # track empty directories and symbolic links to directories with a dummy entry, non-empty directories should not have entries, they are handled automatically by having files inside them
                             relative_path = os.path.relpath(full_path, self.dir)
                             if self.force_posix_path_sep:
                                 relative_path = relative_path.replace(os.path.sep, "/")

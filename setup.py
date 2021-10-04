@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="BackuPy",
-    version=backupy.version,
+    version=backupy.version(),
     description="A simple backup program in python with an emphasis on data integrity and transparent behaviour",
     long_description=long_description,
     long_description_content_type="text/markdown",
