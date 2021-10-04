@@ -99,14 +99,15 @@ class FileScanner:
             self.dict_prev = local_dict.copy()
             self.set_unmodified = set(self.dict_current.keys())
         else:
-            self.dict_prev = readJson(os.path.join(self.dir, self.config_dir, "database.json"))
-            self.verifyDatabaseCrc(self.dict_prev)
+            db_path = os.path.join(self.dir, self.config_dir, "database.json")
+            self.dict_prev = readJson(db_path)
+            self.verifyDatabaseCrc(self.dict_prev, db_path)
 
     def getDatabaseX2(self, fallback: bool = True) -> dict:
         """Get the 'last seen' database of this directory from the perspective of the other directory"""
         other_db_path = os.path.join(self.other_dir, self.config_dir, "database-%s.json" % self.unique_id)
         database_x2 = readJson(other_db_path)
-        self.verifyDatabaseCrc(database_x2)
+        self.verifyDatabaseCrc(database_x2, other_db_path)
         if database_x2 or not fallback:
             return database_x2
         else:
@@ -115,14 +116,17 @@ class FileScanner:
     def calcDatabaseCrc(self, database: dict) -> str:
         return "%X" % (zlib.crc32(json.dumps(database, sort_keys=True).encode()) & 0xFFFFFFFF)
 
-    def verifyDatabaseCrc(self, database: dict) -> None:
+    def verifyDatabaseCrc(self, database: dict, abs_db_path: str) -> None:
         """Verify the data in the database matches the CRC and pops the entry, otherwise raises exception"""
         self_entry = os.path.join(self.config_dir, "database")
         if self_entry in database:
             crc_record = database.pop(self_entry)["crc"]
             crc_calc = self.calcDatabaseCrc(database)
             if crc_record != crc_calc:
-                raise Exception("Warning: CRC of database contents (%s) does not match recorded CRC (%s), database may be corrupted. To continue, remove entry %s from database." % (crc_calc, crc_record, self_entry))
+                raise Exception("Warning: CRC of database contents (%s) does not match recorded CRC (%s), database may be corrupted.\n"
+                                "Inspection of database and files is recommended if this was not triggered by manually editing the database.\n"
+                                "Hint: try -c crc --dry-run after creating a backup copy of the current database then editing it to continue.\n"
+                                "To continue, remove entry %s from %s." % (crc_calc, crc_record, self_entry, abs_db_path))
 
     def verifyCrcOnCopy(self, source_root: str, dest_root: str, source_file: str, dest_file: str, other_scanner: 'FileScanner') -> None:
         if self.dir == source_root and other_scanner.dir == dest_root:
