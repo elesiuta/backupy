@@ -40,10 +40,10 @@ class LogManager:
             from .gui import colourize
             self.gui_colourize = colourize
             self.terminal_width = 80
-        # init attributes for linting (replaced by BackupManager to reference the same object)
-        self.config = ConfigObject
-        self.source = FileScanner
-        self.dest = FileScanner
+        # init attributes for linting
+        self.config: ConfigObject
+        self.source: FileScanner
+        self.dest: FileScanner
 
     def append(self, entry: list, columns: list = [], row_split: bool = True) -> None:
         # entry to appear in log, label columns for summary, row_split for a new file
@@ -164,11 +164,14 @@ class LogManager:
         return attr_list
 
     def colourPrint(self, msg: str, colour: str) -> None:
+        if colour == "NONE":
+            print(self.replaceSurrogates(msg))
+        else:
+            print(self.colourString(msg, colour))
+
+    def verbosePrint(self, msg: str, colour: str) -> None:
         if self.config.verbose:
-            if colour == "NONE":
-                print(self.replaceSurrogates(msg))
-            else:
-                print(self.colourString(msg, colour))
+            self.colourPrint(msg, colour)
 
     def printFileInfo(self, header: str, f: str, d: dict, sub_header: str = "", skip_info: bool = False) -> None:
         header, sub_header = getString(header), getString(sub_header)
@@ -194,7 +197,8 @@ class LogManager:
                     s = s + extra_space + self.colourString(getString(" Hash: "), "B") + d[f]["crc"]
             else:
                 s = s + extra_space + self.colourString(getString(" Missing"), "B")
-        print(s)
+        if self.config.verbose:
+            print(s)
 
     def printFiles(self, files: list, d: dict) -> None:
         for f in files:

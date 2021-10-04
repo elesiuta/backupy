@@ -71,11 +71,11 @@ class BackupManager():
             self.config.write_database_x2 = True
         # check source & dest
         if not FileOps.isdir(self.config.source):
-            print(self.log.colourString(getString("Unable to access source directory: ") + self.config.source, "R"))
-            print(self.log.colourString(getString("Check permissions and if the directory exists."), "R"))
+            self.log.colourPrint(getString("Unable to access source directory: ") + self.config.source, "R")
+            self.log.colourPrint(getString("Check permissions and if the directory exists."), "R")
             sys.exit(1)
         if self.config.dest is None:
-            print(self.log.colourString(getString("Destination directory not provided or config failed to load"), "R"))
+            self.log.colourPrint(getString("Destination directory not provided or config failed to load"), "R")
             sys.exit(1)
         try:
             for access_test in [self.config.source, self.config.dest]:
@@ -112,7 +112,7 @@ class BackupManager():
     def _saveConfig(self) -> None:
         """Saves config as JSON file"""
         writeJson(os.path.join(self.config.source, self.config.config_dir, "config.json"), vars(self.config))
-        print(self.log.colourString(getString("Config saved"), "G"))
+        self.log.colourPrint(getString("Config saved"), "G")
         sys.exit(0)
 
     def _loadConfig(self) -> None:
@@ -123,16 +123,16 @@ class BackupManager():
         config = readJson(config_dir)
         self.config = ConfigObject(config)
         self.log.config = self.config
-        print(self.log.colourString(getString("Loaded config from:") + "\n" + config_dir, "G"))
+        self.log.colourPrint(getString("Loaded config from:") + "\n" + config_dir, "G")
         if self.config.source is None or FileOps.abspath(current_source) != FileOps.abspath(self.config.source):
-            print(self.log.colourString(getString("A config file matching the specified source was not found (case sensitive)"), "R"))
+            self.log.colourPrint(getString("A config file matching the specified source was not found (case sensitive)"), "R")
             sys.exit(1)
 
     def _abortRun(self) -> int:
         """Write log for aborted run and return 1 (internal use only)"""
         self.log.append([getString("### ABORTED ###")])
         self.log.writeLog("database.aborted.json")
-        print(self.log.colourString(getString("Run aborted"), "Y"))
+        self.log.colourPrint(getString("Run aborted"), "Y")
         return 1
 
     def _internalTests(self, transfer_lists: TransferLists) -> None:
@@ -204,27 +204,27 @@ class BackupManager():
                 sync_conflicts += sorted(list(source_new & dest_new))  # new on both sides
                 sync_conflicts = sorted(list(filter(lambda f: not self.source.fileMatch(f, f, dest_dict, set(), True), sync_conflicts)))  # don't already match
                 if len(sync_conflicts) >= 1:
-                    print(self.log.colourString(getString("WARNING: found files modified in both source and destination since last scan"), "Y"))
+                    self.log.colourPrint(getString("WARNING: found files modified in both source and destination since last scan"), "Y")
                     detection_flag = True
-                print(self.log.colourString(getString("Sync Database Conflicts: %s") % (len(sync_conflicts)), "V"))
+                self.log.colourPrint(getString("Sync Database Conflicts: %s") % (len(sync_conflicts)), "V")
                 self.log.printSyncDbConflicts(sync_conflicts, source_dict, dest_dict, source_prev, dest_prev)
             else:
                 dest_conflicts = sorted(list(dest_modified))
                 dest_conflicts += sorted(list(dest_missing))
                 dest_conflicts += sorted(list(dest_new))
                 if len(dest_conflicts) >= 1:
-                    print(self.log.colourString(getString("WARNING: found files modified in the destination since last scan"), "Y"))
+                    self.log.colourPrint(getString("WARNING: found files modified in the destination since last scan"), "Y")
                     detection_flag = True
-                print(self.log.colourString(getString("Destination Database Conflicts: %s") % (len(dest_conflicts)), "V"))
+                self.log.colourPrint(getString("Destination Database Conflicts: %s") % (len(dest_conflicts)), "V")
                 self.log.printChangedFiles(dest_conflicts, dest_dict, dest_prev, "   Dest", "     DB")
         # print database conflicts concerning CRCs if available, as well as CRC conflicts between source and dest if attributes otherwise match
         crc_errors_detected = []
         if len(source_crc_errors) > 0 or len(dest_crc_errors) > 0:
             self.log.append([getString("### CRC ERRORS DETECTED ###")], ["Section"])
-            print(self.log.colourString(getString("WARNING: found non matching CRC values, possible corruption detected"), "Y"))
+            self.log.colourPrint(getString("WARNING: found non matching CRC values, possible corruption detected"), "Y")
             detection_flag = True
             crc_errors_detected = sorted(list(source_crc_errors | dest_crc_errors))
-            print(self.log.colourString(getString("CRC Errors Detected: %s") % (len(crc_errors_detected)), "V"))
+            self.log.colourPrint(getString("CRC Errors Detected: %s") % (len(crc_errors_detected)), "V")
             if self.config.source != self.config.dest:
                 self.log.printSyncDbConflicts(crc_errors_detected, source_dict, dest_dict, source_prev, dest_prev)
             else:
@@ -232,7 +232,7 @@ class BackupManager():
         # show curses tree
         if detection_flag:
             while not self.config.noprompt:
-                print(self.log.colourString(getString("Show files as tree with curses (y/n)?"), "G"))
+                self.log.colourPrint(getString("Show files as tree with curses (y/n)?"), "G")
                 response = simplePrompt(["y", "n"])
                 if response == "n":
                     break
@@ -246,7 +246,7 @@ class BackupManager():
                     else:
                         sync_conflicts_tree([], crc_errors_detected)
                 except Exception:
-                    print(self.log.colourString(getString("Curses Error"), "R"))
+                    self.log.colourPrint(getString("Curses Error"), "R")
         return detection_flag
 
     def _printAndLogScanOnlyDiffSummary(self, side_str: str, side_info: FileScanner) -> None:
@@ -257,25 +257,25 @@ class BackupManager():
         list_new, list_missing, list_modified, moved = self_compare["self_only"], self_compare["other_only"], self_compare["changed"], self_compare["moved"]
         # print differences
         sum_size = self.log.prettySize(sum(side_dict[f]["size"] for f in list_new)).strip()
-        print(self.log.colourString(getString("%s New Files: %s (%s)") % (side_str, len(list_new), sum_size), "V"))
+        self.log.colourPrint(getString("%s New Files: %s (%s)") % (side_str, len(list_new), sum_size), "V")
         self.log.append([getString("### %s NEW FILES ###") % (side_str.upper())], ["Section"])
         self.log.printFiles(list_new, side_dict)
         sum_size = self.log.prettySize(sum(side_prev[f]["size"] for f in list_missing)).strip()
-        print(self.log.colourString(getString("%s Missing Files: %s (%s)") % (side_str, len(list_missing), sum_size), "V"))
+        self.log.colourPrint(getString("%s Missing Files: %s (%s)") % (side_str, len(list_missing), sum_size), "V")
         self.log.append([getString("### %s MISSING FILES ###") % (side_str.upper())], ["Section"])
         self.log.printFiles(list_missing, side_prev)
         sum_size = self.log.prettySize(sum(abs(side_dict[f]["size"] - side_prev[f]["size"]) for f in list_modified)).strip()
-        print(self.log.colourString(getString("%s Changed Files: %s (%s)") % (side_str, len(list_modified), sum_size), "V"))
+        self.log.colourPrint(getString("%s Changed Files: %s (%s)") % (side_str, len(list_modified), sum_size), "V")
         self.log.append([getString("### %s CHANGED FILES ###") % (side_str.upper())], ["Section"])
         self.log.printChangedFiles(list_modified, side_dict, side_prev, "    New", "    Old")
         sum_size = self.log.prettySize(sum(side_dict[f["source"]]["size"] for f in moved)).strip()
-        print(self.log.colourString(getString("%s Moved Files: %s (%s)") % (side_str, len(moved), sum_size), "V"))
+        self.log.colourPrint(getString("%s Moved Files: %s (%s)") % (side_str, len(moved), sum_size), "V")
         self.log.append([getString("### %s MOVED FILES ###") % (side_str.upper())], ["Section"])
         self.log.printMovedFiles(moved, side_dict, side_prev, "   New: ", "   Old: ")
         # show curses tree
         if list_new or list_missing or list_modified or moved:
             while not self.config.noprompt:
-                print(self.log.colourString(getString("Show files as tree with curses (y/n)?"), "G"))
+                self.log.colourPrint(getString("Show files as tree with curses (y/n)?"), "G")
                 response = simplePrompt(["y", "n"])
                 if response == "n":
                     break
@@ -283,7 +283,7 @@ class BackupManager():
                     from .treedisplay import scan_only_tree
                     scan_only_tree(side_str, list_new, list_missing, list_modified, moved)
                 except Exception:
-                    print(self.log.colourString(getString("Curses Error"), "R"))
+                    self.log.colourPrint(getString("Curses Error"), "R")
 
     def _printAndLogCompareDiffSummary(self, transfer_lists: TransferLists) -> None:
         # get lists and databases
@@ -314,29 +314,29 @@ class BackupManager():
             change_msg = getString("(will be left as is)")
         # print differences
         sum_size = self.log.prettySize(sum(source_dict[f]["size"] for f in source_only)).strip()
-        print(self.log.colourString(getString("Source Only (will be copied to dest): %s (%s)") % (len(source_only), sum_size), "V"))
+        self.log.colourPrint(getString("Source Only (will be copied to dest): %s (%s)") % (len(source_only), sum_size), "V")
         self.log.append([getString("### SOURCE ONLY ###")], ["Section"])
         self.log.printFiles(source_only, source_dict)
         sum_size = self.log.prettySize(sum(dest_dict[f]["size"] for f in dest_only)).strip()
-        print(self.log.colourString(getString("Destination Only %s: %s (%s)") % (dest_msg, len(dest_only), sum_size), "V"))
+        self.log.colourPrint(getString("Destination Only %s: %s (%s)") % (dest_msg, len(dest_only), sum_size), "V")
         self.log.append([getString("### DESTINATION ONLY ###")], ["Section"])
         self.log.printFiles(dest_only, dest_dict)
         sum_size = self.log.prettySize(sum(abs(source_dict[f]["size"] - dest_dict[f]["size"]) for f in changed)).strip()
-        print(self.log.colourString(getString("Changed Files %s: %s (%s)") % (change_msg, len(changed), sum_size), "V"))
+        self.log.colourPrint(getString("Changed Files %s: %s (%s)") % (change_msg, len(changed), sum_size), "V")
         self.log.append([getString("### CHANGED FILES ###")], ["Section"])
         self.log.printChangedFiles(changed, source_dict, dest_dict)
         if not self.config.nomoves:
             sum_size = self.log.prettySize(sum(source_dict[f["source"]]["size"] for f in moved)).strip()
-            print(self.log.colourString(getString("Moved Files %s: %s (%s)") % (move_msg, len(moved), sum_size), "V"))
+            self.log.colourPrint(getString("Moved Files %s: %s (%s)") % (move_msg, len(moved), sum_size), "V")
             self.log.append([getString("### MOVED FILES ###")], ["Section"])
             self.log.printMovedFiles(moved, source_dict, dest_dict)
         if self.config.main_mode == "sync" and self.config.sync_propagate_deletions:
             sum_size = self.log.prettySize(sum(dest_dict[f]["size"] for f in source_deleted)).strip()
-            print(self.log.colourString(getString("Deleted from source (will %s on dest): %s (%s)") % (archive_msg, len(source_deleted), sum_size), "V"))
+            self.log.colourPrint(getString("Deleted from source (will %s on dest): %s (%s)") % (archive_msg, len(source_deleted), sum_size), "V")
             self.log.append([getString("### DELETED FROM SOURCE ###")], ["Section"])
             self.log.printFiles(source_deleted, dest_dict)
             sum_size = self.log.prettySize(sum(source_dict[f]["size"] for f in dest_deleted)).strip()
-            print(self.log.colourString(getString("Deleted from dest (will %s on source): %s (%s)") % (archive_msg, len(dest_deleted), sum_size), "V"))
+            self.log.colourPrint(getString("Deleted from dest (will %s on source): %s (%s)") % (archive_msg, len(dest_deleted), sum_size), "V")
             self.log.append([getString("### DELETED FROM DESTINATION ###")], ["Section"])
             self.log.printFiles(dest_deleted, source_dict)
 
@@ -349,7 +349,7 @@ class BackupManager():
         fileman = FileManager(self.config, self.source, self.dest, self.log, self.backup_time, self.gui)
         # perform the backup/mirror/sync
         self.log.append([getString("### START ") + self.config.main_mode.upper() + simulation_msg.upper() + " ###"])
-        print(self.log.colourString(getString("Starting ") + self.config.main_mode, "V"))
+        self.log.colourPrint(getString("Starting ") + self.config.main_mode, "V")
         if self.config.main_mode == "mirror":
             fileman.handleDeletedFiles(self.config.dest, dest_only)
             fileman.copyFiles(self.config.source, self.config.dest, source_only, source_only)
@@ -372,7 +372,7 @@ class BackupManager():
         # dry run confirmation message
         if self.config.dry_run:
             simulation_msg = getString(" dry run")
-            print(self.log.colourString(getString("Dry Run"), "V"))
+            self.log.colourPrint(getString("Dry Run"), "V")
         else:
             simulation_msg = ""
         # scan and compare directories
@@ -389,7 +389,7 @@ class BackupManager():
                 self._printAndLogScanOnlyDiffSummary("Destination", self.dest)
             self.log.append([getString("### SCAN COMPLETED ###")])
             self.log.writeLog("database.json")
-            print(self.log.colourString(getString("Completed!"), "G"))
+            self.log.colourPrint(getString("Completed!"), "G")
             return 0
         # print differences between source and dest
         self._printAndLogCompareDiffSummary(transfer_lists)
@@ -397,7 +397,7 @@ class BackupManager():
         self._internalTests(transfer_lists)
         # exit if directories already match
         if transfer_lists.isEmpty():
-            print(self.log.colourString(getString("Directories already match, completed!"), "G"))
+            self.log.colourPrint(getString("Directories already match, completed!"), "G")
             self.log.append([getString("### NO CHANGES FOUND ###")])
             self.log.writeLog("database.json")
             return 0
@@ -407,7 +407,7 @@ class BackupManager():
             if self.gui:
                 go = self.gui_simplePrompt(getString("Scan complete, continue with %s%s?") % (self.config.main_mode, simulation_msg))
             else:
-                print(self.log.colourString(getString("Scan complete, continue with %s%s (y/n/skip/curses)?") % (self.config.main_mode, simulation_msg), "G"))
+                self.log.colourPrint(getString("Scan complete, continue with %s%s (y/n/skip/curses)?") % (self.config.main_mode, simulation_msg), "G")
                 go = simplePrompt(["y", "n", "skip", "curses"])
             if go == "skip":
                 if not transfer_lists.skipFileTransfers(self.log):
@@ -417,7 +417,7 @@ class BackupManager():
                     from .treedisplay import transfer_lists_tree
                     transfer_lists_tree(transfer_lists.getLists())
                 except Exception:
-                    print(self.log.colourString(getString("Curses Error"), "R"))
+                    self.log.colourPrint(getString("Curses Error"), "R")
             elif go == "n":
                 return self._abortRun()
             elif go == "y":
@@ -426,5 +426,5 @@ class BackupManager():
         self._performBackup(transfer_lists, simulation_msg)
         self.log.append([getString("### COMPLETED ###")])
         self.log.writeLog("database.json")
-        print(self.log.colourString(getString("Completed!"), "G"))
+        self.log.colourPrint(getString("Completed!"), "G")
         return 0
