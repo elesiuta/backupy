@@ -13,49 +13,51 @@
 
 # https://github.com/elesiuta/backupy
 
+import dataclasses
 import os
 import random
+import typing
 
 
 class ConfigObject:
     def __init__(self, config: dict):
         """Used for storing user configuration, use these attribute names as keys in your configuration dictionary"""
         # default config (from argparse)
-        self.source = None
-        self.dest = None
-        self.main_mode = "mirror"
-        self.select_mode = "source"
-        self.compare_mode = "attr"
-        self.sync_propagate_deletions = False
-        self.filter_include_list = None
-        self.filter_exclude_list = None
-        self.noarchive = False
-        self.nocolour = False
-        self.nofollow = False
-        self.nolog = False
-        self.nomoves = False
-        self.noprompt = False
-        self.dry_run = False
-        self.force_posix_path_sep = False
-        self.quit_on_db_conflict = False
-        self.scan_only = False
-        self.use_cold_storage = False
-        self.use_rsync = False
-        self.verify_copy = False
+        self.source: typing.Union[str, None] = None
+        self.dest: typing.Union[str, None] = None
+        self.main_mode: str = "mirror"
+        self.select_mode: str = "source"
+        self.compare_mode: str = "attr"
+        self.sync_propagate_deletions: bool = False
+        self.filter_include_list: typing.Union[list[str], None] = None
+        self.filter_exclude_list: typing.Union[list[str], None] = None
+        self.noarchive: bool = False
+        self.nocolour: bool = False
+        self.nofollow: bool = False
+        self.nolog: bool = False
+        self.nomoves: bool = False
+        self.noprompt: bool = False
+        self.dry_run: bool = False
+        self.force_posix_path_sep: bool = False
+        self.quit_on_db_conflict: bool = False
+        self.scan_only: bool = False
+        self.use_cold_storage: bool = False
+        self.use_rsync: bool = False
+        self.verify_copy: bool = False
         # default config (additional)
-        self.source_unique_id = "%05x" % random.randrange(16**5)
-        self.dest_unique_id = "%05x" % random.randrange(16**5)
-        self.archive_dir = ".backupy/Archive"
-        self.config_dir = ".backupy"
-        self.log_dir = ".backupy/Logs"
-        self.trash_dir = ".backupy/Trash"
-        self.cleanup_empty_dirs = True
-        self.root_alias_log = True
-        self.stdout_status_bar = True
-        self.verbose = True
-        self.write_database_x2 = False
-        self.write_log_dest = False
-        self.write_log_summary = False
+        self.source_unique_id: str = "%05x" % random.randrange(16**5)
+        self.dest_unique_id: str = "%05x" % random.randrange(16**5)
+        self.archive_dir: str = ".backupy/Archive"
+        self.config_dir: str = ".backupy"
+        self.log_dir: str = ".backupy/Logs"
+        self.trash_dir: str = ".backupy/Trash"
+        self.cleanup_empty_dirs: bool = True
+        self.root_alias_log: bool = True
+        self.stdout_status_bar: bool = True
+        self.verbose: bool = True
+        self.write_database_x2: bool = False
+        self.write_log_dest: bool = False
+        self.write_log_summary: bool = False
         # load config
         for key in config:
             if config[key] is not None and hasattr(self, key):
@@ -78,3 +80,44 @@ class ConfigObject:
             super().__setattr__(name, value)
         else:
             raise Exception("Error: Config modified during run (should be locked)")
+
+
+@dataclasses.dataclass
+class ConfigDataClass:
+    """Can be used to create a BackuPy config dictionary"""
+    # default config (from argparse)
+    source: typing.Union[str, None] = None
+    dest: typing.Union[str, None] = None
+    main_mode: str = "mirror"
+    select_mode: str = "source"
+    compare_mode: str = "attr"
+    sync_propagate_deletions: bool = False
+    filter_include_list: typing.Union[list[str], None] = None
+    filter_exclude_list: typing.Union[list[str], None] = None
+    noarchive: bool = False
+    nocolour: bool = False
+    nofollow: bool = False
+    nolog: bool = False
+    nomoves: bool = False
+    noprompt: bool = False
+    dry_run: bool = False
+    force_posix_path_sep: bool = False
+    quit_on_db_conflict: bool = False
+    scan_only: bool = False
+    use_cold_storage: bool = False
+    use_rsync: bool = False
+    verify_copy: bool = False
+    # default config (additional)
+    source_unique_id: str = "%05x" % random.randrange(16**5)
+    dest_unique_id: str = "%05x" % random.randrange(16**5)
+    archive_dir: str = ".backupy/Archive"
+    config_dir: str = ".backupy"
+    log_dir: str = ".backupy/Logs"
+    trash_dir: str = ".backupy/Trash"
+    cleanup_empty_dirs: bool = True
+    root_alias_log: bool = True
+    stdout_status_bar: bool = True
+    verbose: bool = True
+    write_database_x2: bool = False
+    write_log_dest: bool = False
+    write_log_summary: bool = False
