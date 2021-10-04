@@ -13,7 +13,6 @@
 
 # https://github.com/elesiuta/backupy
 
-import dataclasses
 import os
 import random
 import typing
@@ -80,44 +79,3 @@ class ConfigObject:
             super().__setattr__(name, value)
         else:
             raise Exception("Error: Config modified during run (should be locked)")
-
-
-@dataclasses.dataclass
-class ConfigDataClass:
-    """Can be used to create a BackuPy config dictionary"""
-    # default config (from argparse)
-    source: typing.Union[str, None] = None
-    dest: typing.Union[str, None] = None
-    main_mode: str = "mirror"
-    select_mode: str = "source"
-    compare_mode: str = "attr"
-    sync_propagate_deletions: bool = False
-    filter_include_list: typing.Union[list[str], None] = None
-    filter_exclude_list: typing.Union[list[str], None] = None
-    noarchive: bool = False
-    nocolour: bool = False
-    nofollow: bool = False
-    nolog: bool = False
-    nomoves: bool = False
-    noprompt: bool = False
-    dry_run: bool = False
-    force_posix_path_sep: bool = False
-    quit_on_db_conflict: bool = False
-    scan_only: bool = False
-    use_cold_storage: bool = False
-    use_rsync: bool = False
-    verify_copy: bool = False
-    # default config (additional)
-    source_unique_id: str = "%05x" % random.randrange(16**5)
-    dest_unique_id: str = "%05x" % random.randrange(16**5)
-    archive_dir: str = ".backupy/Archive"
-    config_dir: str = ".backupy"
-    log_dir: str = ".backupy/Logs"
-    trash_dir: str = ".backupy/Trash"
-    cleanup_empty_dirs: bool = True
-    root_alias_log: bool = True
-    stdout_status_bar: bool = True
-    verbose: bool = True
-    write_database_x2: bool = False
-    write_log_dest: bool = False
-    write_log_summary: bool = False
