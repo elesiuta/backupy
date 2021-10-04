@@ -5,7 +5,7 @@ __all__ = ["create_job", "main", "run", "start_gui", "version"]
 
 
 def create_job(config: dict) -> BackupManager:
-    """Create a new job for a given configuration, returns a BackupManager object"""
+    """Create a new job for a given configuration (see config.json or config.py for key names), returns a BackupManager object"""
     return BackupManager(config)
 
 
@@ -18,7 +18,7 @@ def main():
 
 
 def run(config: dict) -> int:
-    """Execute BackuPy for a given configuration"""
+    """Execute backupy for a given configuration (see config.json or config.py for key names), returns exit status"""
     backup_man = BackupManager(config)
     return backup_man.run()
 

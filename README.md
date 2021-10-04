@@ -18,14 +18,14 @@ pip install backupy --upgrade
 - Detection and alerts of corrupted files
 - Detection and alerts of unexpected file modifications on destination outside of backups and mirrors, or sync conflicts (a file was modified on both sides since the last sync)
 - JSON formatted database for tracking files and CSV formatted logs
-- Files are always safe by default, being moved to an identically structured archive directory before being deleted or overwritten
 - Filter files with regular expressions
+- Files are always safe by default, being moved to an identically structured archive directory before being deleted or overwritten
 ## [Design Goals](#design-goals)
 - Backups should be future proof and verifiable, even without BackuPy
   - uses [file-based increments](https://wiki.archlinux.org/index.php/Synchronization_and_backup_programs#File-based_increments) and human readable database/log files that are also easy to parse
 - Code should be simple and easy to verify to ensure predicable and reliable operation
-  - a callgraph is available under analysis
-  - there are only three, easy to follow functions under `FileManager` from `backupy.fileman` that ever touch your files, no more, no less, three shall be the number of thou functions, and the number of the functions shall be three
+  - a callgraph is available in `analysis/callgraph.svg`
+  - there are only three, easy to follow functions (under `FileManager` in `backupy/fileman.py`) that ever touch your files, no more, no less, three shall be the number of thou functions, and the number of the functions shall be three
 - Follow the principle of least astonishment
   - clear backup behaviour between directories, the current status of files and how they will be handled upon execution should be perfectly obvious
 - Avoid feature creep and duplicating other programs
@@ -34,26 +34,28 @@ pip install backupy --upgrade
   - no backup encryption (use encrypted storage)
   - no filesystem monitoring (this is not a continuous backup/sync program)
 - Easily extensible with other backends
-  - all the low level functions used for file operations are under `FileOps` from `backupy.utils` for easy monkey patching
+  - all the low level functions used for file operations are under `FileOps` from `backupy.utils` for easy monkey patching (see `example_extension.py`)
 ## [Usage Description](#usage-description)
 - Source and destination directories can be any directory accessible via the computer's file system
 - Destination can be empty or contain files from a previous backup (even one made without BackuPy), matching files on both sides will be skipped
-- Main modes (how to handle new and deleted files)
-  - Backup mode: copies files that are only in source to destination
-  - Mirror mode: copies files that are only in source to destination and deletes files that are only in destination
-  - Sync mode: copies files that are only in source to destination and copies files that are only in destination to source
-- Selection modes (which file to select in cases where different versions exist on both sides)
-  - Source mode: copy source files to destination
-  - Destination mode: copy destination files to source
-  - Newer mode: copy newer files based on last modified time
-  - None mode: don't copy either, differing files will only be logged for manual intervention
-- Compare modes (how to detect which files have changed)
-  - Attribute mode: compare file attributes (size and last modified time)
-  - Attribute+ mode: compare file attributes and calculate CRCs only for new and changed files for future verification
-  - CRC mode: compare file attributes and CRC for every file, and checks previously stored CRCs to detect corruption
+- `Main modes` (how to handle new and deleted files)
+  - `Backup mode:` copies files that are only in source to destination
+  - `Mirror mode:` copies files that are only in source to destination and deletes files that are only in destination
+  - `Sync mode:` copies files that are only in source to destination and copies files that are only in destination to source
+- `Selection modes` (which file to select in cases where different versions exist on both sides)
+  - `Source mode:` copy source files to destination
+  - `Destination mode:` copy destination files to source
+  - `Newer mode:` copy newer files based on last modified time
+  - `None mode:` don't copy either, differing files will only be logged for manual intervention
+- `Compare modes` (how to detect which files have changed)
+  - `Attribute mode:` compare file attributes (size and last modified time)
+  - `Attribute+ mode:` compare file attributes and calculate CRCs only for new and changed files for future verification
+  - `CRC mode:` compare file attributes and CRC for every file, and checks previously stored CRCs to detect corruption
 - Test your settings first with the `--dry-run` flag
 - By default, you will always be notified of any changes, unexpected modifications, sync conflicts, or file corruption before being prompted to continue, cancel, or skip selected files
-- You can also "restore" files with BackuPy by swapping your source and destination
+- Symbolic links to folders are never followed and always copied verbatim
+- Symbolic links to files are followed by default, copying the referenced file, use `--nofollow` to copy symbolic links to files verbatim
+- To restore files, just copy them over from your destination to source (or swap source and destination in BackuPy)
 ## [Command Line Interface](#command-line-interface)
 ```
 usage: backupy [options] -- <source> <dest>
@@ -144,33 +146,33 @@ configuration options:
   -l, --load   Load configuration from <source>/.backupy/config.json
 ```
 ## [Extra Configuration Options](#extra-configuration-options)
-- Some options can only be set from the config.json file
-  - source_unique_id & dest_unique_id
-    - unique id for each folder, used when write_database_x2 is enabled, each assigned a random string by default
-  - archive_dir
-    - can be any subdirectory, default = ".backupy/Archive"
-  - config_dir
-    - can't be changed under normal operation, default = ".backupy"
-  - log_dir
-    - can be any subdirectory, default = ".backupy/Logs"
-  - trash_dir
-    - can be any subdirectory, default = ".backupy/Trash"
-  - cleanup_empty_dirs
-    - delete directories when they become empty, default = True
-  - nocolour
-    - disable colour when printing to stdout, default = False
-  - root_alias_log
-    - replace source and dest paths with "\<source\>" and "\<dest\>" in logs, default = True
-  - stdout_status_bar
-    - show progress status bar, default = True
-  - verbose
-    - print program status updates to stdout, default = True
-  - write_database_x2
-    - write both source and destination databases to each side using their unique id, useful for syncing groups of more than two folders or with the --sync-delete flag, default = False
-  - write_log_dest
-    - write a copy of the log to \<dest\>/\<log_dir\>/log-yymmdd-HHMM-dest.csv, default = False
-  - write_log_summary
-    - alternative log structure, written in addition to standard log, default = False
+- Some options can only be set from the `config.json` file (all options and defaults are in `backupy/config.py`)
+  - `source_unique_id` & `dest_unique_id`
+    - unique id for each folder, used when `write_database_x2` is enabled, each assigned a random string by default
+  - `archive_dir` = ".backupy/Archive"
+    - can be any subdirectory
+  - `config_dir` = ".backupy"
+    - can't be changed under normal operation
+  - `log_dir` = ".backupy/Logs"
+    - can be any subdirectory
+  - `trash_dir` = ".backupy/Trash"
+    - can be any subdirectory
+  - `cleanup_empty_dirs` = True
+    - delete directories when they become empty
+  - `nocolour` = False
+    - disable colour when printing to stdout
+  - `root_alias_log` = True
+    - abbreviate absolute paths to source and dest with `<source>` and `<dest>` in logs
+  - `stdout_status_bar` = True
+    - show progress status bar
+  - `verbose` = True
+    - print list of differences between directories to stdout
+  - `write_database_x2` = False
+    - write both source and destination databases to each side using their `unique_id`, useful for syncing groups of more than two folders or with the `--sync-delete` flag
+  - `write_log_dest` = False
+    - write a copy of the log to `<dest>/<log_dir>/log-yymmdd-HHMM-dest.csv`
+  - `write_log_summary` = False
+    - alternative log structure, written in addition to standard log
 ## [Building From Source](#building-from-source)
 - Run tests with
 ```

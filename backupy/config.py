@@ -20,8 +20,8 @@ import typing
 
 class ConfigObject:
     def __init__(self, config: dict):
-        """Used for storing user configuration, use these attribute names as keys in your configuration dictionary"""
-        # default config (from argparse)
+        """Used for storing user configuration, these attribute names are also the key names in config.json or the config dictionary"""
+        # default config (from argparse cli)
         self.source: typing.Union[str, None] = None
         self.dest: typing.Union[str, None] = None
         self.main_mode: str = "mirror"
@@ -43,7 +43,7 @@ class ConfigObject:
         self.use_cold_storage: bool = False
         self.use_rsync: bool = False
         self.verify_copy: bool = False
-        # default config (additional)
+        # default config (additional, cannot set via cli)
         self.source_unique_id: str = "%05x" % random.randrange(16**5)
         self.dest_unique_id: str = "%05x" % random.randrange(16**5)
         self.archive_dir: str = ".backupy/Archive"
