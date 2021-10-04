@@ -61,10 +61,7 @@ pip install backupy --upgrade
 usage: backupy [options] -- <source> <dest>
        backupy <source> <dest> [options]
        backupy <source> --load [-c mode] [--dbscan] [--dry-run]
-       backupy -h | --help
-
-BackuPy: A simple backup program in python with an emphasis on data integrity
-and transparent behaviour
+       backupy -h | --help | --version
 
 positional arguments:
   source       Path to source
@@ -144,6 +141,13 @@ configuration options:
   -p, --posix  Force posix style paths on non-posix operating systems
   -k, --save   Save configuration to <source>/.backupy/config.json
   -l, --load   Load configuration from <source>/.backupy/config.json
+
+BackuPy is a simple backup program in python with an emphasis on data 
+integrity and transparent behaviour - https://github.com/elesiuta/backupy 
+
+BackuPy comes with ABSOLUTELY NO WARRANTY. This is free software, and you are 
+welcome to redistribute it under certain conditions. See the GNU General 
+Public Licence for details.
 ```
 ## [Extra Configuration Options](#extra-configuration-options)
 - Some options can only be set from the `config.json` file (all options and defaults are in `backupy/config.py`)

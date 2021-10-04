@@ -15,12 +15,15 @@
 
 import argparse
 import sys
+import textwrap
 
 from .backupman import BackupManager
 from .utils import getString, getVersion
 
 
 class ArgparseCustomFormatter(argparse.HelpFormatter):
+    def _fill_text(self, text, width, indent):
+        return "".join(indent + line for line in text.splitlines(keepends=True))
     def _split_lines(self, text, width):
         if text[:2] == 'F!':
             return text.splitlines()[1:]
@@ -29,12 +32,19 @@ class ArgparseCustomFormatter(argparse.HelpFormatter):
 
 def main() -> int:
     """start the command line interface for backupy"""
-    parser = argparse.ArgumentParser(description=getString("BackuPy: A simple backup program in python with an emphasis on data integrity and transparent behaviour"),
+    parser = argparse.ArgumentParser(epilog=textwrap.dedent("""
+                                     BackuPy is a simple backup program in python with an emphasis on data 
+                                     integrity and transparent behaviour - https://github.com/elesiuta/backupy 
+
+                                     BackuPy comes with ABSOLUTELY NO WARRANTY. This is free software, and you are 
+                                     welcome to redistribute it under certain conditions. See the GNU General 
+                                     Public Licence for details.
+                                     """),
                                      formatter_class=lambda prog: ArgparseCustomFormatter(prog, max_help_position=15),
-                                     usage="%(prog)s [options] -- <source> <dest>\n"
-                                           "       %(prog)s <source> <dest> [options]\n"
-                                           "       %(prog)s <source> --load [-c mode] [--dbscan] [--dry-run]\n"
-                                           "       %(prog)s -h | --help")
+                                     usage="backupy [options] -- <source> <dest>\n"
+                                           "       backupy <source> <dest> [options]\n"
+                                           "       backupy <source> --load [-c mode] [--dbscan] [--dry-run]\n"
+                                           "       backupy -h | --help | --version")
     parser.add_argument("source", action="store", type=str,
                         help=getString("Path to source"))
     parser.add_argument("dest", action="store", type=str, nargs="?", default=None,
