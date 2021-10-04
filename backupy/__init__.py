@@ -1,4 +1,5 @@
 from .backupman import BackupManager
+from .utils import FileOps
 
 __all__ = ["create_job", "main", "run", "start_gui", "version"]
 
