@@ -4,7 +4,7 @@
   - [Design Goals](#design-goals)
   - [Usage Description](#usage-description)
   - [Command Line Interface](#command-line-interface)
-  - [Extra Configuration Options](#extra-configuration-options)
+  - [Configuration File](#configuration-file)
   - [Building From Source](#building-from-source)
 ## [Installation](#installation)
 - Install the latest release from PyPI (supports all platforms with Python and has no other dependencies)
@@ -149,34 +149,38 @@ BackuPy comes with ABSOLUTELY NO WARRANTY. This is free software, and you are
 welcome to redistribute it under certain conditions. See the GNU General 
 Public Licence for details.
 ```
-## [Extra Configuration Options](#extra-configuration-options)
-- Some options can only be set from the `config.json` file (all options and defaults are in `backupy/config.py`)
-  - `source_unique_id` & `dest_unique_id`
-    - unique id for each folder, used when `write_database_x2` is enabled, each assigned a random string by default
-  - `archive_dir` = ".backupy/Archive"
-    - can be any subdirectory
-  - `config_dir` = ".backupy"
-    - can't be changed under normal operation
-  - `log_dir` = ".backupy/Logs"
-    - can be any subdirectory
-  - `trash_dir` = ".backupy/Trash"
-    - can be any subdirectory
-  - `cleanup_empty_dirs` = True
-    - delete directories when they become empty
-  - `nocolour` = False
-    - disable colour when printing to stdout
-  - `root_alias_log` = True
-    - abbreviate absolute paths to source and dest with `<source>` and `<dest>` in logs
-  - `stdout_status_bar` = True
-    - show progress status bar
-  - `verbose` = True
-    - print list of differences between directories to stdout
-  - `write_database_x2` = False
-    - write both source and destination databases to each side using their `unique_id`, useful for syncing groups of more than two folders or with the `--sync-delete` flag
-  - `write_log_dest` = False
-    - write a copy of the log to `<dest>/<log_dir>/log-yymmdd-HHMM-dest.csv`
-  - `write_log_summary` = False
-    - alternative log structure, written in addition to standard log
+## [Configuration File](#configuration-file)
+- Note: The config file is saved to, and loaded from `<source>/.backupy/config.json`
+  - it contains all the options from the command line interface along with some additional options
+  - the only CLI options that can be used with `--load` and can override settings in `config.json` are `-c mode`, `--dbscan`, and `--dry-run`
+  - see `backupy/config.py` for where all the options and defaults are stored in code
+  - below is a description of all the other options that are available
+- `source_unique_id` & `dest_unique_id`
+  - unique id for each folder, used when `write_database_x2` is enabled, each assigned a random string by default
+- `archive_dir` = ".backupy/Archive"
+  - can be any subdirectory
+- `config_dir` = ".backupy"
+  - can't be changed under normal operation
+- `log_dir` = ".backupy/Logs"
+  - can be any subdirectory
+- `trash_dir` = ".backupy/Trash"
+  - can be any subdirectory
+- `cleanup_empty_dirs` = True
+  - delete directories when they become empty
+- `root_alias_log` = True
+  - abbreviate absolute paths to source and dest with `<source>` and `<dest>` in logs
+- `stdout_status_bar` = True
+  - show progress status bar
+- `verbose` = True
+  - print list of differences between directories to stdout
+- `write_database_x2` = False
+  - write both source and destination databases to each side using their `unique_id`, useful for syncing groups of more than two folders or with the `--sync-delete` flag
+- `write_log_dest` = False
+  - write a copy of the log to `<dest>/<log_dir>/log-yymmdd-HHMM-dest.csv`
+- `write_log_summary` = False
+  - alternative log structure, written in addition to standard log
+- `nocolour` = False
+  - disable colour when printing to stdout
 ## [Building From Source](#building-from-source)
 - Run tests with
 ```
