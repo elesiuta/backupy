@@ -321,189 +321,189 @@ class TestBackupy(unittest.TestCase):
 
     def test_mirror_new(self):
         test_name = "mirror-new"
-        config = {"main_mode": "mirror", "select_mode": "new", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "new", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source(self):
         test_name = "mirror-source"
-        config = {"main_mode": "mirror", "select_mode": "source", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_log(self):
         test_name = "mirror-source-log"
-        config = {"main_mode": "mirror", "select_mode": "source", "nomoves": True, "noprompt": True, "nolog": False, "noarchive": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "nomoves": True, "noprompt": True, "nolog": False, "noarchive": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_dest(self):
         test_name = "mirror-dest"
-        config = {"main_mode": "mirror", "select_mode": "dest", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "dest", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_no(self):
         test_name = "mirror-no"
-        config = {"main_mode": "mirror", "select_mode": "no", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "no", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_backup_new(self):
         test_name = "backup-new"
-        config = {"main_mode": "backup", "select_mode": "new", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
+        config = {"force_posix_path_sep": True, "main_mode": "backup", "select_mode": "new", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_backup_source(self):
         test_name = "backup-source"
-        config = {"main_mode": "backup", "select_mode": "source", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
+        config = {"force_posix_path_sep": True, "main_mode": "backup", "select_mode": "source", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_backup_dest(self):
         test_name = "backup-dest"
-        config = {"main_mode": "backup", "select_mode": "dest", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
+        config = {"force_posix_path_sep": True, "main_mode": "backup", "select_mode": "dest", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_backup_no(self):
         test_name = "backup-no"
-        config = {"main_mode": "backup", "select_mode": "no", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
+        config = {"force_posix_path_sep": True, "main_mode": "backup", "select_mode": "no", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_new(self):
         test_name = "sync-new"
-        config = {"main_mode": "sync", "select_mode": "new", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
+        config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "new", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_source(self):
         test_name = "sync-source"
-        config = {"main_mode": "sync", "select_mode": "source", "nomoves": True, "sync_propagate_deletions": True, "noprompt": True, "nolog": True, "noarchive": True}
+        config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "source", "nomoves": True, "sync_propagate_deletions": True, "noprompt": True, "nolog": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_source_log(self):
         test_name = "sync-source-log"
-        config = {"main_mode": "sync", "select_mode": "source", "nomoves": True, "noprompt": True, "nolog": False, "noarchive": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "source", "nomoves": True, "noprompt": True, "nolog": False, "noarchive": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_dest(self):
         test_name = "sync-dest"
-        config = {"main_mode": "sync", "select_mode": "dest", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
+        config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "dest", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_no(self):
         test_name = "sync-no"
-        config = {"main_mode": "sync", "select_mode": "no", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
+        config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "no", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_new_archive(self):
         test_name = "mirror-new-archive"
-        config = {"main_mode": "mirror", "select_mode": "new", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "new", "nomoves": True, "noprompt": True, "nolog": True, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_backup_new_moved(self):
         test_name = "backup-new-moved"
-        config = {"main_mode": "backup", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": True, "noarchive": True}
+        config = {"force_posix_path_sep": True, "main_mode": "backup", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_backup_new_moved_match(self):
         test_name = "backup-new-moved-match"
-        config = {"main_mode": "backup", "select_mode": "new", "compare_mode": "crc", "nomoves": False, "noprompt": True, "nolog": True, "noarchive": True}
+        config = {"force_posix_path_sep": True, "main_mode": "backup", "select_mode": "new", "compare_mode": "crc", "nomoves": False, "noprompt": True, "nolog": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_backup_new_moved_all(self):
         test_name = "backup-new-moved-all"
-        config = {"main_mode": "backup", "select_mode": "new", "compare_mode": "crc", "nomoves": False, "noprompt": True, "nolog": True, "noarchive": True}
+        config = {"force_posix_path_sep": True, "main_mode": "backup", "select_mode": "new", "compare_mode": "crc", "nomoves": False, "noprompt": True, "nolog": True, "noarchive": True}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_new_moved_archive(self):
         test_name = "mirror-new-moved-archive"
-        config = {"main_mode": "mirror", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": True, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": True, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_new_log(self):
         test_name = "sync-new-log"
-        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_new_log_set1(self):
         test_name = "sync-new-log-set1"
-        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_new_log_dry_run_set1(self):
         test_name = "sync-new-log-dry_run-set1"
-        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "dry_run": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "dry_run": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_new_nolog_dry_run_set1(self):
         test_name = "sync-new-nolog-dry_run-set1"
-        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": True, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "dry_run": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": True, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "dry_run": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=False, rewrite_sep=False, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_log_set1(self):
         test_name = "mirror-source-log-set1"
-        config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_log_dir_set1(self):
         test_name = "mirror-source-log-dir-set1"
-        config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy/Config", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy/Config", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_log_dir_set0(self):
         test_name = "mirror-source-log-dir-set0"
-        config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "sync_propagate_deletions": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy/Config", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "sync_propagate_deletions": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy/Config", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=0)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_twice_nochanges(self):
         test_name = "sync-twice-nochanges-set1"
-        config = {"main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "backup_time_override": "000000-0000"}
         runTest(test_name, config, rewrite_log=True, set=1, compare=False, setup=True, cleanup=False, write_solution=False)
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1, setup=False)
         self.assertEqual(dirA, dirAsol, str(compDict))
@@ -511,35 +511,35 @@ class TestBackupy(unittest.TestCase):
 
     def test_mirror_source_filter(self):
         test_name = "mirror-source-filter"
-        config = {"main_mode": "mirror", "select_mode": "source", "filter_include_list": ["modified"], "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy/Config", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "filter_include_list": ["modified"], "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy/Config", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=0)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_filter_false(self):
         test_name = "mirror-source-filter-false"
-        config = {"main_mode": "mirror", "select_mode": "source", "filter_exclude_list": ["modified"], "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy/Config", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "filter_exclude_list": ["modified"], "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy/Config", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=0)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_set2(self):
         test_name = "mirror-source-set2"
-        config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_attrplus_set2(self):
         test_name = "mirror-source-attrplus-set2"
-        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "attr+", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "compare_mode": "attr+", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_crc_set2(self):
         test_name = "mirror-source-crc-set2"
-        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "crc", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "compare_mode": "crc", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
@@ -553,140 +553,140 @@ class TestBackupy(unittest.TestCase):
 
     def test_mirror_source_aliaslog_set2(self):
         test_name = "mirror-source-aliaslog-set2"
-        config = {"main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": True, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": True, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_source_attrplus_set2(self):
         test_name = "sync-source-attrplus-set2"
-        config = {"main_mode": "sync", "select_mode": "source", "compare_mode": "attr+", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "source", "compare_mode": "attr+", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_source_crc_set2(self):
         test_name = "sync-source-crc-set2"
-        config = {"main_mode": "sync", "select_mode": "source", "compare_mode": "crc", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "write_log_summary": True, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "source", "compare_mode": "crc", "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": False, "noarchive": False, "write_log_summary": True, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_verifycopy_set2(self):
         test_name = "mirror-source-verifycopy-set2"
-        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "attr", "verify_copy": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "compare_mode": "attr", "verify_copy": True, "noprompt": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_verifycopyplus_set2(self):
         test_name = "mirror-source-verifycopyplus-set2"
-        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "attr+", "verify_copy": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "compare_mode": "attr+", "verify_copy": True, "noprompt": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_dest_verifycopyplus_set2(self):
         test_name = "sync-dest-verifycopyplus-set2"
-        config = {"main_mode": "sync", "select_mode": "dest", "compare_mode": "attr+", "verify_copy": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "dest", "compare_mode": "attr+", "verify_copy": True, "noprompt": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_verifycopycrc_set2(self):
         test_name = "mirror-source-verifycopycrc-set2"
-        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "crc", "verify_copy": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "compare_mode": "crc", "verify_copy": True, "noprompt": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_scanonly_set2(self):
         test_name = "mirror-source-scanonly-set2"
-        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "attr+", "scan_only": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "compare_mode": "attr+", "scan_only": True, "noprompt": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_scanonlycrc_set2(self):
         test_name = "mirror-source-scanonlycrc-set2"
-        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "crc", "scan_only": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "compare_mode": "crc", "scan_only": True, "noprompt": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_qconflicts_set2(self):
         test_name = "mirror-source-qconflicts-set2"
-        config = {"main_mode": "mirror", "select_mode": "source", "quit_on_db_conflict": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "quit_on_db_conflict": True, "noprompt": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_qconflictscrc_set2(self):
         test_name = "mirror-source-qconflictscrc-set2"
-        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "crc", "quit_on_db_conflict": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "compare_mode": "crc", "quit_on_db_conflict": True, "noprompt": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_qconflicts_set1(self):
         test_name = "mirror-source-qconflicts-set1"
-        config = {"main_mode": "mirror", "select_mode": "source", "quit_on_db_conflict": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "quit_on_db_conflict": True, "noprompt": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_qconflicts_set0(self):
         test_name = "mirror-source-qconflicts-set0"
-        config = {"main_mode": "mirror", "select_mode": "source", "quit_on_db_conflict": True, "noprompt": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "quit_on_db_conflict": True, "noprompt": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=0)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_attr_set3(self):
         test_name = "mirror-source-attr-set3"
-        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "attr", "noprompt": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "compare_mode": "attr", "noprompt": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=3)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_attrp_set3(self):
         test_name = "mirror-source-attrp-set3"
-        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "attr+", "noprompt": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "compare_mode": "attr+", "noprompt": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=3)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_mirror_source_crc_set3(self):
         test_name = "mirror-source-crc-set3"
-        config = {"main_mode": "mirror", "select_mode": "source", "compare_mode": "crc", "noprompt": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "mirror", "select_mode": "source", "compare_mode": "crc", "noprompt": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=3)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_deleted_set0(self):
         test_name = "sync-deleted-log-set0"
-        config = {"main_mode": "sync", "select_mode": "new", "noprompt": True, "source_unique_id": "sourceid", "dest_unique_id": "destid", "sync_propagate_deletions": True, "write_database_x2": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "new", "noprompt": True, "source_unique_id": "sourceid", "dest_unique_id": "destid", "sync_propagate_deletions": True, "write_database_x2": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=0)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_deleted_set1(self):
         test_name = "sync-deleted-log-set1"
-        config = {"main_mode": "sync", "select_mode": "new", "noprompt": True, "source_unique_id": "sourceid", "dest_unique_id": "destid", "sync_propagate_deletions": True, "write_database_x2": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "new", "noprompt": True, "source_unique_id": "sourceid", "dest_unique_id": "destid", "sync_propagate_deletions": True, "write_database_x2": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_deleted_set2(self):
         test_name = "sync-deleted-log-set2"
-        config = {"main_mode": "sync", "select_mode": "new", "noprompt": True, "source_unique_id": "sourceid", "dest_unique_id": "destid", "sync_propagate_deletions": True, "write_database_x2": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "new", "noprompt": True, "source_unique_id": "sourceid", "dest_unique_id": "destid", "sync_propagate_deletions": True, "write_database_x2": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=2)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
     def test_sync_deleted_set3(self):
         test_name = "sync-deleted-log-set3"
-        config = {"main_mode": "sync", "select_mode": "new", "noprompt": True, "source_unique_id": "sourceid", "dest_unique_id": "destid", "sync_propagate_deletions": True, "write_database_x2": True, "backup_time_override": "000000-0000"}
+        config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "new", "noprompt": True, "source_unique_id": "sourceid", "dest_unique_id": "destid", "sync_propagate_deletions": True, "write_database_x2": True, "backup_time_override": "000000-0000"}
         dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, set=3)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
