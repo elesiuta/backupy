@@ -169,10 +169,6 @@ class LogManager:
         else:
             print(self.colourString(msg, colour))
 
-    def verbosePrint(self, msg: str, colour: str) -> None:
-        if self.config.verbose:
-            self.colourPrint(msg, colour)
-
     def printFileInfo(self, header: str, f: str, d: dict, sub_header: str = "", skip_info: bool = False) -> None:
         header, sub_header = getString(header), getString(sub_header)
         if f in d and d[f] is not None:
