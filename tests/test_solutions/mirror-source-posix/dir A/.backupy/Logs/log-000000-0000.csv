@@ -12,23 +12,23 @@ File:,Source,file modified newer on B.txt,35 B,Wed Jul 17 13:21:32 2019
 ### MOVED FILES ###
 Source:,,renamed file A.txt,14 B,Wed Jul 17 13:14:48 2019
 Dest:,,renamed file B.txt,14 B,Wed Jul 17 13:14:48 2019
-Source:,,subdir/renamed dir A/file1.txt,11 B,Wed Jul 17 13:16:00 2019
-Dest:,,renamed dir B/file1.txt,11 B,Wed Jul 17 13:16:00 2019
-Source:,,subdir/renamed dir A/file2.txt,2 B,Wed Jul 17 13:16:06 2019
-Dest:,,renamed dir B/file2.txt,2 B,Wed Jul 17 13:16:06 2019
-Source:,,subdir/renamed dir A/file3.txt,45 B,Wed Jul 17 13:16:26 2019
-Dest:,,renamed dir B/file3.txt,45 B,Wed Jul 17 13:16:26 2019
+Source:,,subdir\renamed dir A\file1.txt,11 B,Wed Jul 17 13:16:00 2019
+Dest:,,renamed dir B\file1.txt,11 B,Wed Jul 17 13:16:00 2019
+Source:,,subdir\renamed dir A\file2.txt,2 B,Wed Jul 17 13:16:06 2019
+Dest:,,renamed dir B\file2.txt,2 B,Wed Jul 17 13:16:06 2019
+Source:,,subdir\renamed dir A\file3.txt,45 B,Wed Jul 17 13:16:26 2019
+Dest:,,renamed dir B\file3.txt,45 B,Wed Jul 17 13:16:26 2019
 ### START MIRROR ###
-Move:,<dest>,empty dir only B,<dest>/.backupy/Trash/000000-0000,empty dir only B
-Move:,<dest>,file only B.txt,<dest>/.backupy/Trash/000000-0000,file only B.txt
+Move:,<dest>,empty dir only B,<dest>\.backupy\Trash\000000-0000,empty dir only B
+Move:,<dest>,file only B.txt,<dest>\.backupy\Trash\000000-0000,file only B.txt
 Copy:,<source>,empty dir only A,<dest>,empty dir only A
 Copy:,<source>,file only A.txt,<dest>,file only A.txt
 Move:,<dest>,renamed file B.txt,<dest>,renamed file A.txt
-Move:,<dest>,renamed dir B/file1.txt,<dest>,subdir/renamed dir A/file1.txt
-Move:,<dest>,renamed dir B/file2.txt,<dest>,subdir/renamed dir A/file2.txt
-Move:,<dest>,renamed dir B/file3.txt,<dest>,subdir/renamed dir A/file3.txt
-Move:,<dest>,file modified newer on A.txt,<dest>/.backupy/Archive/000000-0000,file modified newer on A.txt
+Move:,<dest>,renamed dir B\file1.txt,<dest>,subdir\renamed dir A\file1.txt
+Move:,<dest>,renamed dir B\file2.txt,<dest>,subdir\renamed dir A\file2.txt
+Move:,<dest>,renamed dir B\file3.txt,<dest>,subdir\renamed dir A\file3.txt
+Move:,<dest>,file modified newer on A.txt,<dest>\.backupy\Archive\000000-0000,file modified newer on A.txt
 Copy:,<source>,file modified newer on A.txt,<dest>,file modified newer on A.txt
-Move:,<dest>,file modified newer on B.txt,<dest>/.backupy/Archive/000000-0000,file modified newer on B.txt
+Move:,<dest>,file modified newer on B.txt,<dest>\.backupy\Archive\000000-0000,file modified newer on B.txt
 Copy:,<source>,file modified newer on B.txt,<dest>,file modified newer on B.txt
 ### COMPLETED ###

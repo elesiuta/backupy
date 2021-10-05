@@ -1,5 +1,5 @@
 {
- ".backupy/database": {
+ ".backupy\\database": {
   "crc": "B1CD6F38",
   "dir": false,
   "mtime": 0,
@@ -23,15 +23,15 @@
   "mtime": 1563369616.0,
   "size": 9
  },
- "renamed dir B/file1.txt": {
+ "renamed dir B\\file1.txt": {
   "mtime": 1563369360.0,
   "size": 11
  },
- "renamed dir B/file2.txt": {
+ "renamed dir B\\file2.txt": {
   "mtime": 1563369366.0,
   "size": 2
  },
- "renamed dir B/file3.txt": {
+ "renamed dir B\\file3.txt": {
   "mtime": 1563369386.0,
   "size": 45
  },
@@ -49,7 +49,7 @@
   "mtime": 1563369444.0,
   "size": 2
  },
- "same nested dir/same empty dir": {
+ "same nested dir\\same empty dir": {
   "crc": "0",
   "dir": true,
   "mtime": 0,

@@ -46,7 +46,7 @@ def replaceDictKeySep(d):
     # replace path separators to windows for consistent testing
     new_d = {}
     for key in d:
-        new_d[key.replace(os.path.sep, "\\")] = d[key]
+        new_d[key.replace("/", "\\")] = d[key]
     return new_d
 
 def prerewriteDb(fName):
@@ -55,7 +55,7 @@ def prerewriteDb(fName):
         db = readJson(fName)
         new_db = {}
         for key in db:
-            new_db[key.replace("\\", os.path.sep)] = db[key]
+            new_db[key.replace("\\", "/")] = db[key]
         writeJson(fName, new_db)
 
 def rewriteDb(fName):
@@ -65,12 +65,12 @@ def rewriteDb(fName):
         writeJson(fName, replaceDictKeySep(db), sort_keys=True)
 
 def rewriteSep(fName):
-    # replace path separators to windows for consistent testing
+    # replace path separators to windows for consistent testing and rewrite line endings to windows
     if os.path.exists(fName):
         with open(fName, "r") as f:
             data = []
             for row in f.readlines():
-                data.append(row.replace(os.path.sep, "\\"))
+                data.append(row.replace("/", "\\"))
         with open(fName, "w", encoding="utf-8", newline="\r\n") as f:
             f.writelines(data)
 
@@ -119,14 +119,14 @@ def dirInfo(path, skip_time = True):
         for subdir in subdir_list:
             full_path = os.path.join(dir_path, subdir)
             if not skip_time:
-                relativePath = os.path.relpath(full_path, path).replace(os.path.sep, "\\") + "\\"
+                relativePath = os.path.relpath(full_path, path).replace("/", "\\") + "\\"
                 file_dicts[relativePath] = {"size": os.path.getsize(full_path), "mtime": os.path.getmtime(full_path), "crc": 0, "dir": True}
             elif len(os.listdir(full_path)) == 0:
-                relativePath = os.path.relpath(full_path, path).replace(os.path.sep, "\\")
+                relativePath = os.path.relpath(full_path, path).replace("/", "\\")
                 file_dicts[relativePath] = {"size": 0, "mtime": 0, "crc": 0, "dir": True}
         for fName in sorted(file_list):
             full_path = os.path.join(dir_path, fName)
-            relativePath = os.path.relpath(full_path, path).replace(os.path.sep, "\\")
+            relativePath = os.path.relpath(full_path, path).replace("/", "\\")
             size = os.path.getsize(full_path)
             if skip_time:
                 mtime = 0
@@ -226,8 +226,8 @@ def runTest(test_name, config, set=0, rewrite_log=True, rewrite_sep=True, compar
     sol_path = os.path.join("tests", "test_solutions", test_name)
     dir_A_sol_path = os.path.join(sol_path, dir_A)
     dir_B_sol_path = os.path.join(sol_path, dir_B)
-    # fix separators for running tests on linux
-    if os.name != "nt" and rewrite_sep:
+    # fix separators for running tests on windows and linux (should just recreate them all with posix separators and line endings at some point)
+    if True:
         if "config_dir" in config:
             db_dir = config["config_dir"]
         else:
@@ -476,7 +476,7 @@ class TestBackupy(unittest.TestCase):
     def test_sync_new_nolog_dry_run_set1(self):
         test_name = "sync-new-nolog-dry_run-set1"
         config = {"force_posix_path_sep": True, "main_mode": "sync", "select_mode": "new", "nomoves": False, "noprompt": True, "nolog": True, "noarchive": False, "archive_dir": ".backupy", "config_dir": ".backupy", "log_dir": ".backupy", "trash_dir": ".backupy/Deleted", "dry_run": True, "backup_time_override": "000000-0000"}
-        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=False, rewrite_sep=False, set=1)
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=False, rewrite_sep=True, set=1)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
@@ -547,7 +547,7 @@ class TestBackupy(unittest.TestCase):
     def test_mirror_source_posix(self):
         test_name = "mirror-source-posix"
         config = {"main_mode": "mirror", "select_mode": "source", "force_posix_path_sep": True, "nomoves": False, "noprompt": True, "nolog": False, "root_alias_log": True, "noarchive": False, "archive_dir": ".backupy/Archive", "config_dir": ".backupy", "log_dir": ".backupy/Logs", "trash_dir": ".backupy/Trash", "backup_time_override": "000000-0000"}
-        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, rewrite_sep=False, set=0)
+        dirA, dirB, dirAsol, dirBsol, compDict = runTest(test_name, config, rewrite_log=True, rewrite_sep=True, set=0)
         self.assertEqual(dirA, dirAsol, str(compDict))
         self.assertEqual(dirB, dirBsol, str(compDict))
 
