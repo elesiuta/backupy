@@ -7,7 +7,7 @@
   - [Configuration File](#configuration-file)
   - [Building From Source](#building-from-source)
 ## [Installation](#installation)
-- Install the latest release from PyPI (supports all platforms with Python and has no other dependencies)
+- Install the latest release from PyPI (supports all platforms with Python and has no dependencies outside the standard library)
 ```
 pip install backupy --upgrade
 ```
@@ -26,6 +26,7 @@ pip install backupy --upgrade
 - Code should be simple and easy to verify to ensure predicable and reliable operation
   - a callgraph is available in `analysis/callgraph.svg`
   - there are only three, easy to follow functions (under `FileManager` in `backupy/fileman.py`) that ever touch your files, no more, no less, three shall be the number of thou functions, and the number of the functions shall be three
+  - use trustworthy dependencies
 - Follow the principle of least astonishment
   - clear backup behaviour between directories, the current status of files and how they will be handled upon execution should be perfectly obvious
 - Avoid feature creep and duplicating other programs
@@ -37,11 +38,14 @@ pip install backupy --upgrade
   - all the low level functions used for file operations are under `FileOps` from `backupy.utils` for easy monkey patching (see `example_extension.py`)
 ## [Usage Description](#usage-description)
 - Source and destination directories can be any directory accessible via the computer's file system
-- Destination can be empty or contain files from a previous backup (even one made without BackuPy), matching files on both sides will be skipped
+  - Destination can be empty or contain files from a previous backup (even one made without BackuPy), matching files on both sides will be skipped
+  - Use the `--posix` flag if you plan on using BackuPy between Windows and any other OS
 - `Main modes` (how to handle new and deleted files)
   - `Backup mode:` copies files that are only in source to destination
   - `Mirror mode:` copies files that are only in source to destination and deletes files that are only in destination
   - `Sync mode:` copies files that are only in source to destination and copies files that are only in destination to source
+    - you may also want to use `--sync-delete` to propagate deletions
+    - see `write_database_x2` in the [configuration file](#configuration-file) if syncing more than two folders
 - `Selection modes` (which file to select in cases where different versions exist on both sides)
   - `Source mode:` copy source files to destination
   - `Destination mode:` copy destination files to source
@@ -51,6 +55,7 @@ pip install backupy --upgrade
   - `Attribute mode:` compare file attributes (size and last modified time)
   - `Attribute+ mode:` compare file attributes and calculate CRCs only for new and changed files for future verification
   - `CRC mode:` compare file attributes and CRC for every file, and checks previously stored CRCs to detect corruption
+    - you may also want to use `--verify` to verify the CRC of files after they're copied
 - Test your options first with the `--dry-run` flag
 - See [Command Line Interface](#command-line-interface) and [Configuration File](#configuration-file) below for all available options
 - By default, you will always be notified of any changes, unexpected modifications, sync conflicts, or file corruption before being prompted to continue, cancel, or skip selected files
@@ -196,7 +201,7 @@ python setup.py test
 ```
 python setup.py sdist
 ```
-- Building an executable with the GUI (deprecated, may rewrite with flutter)
+- Building an executable with the GUI (depends on [Gooey](https://pypi.org/project/Gooey/)) (deprecated, may rewrite with flutter)
 ```
 pyinstaller build.spec
 ```
