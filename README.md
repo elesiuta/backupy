@@ -51,8 +51,13 @@ pip install backupy --upgrade
   - `Attribute mode:` compare file attributes (size and last modified time)
   - `Attribute+ mode:` compare file attributes and calculate CRCs only for new and changed files for future verification
   - `CRC mode:` compare file attributes and CRC for every file, and checks previously stored CRCs to detect corruption
-- Test your settings first with the `--dry-run` flag
+- Test your options first with the `--dry-run` flag
+- See [Command Line Interface](#command-line-interface) and [Configuration File](#configuration-file) below for all available options
 - By default, you will always be notified of any changes, unexpected modifications, sync conflicts, or file corruption before being prompted to continue, cancel, or skip selected files
+  - it is recommended to use `--qconflicts` if using `--noprompt`, especially if also using `--noarchive`
+- By default, you will be prompted before any changes are made to your files and
+  - overwritten files will be moved to `<source|dest>/.backupy/Archives/yymmdd-HHMM/<original path>`
+  - deleted files will be moved to `<source|dest>/.backupy/Trash/yymmdd-HHMM/<original path>`
 - Symbolic links to folders are never followed and always copied verbatim
 - Symbolic links to files are followed by default, copying the referenced file, use `--nofollow` to copy symbolic links to files verbatim
 - To restore files, just copy them over from your destination to source (or swap source and destination in BackuPy)
@@ -139,8 +144,8 @@ configuration options:
                   <source>/.backupy/Logs/log-yymmdd-HHMM.csv
                   <source|dest>/.backupy/database.json
   -p, --posix  Force posix style paths on non-posix operating systems
-  -k, --save   Save configuration to <source>/.backupy/config.json
-  -l, --load   Load configuration from <source>/.backupy/config.json
+  -k, --save   Save configuration to <source>/.backupy/config.json and exit
+  -l, --load   Load configuration from <source>/.backupy/config.json and run
 
 BackuPy is a simple backup program in python with an emphasis on data 
 integrity and transparent behaviour - https://github.com/elesiuta/backupy 
@@ -150,9 +155,10 @@ welcome to redistribute it under certain conditions. See the GNU General
 Public Licence for details.
 ```
 ## [Configuration File](#configuration-file)
-- Note: The config file is saved to, and loaded from `<source>/.backupy/config.json`
+- The config file is saved to, and loaded from `<source>/.backupy/config.json`
   - it contains all the options from the command line interface along with some additional options
   - the only CLI options that can be used with `--load` and can override settings in `config.json` are `-c mode`, `--dbscan`, and `--dry-run`
+    - the overrides can enable `--dbscan` or `--dry-run` but not disable
   - see `backupy/config.py` for where all the options and defaults are stored in code
   - below is a description of all the other options that are available
 - `source_unique_id` & `dest_unique_id`

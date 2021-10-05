@@ -130,9 +130,9 @@ def main() -> int:
     group5.add_argument("-p", "--posix", dest="force_posix_path_sep", action="store_true",
                         help=getString("Force posix style paths on non-posix operating systems"))
     group5.add_argument("-k", "--save", dest="save", action="store_true",
-                        help=getString("Save configuration to <source>/.backupy/config.json"))
+                        help=getString("Save configuration to <source>/.backupy/config.json and exit"))
     group5.add_argument("-l", "--load", dest="load", action="store_true",
-                        help=getString("Load configuration from <source>/.backupy/config.json"))
+                        help=getString("Load configuration from <source>/.backupy/config.json and run"))
     parser.add_argument("--nocolour", dest="nocolour", action="store_true",
                         help=argparse.SUPPRESS)
     parser.add_argument("--version", action="version", version=getVersion())
