@@ -42,12 +42,12 @@ class FileScanner:
         self.set_crc_errors = set()
         self.set_dirs = set()
         # Init filters
-        self.filter_include_list = None
-        self.filter_exclude_list = None
+        self.filter_include_list = []
+        self.filter_exclude_list = []
         try:
-            if config.filter_include_list is not None:
+            if config.filter_include_list:
                 self.filter_include_list = [re.compile(f) for f in config.filter_include_list]
-            if config.filter_exclude_list is not None:
+            if config.filter_exclude_list:
                 self.filter_exclude_list = [re.compile(f) for f in config.filter_exclude_list]
         except Exception:
             raise Exception("Filter Processing Error")
@@ -248,10 +248,10 @@ class FileScanner:
                     subdir_list.clear()
                     continue
                 # apply filters
-                if self.filter_include_list is not None:
+                if self.filter_include_list:
                     subdir_list = filter(lambda x: any([True if r.search(os.path.join(dir_path, x)) else False for r in self.filter_include_list]), subdir_list)
                     file_list = filter(lambda x: any([True if r.search(os.path.join(dir_path, x)) else False for r in self.filter_include_list]), file_list)
-                if self.filter_exclude_list is not None:
+                if self.filter_exclude_list:
                     subdir_list = filter(lambda x: all([False if r.search(os.path.join(dir_path, x)) else True for r in self.filter_exclude_list]), subdir_list)
                     file_list = filter(lambda x: all([False if r.search(os.path.join(dir_path, x)) else True for r in self.filter_exclude_list]), file_list)
                 # scan folders

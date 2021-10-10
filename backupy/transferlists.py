@@ -79,6 +79,7 @@ class TransferLists:
 
     def skipFileTransfers(self, log: LogManager) -> bool:
         self._unfreeze()
+        assert isinstance(self.source_only, list) and isinstance(self.dest_only, list) and isinstance(self.changed, list)
         log.append([getString("### SKIPPED ###")], ["Section"])
         print(log.colourString(getString("Enter file paths to remove them from the transfer queues, then 'continue' when ready or 'cancel' to abort"), "G"))
         while True:

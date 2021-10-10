@@ -15,21 +15,20 @@
 
 import os
 import random
-import typing
 
 
 class ConfigObject:
     def __init__(self, config: dict):
         """Used for storing user configuration, these attribute names are also the key names in config.json or the config dictionary"""
         # default config (from argparse cli)
-        self.source: typing.Union[str, None] = None
-        self.dest: typing.Union[str, None] = None
+        self.source: str = ""
+        self.dest: str = ""
         self.main_mode: str = "mirror"
         self.select_mode: str = "source"
         self.compare_mode: str = "attr"
         self.sync_propagate_deletions: bool = False
-        self.filter_include_list: typing.Union[list[str], None] = None
-        self.filter_exclude_list: typing.Union[list[str], None] = None
+        self.filter_include_list: list[str] = []
+        self.filter_exclude_list: list[str] = []
         self.noarchive: bool = False
         self.nocolour: bool = False
         self.nofollow: bool = False
@@ -60,7 +59,7 @@ class ConfigObject:
         # load config
         for key in config:
             if config[key] is not None and hasattr(self, key):
-                if getattr(self, key) is not None and type(getattr(self, key)) != type(config[key]):
+                if not isinstance(config[key], type(getattr(self, key))):
                     raise Exception("Error: Invalid type for %s in config, should be %s" % (key, type(getattr(self, key))))
                 self.__setattr__(key, config[key])
         # normalize paths (these should be relative, not absolute!)
@@ -75,7 +74,7 @@ class ConfigObject:
         assert self.compare_mode in ["attr", "attr+", "crc"]
 
     def __setattr__(self, name, value):
-        if not hasattr(self, "locked") or not self.locked:
+        if not hasattr(self, "locked"):
             super().__setattr__(name, value)
         else:
             raise Exception("Error: Config modified during run (should be locked)")

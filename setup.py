@@ -1,21 +1,22 @@
 import setuptools
 import backupy
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+with open("README.md", "r") as f:
+    long_description = f.read()
 
 setuptools.setup(
     name="BackuPy",
     version=backupy.version(),
+    python_requires=">3.8.*",
     description="A simple backup program in python with an emphasis on data integrity and transparent behaviour",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/elesiuta/backupy",
     license="GPLv3",
-    packages=['backupy'],
+    packages=["backupy"],
     entry_points={
-        'console_scripts': [
-            'backupy = backupy:main'
+        "console_scripts": [
+            "backupy = backupy:main"
         ]
     },
     classifiers=[
@@ -29,5 +30,5 @@ setuptools.setup(
         "Environment :: Console",
         "Development Status :: 5 - Production/Stable",
     ],
-    test_suite = 'tests.tests',
+    test_suite="tests.tests",
 )

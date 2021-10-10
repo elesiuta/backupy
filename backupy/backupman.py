@@ -64,18 +64,17 @@ class BackupManager():
         if "compare_mode" in args and args["compare_mode"] is not None and not gui:
             self.config.compare_mode = args["compare_mode"]
         # scan only mode
-        if self.config.scan_only and (self.config.dest is None or not FileOps.isdir(self.config.dest)):
+        if self.config.scan_only and (self.config.dest == "" or not FileOps.isdir(self.config.dest)):
             self.config.dest = self.config.source
         # cold storage mode
         if self.config.use_cold_storage:
             self.config.write_database_x2 = True
         # check source & dest
-        assert self.config.source is not None
         if not FileOps.isdir(self.config.source):
             self.log.colourPrint(getString("Unable to access source directory: ") + self.config.source, "R")
             self.log.colourPrint(getString("Check permissions and if the directory exists."), "R")
             sys.exit(1)
-        if self.config.dest is None:
+        if self.config.dest == "":
             self.log.colourPrint(getString("Destination directory not provided or config failed to load"), "R")
             sys.exit(1)
         try:
@@ -125,7 +124,7 @@ class BackupManager():
         self.config = ConfigObject(config)
         self.log.config = self.config
         self.log.colourPrint(getString("Loaded config from:") + "\n" + config_dir, "G")
-        if self.config.source is None or FileOps.abspath(current_source) != FileOps.abspath(self.config.source):
+        if self.config.source == "" or FileOps.abspath(current_source) != FileOps.abspath(self.config.source):
             self.log.colourPrint(getString("A config file matching the specified source was not found (case sensitive)"), "R")
             sys.exit(1)
 
@@ -150,9 +149,9 @@ class BackupManager():
     def _scanDirectories(self) -> bool:
         """init FileScanner and load previous scan data if available"""
         self.source = FileScanner(self.config.source, self.config.source_unique_id,
-                              self.config.dest, self.config, self.gui)
+                                  self.config.dest, self.config, self.gui)
         self.dest = FileScanner(self.config.dest, self.config.dest_unique_id,
-                            self.config.source, self.config, self.gui)
+                                self.config.source, self.config, self.gui)
         dest_database_load_success = False
         self.source.loadDatabase()
         self.dest.loadDatabase(self.config.use_cold_storage)

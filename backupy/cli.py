@@ -24,6 +24,7 @@ from .utils import getString, getVersion
 class ArgparseCustomFormatter(argparse.HelpFormatter):
     def _fill_text(self, text, width, indent):
         return "".join(indent + line for line in text.splitlines(keepends=True))
+
     def _split_lines(self, text, width):
         if text[:2] == 'F!':
             return text.splitlines()[1:]

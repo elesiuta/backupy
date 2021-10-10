@@ -15,7 +15,6 @@
 
 import os
 import subprocess
-import typing
 
 from .config import ConfigObject
 from .filescanner import FileScanner
@@ -172,6 +171,8 @@ class FileManager:
                     side = self.config.dest
                     oldLoc = f["dest"]
                     newLoc = f["source"]
+                else:
+                    raise Exception("Incorrect format for list of moved pair dictionaries")
                 self._moveFile(side, side, oldLoc, newLoc)
             self.log.colourPrint(getString("Moving completed!"), "NONE")
 
