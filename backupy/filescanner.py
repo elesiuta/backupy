@@ -29,8 +29,7 @@ from .utils import (
 
 
 class FileScanner:
-    def __init__(self, directory_root_path: str, unique_id: str,
-                 other_root_path: str, config: ConfigObject, gui: bool = False):
+    def __init__(self, directory_root_path: str, unique_id: str, other_root_path: str, config: ConfigObject, gui: bool = False):
         """For scanning directories, tracking files and changes, meant only for internal use by BackupManager"""
         # File dictionaries, keys are paths relative to directory_root_path, values are dictionaries of file attributes
         self.dict_current = {}
