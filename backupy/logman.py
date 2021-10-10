@@ -26,7 +26,7 @@ from .utils import (
 
 
 class LogManager:
-    def __init__(self, backup_time: int, gui: bool):
+    def __init__(self, backup_time: str, gui: bool):
         """Provides methods for log formatting and pretty printing (used by BackupManager)"""
         # init variables
         self._log = []
@@ -40,7 +40,7 @@ class LogManager:
             from .gui import colourize
             self.gui_colourize = colourize
             self.terminal_width = 80
-        # init attributes for linting
+        # init attributes for linting (set by BackupManager to reference the same object)
         self.config: ConfigObject
         self.source: FileScanner
         self.dest: FileScanner
@@ -71,6 +71,7 @@ class LogManager:
                    "Header", "Subheader", "Path", "Size", "Modified", "Hash"]
         log_csv = [columns]
         new_section = False
+        entry_number = 0
         for i in range(len(self._log)):
             if self._log_columns[i]:
                 if self._log_columns[i][-1] and not new_section:

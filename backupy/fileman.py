@@ -15,6 +15,7 @@
 
 import os
 import subprocess
+import typing
 
 from .config import ConfigObject
 from .filescanner import FileScanner

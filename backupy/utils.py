@@ -17,11 +17,12 @@ import csv
 import json
 import os
 import shutil
+import typing
 import unicodedata
 
 
 def getVersion() -> str:
-    return "1.10.1"
+    return "1.10.2dev"
 
 
 def getString(text: str) -> str:
@@ -86,24 +87,24 @@ def writeJson(file_path: str, data: dict, subdir: bool = True, sort_keys: bool =
 class FileOps:
     """expose file operation functions as class attributes for easy monkey-patching"""
     # functions for readonly operations (used in BackupManager, FileManager, or FileScanner)
-    abspath = os.path.abspath
-    isabs = os.path.isabs
-    isdir = os.path.isdir
-    islink = os.path.islink
-    listdir = os.listdir
-    open = lambda path: open(path, "rb")
-    readlink = os.readlink
-    stat = os.stat
-    walk = os.walk
+    abspath: typing.Callable = os.path.abspath
+    isabs: typing.Callable = os.path.isabs
+    isdir: typing.Callable = os.path.isdir
+    islink: typing.Callable = os.path.islink
+    listdir: typing.Callable = os.listdir
+    open: typing.Callable = lambda path: open(path, "rb")
+    readlink: typing.Callable = os.readlink
+    stat: typing.Callable = os.stat
+    walk: typing.Callable = os.walk
     # functions for read/write operations (only used in FileManager)
-    chmod = os.chmod
-    copy = shutil.copy2
-    copyff = lambda source, dest: shutil.copy2(source, dest, follow_symlinks=False)
-    makedirs = os.makedirs
-    move = shutil.move
-    remove = os.remove
-    removedirs = os.removedirs
-    rmdir = os.rmdir
+    chmod: typing.Callable = os.chmod
+    copy: typing.Callable = shutil.copy2
+    copyff: typing.Callable = lambda source, dest: shutil.copy2(source, dest, follow_symlinks=False)
+    makedirs: typing.Callable = os.makedirs
+    move: typing.Callable = shutil.move
+    remove: typing.Callable = os.remove
+    removedirs: typing.Callable = os.removedirs
+    rmdir: typing.Callable = os.rmdir
 
 
 def testConsistency(source_dicts: tuple, source_sets: tuple,
@@ -111,6 +112,7 @@ def testConsistency(source_dicts: tuple, source_sets: tuple,
                     transfer_lists: tuple,
                     redundant_source: dict, redundant_dest: dict,
                     redundant_source_moves: dict, redundant_dest_moves: dict) -> None:
+    """redundant checks (slow), used only for internal testing when checking test cases"""
     # get sets
     source_only, dest_only, changed, source_moved, dest_moved, source_deleted, dest_deleted = transfer_lists
     source_dict, source_prev = source_dicts

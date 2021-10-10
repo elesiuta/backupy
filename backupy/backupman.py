@@ -48,7 +48,7 @@ class BackupManager():
         # init log manager
         self.log = LogManager(self.backup_time, gui)
         # init config
-        if type(args) != dict:
+        if not isinstance(args, dict):
             args = vars(args)
         self.config = ConfigObject(args)
         # load config (be careful if using a non-default config_dir!)
@@ -70,6 +70,7 @@ class BackupManager():
         if self.config.use_cold_storage:
             self.config.write_database_x2 = True
         # check source & dest
+        assert self.config.source is not None
         if not FileOps.isdir(self.config.source):
             self.log.colourPrint(getString("Unable to access source directory: ") + self.config.source, "R")
             self.log.colourPrint(getString("Check permissions and if the directory exists."), "R")
@@ -136,6 +137,7 @@ class BackupManager():
         return 1
 
     def _internalTests(self, transfer_lists: TransferLists) -> None:
+        """redundant checks (slow), used only for internal testing when checking test cases"""
         if self.backup_time == "000000-0000":
             testConsistency(self.source.getDicts(), self.source.getSets(),
                             self.dest.getDicts(), self.dest.getSets(),
@@ -146,7 +148,7 @@ class BackupManager():
                             self.dest.compareDb(self.dest.dict_prev, set(), True, False, True))
 
     def _scanDirectories(self) -> bool:
-        # init FileScanner and load previous scan data if available
+        """init FileScanner and load previous scan data if available"""
         self.source = FileScanner(self.config.source, self.config.source_unique_id,
                               self.config.dest, self.config, self.gui)
         self.dest = FileScanner(self.config.dest, self.config.dest_unique_id,
@@ -174,8 +176,8 @@ class BackupManager():
         self.log.source, self.log.dest = self.source, self.dest
         return dest_database_load_success
 
-    def _compareDirectories(self):
-        # compare directories (should be relatively fast, all the read operations are done during scan)
+    def _compareDirectories(self) -> typing.Union[TransferLists, None]:
+        """compare directories (should be relatively fast, all the read operations are done during scan)"""
         transfer_lists = None
         if not self.config.scan_only:
             self.log.colourPrint(getString("Comparing directories..."), "B")
@@ -197,6 +199,7 @@ class BackupManager():
         # note: this only notifies the user so they can intervene, it does not handle them in any special way, treating them as regular file changes
         # it can also be triggered by time zone or dst changes, lower file system mod time precision, and corruption if using CRCs (handled next)
         detection_flag = False
+        sync_conflicts = []
         if dest_database_load_success and self.config.source != self.config.dest:
             self.log.append([getString("### DATABASE CONFLICTS ###")], ["Section"])
             if self.config.main_mode == "sync":
@@ -304,6 +307,8 @@ class BackupManager():
         elif self.config.main_mode == "mirror":
             dest_msg = getString("(will be %sd)" % (archive_msg))
             move_msg = getString("(will move files on dest to match source)")
+        else:
+            raise Exception("Invalid main mode (already checked in ConfigObject, this just gets rid of linter warning)")
         if self.config.select_mode == "source":
             change_msg = getString("(%s dest and copy source -> dest)" % (archive_msg))
         elif self.config.select_mode == "dest":
@@ -312,6 +317,8 @@ class BackupManager():
             change_msg = getString("(%s older and copy newer)" % (archive_msg))
         elif self.config.select_mode == "no":
             change_msg = getString("(will be left as is)")
+        else:
+            raise Exception("Invalid main mode (already checked in ConfigObject, this just gets rid of linter warning)")
         # print differences
         sum_size = self.log.prettySize(sum(source_dict[f]["size"] for f in source_only)).strip()
         self.log.colourPrint(getString("Source Only (will be copied to dest): %s (%s)") % (len(source_only), sum_size), "V")
@@ -391,6 +398,7 @@ class BackupManager():
             self.log.writeLog("database.json")
             self.log.colourPrint(getString("Completed!"), "G")
             return 0
+        assert isinstance(transfer_lists, TransferLists)
         # print differences between source and dest
         self._printAndLogCompareDiffSummary(transfer_lists)
         # consistency checks used for testing and debugging
