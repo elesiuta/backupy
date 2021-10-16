@@ -1,0 +1,26 @@
+# coveragerc to control coverage.py
+# coverage run setup.py test
+[run]
+source = backupy
+branch = True
+
+[report]
+# omit files purely for user interfacing
+omit = backupy/gui.py, backupy/cli.py, backupy/treedisplay.py
+# omit unpragmatic lines to test for reason
+exclude_lines =
+    # Have to re-enable the standard pragma
+    pragma: no cover
+
+    # experimental feature and depends on having rsync installed
+    if self.config.use_rsync:
+
+    # deprecated feature
+    if self.gui:
+    elif self.gui and self.total > 0:
+    def simplePrompt
+
+    # user interaction
+    while not self.config.noprompt:
+    def skipFileTransfers
+    def _unfreeze
