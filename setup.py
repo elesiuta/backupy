@@ -7,7 +7,7 @@ with open("README.md", "r") as f:
 setuptools.setup(
     name="BackuPy",
     version=backupy.version(),
-    python_requires=">3.8.*",
+    python_requires=">3.7.*",
     description="A simple backup program in python with an emphasis on data integrity and transparent behaviour",
     long_description=long_description,
     long_description_content_type="text/markdown",
