@@ -4,24 +4,19 @@ description: |
   A simple backup program in python with an emphasis on data integrity
   and transparent behaviour.
 confinement: strict
-base: core18
-adopt-info: backupy
+base: core22
+version: '1.10.1'
 
 parts:
   backupy:
     plugin: python
-    python-version: python3
-    source: .
-    override-pull: |
-      snapcraftctl pull
-      snapcraftctl set-version "$(git describe --tags | cut -c2-)"
+    source: https://github.com/elesiuta/backupy.git
+    source-tag: 'v${SNAPCRAFT_PROJECT_VERSION}'
 
 apps:
   backupy:
     command: bin/backupy
-    environment:
-      LANG: C.UTF-8
-      LC_ALL: C.UTF-8
     plugs:
     - home
     - removable-media
+    - system-backup
