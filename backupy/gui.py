@@ -72,6 +72,7 @@ def simplePrompt(msg: str) -> str:
 
 
 @Gooey(program_name="BackuPy",
+       target="python -mbackupy.gui",
        image_dir=local_resource_path("images/"),
        richtext_controls=True,
        tabbed_groups=True,
