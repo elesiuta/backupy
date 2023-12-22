@@ -154,6 +154,12 @@ def main_gui():
                         help=" Force posix style paths on non-posix operating systems")
     group4.add_argument("--sync-delete", dest="sync_propagate_deletions", action="store_true", metavar="Propagate deletions during sync", gooey_options={"full_width": True},
                         help=" Use the database to propagate deletions since the last sync")
+    group2.add_argument("--fi", dest="filter_include_list", action="store", type=str, nargs="+", default=None, metavar="regex",
+                        help=getString("Filter: Only include files matching the regular expression(s) (include all by default, searches file paths)"))
+    group2.add_argument("--fe", dest="filter_exclude_list", action="store", type=str, nargs="+", default=None, metavar="regex",
+                        help=getString("Filter: Exclude files matching the regular expression(s) (exclude has priority over include, searches file paths)"))
+    group2.add_argument("--forbidden-exts", dest="forbidden_extensions_list", action="store", type=str, nargs="+", default=None, metavar="token",
+                        help=getString("Forbidden extensions list"))                        
     group4.add_argument("--noarchive", action="store_true", metavar="No archiving", gooey_options={"full_width": True},
                         help=" Disable archiving files before overwriting/deleting to:\n"
                              "  <source|dest>/.backupy/Archives/yymmdd-HHMM/\n"
