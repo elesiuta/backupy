@@ -80,6 +80,18 @@ class FileManager:
             if not self.config.dry_run:
                 source = os.path.join(source_root, source_file)
                 dest = os.path.join(dest_root, dest_file)
+                if self.config.forbidden_extensions_list:
+                    if os.path.exists(source + "~"):
+                        #restore
+                        file_name, file_extension = os.path.splitext(dest)
+                        if file_extension in self.config.forbidden_extensions_list:
+                            source += "~"
+                    elif os.path.exists(source):
+                        #backup
+                        file_name, file_extension = os.path.splitext(dest)
+                        if file_extension in self.config.forbidden_extensions_list:
+                            dest += "~"
+
                 if FileOps.isdir(source):
                     if FileOps.islink(source):
                         FileOps.copyff(source, dest)

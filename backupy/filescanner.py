@@ -44,6 +44,9 @@ class FileScanner:
         # Init filters
         self.filter_include_list = []
         self.filter_exclude_list = []
+        self.forbidden_extensions_list = []
+        if config.forbidden_extensions_list:
+            self.forbidden_extensions_list = config.forbidden_extensions_list
         try:
             if config.filter_include_list:
                 self.filter_include_list = [re.compile(f) for f in config.filter_include_list]
@@ -287,6 +290,10 @@ class FileScanner:
         stat = FileOps.stat(full_path, follow_symlinks=self.follow_symlinks)
         size = stat.st_size
         mtime = stat.st_mtime
+        if self.forbidden_extensions_list:
+            file_name, file_extension = os.path.splitext(relative_path)
+            if file_extension in [ "%s~" % f for f in self.forbidden_extensions_list]:
+                relative_path = relative_path.rstrip("~")
         self.dict_current[relative_path] = {"size": size, "mtime": mtime}
         if self.compare_mode == "crc":
             self.dict_current[relative_path]["crc"] = self.calcCrc(full_path)
