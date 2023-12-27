@@ -60,6 +60,17 @@ class FileManager:
                         FileOps.chmod(path, 0o777)
                         FileOps.rmdir(path)
                 else:
+                    if self.config.forbidden_extensions_list:
+                        if os.path.exists(path + "~"):
+                            #restore
+                            file_name, file_extension = os.path.splitext(path)
+                            if file_extension in self.config.forbidden_extensions_list:
+                                path += "~"
+                        elif os.path.exists(path):
+                            #backup
+                            file_name, file_extension = os.path.splitext(path)
+                            if file_extension in self.config.forbidden_extensions_list:
+                                path += "~"
                     try:
                         FileOps.remove(path)
                     except IOError:
