@@ -29,6 +29,7 @@ class ConfigObject:
         self.sync_propagate_deletions: bool = False
         self.filter_include_list: list[str] = []
         self.filter_exclude_list: list[str] = []
+        self.forbidden_extensions_list: list[str] = []
         self.noarchive: bool = False
         self.nocolour: bool = False
         self.nofollow: bool = False
